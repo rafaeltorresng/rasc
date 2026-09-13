@@ -59,6 +59,61 @@ struct ScratchpadSessionTests {
     }
 
     @Test
+    func contentRevisionInvalidatesARefinementBeforeAutosavePersistsTheEdit() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let note = try await fixture.repository.createScratch(content: "original")
+        fixture.userDefaults.set(note.id.uuidString, forKey: "activeNoteID")
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        try await session.restore()
+
+        session.text = "first in-memory edit"
+        session.scheduleAutosave()
+        let request = RefinementRequest(
+            requestID: UUID(),
+            snapshot: NoteSnapshot(
+                noteID: note.id,
+                revision: session.contentRevision,
+                text: session.text
+            )
+        )
+
+        session.text = "second in-memory edit"
+        session.scheduleAutosave()
+
+        #expect(session.contentRevision == request.snapshot.revision + 1)
+        #expect(!request.isCurrent(
+            noteID: note.id,
+            revision: session.contentRevision,
+            requestID: request.requestID
+        ))
+        #expect(try await fixture.repository.fetch(id: note.id)?.content == "original")
+    }
+
+    @Test
+    func contentRevisionChangesOnlyWhenInMemoryContentChanges() throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        let initialRevision = session.contentRevision
+
+        session.text = "draft"
+        #expect(session.contentRevision == initialRevision + 1)
+
+        session.text = "draft"
+        #expect(session.contentRevision == initialRevision + 1)
+
+        session.text = "draft updated"
+        #expect(session.contentRevision == initialRevision + 2)
+    }
+
+    @Test
     func relaunchRestoresThePersistedActiveNoteInsteadOfTheMostRecentNote() async throws {
         let fixture = try makeFixture()
         defer { fixture.remove() }

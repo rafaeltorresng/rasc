@@ -9,7 +9,13 @@ final class ScratchpadSession {
         case search
     }
 
-    var text = ""
+    var text = "" {
+        didSet {
+            guard text != oldValue else { return }
+            contentRevision &+= 1
+        }
+    }
+    private(set) var contentRevision = 0
     private(set) var surface = Surface.editor
     var searchQuery = ""
     private(set) var searchResults: [Note] = []
