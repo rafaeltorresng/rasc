@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "messy-thought-pt-001",
+      "language": "pt",
+      "input": "ideia refine devia inferir tipo talvez começar pequeno e medir",
+      "expectedKind": "messyText",
+      "mustPreserve": ["talvez", "começar pequeno", "medir"],
+      "mustNotIntroduce": ["prazo definido", "decisão confirmada"],
+      "expectsNoChange": false
+    },
+    {
+      "id": "tasks-pt-001",
+      "language": "pt",
+      "input": "comprar passagem\nver hotel\nresponder Pedro\nsexta mandar documento",
+      "expectedKind": "tasks",
+      "mustPreserve": ["Pedro", "sexta"],
+      "mustNotIntroduce": ["17:00", "responsável: Pedro"],
+      "expectsNoChange": false
+    },
+    {
+      "id": "meeting-en-001",
+      "language": "en",
+      "input": "sync notes: keep beta small, Mira will check onboarding copy, maybe launch October 8",
+      "expectedKind": "meeting",
+      "mustPreserve": ["Mira", "maybe", "October 8"],
+      "mustNotIntroduce": ["launch confirmed", "Mira owns the launch"],
+      "expectsNoChange": false
+    },
+    {
+      "id": "message-pt-001",
+      "language": "pt",
+      "input": "oi Lucis acho q consegui resolver aquela parte da fila vou monitorar hoje e se aparecer algo te aviso",
+      "expectedKind": "message",
+      "mustPreserve": ["Lucis", "acho", "hoje"],
+      "mustNotIntroduce": ["resolvido com sucesso", "garantido"],
+      "expectsNoChange": false
+    },
+    {
+      "id": "technical-mixed-001",
+      "language": "mixed",
+      "input": "next_retry_at pode estar menor que scheduled_at after combineWithPacingSlot no whatsapp_queue tick",
+      "expectedKind": "technical",
+      "mustPreserve": ["next_retry_at", "scheduled_at", "combineWithPacingSlot", "whatsapp_queue"],
+      "mustNotIntroduce": ["root cause confirmed", "deploy by Friday"],
+      "expectsNoChange": false
+    },
+    {
+      "id": "no-change-en-001",
+      "language": "en",
+      "input": "Send the signed contract tomorrow.",
+      "expectedKind": "alreadyGood",
+      "mustPreserve": ["signed contract", "tomorrow"],
+      "mustNotIntroduce": [],
+      "expectsNoChange": true
+    },
+    {
+      "id": "uncertainty-pt-001",
+      "language": "pt",
+      "input": "acho que talvez o retry esteja correndo antes do queue tick",
+      "expectedKind": "technical",
+      "mustPreserve": ["acho", "talvez", "retry", "queue tick"],
+      "mustNotIntroduce": ["é uma race condition", "causa confirmada"],
+      "expectsNoChange": false
+    },
+    {
+      "id": "message-en-001",
+      "language": "en",
+      "input": "hey Sam I might have fixed build #1842 can you check macOS 14.6 when you get a minute",
+      "expectedKind": "message",
+      "mustPreserve": ["Sam", "might", "#1842", "macOS 14.6"],
+      "mustNotIntroduce": ["confirmed fixed", "urgent", "deadline"],
+      "expectsNoChange": false
+    },
+    {
+      "id": "mixed-language-001",
+      "language": "mixed",
+      "input": "revisar onboarding copy depois do deploy, maybe ask Ana sobre CTA v2",
+      "expectedKind": "tasks",
+      "mustPreserve": ["onboarding copy", "deploy", "maybe", "Ana", "CTA v2"],
+      "mustNotIntroduce": ["Ana confirmou", "até amanhã"],
+      "expectsNoChange": false
+    }
+  ]
+}
