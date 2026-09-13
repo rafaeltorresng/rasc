@@ -87,6 +87,47 @@ actor NoteRepository {
         }
     }
 
+    func recent(limit: Int) throws -> [Note] {
+        guard limit > 0 else { return [] }
+
+        return try database.read { database in
+            try Note
+                .filter(Note.Columns.deletedAt == nil)
+                .order(Note.Columns.updatedAt.desc, Column.rowID.desc)
+                .limit(limit)
+                .fetchAll(database)
+        }
+    }
+
+    func search(_ query: String, limit: Int) throws -> [Note] {
+        let normalizedQuery = query.precomposedStringWithCanonicalMapping
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !normalizedQuery.isEmpty else {
+            return try recent(limit: limit)
+        }
+        guard limit > 0,
+              let pattern = FTS5Pattern(matchingAllPrefixesIn: normalizedQuery)
+        else {
+            return []
+        }
+
+        return try database.read { database in
+            try Note.fetchAll(
+                database,
+                sql: """
+                    SELECT notes.*
+                    FROM notes
+                    JOIN notes_fts ON notes_fts.rowid = notes.rowid
+                    WHERE notes_fts MATCH ?
+                      AND notes.deleted_at IS NULL
+                    ORDER BY bm25(notes_fts), notes.updated_at DESC, notes.rowid DESC
+                    LIMIT ?
+                    """,
+                arguments: [pattern, limit]
+            )
+        }
+    }
+
     func delete(id: UUID) throws {
         _ = try database.write { database in
             try Note

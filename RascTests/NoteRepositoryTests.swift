@@ -6,6 +6,20 @@ import Testing
 @Suite(.serialized)
 struct NoteRepositoryTests {
     @Test
+    func derivesHistoryTextFromNoteContent() {
+        let note = Note(
+            id: UUID(),
+            content: "\n  Queue retry issue  \n\nCheck next_retry_at after deploy.\n",
+            createdAt: .distantPast,
+            updatedAt: .distantPast,
+            deletedAt: nil
+        )
+
+        #expect(note.displayTitle == "Queue retry issue")
+        #expect(note.displaySnippet == "Check next_retry_at after deploy.")
+    }
+
+    @Test
     func createsANoteWithTheInitialSchema() async throws {
         let databaseURL = makeDatabaseURL()
         defer { removeDatabase(at: databaseURL) }
@@ -67,6 +81,95 @@ struct NoteRepositoryTests {
     }
 
     @Test
+    func returnsRecentNotesByUpdatedAtDescending() async throws {
+        let databaseURL = makeDatabaseURL()
+        defer { removeDatabase(at: databaseURL) }
+        let repository = try NoteRepository(databaseURL: databaseURL)
+        let first = try await repository.createScratch(content: "first")
+        let second = try await repository.createScratch(content: "second")
+        let third = try await repository.createScratch(content: "third")
+        let database = try DatabaseQueue(path: databaseURL.path)
+        try await database.write { database in
+            try database.execute(
+                sql: "UPDATE notes SET updated_at = ? WHERE id = ?",
+                arguments: [Date(timeIntervalSince1970: 100), first.id]
+            )
+            try database.execute(
+                sql: "UPDATE notes SET updated_at = ? WHERE id = ?",
+                arguments: [Date(timeIntervalSince1970: 300), second.id]
+            )
+            try database.execute(
+                sql: "UPDATE notes SET updated_at = ? WHERE id = ?",
+                arguments: [Date(timeIntervalSince1970: 200), third.id]
+            )
+        }
+
+        let recent = try await repository.recent(limit: 3)
+
+        #expect(recent.map(\.id) == [second.id, third.id, first.id])
+    }
+
+    @Test
+    func excludesDeletedNotesFromRecentAndSearch() async throws {
+        let repository = try makeRepository()
+        let visible = try await repository.createScratch(content: "visible queue note")
+        let deleted = try await repository.createScratch(content: "deleted queue note")
+        try await repository.delete(id: deleted.id)
+
+        #expect(try await repository.recent(limit: 10).map(\.id) == [visible.id])
+        #expect(try await repository.search("queue", limit: 10).map(\.id) == [visible.id])
+    }
+
+    @Test
+    func searchesByExactWord() async throws {
+        let repository = try makeRepository()
+        let matching = try await repository.createScratch(content: "Investigate the queue retry")
+        _ = try await repository.createScratch(content: "Review window focus")
+
+        #expect(try await repository.search("queue", limit: 10).map(\.id) == [matching.id])
+    }
+
+    @Test
+    func searchesByAllTermPrefixes() async throws {
+        let repository = try makeRepository()
+        let matching = try await repository.createScratch(content: "Caramuru queue retry investigation")
+        _ = try await repository.createScratch(content: "Caramel recipe")
+
+        #expect(try await repository.search("caram que", limit: 10).map(\.id) == [matching.id])
+    }
+
+    @Test
+    func searchesPortugueseTextWithoutRequiringDiacritics() async throws {
+        let repository = try makeRepository()
+        let matching = try await repository.createScratch(
+            content: "João revisa a ação no café depois do deploy"
+        )
+
+        #expect(try await repository.search("joao acao cafe", limit: 10).map(\.id) == [matching.id])
+    }
+
+    @Test
+    func searchesMixedLanguageTechnicalIdentifiers() async throws {
+        let repository = try makeRepository()
+        let matching = try await repository.createScratch(
+            content: "Atualizar next_retry_at after the queue succeeds"
+        )
+
+        #expect(try await repository.search("atual next_retry", limit: 10).map(\.id) == [matching.id])
+    }
+
+    @Test
+    func searchesURLsAndUUIDLikeStrings() async throws {
+        let repository = try makeRepository()
+        let matching = try await repository.createScratch(
+            content: "See https://example.com/api/v2/jobs/550e8400-e29b-41d4-a716-446655440000"
+        )
+
+        #expect(try await repository.search("example.com/api", limit: 10).map(\.id) == [matching.id])
+        #expect(try await repository.search("550e8400-e29b", limit: 10).map(\.id) == [matching.id])
+    }
+
+    @Test
     func deletesAnEmptyScratch() async throws {
         let databaseURL = makeDatabaseURL()
         defer { removeDatabase(at: databaseURL) }
@@ -118,6 +221,51 @@ struct NoteRepositoryTests {
             try database.columns(in: Note.databaseTableName).map(\.name)
         }
         #expect(columns == ["id", "content", "created_at", "updated_at", "deleted_at"])
+    }
+
+    @Test
+    func migratesM1NotesIntoTheFTSIndexWithoutDataLoss() async throws {
+        let databaseURL = makeDatabaseURL()
+        defer { removeDatabase(at: databaseURL) }
+        let database = try DatabaseQueue(path: databaseURL.path)
+        var m1Migrator = DatabaseMigrator()
+        m1Migrator.registerMigration("v1_create_notes") { database in
+            try database.create(table: Note.databaseTableName) { table in
+                table.column("id", .text).primaryKey()
+                table.column("content", .text).notNull()
+                table.column("createdAt", .datetime).notNull()
+                table.column("updatedAt", .datetime).notNull()
+            }
+        }
+        m1Migrator.registerMigration("v2_m1_notes_schema") { database in
+            try database.alter(table: Note.databaseTableName) { table in
+                table.rename(column: "createdAt", to: "created_at")
+                table.rename(column: "updatedAt", to: "updated_at")
+                table.add(column: "deleted_at", .datetime)
+            }
+        }
+        try m1Migrator.migrate(database)
+
+        let noteID = UUID()
+        let timestamp = Date(timeIntervalSince1970: 1_700_000_000)
+        try await database.write { database in
+            try database.execute(
+                sql: "INSERT INTO notes (id, content, created_at, updated_at) VALUES (?, ?, ?, ?)",
+                arguments: [noteID, "M1 café queue note", timestamp, timestamp]
+            )
+        }
+
+        let repository = try NoteRepository(databaseURL: databaseURL)
+
+        #expect(try await repository.fetch(id: noteID)?.content == "M1 café queue note")
+        #expect(try await repository.search("cafe que", limit: 10).map(\.id) == [noteID])
+        let ftsTableExists = try await database.read { database in
+            try Bool.fetchOne(
+                database,
+                sql: "SELECT EXISTS(SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'notes_fts')"
+            )
+        }
+        #expect(ftsTableExists == true)
     }
 
     private func makeRepository() throws -> NoteRepository {

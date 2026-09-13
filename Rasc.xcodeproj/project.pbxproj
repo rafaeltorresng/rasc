@@ -22,6 +22,7 @@
 		01000000000000000000000D /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000C /* Note.swift */; };
 		01000000000000000000000E /* ScratchpadSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000D /* ScratchpadSessionTests.swift */; };
 		01000000000000000000000F /* ActiveNoteStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000E /* ActiveNoteStore.swift */; };
+		010000000000000000000010 /* HistorySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000F /* HistorySearchView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		02000000000000000000000C /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Domain/Note.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000000D /* ScratchpadSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScratchpadSessionTests.swift; sourceTree = "<group>"; };
 		02000000000000000000000E /* ActiveNoteStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Data/ActiveNoteStore.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000000F /* HistorySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Search/HistorySearchView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +95,7 @@
 				02000000000000000000000B /* AppDatabase.swift */,
 				02000000000000000000000C /* Note.swift */,
 				02000000000000000000000E /* ActiveNoteStore.swift */,
+				02000000000000000000000F /* HistorySearchView.swift */,
 			);
 			name = Rasc;
 			sourceTree = "<group>";
@@ -231,6 +234,7 @@
 				01000000000000000000000C /* AppDatabase.swift in Sources */,
 				01000000000000000000000D /* Note.swift in Sources */,
 				01000000000000000000000F /* ActiveNoteStore.swift in Sources */,
+				010000000000000000000010 /* HistorySearchView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

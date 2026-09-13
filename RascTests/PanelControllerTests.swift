@@ -1,4 +1,5 @@
 import AppKit
+import SwiftUI
 import Testing
 @testable import Rasc
 
@@ -46,6 +47,42 @@ struct PanelControllerTests {
         await controller.toggle()
 
         #expect(!controller.panel.isVisible)
+    }
+
+    @Test
+    func searchFieldRoutesNativeNavigationAndSubmitCommands() {
+        var commands: [HistorySearchCommand] = []
+        let searchField = HistorySearchTextField(
+            text: .constant(""),
+            focusRequest: 0,
+            onCommand: { commands.append($0) }
+        )
+        let coordinator = searchField.makeCoordinator()
+        let textField = NSTextField()
+        let textView = NSTextView()
+
+        #expect(coordinator.control(
+            textField,
+            textView: textView,
+            doCommandBy: #selector(NSResponder.moveUp(_:))
+        ))
+        #expect(coordinator.control(
+            textField,
+            textView: textView,
+            doCommandBy: #selector(NSResponder.moveDown(_:))
+        ))
+        #expect(coordinator.control(
+            textField,
+            textView: textView,
+            doCommandBy: #selector(NSResponder.insertNewline(_:))
+        ))
+        #expect(coordinator.control(
+            textField,
+            textView: textView,
+            doCommandBy: #selector(NSResponder.cancelOperation(_:))
+        ))
+
+        #expect(commands == [.moveUp, .moveDown, .openSelection, .closeSearch])
     }
 
     private func makeController() throws -> PanelController {
