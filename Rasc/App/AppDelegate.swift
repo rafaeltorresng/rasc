@@ -46,6 +46,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    func openSearch() {
+        Task { [weak self] in
+            await self?.panelController?.openSearch()
+        }
+    }
+
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         Task { [weak self] in
             let didFlush = await self?.panelController?.flushForTermination() ?? true

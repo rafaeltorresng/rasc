@@ -15,6 +15,13 @@ struct RascApp: App {
                 }
                 .keyboardShortcut("n")
             }
+
+            CommandGroup(after: .newItem) {
+                Button("Find Note") {
+                    appDelegate.openSearch()
+                }
+                .keyboardShortcut("p")
+            }
         }
     }
 }

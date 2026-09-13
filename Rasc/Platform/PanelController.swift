@@ -57,6 +57,19 @@ final class PanelController: NSObject, NSWindowDelegate {
         presentPanel()
     }
 
+    func openSearch() async {
+        do {
+            if !panel.isVisible {
+                try await session.restore()
+            }
+            try await session.openSearch()
+        } catch {
+            return
+        }
+
+        presentPanel()
+    }
+
     private func presentPanel() {
         let currentApplication = NSRunningApplication.current
         let frontmostApplication = NSWorkspace.shared.frontmostApplication

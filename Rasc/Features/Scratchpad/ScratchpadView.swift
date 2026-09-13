@@ -4,14 +4,26 @@ import SwiftUI
 @MainActor
 @Observable
 final class ScratchpadSession {
+    enum Surface: Equatable {
+        case editor
+        case search
+    }
+
     var text = ""
+    private(set) var surface = Surface.editor
+    var searchQuery = ""
+    private(set) var searchResults: [Note] = []
+    private(set) var selectedSearchIndex = 0
     private(set) var focusRequest = 0
+    private(set) var searchFocusRequest = 0
     private(set) var saveErrorMessage: String?
+    private(set) var searchErrorMessage: String?
 
     private let repository: NoteRepository
     private let activeNoteStore: ActiveNoteStore
     private var noteID: UUID?
     private var autosaveTask: Task<Void, Never>?
+    private var searchTask: Task<Void, Never>?
 
     init(repository: NoteRepository, userDefaults: UserDefaults = .standard) {
         self.repository = repository
@@ -23,6 +35,8 @@ final class ScratchpadSession {
     }
 
     func restore() async throws {
+        resetSearchState()
+
         if !activeNoteStore.hasEstablishedState {
             if let note = try await repository.fetchMostRecent() {
                 noteID = note.id
@@ -90,9 +104,113 @@ final class ScratchpadSession {
 
     func startNewScratch() async throws {
         try await flush()
+        resetSearchState()
         noteID = nil
         activeNoteStore.noteID = nil
         text = ""
+    }
+
+    func openSearch() async throws {
+        searchTask?.cancel()
+        searchTask = nil
+        surface = .search
+        searchQuery = ""
+        searchErrorMessage = nil
+        searchFocusRequest &+= 1
+
+        do {
+            try await refreshSearch()
+        } catch {
+            searchResults = []
+            selectedSearchIndex = 0
+            searchErrorMessage = "Couldn't search local notes."
+            throw error
+        }
+    }
+
+    func scheduleSearch() {
+        searchTask?.cancel()
+        let query = searchQuery
+        searchResults = []
+        selectedSearchIndex = 0
+        searchErrorMessage = nil
+
+        searchTask = Task { [weak self] in
+            guard let self else { return }
+
+            do {
+                let results = try await repository.search(query, limit: 12)
+                guard !Task.isCancelled,
+                      surface == .search,
+                      searchQuery == query
+                else {
+                    return
+                }
+                applySearchResults(results)
+            } catch is CancellationError {
+                return
+            } catch {
+                guard !Task.isCancelled, surface == .search, searchQuery == query else { return }
+                searchErrorMessage = "Couldn't search local notes."
+            }
+        }
+    }
+
+    func refreshSearch() async throws {
+        let query = searchQuery
+        let results = try await repository.search(query, limit: 12)
+        guard surface == .search, searchQuery == query else { return }
+        applySearchResults(results)
+    }
+
+    func moveSearchSelection(by offset: Int) {
+        guard !searchResults.isEmpty else {
+            selectedSearchIndex = 0
+            return
+        }
+
+        selectedSearchIndex = min(
+            max(selectedSearchIndex + offset, 0),
+            searchResults.count - 1
+        )
+    }
+
+    func selectSearchResult(at index: Int) {
+        guard searchResults.indices.contains(index) else { return }
+        selectedSearchIndex = index
+    }
+
+    @discardableResult
+    func openSelectedSearchResult() async throws -> Bool {
+        guard surface == .search,
+              searchResults.indices.contains(selectedSearchIndex)
+        else {
+            return false
+        }
+
+        let selectedNoteID = searchResults[selectedSearchIndex].id
+        let selectedQuery = searchQuery
+        try await flush()
+        guard surface == .search, searchQuery == selectedQuery else { return false }
+
+        guard let selectedNote = try await repository.fetch(id: selectedNoteID) else {
+            try await refreshSearch()
+            return false
+        }
+        guard surface == .search, searchQuery == selectedQuery else { return false }
+
+        noteID = selectedNote.id
+        activeNoteStore.noteID = selectedNote.id
+        text = selectedNote.content
+        resetSearchState()
+        requestEditorFocus()
+        return true
+    }
+
+    func closeSearch() {
+        guard surface == .search else { return }
+        resetSearchState()
+        requestEditorFocus()
     }
 
     private func persist(_ content: String) async throws {
@@ -114,6 +232,22 @@ final class ScratchpadSession {
         }
         saveErrorMessage = nil
     }
+
+    private func applySearchResults(_ results: [Note]) {
+        searchResults = results
+        selectedSearchIndex = 0
+        searchErrorMessage = nil
+    }
+
+    private func resetSearchState() {
+        searchTask?.cancel()
+        searchTask = nil
+        surface = .editor
+        searchQuery = ""
+        searchResults = []
+        selectedSearchIndex = 0
+        searchErrorMessage = nil
+    }
 }
 
 struct ScratchpadView: View {
@@ -123,24 +257,31 @@ struct ScratchpadView: View {
     let onEscape: () -> Void
 
     var body: some View {
-        TextEditor(text: $session.text)
-            .font(.system(size: 14, design: .monospaced))
-            .padding(20)
-            .focused($editorIsFocused)
-            .onChange(of: session.focusRequest, initial: true) {
-                requestEditorFocus()
+        Group {
+            switch session.surface {
+            case .editor:
+                TextEditor(text: $session.text)
+                    .font(.system(size: 14, design: .monospaced))
+                    .padding(20)
+                    .focused($editorIsFocused)
+                    .onChange(of: session.focusRequest, initial: true) {
+                        requestEditorFocus()
+                    }
+                    .onChange(of: session.text) {
+                        session.scheduleAutosave()
+                    }
+                    .onExitCommand(perform: onEscape)
+            case .search:
+                HistorySearchView(session: session)
             }
-            .onChange(of: session.text) {
-                session.scheduleAutosave()
+        }
+        .overlay(alignment: .bottomLeading) {
+            if let saveErrorMessage = session.saveErrorMessage {
+                Text(saveErrorMessage)
+                    .foregroundStyle(.red)
+                    .padding(12)
             }
-            .onExitCommand(perform: onEscape)
-            .overlay(alignment: .bottomLeading) {
-                if let saveErrorMessage = session.saveErrorMessage {
-                    Text(saveErrorMessage)
-                        .foregroundStyle(.red)
-                        .padding(12)
-                }
-            }
+        }
     }
 
     private func requestEditorFocus() {

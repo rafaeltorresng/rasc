@@ -132,6 +132,134 @@ struct ScratchpadSessionTests {
         #expect(relaunchedSession.text.isEmpty)
     }
 
+    @Test
+    func emptySearchShowsRecentNotes() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let older = try await fixture.repository.createScratch(content: "older note")
+        try await Task.sleep(for: .milliseconds(10))
+        let newer = try await fixture.repository.createScratch(content: "newer note")
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+
+        try await session.openSearch()
+
+        #expect(session.surface == .search)
+        #expect(session.searchQuery.isEmpty)
+        #expect(session.searchResults.map(\.id) == [newer.id, older.id])
+        #expect(session.selectedSearchIndex == 0)
+    }
+
+    @Test
+    func searchUpdatesLocallyForTheCurrentQuery() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let queue = try await fixture.repository.createScratch(content: "queue retry")
+        _ = try await fixture.repository.createScratch(content: "window focus")
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        try await session.openSearch()
+
+        session.searchQuery = "que"
+        try await session.refreshSearch()
+
+        #expect(session.searchResults.map(\.id) == [queue.id])
+        #expect(session.selectedSearchIndex == 0)
+    }
+
+    @Test
+    func arrowNavigationMovesTheSearchSelectionWithinResults() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        _ = try await fixture.repository.createScratch(content: "one")
+        try await Task.sleep(for: .milliseconds(10))
+        _ = try await fixture.repository.createScratch(content: "two")
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        try await session.openSearch()
+
+        session.moveSearchSelection(by: 1)
+        #expect(session.selectedSearchIndex == 1)
+        session.moveSearchSelection(by: 1)
+        #expect(session.selectedSearchIndex == 1)
+        session.moveSearchSelection(by: -1)
+        #expect(session.selectedSearchIndex == 0)
+        session.moveSearchSelection(by: -1)
+        #expect(session.selectedSearchIndex == 0)
+    }
+
+    @Test
+    func enterOpensTheSelectedNote() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let selected = try await fixture.repository.createScratch(content: "open this result")
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        try await session.openSearch()
+
+        let didOpen = try await session.openSelectedSearchResult()
+
+        #expect(didOpen)
+        #expect(session.surface == .editor)
+        #expect(session.text == "open this result")
+        #expect(fixture.userDefaults.string(forKey: "activeNoteID") == selected.id.uuidString)
+    }
+
+    @Test
+    func switchingNotesFlushesPendingEditsBeforeOpeningTheResult() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let active = try await fixture.repository.createScratch(content: "original active text")
+        try await Task.sleep(for: .milliseconds(10))
+        let target = try await fixture.repository.createScratch(content: "target note")
+        fixture.userDefaults.set(active.id.uuidString, forKey: "activeNoteID")
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        try await session.restore()
+        session.text = "pending active edit"
+        session.scheduleAutosave()
+        try await session.openSearch()
+        #expect(session.searchResults.first?.id == target.id)
+
+        let didOpen = try await session.openSelectedSearchResult()
+
+        #expect(didOpen)
+        #expect(try await fixture.repository.fetch(id: active.id)?.content == "pending active edit")
+        #expect(session.text == "target note")
+        #expect(fixture.userDefaults.string(forKey: "activeNoteID") == target.id.uuidString)
+    }
+
+    @Test
+    func escapeClosesSearchAndReturnsToTheCurrentScratch() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let active = try await fixture.repository.createScratch(content: "current scratch")
+        fixture.userDefaults.set(active.id.uuidString, forKey: "activeNoteID")
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        try await session.restore()
+        session.text = "current scratch with pending text"
+        try await session.openSearch()
+
+        session.closeSearch()
+
+        #expect(session.surface == .editor)
+        #expect(session.text == "current scratch with pending text")
+        #expect(fixture.userDefaults.string(forKey: "activeNoteID") == active.id.uuidString)
+    }
+
     private func makeFixture() throws -> Fixture {
         let databaseURL = FileManager.default.temporaryDirectory
             .appending(path: UUID().uuidString)
