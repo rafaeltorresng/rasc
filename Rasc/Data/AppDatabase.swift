@@ -30,6 +30,15 @@ enum AppDatabase {
             }
         }
 
+        migrator.registerMigration("v3_m2_create_notes_fts") { database in
+            try database.create(virtualTable: "notes_fts", using: FTS5()) { table in
+                table.synchronize(withTable: Note.databaseTableName)
+                table.tokenizer = .unicode61(diacritics: .remove)
+                table.prefixes = [2, 3, 4]
+                table.column("content")
+            }
+        }
+
         return migrator
     }
 }
