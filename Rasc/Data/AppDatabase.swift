@@ -39,6 +39,22 @@ enum AppDatabase {
             }
         }
 
+        migrator.registerMigration("v4_m3a_create_refinement_revisions") { database in
+            try database.create(table: "refinement_revisions") { table in
+                table.column("id", .text).primaryKey()
+                table.column("note_id", .text)
+                    .notNull()
+                    .indexed()
+                    .references(Note.databaseTableName)
+                table.column("before_content", .text).notNull()
+                table.column("after_content", .text).notNull()
+                table.column("provider", .text).notNull()
+                table.column("model_identifier", .text).notNull()
+                table.column("prompt_version", .text).notNull()
+                table.column("created_at", .datetime).notNull()
+            }
+        }
+
         return migrator
     }
 }

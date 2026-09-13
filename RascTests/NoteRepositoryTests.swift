@@ -268,6 +268,68 @@ struct NoteRepositoryTests {
         #expect(ftsTableExists == true)
     }
 
+    @Test
+    func migratesM2DatabaseToRefinementRevisionsWithoutLosingNotes() async throws {
+        let databaseURL = makeDatabaseURL()
+        defer { removeDatabase(at: databaseURL) }
+        let database = try DatabaseQueue(path: databaseURL.path)
+        var m2Migrator = DatabaseMigrator()
+        m2Migrator.registerMigration("v1_create_notes") { database in
+            try database.create(table: Note.databaseTableName) { table in
+                table.column("id", .text).primaryKey()
+                table.column("content", .text).notNull()
+                table.column("createdAt", .datetime).notNull()
+                table.column("updatedAt", .datetime).notNull()
+            }
+        }
+        m2Migrator.registerMigration("v2_m1_notes_schema") { database in
+            try database.alter(table: Note.databaseTableName) { table in
+                table.rename(column: "createdAt", to: "created_at")
+                table.rename(column: "updatedAt", to: "updated_at")
+                table.add(column: "deleted_at", .datetime)
+            }
+        }
+        m2Migrator.registerMigration("v3_m2_create_notes_fts") { database in
+            try database.create(virtualTable: "notes_fts", using: FTS5()) { table in
+                table.synchronize(withTable: Note.databaseTableName)
+                table.tokenizer = .unicode61(diacritics: .remove)
+                table.prefixes = [2, 3, 4]
+                table.column("content")
+            }
+        }
+        try m2Migrator.migrate(database)
+
+        let noteID = UUID()
+        let timestamp = Date(timeIntervalSince1970: 1_700_000_000)
+        try await database.write { database in
+            try database.execute(
+                sql: "INSERT INTO notes (id, content, created_at, updated_at) VALUES (?, ?, ?, ?)",
+                arguments: [noteID, "preserve before refinement migration", timestamp, timestamp]
+            )
+        }
+
+        let repository = try NoteRepository(databaseURL: databaseURL)
+
+        #expect(try await repository.fetch(id: noteID)?.content == "preserve before refinement migration")
+        let revisionColumns = try await database.read { database in
+            try database.columns(in: "refinement_revisions").map(\.name)
+        }
+        #expect(revisionColumns == [
+            "id",
+            "note_id",
+            "before_content",
+            "after_content",
+            "provider",
+            "model_identifier",
+            "prompt_version",
+            "created_at",
+        ])
+        let revisionCount = try await database.read { database in
+            try Int.fetchOne(database, sql: "SELECT COUNT(*) FROM refinement_revisions")
+        }
+        #expect(revisionCount == 0)
+    }
+
     private func makeRepository() throws -> NoteRepository {
         try NoteRepository(databaseURL: makeDatabaseURL())
     }
