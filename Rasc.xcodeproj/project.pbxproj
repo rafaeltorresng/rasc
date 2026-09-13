@@ -23,6 +23,10 @@
 		01000000000000000000000E /* ScratchpadSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000D /* ScratchpadSessionTests.swift */; };
 		01000000000000000000000F /* ActiveNoteStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000E /* ActiveNoteStore.swift */; };
 		010000000000000000000010 /* HistorySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000F /* HistorySearchView.swift */; };
+		010000000000000000000011 /* Refinement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000010 /* Refinement.swift */; };
+		010000000000000000000012 /* RefinementProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000011 /* RefinementProvider.swift */; };
+		010000000000000000000013 /* RefinementContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000012 /* RefinementContractTests.swift */; };
+		010000000000000000000014 /* RefinementEvals.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000013 /* RefinementEvals.v1.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +55,10 @@
 		02000000000000000000000D /* ScratchpadSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScratchpadSessionTests.swift; sourceTree = "<group>"; };
 		02000000000000000000000E /* ActiveNoteStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Data/ActiveNoteStore.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000000F /* HistorySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Search/HistorySearchView.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000010 /* Refinement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Domain/Refinement.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000011 /* RefinementProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefinementProvider.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000012 /* RefinementContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefinementContractTests.swift; sourceTree = "<group>"; };
+		020000000000000000000013 /* RefinementEvals.v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Fixtures/RefinementEvals.v1.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +104,8 @@
 				02000000000000000000000C /* Note.swift */,
 				02000000000000000000000E /* ActiveNoteStore.swift */,
 				02000000000000000000000F /* HistorySearchView.swift */,
+				020000000000000000000010 /* Refinement.swift */,
+				020000000000000000000011 /* RefinementProvider.swift */,
 			);
 			name = Rasc;
 			sourceTree = "<group>";
@@ -106,6 +116,8 @@
 				020000000000000000000002 /* PanelControllerTests.swift */,
 				020000000000000000000009 /* NoteRepositoryTests.swift */,
 				02000000000000000000000D /* ScratchpadSessionTests.swift */,
+				020000000000000000000012 /* RefinementContractTests.swift */,
+				020000000000000000000013 /* RefinementEvals.v1.json */,
 			);
 			path = RascTests;
 			sourceTree = SOURCE_ROOT;
@@ -215,6 +227,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				010000000000000000000014 /* RefinementEvals.v1.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -235,6 +248,8 @@
 				01000000000000000000000D /* Note.swift in Sources */,
 				01000000000000000000000F /* ActiveNoteStore.swift in Sources */,
 				010000000000000000000010 /* HistorySearchView.swift in Sources */,
+				010000000000000000000011 /* Refinement.swift in Sources */,
+				010000000000000000000012 /* RefinementProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,6 +260,7 @@
 				010000000000000000000002 /* PanelControllerTests.swift in Sources */,
 				010000000000000000000008 /* NoteRepositoryTests.swift in Sources */,
 				01000000000000000000000E /* ScratchpadSessionTests.swift in Sources */,
+				010000000000000000000013 /* RefinementContractTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
