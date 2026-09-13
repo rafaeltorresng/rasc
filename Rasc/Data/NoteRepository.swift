@@ -1,49 +1,52 @@
 import Foundation
 import GRDB
 
-struct Note: Codable, FetchableRecord, PersistableRecord, Sendable {
-    static let databaseTableName = "notes"
-
-    let id: UUID
-    var content: String
-    let createdAt: Date
-    var updatedAt: Date
-}
-
 actor NoteRepository {
+    enum PersistenceError: Error {
+        case emptyContent
+    }
+
     private let database: DatabaseQueue
 
+    nonisolated static var defaultDatabaseURL: URL {
+        get throws {
+            let applicationSupportDirectory = try FileManager.default.url(
+                for: .applicationSupportDirectory,
+                in: .userDomainMask,
+                appropriateFor: nil,
+                create: true
+            )
+            return applicationSupportDirectory
+                .appending(path: "Rasc", directoryHint: .isDirectory)
+                .appending(path: "Rasc.sqlite")
+        }
+    }
+
     nonisolated static func openDefault() throws -> NoteRepository {
-        let applicationSupportDirectory = try FileManager.default.url(
-            for: .applicationSupportDirectory,
-            in: .userDomainMask,
-            appropriateFor: nil,
-            create: true
-        )
-        let databaseDirectory = applicationSupportDirectory.appending(path: "Rasc", directoryHint: .isDirectory)
+        let databaseURL = try defaultDatabaseURL
+        let databaseDirectory = databaseURL.deletingLastPathComponent()
         try FileManager.default.createDirectory(at: databaseDirectory, withIntermediateDirectories: true)
-        return try NoteRepository(databaseURL: databaseDirectory.appending(path: "Rasc.sqlite"))
+        return try NoteRepository(databaseURL: databaseURL)
     }
 
     init(databaseURL: URL) throws {
-        database = try DatabaseQueue(path: databaseURL.path)
-
-        var migrator = DatabaseMigrator()
-        migrator.registerMigration("v1_create_notes") { database in
-            try database.create(table: Note.databaseTableName) { table in
-                table.column("id", .text).primaryKey()
-                table.column("content", .text).notNull()
-                table.column("createdAt", .datetime).notNull()
-                table.column("updatedAt", .datetime).notNull()
-            }
-        }
-        try migrator.migrate(database)
+        database = try AppDatabase.open(at: databaseURL)
     }
 
     func createScratch(content: String) throws -> Note {
-        try database.write { database in
+        guard Self.hasMeaningfulContent(content) else {
+            throw PersistenceError.emptyContent
+        }
+
+        return try database.write { database in
             let now = Date()
-            let note = Note(id: UUID(), content: content, createdAt: now, updatedAt: now)
+            let note = Note(
+                id: UUID(),
+                content: content,
+                createdAt: now,
+                updatedAt: now,
+                deletedAt: nil
+            )
             try note.insert(database)
             return note
         }
@@ -51,17 +54,26 @@ actor NoteRepository {
 
     func fetch(id: UUID) throws -> Note? {
         try database.read { database in
-            try Note.fetchOne(database, key: id)
+            try Note
+                .filter(Note.Columns.id == id)
+                .filter(Note.Columns.deletedAt == nil)
+                .fetchOne(database)
         }
     }
 
     func update(id: UUID, content: String) throws {
+        guard Self.hasMeaningfulContent(content) else {
+            try delete(id: id)
+            return
+        }
+
         _ = try database.write { database in
             try Note
-                .filter(key: id)
+                .filter(Note.Columns.id == id)
+                .filter(Note.Columns.deletedAt == nil)
                 .updateAll(database, [
-                    Column("content").set(to: content),
-                    Column("updatedAt").set(to: Date()),
+                    Note.Columns.content.set(to: content),
+                    Note.Columns.updatedAt.set(to: Date()),
                 ])
         }
     }
@@ -69,14 +81,24 @@ actor NoteRepository {
     func fetchMostRecent() throws -> Note? {
         try database.read { database in
             try Note
-                .order(Column("updatedAt").desc, Column.rowID.desc)
+                .filter(Note.Columns.deletedAt == nil)
+                .order(Note.Columns.updatedAt.desc, Column.rowID.desc)
                 .fetchOne(database)
         }
     }
 
     func delete(id: UUID) throws {
-        try database.write { database in
-            _ = try Note.deleteOne(database, key: id)
+        _ = try database.write { database in
+            try Note
+                .filter(Note.Columns.id == id)
+                .filter(Note.Columns.deletedAt == nil)
+                .updateAll(database, [
+                    Note.Columns.deletedAt.set(to: Date()),
+                ])
         }
+    }
+
+    private nonisolated static func hasMeaningfulContent(_ content: String) -> Bool {
+        !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 }

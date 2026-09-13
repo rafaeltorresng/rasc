@@ -101,6 +101,13 @@ final class PanelController: NSObject, NSWindowDelegate {
         false
     }
 
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        Task { [weak self] in
+            await self?.hide()
+        }
+        return false
+    }
+
     private func configurePanel() {
         panel.delegate = self
         panel.title = "Rasc"

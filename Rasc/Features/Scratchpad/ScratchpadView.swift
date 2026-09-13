@@ -9,11 +9,13 @@ final class ScratchpadSession {
     private(set) var saveErrorMessage: String?
 
     private let repository: NoteRepository
+    private let activeNoteStore: ActiveNoteStore
     private var noteID: UUID?
     private var autosaveTask: Task<Void, Never>?
 
-    init(repository: NoteRepository) {
+    init(repository: NoteRepository, userDefaults: UserDefaults = .standard) {
         self.repository = repository
+        activeNoteStore = ActiveNoteStore(userDefaults: userDefaults)
     }
 
     func requestEditorFocus() {
@@ -21,7 +23,30 @@ final class ScratchpadSession {
     }
 
     func restore() async throws {
-        guard let note = try await repository.fetchMostRecent() else {
+        if !activeNoteStore.hasEstablishedState {
+            if let note = try await repository.fetchMostRecent() {
+                noteID = note.id
+                text = note.content
+                activeNoteStore.noteID = note.id
+            } else {
+                noteID = nil
+                text = ""
+                activeNoteStore.noteID = nil
+            }
+            return
+        }
+
+        guard let activeNoteID = activeNoteStore.noteID else {
+            activeNoteStore.noteID = nil
+            noteID = nil
+            text = ""
+            return
+        }
+
+        guard let note = try await repository.fetch(id: activeNoteID) else {
+            activeNoteStore.noteID = nil
+            noteID = nil
+            text = ""
             return
         }
 
@@ -30,10 +55,13 @@ final class ScratchpadSession {
     }
 
     func scheduleAutosave() {
-        autosaveTask?.cancel()
+        let previousAutosave = autosaveTask
+        previousAutosave?.cancel()
         let snapshot = text
 
         autosaveTask = Task { [weak self] in
+            await previousAutosave?.value
+
             do {
                 try await Task.sleep(for: .milliseconds(200))
                 guard !Task.isCancelled else { return }
@@ -47,7 +75,11 @@ final class ScratchpadSession {
     }
 
     func flush() async throws {
-        autosaveTask?.cancel()
+        let pendingAutosave = autosaveTask
+        autosaveTask = nil
+        pendingAutosave?.cancel()
+        await pendingAutosave?.value
+
         do {
             try await persist(text)
         } catch {
@@ -59,6 +91,7 @@ final class ScratchpadSession {
     func startNewScratch() async throws {
         try await flush()
         noteID = nil
+        activeNoteStore.noteID = nil
         text = ""
     }
 
@@ -68,13 +101,16 @@ final class ScratchpadSession {
                 try await repository.delete(id: noteID)
                 self.noteID = nil
             }
+            activeNoteStore.noteID = nil
             return
         }
 
         if let noteID {
             try await repository.update(id: noteID, content: content)
+            activeNoteStore.noteID = noteID
         } else {
             noteID = try await repository.createScratch(content: content).id
+            activeNoteStore.noteID = noteID
         }
         saveErrorMessage = nil
     }
