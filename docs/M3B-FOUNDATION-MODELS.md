@@ -1,6 +1,6 @@
 # M3B Foundation Models Refine
 
-M3B implements Rasc's first interactive Refine flow with Apple's on-device system language model only. Capture, editing, autosave, history, and lexical search continue to work when the model or framework is unavailable.
+M3B implements Rasc's first interactive Refine flow with Apple's on-device system language model only. It is the sole shipping Refine provider in V1: there is no OpenRouter, BYOK, cloud fallback, backend, or external AI provider. Capture, editing, autosave, history, and lexical search continue to work when the model or framework is unavailable.
 
 ## Foundation Models APIs used
 

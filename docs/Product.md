@@ -54,6 +54,12 @@ A ambição não é criar a ferramenta com mais capacidades. É construir uma fe
 
 ---
 
+## Decisão de IA da V1
+
+Foundation Models é o único provider de Refine embarcado na V1. Refine é inteiramente on-device: não há OpenRouter, BYOK, cloud fallback, backend ou provider externo. Quando Foundation Models não estiver disponível, somente Refine fica indisponível; captura, histórico e busca continuam funcionando normalmente. `RefinementProvider` permanece como uma fronteira interna já útil para a implementação e testes, sem infraestrutura adicional de providers.
+
+---
+
 # 2. O problema
 
 ## 2.1 Nem todo pensamento deveria nascer permanente
@@ -588,23 +594,18 @@ Arquiteturalmente:
                             |
                      Refinement Engine
                             |
-             +--------------+--------------+
-             |                             |
-      Apple Foundation              external model
-           Models                    / OpenRouter
+                     Apple Foundation
+                          Models
+                       on-device
 ```
 
 ---
 
-# 19. Apple Foundation Models como caminho preferencial
+# 19. Apple Foundation Models como único provider da V1
 
 O Foundation Models framework foi introduzido pela Apple em 2025 e disponibilizou para aplicativos acesso ao modelo on-device utilizado pelo Apple Intelligence. O framework suporta geração, análise, guided generation e tool calling; como a inferência pode acontecer localmente, o conteúdo enviado ao modelo permanece no dispositivo e pode funcionar offline.
 
 No macOS 26, a Apple adicionou diretamente essa capacidade ao sistema.
-
-Na evolução de 2026/macOS 27, o framework passou a oferecer uma abstração mais ampla de `LanguageModel`, permitindo também integrar modelos externos ou outros modelos locais por uma interface comum. Apple também introduziu melhorias de avaliação e novos modelos.
-
-Para este produto, isso cria uma oportunidade particularmente boa.
 
 O comportamento principal de Refine — classificação leve, estruturação, extração e rewrite — está muito próximo dos tipos de tarefas apropriados para inferência local.
 
@@ -620,33 +621,20 @@ Consequências:
 
 ---
 
-# 20. OpenRouter como fallback, não onboarding
-
-A ideia inicial considerava solicitar uma API key do OpenRouter.
-
-Isso continua sendo tecnicamente interessante, mas não deveria ser a experiência padrão.
-
-Fazer BYOK obrigatório adicionaria fricção antes do usuário sequer experimentar o valor do produto.
-
-Uma arquitetura melhor:
+# 20. Sem fallback cloud na V1
 
 ```text
 Apple Foundation Model disponível
-→ Refine local
+→ Refine on-device
 
 Apple model indisponível
-→ Refine opcional via provider externo
+→ Refine indisponível
 
-Usuário avançado quer modelo externo
-→ configurar OpenRouter nas preferências
-
-Nenhum modelo disponível
-→ scratchpad continua funcionando
+Em ambos os casos
+→ scratchpad, histórico e busca continuam funcionando
 ```
 
-O produto principal continua útil sem IA.
-
-Isso também reduz o risco de o produto desaparecer caso uma API mude ou os custos dos modelos externos se alterem.
+Não há OpenRouter, BYOK, API key, backend, configuração ou sugestão de fallback cloud na V1.
 
 ---
 
@@ -704,7 +692,7 @@ Isso aumenta complexidade em:
 * backups;
 * sync.
 
-Na primeira versão, é suficiente priorizar armazenamento local corretamente protegido pelo sistema operacional, utilizar Keychain para qualquer segredo externo e não transmitir conteúdo sem uma ação explícita.
+Na V1, é suficiente priorizar armazenamento local corretamente protegido pelo sistema operacional. Refine não transmite conteúdo: não há segredo externo, Keychain de provider ou ação de envio a configurar.
 
 Criptografia própria pode ser avaliada posteriormente se pesquisas mostrarem que ela influencia materialmente confiança ou compra.
 
@@ -996,9 +984,7 @@ Swift
 SwiftUI
 AppKit quando necessário
 local persistence
-Keychain
 Foundation Models
-optional external LanguageModel/OpenRouter
 ```
 
 SwiftUI deve resolver a maior parte das superfícies.
@@ -1030,10 +1016,10 @@ Uma estratégia possível:
 ```text
 macOS compatível sem Foundation Models
 → capture/history normalmente
-→ modelo externo opcional para Refine
+→ Refine indisponível
 
 macOS com Foundation Models
-→ Refine local preferencial
+→ Refine on-device
 ```
 
 Isso preserva mercado potencial e permite que AI continue sendo uma melhoria sobre uma aplicação útil, não uma dependência absoluta.
@@ -1264,7 +1250,7 @@ Na tese atual, deliberadamente **não fazem parte do produto**:
 
 **Chat com todas as notas** — empurra para second brain.
 
-**AI model picker na superfície principal** — implementação vazando para UX.
+**AI model picker** — fora de escopo da V1.
 
 **Templates** — exigem escolha antecipada.
 
@@ -1358,7 +1344,7 @@ Tucky utiliza US$4/mês.
 
 Para este produto, subscription inicialmente parece menos coerente.
 
-Se o core utiliza modelo local e providers externos podem funcionar via BYOK, o custo marginal recorrente por usuário pode ser muito pequeno.
+Como o core e o Refine da V1 são locais, o custo marginal recorrente por usuário pode ser muito pequeno.
 
 Uma estrutura plausível para teste seria:
 
@@ -1624,9 +1610,9 @@ Até que ponto formatting melhora a utilidade antes de virar editor?
 
 Refine deve existir apenas manualmente ou o sistema pode discretamente sinalizar que identificou uma transformação útil?
 
-### AI fallback
+### Refine indisponível
 
-Qual deve ser a experiência em Macs sem modelo local disponível?
+Em Macs sem modelo local disponível, Refine fica indisponível sem oferecer fallback externo; o produto principal continua útil.
 
 ### Naming
 

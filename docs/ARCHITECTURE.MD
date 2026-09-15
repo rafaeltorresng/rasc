@@ -28,7 +28,7 @@ Ele define:
 * modelo de concorrência;
 * Refinement Engine;
 * Foundation Models;
-* fallback externo;
+* disponibilidade on-device de Refine;
 * segurança;
 * privacidade;
 * observabilidade;
@@ -44,6 +44,10 @@ Ele define:
 O objetivo não é criar uma arquitetura preparada para qualquer futuro imaginável.
 
 É criar a arquitetura **mais simples que preserve as propriedades fundamentais do produto** e permita evoluir onde dados reais justificarem.
+
+## Decisão de provider da V1
+
+Foundation Models é o único provider de Refine embarcado na V1. Refine é inteiramente on-device: não há OpenRouter, BYOK, fallback cloud, backend nem provider externo. Quando Foundation Models está indisponível, somente Refine fica indisponível; captura, persistência, histórico e busca seguem locais e normais. `RefinementProvider` permanece como fronteira interna já usada pela implementação e pelos testes, sem infraestrutura adicional de providers.
 
 ---
 
@@ -100,9 +104,7 @@ A stack recomendada para a V1 é:
 | Global shortcuts     | `KeyboardShortcuts`               |
 | Persistência         | SQLite + GRDB                     |
 | Search               | SQLite FTS5                       |
-| Secrets              | macOS Keychain                    |
 | Local AI             | Apple Foundation Models           |
-| External AI fallback | OpenRouter                        |
 | Networking           | `URLSession`                      |
 | Login item           | `SMAppService`                    |
 | Menu bar             | AppKit `NSStatusItem`             |
@@ -219,9 +221,9 @@ Arquiteturalmente:
         ▼                  ▼
    NoteRepository     RefinementEngine
         │                  │
-        ▼             ┌────┴────────────┐
- SQLite / GRDB        ▼                 ▼
-                FoundationModels   OpenRouter
+        ▼             │
+ SQLite / GRDB   FoundationModels
+                  on-device only
 ```
 
 Não existe backend entre essas partes.
@@ -279,21 +281,8 @@ Data/
 AI/
     RefinementEngine.swift
     RefinementProvider.swift
-
-    FoundationModels/
-        FoundationModelsProvider.swift
-        FoundationRefinementOutput.swift
-
-    OpenRouter/
-        OpenRouterProvider.swift
-        OpenRouterClient.swift
-
-    Prompts/
-        RefinementPrompt.swift
-        PromptVersion.swift
-
-Security/
-    KeychainStore.swift
+    FoundationModelsRefinementProvider.swift
+    RefinementPrompt.swift
 
 Diagnostics/
     AppLogger.swift
@@ -1303,8 +1292,6 @@ UserDefaults é apropriado para:
 * appearance;
 * onboarding completed;
 * active note ID;
-* preferred provider;
-* external fallback enabled;
 * last used app version.
 
 Não é apropriado para:
@@ -1315,21 +1302,9 @@ Não é apropriado para:
 
 ---
 
-# 51. Keychain
+# 51. Keychain — fora de escopo da V1
 
-A OpenRouter API key deve ser armazenada utilizando Security framework / Keychain.
-
-A Apple recomenda a data protection keychain para apps executando em user context, e a API `SecItem` se alinha diretamente a ela.
-
-Nunca:
-
-```text
-UserDefaults
-.plist
-SQLite
-environment persisted
-plaintext config
-```
+A V1 não possui API keys, BYOK ou credenciais de provider externo. Não adicionar Keychain apenas para preparar um fallback cloud.
 
 ---
 
@@ -1359,11 +1334,7 @@ App Sandbox
 Outgoing Network Connections
 ```
 
-Network é necessário somente para:
-
-* OpenRouter;
-* update checking;
-* eventualmente licensing.
+Network não participa de Refine na V1. Pode ser usado separadamente por atualização do app ou licensing, nunca para conteúdo de nota.
 
 Não precisamos de:
 
@@ -1465,7 +1436,7 @@ Razão importante:
 
 Mesmo exigir macOS 26 **não garante local AI**, porque Macs sem Apple silicon continuam sem Apple Intelligence.
 
-Então subir o mínimo para 26 não elimina nosso fallback.
+Então subir o mínimo para 26 não elimina a necessidade de tratar Refine como indisponível.
 
 Se as APIs de UI que desejarmos tornarem suporte a 15 artificialmente trabalhoso, podemos reconsiderar.
 
@@ -1487,11 +1458,7 @@ macOS 26+ + eligible Apple Intelligence
 
 Em 2026 a Apple anunciou uma evolução relevante do Foundation Models framework:
 
-`LanguageModel`
-
-passa a permitir que outros modelos, locais ou cloud, se integrem à mesma abstração de sessões.
-
-Arquiteturalmente isso é muito interessante para nós.
+`LanguageModel` introduz uma abstração mais ampla de sessões.
 
 Porém, a documentação atual marca essas APIs novas como **Beta** e explicitamente diz que estão sujeitas a mudança.
 
@@ -1519,16 +1486,7 @@ protocol RefinementProvider: Sendable {
 }
 ```
 
-Implementações:
-
-```text
-FoundationModelsProvider
-OpenRouterProvider
-```
-
-Quando macOS 27 estiver estável e a API `LanguageModel` tiver comportamento final, podemos reavaliar se vale substituir parte dessa abstração.
-
-Não precisamos prever exatamente como hoje.
+Na V1, a única implementação é `FoundationModelsRefinementProvider`. A abstração é mantida porque já delimita a implementação e permite fakes determinísticos nos testes; não antecipar novos providers ou roteamento.
 
 ---
 
@@ -1545,7 +1503,7 @@ RefinementEngine
 Responsabilidades:
 
 * validar request;
-* escolher provider;
+* invocar o provider Foundation Models;
 * preparar prompt;
 * executar;
 * validar resposta;
@@ -1555,54 +1513,20 @@ Responsabilidades:
 
 ---
 
-# 61. Sem fallback silencioso para cloud
-
-Regra crítica:
+# 61. Sem fallback cloud na V1
 
 ```text
-local model unavailable
-≠
-send note to OpenRouter automatically
+Foundation Models available? → Refine on-device
+Foundation Models unavailable? → Refine unavailable
 ```
 
-Mesmo que OpenRouter esteja configurado.
-
-O usuário deve ter explicitamente habilitado:
-
-```text
-Use external model when on-device Refine is unavailable
-```
-
-Isso mantém a privacy contract inteligível.
+Não sugerir nem configurar cloud. O scratchpad continua funcionando independentemente da disponibilidade de Refine.
 
 ---
 
 # 62. Provider resolution
 
-Conceitualmente:
-
-```text
-Refine requested
-      │
-      ▼
-Foundation Models available?
-      │
-   yes│
-      ├────────────→ local
-      │
-      no
-      ▼
-External fallback explicitly enabled?
-      │
-   yes│
-      ├────────────→ OpenRouter
-      │
-      no
-      ▼
-Refine unavailable
-```
-
-O scratchpad continua funcionando independentemente da resposta.
+`RefinementProvider` encaminha exclusivamente para `FoundationModelsRefinementProvider` na V1. Não há seleção, fallback ou roteamento de provider.
 
 ---
 
@@ -1785,7 +1709,7 @@ call 2 → transform
 Mas isso significa:
 
 * mais latency;
-* mais custo cloud;
+* mais trabalho de modelo;
 * mais failure modes;
 * classificação também probabilística.
 
@@ -2028,10 +1952,6 @@ estimate/token count
 → compare with model capacity
 ```
 
-Para OpenRouter:
-
-usar capacidade do modelo configurado.
-
 ---
 
 # 80. Notas longas
@@ -2115,9 +2035,7 @@ Evals são mais importantes.
 
 Foundation Models suporta streaming, inclusive snapshot streaming.
 
-OpenRouter também suporta streaming.
-
-Mesmo assim, eu não usaria na V1.
+Mesmo assim, eu não usaria streaming na V1.
 
 Nosso output tende a ser pequeno e estruturado.
 
@@ -2140,113 +2058,11 @@ O benefício é pequeno.
 
 ---
 
-# 84. OpenRouter fallback
+# 84. Providers externos — fora de escopo da V1
 
-OpenRouter deve utilizar:
+OpenRouter, BYOK, API keys, roteamento de privacidade externo, seleção de modelo externo e model picker não fazem parte da V1. Não criar UI, configuração, Keychain ou fluxo de fallback para esses caminhos.
 
-```text
-non-streaming
-strict structured outputs
-```
-
-A documentação atual recomenda JSON Schema strict e `require_parameters: true` para garantir que o endpoint selecionado suporte os parâmetros necessários.
-
-O schema externo deve espelhar a estrutura local:
-
-```json
-{
-  "decision": "changed",
-  "kind": "tasks",
-  "text": "..."
-}
-```
-
----
-
-# 85. Privacy routing no OpenRouter
-
-Se utilizarmos OpenRouter, enviar:
-
-```text
-provider.data_collection = "deny"
-provider.zdr = true
-provider.require_parameters = true
-```
-
-`zdr: true` restringe routing a endpoints de Zero Data Retention.
-
-`data_collection: deny` restringe providers de acordo com as políticas de coleta conhecidas pelo OpenRouter.
-
----
-
-# 86. Não vender OpenRouter como “nada é armazenado”
-
-Precisamos ser precisos.
-
-Segundo a documentação atual, OpenRouter não retém prompt/response por default salvo opt-in, mas mantém metadata como:
-
-* token count;
-* latency;
-* informações da request.
-
-Além disso, ZDR permite determinados caches in-memory de provider.
-
-Portanto:
-
-**local Refine**
-
-> conteúdo permanece no dispositivo.
-
-**OpenRouter Refine**
-
-> conteúdo é enviado ao provider sob política ZDR/data-collection restrita.
-
-Não misturar essas duas afirmações.
-
----
-
-# 87. Seleção de modelo externo
-
-Não escolher um modelo porque ele está no topo de um benchmark geral.
-
-Nosso workload é específico.
-
-Precisamos avaliar candidatos em:
-
-* instruction following;
-* faithfulness;
-* restraint;
-* Portuguese;
-* English;
-* mixed-language;
-* technical preservation;
-* latency;
-* cost.
-
-O modelo vencedor desse benchmark interno vira default.
-
----
-
-# 88. Model picker
-
-Mesmo utilizando OpenRouter, não expor uma lista enorme de modelos na experiência principal.
-
-Preferences pode mostrar:
-
-```text
-External model
-Recommended: [model]
-```
-
-e, talvez:
-
-```text
-Advanced → Custom model
-```
-
-para beta/power users.
-
-A aplicação não deve se tornar um frontend do OpenRouter.
+O único output estruturado de Refine na V1 é o gerado on-device por Foundation Models.
 
 ---
 
@@ -2664,8 +2480,6 @@ NOTE
  ├─→ SQLite local
  │
  ├─→ Foundation Models → stays on device
- │
- └─→ OpenRouter → only on explicit Refine + consent
 ```
 
 Separadamente:
@@ -2946,10 +2760,6 @@ Ao:
 
 cancelar Task.
 
-OpenRouter:
-
-> cancelar `URLSessionTask`.
-
 FoundationModels:
 
 > cancelar Task/session generation conforme API.
@@ -2997,9 +2807,7 @@ modelUnavailable
 unsupportedLanguage
 modelNotReady
 contextTooLarge
-networkUnavailable
-providerRateLimited
-providerRejected
+generationFailed
 invalidOutput
 cancelled
 unknown
@@ -3017,10 +2825,10 @@ ou:
 This note is too long. Select a smaller section.
 ```
 
-ou:
+ou, para falha de geração:
 
 ```text
-External Refine couldn't connect.
+Couldn't refine this note.
 ```
 
 ---
@@ -3046,7 +2854,7 @@ A regra de produto continua:
 
 > preserve the language of the input.
 
-Se modelo local rejeitar determinado idioma, fallback externo só acontece se explicitamente habilitado.
+Se o modelo local não estiver disponível para o ambiente ou idioma, Refine informa indisponibilidade sem tentar provider externo. O editor continua normal.
 
 ---
 
@@ -3107,8 +2915,6 @@ A maior parte dos testes deve ser determinística.
 ### Integration
 
 * SQLite/FTS;
-* Keychain adapter;
-* OpenRouter decoding com mocked URLProtocol;
 * FoundationModels em hardware suportado.
 
 ### UI
@@ -3157,9 +2963,6 @@ Apple silicon + Apple Intelligence available
 Apple silicon + Apple Intelligence disabled
 Apple silicon + model not ready
 device without eligible local model
-external provider configured
-external provider absent
-network offline
 ```
 
 E:
@@ -3205,7 +3008,6 @@ Mudança em:
 
 * prompt;
 * Foundation Models integration;
-* default external model;
 * output schema;
 
 deve executar eval suite.
@@ -3286,11 +3088,11 @@ Decisões arquiteturais importantes devem ser registradas em pequenos ADRs.
 
 ---
 
-### ADR-006 — Local AI first
+### ADR-006 — Refine on-device only
 
-**Decision:** Foundation Models preferencial; cloud explicitamente opt-in.
+**Decision:** Foundation Models é o único provider embarcado na V1; se indisponível, Refine fica indisponível.
 
-**Why:** privacy, offline, zero API setup, alinhamento com workload.
+**Why:** privacidade, funcionamento offline, zero configuração de API e menor superfície de falha.
 
 ---
 
@@ -3354,7 +3156,7 @@ Decisões arquiteturais importantes devem ser registradas em pequenos ADRs.
 | Refine inventa conteúdo          |         crítica | conservative contract + preview + evals  |
 | model drift após OS update       |            alta | prompt versions + regression eval        |
 | stale async result               |            alta | snapshot/revision/request ID             |
-| cloud privacy confusion          |            alta | explicit opt-in + clear provider state   |
+| indisponibilidade do modelo      |            alta | estado claro; app continua útil sem AI   |
 | SQLite migration failure         |            alta | transactional migrations, never erase    |
 | dependency regression            |           média | Package.resolved + CI                    |
 | scope creep                      | produto/crítica | ADRs + anti-features                     |
@@ -3446,22 +3248,9 @@ O objetivo não é integrar feature.
 
 ---
 
-# 140. Quarto spike: external fallback
+# 140. Providers externos — futuro, não V1
 
-Somente depois do local:
-
-```text
-OpenRouter
-Keychain
-strict JSON schema
-ZDR
-data_collection deny
-cancellation
-```
-
-Benchmarkar contra Foundation Models.
-
-Isso vai nos dizer onde local AI realmente é suficiente.
+Qualquer avaliação de fallback cloud exige uma decisão de produto futura. Não antecipar código, UI, credenciais ou infraestrutura para isso na V1.
 
 ---
 
@@ -3554,21 +3343,7 @@ eval dataset
 
 ---
 
-### M4 — External Refine
-
-Entregar:
-
-```text
-Keychain
-OpenRouter
-privacy controls
-fallback
-errors
-```
-
----
-
-### M5 — System Integration
+### M4 — System Integration
 
 Entregar:
 
@@ -3677,13 +3452,11 @@ Distribuição direta não parece artesanal.
  │ Notes/Search│ │ RefinementEngine│
  └──────┬─────┘ └────────┬────────┘
         │                │
-        ▼        ┌───────┴────────┐
- ┌────────────┐  ▼                ▼
- │GRDB/SQLite │ Foundation    OpenRouter
- │   + FTS5   │   Models      explicit
- └────────────┘     │         fallback
-                    │
-               on-device
+        ▼        ┌─────────────────┐
+ ┌────────────┐  │Foundation Models│
+ │GRDB/SQLite │  │   on-device     │
+ │   + FTS5   │  └─────────────────┘
+ └────────────┘
 ```
 
 ---
@@ -3857,7 +3630,7 @@ yes
 
 ### Provider change
 
-Se abandonarmos OpenRouter:
+Se a implementação de provider mudar em uma versão futura:
 
 ```text
 domain changes?
@@ -3924,8 +3697,7 @@ Toda implementação deve proteger quatro invariantes:
 2. AI must never silently destroy a note.
 
 3. A note must never leave the device
-   unless the user explicitly invokes
-   an externally configured provider.
+   for Refine in V1.
 
 4. Product complexity must not leak
    into the capture interaction.

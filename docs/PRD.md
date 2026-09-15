@@ -29,6 +29,10 @@ O objetivo não é especificar toda evolução futura, mas responder com precis�
 
 A V1 deve ser pequena o suficiente para ser compreendida quase integralmente por uma pessoa em poucos minutos.
 
+## Decisão de IA da V1
+
+Foundation Models é o único provider de Refine embarcado na V1. Todo Refine ocorre on-device: não há OpenRouter, BYOK, fallback cloud, backend ou provider externo. Se Foundation Models estiver indisponível, Refine fica indisponível; captura, histórico e busca continuam funcionando normalmente. `RefinementProvider` permanece apenas como fronteira interna limpa, não como infraestrutura para múltiplos providers.
+
 ---
 
 # 2. Definição do produto
@@ -842,15 +846,7 @@ protocol RefinementProvider {
 }
 ```
 
-Implementações possíveis:
-
-`FoundationModelsProvider`
-
-`OpenRouterProvider`
-
-Possíveis outras no futuro.
-
-O domínio do produto não deve depender diretamente de um provider específico.
+Na V1, a única implementação embarcada é `FoundationModelsRefinementProvider`. O domínio não depende diretamente dela, pois `RefinementProvider` já é uma fronteira limpa para a implementação e os testes; não devemos construir infraestrutura adicional de providers na V1.
 
 ---
 
@@ -872,24 +868,9 @@ A disponibilidade deve ser verificada dinamicamente.
 
 ---
 
-# 40. OpenRouter
+# 40. Providers externos — fora de escopo da V1
 
-OpenRouter é fallback opcional.
-
-O usuário pode inserir uma API key nas Preferences.
-
-Essa key deve ficar exclusivamente no macOS Keychain.
-
-A interface principal não exibe:
-
-* créditos;
-* providers;
-* parâmetros;
-* temperature;
-* top-p;
-* context size.
-
-Advanced preferences podem oferecer seleção de modelo posteriormente se existir demanda real.
+OpenRouter, BYOK, API keys, seleção de modelo e qualquer fallback cloud não fazem parte da V1. Não mostrar, configurar ou sugerir esses caminhos quando Foundation Models estiver indisponível.
 
 ---
 
@@ -901,10 +882,6 @@ Situações:
 
 * Foundation Model indisponível;
 * Apple Intelligence desligada;
-* API key inexistente;
-* timeout;
-* rate limit;
-* network error;
 * resposta inválida;
 * safety refusal.
 
@@ -916,12 +893,6 @@ Exemplo:
 
 ```text
 Refine unavailable
-```
-
-Possivelmente com uma ação secundária:
-
-```text
-Configure…
 ```
 
 Nada mais.
@@ -1134,7 +1105,6 @@ V1:
 | Global hotkey         | obrigatória              |
 | Launch at login       | importante               |
 | Always on top default | opcional                 |
-| OpenRouter key        | fallback                 |
 | Appearance            | talvez System/Light/Dark |
 | Menu bar visibility   | talvez                   |
 
@@ -1273,7 +1243,7 @@ A aplicação deve ser compatível com a expectativa de uma pequena Mac utility.
 
 # 64. Offline
 
-Sem Refine externo, todo core deve funcionar offline:
+Sem depender de Refine, todo core deve funcionar offline:
 
 * capture;
 * editing;
@@ -1665,9 +1635,7 @@ UI pode ser lançada inicialmente em inglês se for estratégia de distribuiçã
 
 # 83. Segurança
 
-Qualquer API key externa deve ser armazenada no Keychain.
-
-Nenhum conteúdo deve ser enviado externamente sem necessidade.
+Não há API key ou transmissão externa de conteúdo na V1.
 
 Logs nunca devem incluir conteúdo das notas.
 
@@ -1679,11 +1647,7 @@ Crash reporting deve sanitizar campos dinâmicos.
 
 O produto não tentará automaticamente detectar ou bloquear informação sensível.
 
-Mas a política de transmissão deve ser clara.
-
-Se Refine utilizar modelo externo, Preferences deve informar que o conteúdo selecionado será enviado ao provider configurado.
-
-Quando processamento local estiver ativo, isso pode ser explicitamente indicado sem transformar privacidade em banner constante.
+Na V1, Refine processa o conteúdo somente no dispositivo. Não há configuração de transmissão externa a explicar em Preferences.
 
 ---
 
@@ -1752,10 +1716,10 @@ A lista serve apenas para definir claramente comportamento e observabilidade.
 │ SQLite/etc.  │  │ Engine         │
 └──────────────┘  └────────┬───────┘
                            │
-                   ┌───────┴────────┐
-                   ▼                ▼
-             Foundation       OpenRouter
-              Models           optional
+                   │
+                   ▼
+             Foundation Models
+                on-device
 ```
 
 Nenhum backend é necessário no core.
