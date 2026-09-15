@@ -923,12 +923,9 @@ Refine
 
 Model               On-device
                     Apple Intelligence
-
-Fallback            OpenRouter
-API Key             ••••••••••
 ```
 
-Mas se Apple Intelligence estiver disponível, provider details não precisam ocupar muito espaço.
+Foundation Models é o único provider de Refine na V1; não há fallback cloud, BYOK, API key ou seletor de modelo.
 
 Possível copy:
 
@@ -938,25 +935,9 @@ Refine runs on-device when available.
 
 ---
 
-# 47. OpenRouter configuration
+# 47. Providers externos — fora de escopo da V1
 
-Somente se usuário expandir fallback/provider settings.
-
-Campos:
-
-```text
-API Key
-Model
-```
-
-Model pode começar com um default pré-selecionado.
-
-Não expor:
-
-* temperature;
-* max tokens;
-* top-p;
-* provider order.
+Não há configuração de OpenRouter, API key, BYOK, fallback cloud ou provider externo na V1.
 
 ---
 
@@ -966,13 +947,7 @@ Uma frase simples:
 
 ```text
 Your notes are stored locally on this Mac.
-External models only receive text when you use Refine.
-```
-
-Se Foundation Models estiver ativo:
-
-```text
-Refine is currently running on-device.
+Refine runs on-device when available.
 ```
 
 Isso agrega confiança sem transformar a tela em documentação jurídica.
@@ -1369,7 +1344,6 @@ Não ensinar:
 
 * History;
 * Delete;
-* OpenRouter;
 * Preferences;
 * Keep;
 * command palette.
@@ -1638,10 +1612,7 @@ Appearance
 
 Refine
 
-[x] Use on-device model when available
-
-External fallback
-[ OpenRouter API Key               ]
+On-device Apple Intelligence
 ```
 
 Nada de página avançada inicialmente.
@@ -1748,7 +1719,6 @@ Nenhum custo emocional.
 ⌘J
 
 Refine unavailable.
-Configure fallback in Preferences.
 ```
 
 A nota continua normal.
@@ -1950,7 +1920,7 @@ Antes do beta, testar explicitamente:
 
 * duas ativações rápidas do hotkey;
 * hotkey durante Refine;
-* Esc durante network request;
+* Esc durante geração de Refine;
 * nota enorme;
 * paste de 50 mil caracteres;
 * caracteres Unicode;
@@ -1965,7 +1935,6 @@ Antes do beta, testar explicitamente:
 * encerramento durante autosave;
 * atualização do app durante notas abertas;
 * modelo local indisponível;
-* OpenRouter timeout;
 * resultado vazio do modelo;
 * resultado igual ao input.
 
@@ -2166,9 +2135,9 @@ Com base no produto amadurecido, eu consideraria estas decisões suficientemente
 
 **8. Local-first.**
 
-**9. Foundation Models preferencial quando disponível.**
+**9. Foundation Models é o único provider de Refine na V1; o conteúdo permanece on-device.**
 
-**10. OpenRouter apenas como fallback/opção avançada.**
+**10. Sem fallback cloud, BYOK, API key ou provider externo na V1.**
 
 **11. Sem AI chat.**
 
