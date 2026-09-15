@@ -330,6 +330,95 @@ struct NoteRepositoryTests {
         #expect(revisionCount == 0)
     }
 
+    @Test
+    func acceptsARefinementAndWritesOneCompleteRevisionAtomically() async throws {
+        let repository = try makeRepository()
+        let note = try await repository.createScratch(content: "rough café 👩🏽‍💻 note")
+        let metadata = RefinementMetadata(
+            provider: "foundation-models",
+            modelIdentifier: "system-language-model.default",
+            promptVersion: "refine-v1"
+        )
+
+        let revision = try await repository.acceptRefinement(
+            noteID: note.id,
+            beforeContent: note.content,
+            afterContent: "Clear café 👩🏽‍💻 note.",
+            metadata: metadata
+        )
+
+        #expect(try await repository.fetch(id: note.id)?.content == "Clear café 👩🏽‍💻 note.")
+        #expect(revision.noteID == note.id)
+        #expect(revision.beforeContent == "rough café 👩🏽‍💻 note")
+        #expect(revision.afterContent == "Clear café 👩🏽‍💻 note.")
+        #expect(revision.provider == metadata.provider)
+        #expect(revision.modelIdentifier == metadata.modelIdentifier)
+        #expect(revision.promptVersion == metadata.promptVersion)
+        let persistedRevisions = try await repository.refinementRevisions(for: note.id)
+        let persisted = try #require(persistedRevisions.first)
+        #expect(persistedRevisions.count == 1)
+        #expect(persisted.id == revision.id)
+        #expect(persisted.noteID == revision.noteID)
+        #expect(persisted.beforeContent == revision.beforeContent)
+        #expect(persisted.afterContent == revision.afterContent)
+        #expect(persisted.provider == revision.provider)
+        #expect(persisted.modelIdentifier == revision.modelIdentifier)
+        #expect(persisted.promptVersion == revision.promptVersion)
+        #expect(abs(persisted.createdAt.timeIntervalSince(revision.createdAt)) < 0.001)
+    }
+
+    @Test
+    func staleAcceptedRefinementLeavesTheNoteAndRevisionTableUntouched() async throws {
+        let repository = try makeRepository()
+        let note = try await repository.createScratch(content: "newer content")
+        let metadata = RefinementMetadata(
+            provider: "fake",
+            modelIdentifier: "fake-v1",
+            promptVersion: "refine-v1"
+        )
+
+        do {
+            _ = try await repository.acceptRefinement(
+                noteID: note.id,
+                beforeContent: "stale content",
+                afterContent: "stale rewrite",
+                metadata: metadata
+            )
+            Issue.record("A stale refinement was accepted")
+        } catch NoteRepository.PersistenceError.staleContent {
+            // Expected.
+        }
+
+        #expect(try await repository.fetch(id: note.id)?.content == "newer content")
+        #expect(try await repository.refinementRevisions(for: note.id).isEmpty)
+    }
+
+    @Test
+    func noOpAcceptedRefinementDoesNotWriteARevision() async throws {
+        let repository = try makeRepository()
+        let note = try await repository.createScratch(content: "Already useful.")
+        let metadata = RefinementMetadata(
+            provider: "fake",
+            modelIdentifier: "fake-v1",
+            promptVersion: "refine-v1"
+        )
+
+        do {
+            _ = try await repository.acceptRefinement(
+                noteID: note.id,
+                beforeContent: note.content,
+                afterContent: note.content,
+                metadata: metadata
+            )
+            Issue.record("A no-op refinement wrote a revision")
+        } catch NoteRepository.PersistenceError.noContentChange {
+            // Expected.
+        }
+
+        #expect(try await repository.fetch(id: note.id)?.content == "Already useful.")
+        #expect(try await repository.refinementRevisions(for: note.id).isEmpty)
+    }
+
     private func makeRepository() throws -> NoteRepository {
         try NoteRepository(databaseURL: makeDatabaseURL())
     }

@@ -52,6 +52,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    func refine() {
+        panelController?.startRefinement()
+    }
+
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         Task { [weak self] in
             let didFlush = await self?.panelController?.flushForTermination() ?? true

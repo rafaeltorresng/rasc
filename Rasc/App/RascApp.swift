@@ -21,6 +21,11 @@ struct RascApp: App {
                     appDelegate.openSearch()
                 }
                 .keyboardShortcut("p")
+
+                Button("Refine") {
+                    appDelegate.refine()
+                }
+                .keyboardShortcut("j")
             }
         }
     }

@@ -4,6 +4,8 @@ import GRDB
 actor NoteRepository {
     enum PersistenceError: Error {
         case emptyContent
+        case noContentChange
+        case staleContent
     }
 
     private let database: DatabaseQueue
@@ -32,6 +34,12 @@ actor NoteRepository {
     init(databaseURL: URL) throws {
         database = try AppDatabase.open(at: databaseURL)
     }
+
+    #if DEBUG
+    nonisolated func closeForTesting() throws {
+        try database.close()
+    }
+    #endif
 
     func createScratch(content: String) throws -> Note {
         guard Self.hasMeaningfulContent(content) else {
@@ -75,6 +83,57 @@ actor NoteRepository {
                     Note.Columns.content.set(to: content),
                     Note.Columns.updatedAt.set(to: Date()),
                 ])
+        }
+    }
+
+    func acceptRefinement(
+        noteID: UUID,
+        beforeContent: String,
+        afterContent: String,
+        metadata: RefinementMetadata
+    ) throws -> RefinementRevision {
+        guard beforeContent != afterContent else {
+            throw PersistenceError.noContentChange
+        }
+        guard Self.hasMeaningfulContent(afterContent) else {
+            throw PersistenceError.emptyContent
+        }
+
+        return try database.write { database in
+            let now = Date()
+            let updatedCount = try Note
+                .filter(Note.Columns.id == noteID)
+                .filter(Note.Columns.deletedAt == nil)
+                .filter(Note.Columns.content == beforeContent)
+                .updateAll(database, [
+                    Note.Columns.content.set(to: afterContent),
+                    Note.Columns.updatedAt.set(to: now),
+                ])
+            guard updatedCount == 1 else {
+                throw PersistenceError.staleContent
+            }
+
+            let revision = RefinementRevision(
+                id: UUID(),
+                noteID: noteID,
+                beforeContent: beforeContent,
+                afterContent: afterContent,
+                provider: metadata.provider,
+                modelIdentifier: metadata.modelIdentifier,
+                promptVersion: metadata.promptVersion,
+                createdAt: now
+            )
+            try revision.insert(database)
+            return revision
+        }
+    }
+
+    func refinementRevisions(for noteID: UUID) throws -> [RefinementRevision] {
+        try database.read { database in
+            try RefinementRevision
+                .filter(Column("note_id") == noteID)
+                .order(Column("created_at"), Column.rowID)
+                .fetchAll(database)
         }
     }
 
