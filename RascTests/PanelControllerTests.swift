@@ -7,6 +7,13 @@ import Testing
 @MainActor
 struct PanelControllerTests {
     @Test
+    func appDisallowsMultipleSimultaneousInstances() {
+        let appBundle = Bundle(for: PanelController.self)
+
+        #expect(appBundle.object(forInfoDictionaryKey: "LSMultipleInstancesProhibited") as? Bool == true)
+    }
+
+    @Test
     func configuresPanelForPersistentFloatingScratchpadBehavior() throws {
         let controller = try makeController()
         let panel = controller.panel

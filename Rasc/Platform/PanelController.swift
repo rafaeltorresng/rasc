@@ -8,8 +8,14 @@ final class PanelController: NSObject, NSWindowDelegate {
     private let session: ScratchpadSession
     private var previousApplication: NSRunningApplication?
 
-    init(repository: NoteRepository) {
-        session = ScratchpadSession(repository: repository)
+    init(
+        repository: NoteRepository,
+        refinementProvider: any RefinementProvider = FoundationModelsRefinementProvider()
+    ) {
+        session = ScratchpadSession(
+            repository: repository,
+            refinementProvider: refinementProvider
+        )
         panel = NSPanel(
             contentRect: NSRect(x: 0, y: 0, width: 520, height: 340),
             styleMask: [.titled, .resizable, .fullSizeContentView, .nonactivatingPanel],
@@ -70,6 +76,11 @@ final class PanelController: NSObject, NSWindowDelegate {
         presentPanel()
     }
 
+    func startRefinement() {
+        guard panel.isVisible else { return }
+        session.startRefinement()
+    }
+
     private func presentPanel() {
         let currentApplication = NSRunningApplication.current
         let frontmostApplication = NSWorkspace.shared.frontmostApplication
@@ -84,6 +95,7 @@ final class PanelController: NSObject, NSWindowDelegate {
     }
 
     func hide() async {
+        session.cancelRefinement()
         do {
             try await session.flush()
         } catch {
@@ -102,6 +114,7 @@ final class PanelController: NSObject, NSWindowDelegate {
     }
 
     func flushForTermination() async -> Bool {
+        session.cancelRefinement()
         do {
             try await session.flush()
             return true
