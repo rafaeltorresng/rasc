@@ -81,6 +81,132 @@
       "mustPreserve": ["onboarding copy", "deploy", "maybe", "Ana", "CTA v2"],
       "mustNotIntroduce": ["Ana confirmou", "até amanhã"],
       "expectsNoChange": false
+    },
+    {
+      "id": "planning-abbreviated-pt-001",
+      "language": "pt",
+      "input": "trocar nums narrativos por algo como de x itens/conteudos, y% das narrativas sao pos/neg",
+      "expectedKind": "messyText",
+      "mustPreserve": ["x", "y%", "narrativas", "pos/neg"],
+      "mustNotIntroduce": ["quantidade definida", "percentual confirmado"],
+      "expectsNoChange": false
+    },
+    {
+      "id": "casual-slang-pt-001",
+      "language": "pt",
+      "input": "dale rapaziada, qual a boa?",
+      "expectedKind": "alreadyGood",
+      "mustPreserve": ["dale rapaziada", "qual a boa"],
+      "mustNotIntroduce": ["what's up", "Hello everyone"],
+      "expectsNoChange": true
+    },
+    {
+      "id": "casual-intentional-pt-001",
+      "language": "pt",
+      "input": "e aí, pessoal, tudo certo?",
+      "expectedKind": "alreadyGood",
+      "mustPreserve": ["pessoal", "tudo certo"],
+      "mustNotIntroduce": ["Prezados", "Como estão"],
+      "expectsNoChange": true
+    },
+    {
+      "id": "telegraphic-work-note-pt-001",
+      "language": "pt",
+      "input": "revisar números do funil, separar por canal, talvez comparar com semana passada",
+      "expectedKind": "tasks",
+      "mustPreserve": ["funil", "canal", "talvez", "semana passada"],
+      "mustNotIntroduce": ["meta definida", "comparação confirmada"],
+      "expectsNoChange": false
+    },
+    {
+      "id": "formal-clear-pt-001",
+      "language": "pt",
+      "input": "Enviar o relatório assinado amanhã.",
+      "expectedKind": "alreadyGood",
+      "mustPreserve": ["relatório assinado", "amanhã"],
+      "mustNotIntroduce": ["hoje", "responsável"],
+      "expectsNoChange": true
+    },
+    {
+      "id": "ambiguous-fragment-pt-001",
+      "language": "pt",
+      "input": "ajustar aquilo depois",
+      "expectedKind": "alreadyGood",
+      "mustPreserve": ["ajustar", "depois"],
+      "mustNotIntroduce": ["configuração", "prazo"],
+      "expectsNoChange": true
+    },
+    {
+      "id": "selection-pt-ola-tudobem-001",
+      "scope": "selection",
+      "language": "pt",
+      "input": "ola tudobem",
+      "fullNote": "ola tudobem como vc ta?",
+      "selection": "ola tudobem",
+      "expectedKind": "message",
+      "mustPreserve": ["ola", "tudo", "bem"],
+      "mustNotIntroduce": ["Hello", "everyone", "conclusão"],
+      "expectsNoChange": false
+    },
+    {
+      "id": "selection-pt-misspelling-001",
+      "scope": "selection",
+      "language": "pt",
+      "input": "Acho q agente",
+      "fullNote": "Acho q agente devia revisar o doc amanhã.",
+      "selection": "Acho q agente",
+      "expectedKind": "message",
+      "mustPreserve": ["Acho", "amanhã"],
+      "mustNotIntroduce": ["prazo", "decisão confirmada"],
+      "expectsNoChange": false
+    },
+    {
+      "id": "selection-en-fragment-001",
+      "scope": "selection",
+      "language": "en",
+      "input": "chek the deploy notes",
+      "fullNote": "Can you chek the deploy notes before lunch?",
+      "selection": "chek the deploy notes",
+      "expectedKind": "message",
+      "mustPreserve": ["deploy notes", "lunch"],
+      "mustNotIntroduce": ["deadline", "thanks everyone"],
+      "expectsNoChange": false
+    },
+    {
+      "id": "selection-technical-identifier-001",
+      "scope": "selection",
+      "language": "en",
+      "input": "next_retry_at",
+      "fullNote": "Investigate next_retry_at before changing the queue worker.",
+      "selection": "next_retry_at",
+      "expectedKind": "technical",
+      "mustPreserve": ["next_retry_at"],
+      "mustNotIntroduce": ["retry strategy", "root cause"],
+      "expectsNoChange": true
+    },
+    {
+      "id": "selection-ambiguous-nochange-001",
+      "scope": "selection",
+      "language": "en",
+      "input": "go with it",
+      "fullNote": "Maybe we should go with it later.",
+      "selection": "go with it",
+      "expectedKind": "message",
+      "mustPreserve": ["Maybe", "later"],
+      "mustNotIntroduce": ["decision", "confirmed"],
+      "expectsNoChange": true
+    },
+    {
+      "id": "selection-unicode-pt-001",
+      "scope": "selection",
+      "language": "pt",
+      "input": "café ☕️ tá otimo",
+      "fullNote": "Hoje o café ☕️ tá otimo, né?",
+      "selection": "café ☕️ tá otimo",
+      "expectedKind": "message",
+      "mustPreserve": ["café", "☕️"],
+      "mustNotIntroduce": ["restaurante", "convite"],
+      "expectsNoChange": false
     }
   ]
 }
