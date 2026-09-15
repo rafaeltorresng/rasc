@@ -27,6 +27,11 @@
 		010000000000000000000012 /* RefinementProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000011 /* RefinementProvider.swift */; };
 		010000000000000000000013 /* RefinementContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000012 /* RefinementContractTests.swift */; };
 		010000000000000000000014 /* RefinementEvals.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000013 /* RefinementEvals.v1.json */; };
+		010000000000000000000015 /* RefinementRevision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000014 /* RefinementRevision.swift */; };
+		010000000000000000000016 /* RefinementSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000015 /* RefinementSessionTests.swift */; };
+		010000000000000000000017 /* FoundationModelsProviderContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000016 /* FoundationModelsProviderContractTests.swift */; };
+		010000000000000000000018 /* RefinementPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000017 /* RefinementPrompt.swift */; };
+		010000000000000000000019 /* FoundationModelsRefinementProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000018 /* FoundationModelsRefinementProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +64,11 @@
 		020000000000000000000011 /* RefinementProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefinementProvider.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000012 /* RefinementContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefinementContractTests.swift; sourceTree = "<group>"; };
 		020000000000000000000013 /* RefinementEvals.v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Fixtures/RefinementEvals.v1.json; sourceTree = "<group>"; };
+		020000000000000000000014 /* RefinementRevision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Domain/RefinementRevision.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000015 /* RefinementSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefinementSessionTests.swift; sourceTree = "<group>"; };
+		020000000000000000000016 /* FoundationModelsProviderContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationModelsProviderContractTests.swift; sourceTree = "<group>"; };
+		020000000000000000000017 /* RefinementPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefinementPrompt.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000018 /* FoundationModelsRefinementProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/FoundationModelsRefinementProvider.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +116,9 @@
 				02000000000000000000000F /* HistorySearchView.swift */,
 				020000000000000000000010 /* Refinement.swift */,
 				020000000000000000000011 /* RefinementProvider.swift */,
+				020000000000000000000014 /* RefinementRevision.swift */,
+				020000000000000000000017 /* RefinementPrompt.swift */,
+				020000000000000000000018 /* FoundationModelsRefinementProvider.swift */,
 			);
 			name = Rasc;
 			sourceTree = "<group>";
@@ -118,6 +131,8 @@
 				02000000000000000000000D /* ScratchpadSessionTests.swift */,
 				020000000000000000000012 /* RefinementContractTests.swift */,
 				020000000000000000000013 /* RefinementEvals.v1.json */,
+				020000000000000000000015 /* RefinementSessionTests.swift */,
+				020000000000000000000016 /* FoundationModelsProviderContractTests.swift */,
 			);
 			path = RascTests;
 			sourceTree = SOURCE_ROOT;
@@ -250,6 +265,9 @@
 				010000000000000000000010 /* HistorySearchView.swift in Sources */,
 				010000000000000000000011 /* Refinement.swift in Sources */,
 				010000000000000000000012 /* RefinementProvider.swift in Sources */,
+				010000000000000000000015 /* RefinementRevision.swift in Sources */,
+				010000000000000000000018 /* RefinementPrompt.swift in Sources */,
+				010000000000000000000019 /* FoundationModelsRefinementProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +279,8 @@
 				010000000000000000000008 /* NoteRepositoryTests.swift in Sources */,
 				01000000000000000000000E /* ScratchpadSessionTests.swift in Sources */,
 				010000000000000000000013 /* RefinementContractTests.swift in Sources */,
+				010000000000000000000016 /* RefinementSessionTests.swift in Sources */,
+				010000000000000000000017 /* FoundationModelsProviderContractTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,9 +413,8 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_HARDENED_RUNTIME = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Rasc;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Rasc/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -417,9 +436,8 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_HARDENED_RUNTIME = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Rasc;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Rasc/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
