@@ -14,24 +14,34 @@ struct PanelControllerTests {
     }
 
     @Test
-    func configuresPanelForPersistentFloatingScratchpadBehavior() throws {
+    func appRunsAsMenuBarUtilityWithoutDockIcon() {
+        let appBundle = Bundle(for: PanelController.self)
+
+        #expect(appBundle.object(forInfoDictionaryKey: "LSUIElement") as? Bool == true)
+    }
+
+    @Test
+    func configuresPanelForFullscreenOverlayScratchpadBehavior() throws {
         let controller = try makeController()
         let panel = controller.panel
 
+        #expect(panel is ScratchpadPanel)
+        #expect((panel as? ScratchpadPanel)?.canBecomeKey == true)
         #expect(panel.isFloatingPanel)
         #expect(!panel.hidesOnDeactivate)
         #expect(!panel.becomesKeyOnlyIfNeeded)
-        #expect(panel.level == .floating)
+        #expect(panel.level == .screenSaver)
         #expect(panel.styleMask.contains(.titled))
         #expect(panel.styleMask.contains(.resizable))
         #expect(panel.styleMask.contains(.fullSizeContentView))
         #expect(panel.styleMask.contains(.nonactivatingPanel))
-        #expect(panel.collectionBehavior.contains(.moveToActiveSpace))
-        #expect(panel.collectionBehavior.contains(.transient))
+        #expect(panel.collectionBehavior.contains(.canJoinAllSpaces))
         #expect(panel.collectionBehavior.contains(.canJoinAllApplications))
-        #expect(panel.collectionBehavior.contains(.fullScreenNone))
-        #expect(!panel.collectionBehavior.contains(.fullScreenAuxiliary))
-        #expect(!panel.collectionBehavior.contains(.canJoinAllSpaces))
+        #expect(panel.collectionBehavior.contains(.fullScreenAuxiliary))
+        #expect(panel.collectionBehavior.contains(.stationary))
+        #expect(!panel.collectionBehavior.contains(.moveToActiveSpace))
+        #expect(!panel.collectionBehavior.contains(.transient))
+        #expect(!panel.collectionBehavior.contains(.fullScreenNone))
     }
 
     @Test
@@ -54,6 +64,23 @@ struct PanelControllerTests {
         await controller.toggle()
 
         #expect(!controller.panel.isVisible)
+    }
+
+    @Test
+    func restoresAndPersistsWindowFrame() throws {
+        let userDefaults = UserDefaults(suiteName: "RascTests.\(UUID().uuidString)")!
+        let store = WindowFrameStore(userDefaults: userDefaults)
+        let controller = try makeController(windowFrameStore: store)
+        let targetFrame = NSRect(x: 120, y: 180, width: 540, height: 360)
+
+        controller.panel.setFrame(targetFrame, display: false)
+        store.save(controller.panel)
+
+        let restoredController = try makeController(windowFrameStore: store)
+        restoredController.panel.setFrame(.zero, display: false)
+        store.restore(into: restoredController.panel, on: NSScreen.main)
+
+        #expect(restoredController.panel.frame == targetFrame)
     }
 
     @Test
@@ -92,10 +119,15 @@ struct PanelControllerTests {
         #expect(commands == [.moveUp, .moveDown, .openSelection, .closeSearch])
     }
 
-    private func makeController() throws -> PanelController {
+    private func makeController(
+        windowFrameStore: WindowFrameStore = WindowFrameStore()
+    ) throws -> PanelController {
         let databaseURL = FileManager.default.temporaryDirectory
             .appending(path: UUID().uuidString)
             .appendingPathExtension("sqlite")
-        return PanelController(repository: try NoteRepository(databaseURL: databaseURL))
+        return PanelController(
+            repository: try NoteRepository(databaseURL: databaseURL),
+            windowFrameStore: windowFrameStore
+        )
     }
 }
