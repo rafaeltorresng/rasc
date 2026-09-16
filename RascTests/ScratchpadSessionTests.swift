@@ -295,6 +295,30 @@ struct ScratchpadSessionTests {
     }
 
     @Test
+    func searchKeepsPreviousResultsUntilTheDebouncedQueryFinishes() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        _ = try await fixture.repository.createScratch(content: "queue retry")
+        _ = try await fixture.repository.createScratch(content: "window focus")
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        try await session.openSearch()
+
+        session.searchQuery = "que"
+        session.scheduleSearch()
+        #expect(!session.searchResults.isEmpty)
+
+        session.searchQuery = "window"
+        session.scheduleSearch()
+        #expect(!session.searchResults.isEmpty)
+
+        try await Task.sleep(for: .milliseconds(120))
+        #expect(session.searchResults.map(\.content) == ["window focus"])
+    }
+
+    @Test
     func escapeClosesSearchAndReturnsToTheCurrentScratch() async throws {
         let fixture = try makeFixture()
         defer { fixture.remove() }

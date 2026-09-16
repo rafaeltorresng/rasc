@@ -41,6 +41,7 @@ struct HistorySearchTextField: NSViewRepresentable {
         textField.focusRingType = .none
         textField.font = .systemFont(ofSize: 15)
         textField.placeholderString = "Search notes…"
+        textField.setAccessibilityLabel("Search notes")
         textField.cell?.usesSingleLineMode = true
         textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return textField

@@ -42,6 +42,17 @@ final class ScratchpadSession {
     }
     private(set) var contentRevision = 0
     private(set) var surface = Surface.editor
+
+    var surfaceDiagnosticLabel: String {
+        switch surface {
+        case .editor: "editor"
+        case .search: "search"
+        case .commandPalette: "command_palette"
+        case .refining: "refining"
+        case .refinementPreview: "refinement_preview"
+        case .message: "message"
+        }
+    }
     var searchQuery = ""
     private(set) var searchResults: [Note] = []
     private(set) var selectedSearchIndex = 0
@@ -98,6 +109,10 @@ final class ScratchpadSession {
 
     func requestCommandPaletteFocus() {
         commandPaletteFocusRequest &+= 1
+    }
+
+    func markLoadFailed() {
+        saveErrorMessage = "Couldn't load local notes."
     }
 
     func restore() async throws {
@@ -210,15 +225,23 @@ final class ScratchpadSession {
     func scheduleSearch() {
         searchTask?.cancel()
         let query = searchQuery
-        searchResults = []
-        selectedSearchIndex = 0
         searchErrorMessage = nil
 
         searchTask = Task { [weak self] in
             guard let self else { return }
 
             do {
+                try await Task.sleep(for: .milliseconds(75))
+                guard !Task.isCancelled,
+                      surface == .search,
+                      searchQuery == query
+                else {
+                    return
+                }
+
+                let startedAt = ContinuousClock.now
                 let results = try await repository.search(query, limit: 12)
+                let durationMs = Int((ContinuousClock.now - startedAt).components.attoseconds / 1_000_000_000_000_000)
                 guard !Task.isCancelled,
                       surface == .search,
                       searchQuery == query
@@ -226,6 +249,11 @@ final class ScratchpadSession {
                     return
                 }
                 applySearchResults(results)
+                AppDiagnostics.searchCompleted(
+                    queryLength: query.count,
+                    resultCount: results.count,
+                    durationMs: max(durationMs, 0)
+                )
             } catch is CancellationError {
                 return
             } catch {
@@ -536,6 +564,7 @@ final class ScratchpadSession {
                 inverse: content
             )
             session.text = content
+            session.scheduleAutosave()
             session.requestEditorFocus()
         }
         undoManager.setActionName("Refine")
@@ -806,6 +835,7 @@ struct ScratchpadView: View {
                 } else {
                     TextEditor(text: $session.text)
                         .font(.system(size: 14, design: .monospaced))
+                        .foregroundStyle(.primary)
                         .padding(20)
                         .focused($editorIsFocused)
                         .onChange(of: session.focusRequest, initial: true) {
@@ -934,6 +964,7 @@ private struct SelectableScratchEditor: View {
     var body: some View {
         TextEditor(text: $session.text, selection: $selection)
             .font(.system(size: 14, design: .monospaced))
+            .foregroundStyle(.primary)
             .padding(20)
             .focused($isFocused)
             .onChange(of: session.focusRequest, initial: true) {

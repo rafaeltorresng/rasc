@@ -210,7 +210,7 @@ struct RefinementSessionTests {
         try await session.acceptRefinement(undoManager: undoManager)
 
         undoManager.undo()
-        try await session.flush()
+        try await Task.sleep(for: .milliseconds(300))
 
         #expect(session.text == "original thought")
         #expect(try await fixture.repository.fetch(id: request.snapshot.noteID)?.content == "original thought")
