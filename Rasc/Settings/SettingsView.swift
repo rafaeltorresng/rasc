@@ -1,3 +1,4 @@
+import AppKit
 import KeyboardShortcuts
 import SwiftUI
 
@@ -110,6 +111,9 @@ struct SettingsView: View {
         .task {
             refreshLaunchAtLoginState()
             await refreshRefineStatus()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            refreshLaunchAtLoginState()
         }
     }
 
