@@ -136,6 +136,9 @@ struct HistorySearchView: View {
                 resultList
             }
         }
+        .transientSurfaceBackground()
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("History and search")
         .onExitCommand {
             session.closeSearch()
         }

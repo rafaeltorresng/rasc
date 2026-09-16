@@ -13,7 +13,6 @@
 		010000000000000000000004 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000005 /* AppDelegate.swift */; };
 		010000000000000000000005 /* PanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000006 /* PanelController.swift */; };
 		010000000000000000000006 /* ScratchpadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000007 /* ScratchpadView.swift */; };
-		010000000000000000000007 /* ShortcutSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000008 /* ShortcutSettingsView.swift */; };
 		010000000000000000000008 /* NoteRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000009 /* NoteRepositoryTests.swift */; };
 		010000000000000000000009 /* NoteRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000A /* NoteRepository.swift */; };
 		01000000000000000000000A /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 0D0000000000000000000002 /* GRDB */; };
@@ -32,6 +31,20 @@
 		010000000000000000000017 /* FoundationModelsProviderContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000016 /* FoundationModelsProviderContractTests.swift */; };
 		010000000000000000000018 /* RefinementPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000017 /* RefinementPrompt.swift */; };
 		010000000000000000000019 /* FoundationModelsRefinementProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000018 /* FoundationModelsRefinementProvider.swift */; };
+		01000000000000000000001A /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000019 /* MenuBarController.swift */; };
+		01000000000000000000001B /* LoginItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001A /* LoginItemController.swift */; };
+		01000000000000000000001C /* WindowFrameStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001B /* WindowFrameStore.swift */; };
+		01000000000000000000001D /* PaletteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001C /* PaletteCommand.swift */; };
+		01000000000000000000001E /* CommandPaletteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001D /* CommandPaletteView.swift */; };
+		01000000000000000000001F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001E /* SettingsView.swift */; };
+		010000000000000000000020 /* TransientSurfaceStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001F /* TransientSurfaceStyle.swift */; };
+		010000000000000000000021 /* OverlayStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000020 /* OverlayStateTests.swift */; };
+		010000000000000000000022 /* LoginItemControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000021 /* LoginItemControllerTests.swift */; };
+		010000000000000000000023 /* PaletteCommandTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000022 /* PaletteCommandTests.swift */; };
+		010000000000000000000024 /* GlobalShortcutMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000023 /* GlobalShortcutMigration.swift */; };
+		010000000000000000000025 /* GlobalShortcutMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000024 /* GlobalShortcutMigrationTests.swift */; };
+		010000000000000000000026 /* ScratchpadPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000025 /* ScratchpadPanel.swift */; };
+		010000000000000000000027 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000026 /* AppSettings.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,7 +65,6 @@
 		020000000000000000000005 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/App/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000006 /* PanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/PanelController.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000007 /* ScratchpadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Scratchpad/ScratchpadView.swift; sourceTree = SOURCE_ROOT; };
-		020000000000000000000008 /* ShortcutSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Settings/ShortcutSettingsView.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000009 /* NoteRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteRepositoryTests.swift; sourceTree = "<group>"; };
 		02000000000000000000000A /* NoteRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Data/NoteRepository.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000000B /* AppDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Data/AppDatabase.swift; sourceTree = SOURCE_ROOT; };
@@ -69,6 +81,20 @@
 		020000000000000000000016 /* FoundationModelsProviderContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationModelsProviderContractTests.swift; sourceTree = "<group>"; };
 		020000000000000000000017 /* RefinementPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefinementPrompt.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000018 /* FoundationModelsRefinementProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/FoundationModelsRefinementProvider.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000019 /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/MenuBarController.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000001A /* LoginItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/LoginItemController.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000001B /* WindowFrameStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/WindowFrameStore.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000001C /* PaletteCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Commands/PaletteCommand.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000001D /* CommandPaletteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Commands/CommandPaletteView.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000001E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Settings/SettingsView.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000001F /* TransientSurfaceStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/UI/TransientSurfaceStyle.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000020 /* OverlayStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayStateTests.swift; sourceTree = "<group>"; };
+		020000000000000000000021 /* LoginItemControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItemControllerTests.swift; sourceTree = "<group>"; };
+		020000000000000000000022 /* PaletteCommandTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteCommandTests.swift; sourceTree = "<group>"; };
+		020000000000000000000023 /* GlobalShortcutMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/GlobalShortcutMigration.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000024 /* GlobalShortcutMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalShortcutMigrationTests.swift; sourceTree = "<group>"; };
+		020000000000000000000025 /* ScratchpadPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/ScratchpadPanel.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000026 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Settings/AppSettings.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,7 +134,16 @@
 				020000000000000000000005 /* AppDelegate.swift */,
 				020000000000000000000006 /* PanelController.swift */,
 				020000000000000000000007 /* ScratchpadView.swift */,
-				020000000000000000000008 /* ShortcutSettingsView.swift */,
+				020000000000000000000019 /* MenuBarController.swift */,
+				02000000000000000000001A /* LoginItemController.swift */,
+				02000000000000000000001B /* WindowFrameStore.swift */,
+				02000000000000000000001C /* PaletteCommand.swift */,
+				02000000000000000000001D /* CommandPaletteView.swift */,
+				02000000000000000000001E /* SettingsView.swift */,
+				020000000000000000000026 /* AppSettings.swift */,
+				02000000000000000000001F /* TransientSurfaceStyle.swift */,
+				020000000000000000000023 /* GlobalShortcutMigration.swift */,
+				020000000000000000000025 /* ScratchpadPanel.swift */,
 				02000000000000000000000A /* NoteRepository.swift */,
 				02000000000000000000000B /* AppDatabase.swift */,
 				02000000000000000000000C /* Note.swift */,
@@ -133,6 +168,10 @@
 				020000000000000000000013 /* RefinementEvals.v1.json */,
 				020000000000000000000015 /* RefinementSessionTests.swift */,
 				020000000000000000000016 /* FoundationModelsProviderContractTests.swift */,
+				020000000000000000000020 /* OverlayStateTests.swift */,
+				020000000000000000000021 /* LoginItemControllerTests.swift */,
+				020000000000000000000022 /* PaletteCommandTests.swift */,
+				020000000000000000000024 /* GlobalShortcutMigrationTests.swift */,
 			);
 			path = RascTests;
 			sourceTree = SOURCE_ROOT;
@@ -257,7 +296,16 @@
 				010000000000000000000004 /* AppDelegate.swift in Sources */,
 				010000000000000000000005 /* PanelController.swift in Sources */,
 				010000000000000000000006 /* ScratchpadView.swift in Sources */,
-				010000000000000000000007 /* ShortcutSettingsView.swift in Sources */,
+				01000000000000000000001A /* MenuBarController.swift in Sources */,
+				01000000000000000000001B /* LoginItemController.swift in Sources */,
+				01000000000000000000001C /* WindowFrameStore.swift in Sources */,
+				01000000000000000000001D /* PaletteCommand.swift in Sources */,
+				01000000000000000000001E /* CommandPaletteView.swift in Sources */,
+				01000000000000000000001F /* SettingsView.swift in Sources */,
+				010000000000000000000027 /* AppSettings.swift in Sources */,
+				010000000000000000000020 /* TransientSurfaceStyle.swift in Sources */,
+				010000000000000000000024 /* GlobalShortcutMigration.swift in Sources */,
+				010000000000000000000026 /* ScratchpadPanel.swift in Sources */,
 				010000000000000000000009 /* NoteRepository.swift in Sources */,
 				01000000000000000000000C /* AppDatabase.swift in Sources */,
 				01000000000000000000000D /* Note.swift in Sources */,
@@ -281,6 +329,10 @@
 				010000000000000000000013 /* RefinementContractTests.swift in Sources */,
 				010000000000000000000016 /* RefinementSessionTests.swift in Sources */,
 				010000000000000000000017 /* FoundationModelsProviderContractTests.swift in Sources */,
+				010000000000000000000021 /* OverlayStateTests.swift in Sources */,
+				010000000000000000000022 /* LoginItemControllerTests.swift in Sources */,
+				010000000000000000000023 /* PaletteCommandTests.swift in Sources */,
+				010000000000000000000025 /* GlobalShortcutMigrationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

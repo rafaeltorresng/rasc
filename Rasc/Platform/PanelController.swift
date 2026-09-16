@@ -6,17 +6,20 @@ final class PanelController: NSObject, NSWindowDelegate {
     let panel: NSPanel
 
     private let session: ScratchpadSession
+    private let windowFrameStore: WindowFrameStore
     private var previousApplication: NSRunningApplication?
 
     init(
         repository: NoteRepository,
-        refinementProvider: any RefinementProvider = FoundationModelsRefinementProvider()
+        refinementProvider: any RefinementProvider = FoundationModelsRefinementProvider(),
+        windowFrameStore: WindowFrameStore = WindowFrameStore()
     ) {
         session = ScratchpadSession(
             repository: repository,
             refinementProvider: refinementProvider
         )
-        panel = NSPanel(
+        self.windowFrameStore = windowFrameStore
+        panel = ScratchpadPanel(
             contentRect: NSRect(x: 0, y: 0, width: 520, height: 340),
             styleMask: [.titled, .resizable, .fullSizeContentView, .nonactivatingPanel],
             backing: .buffered,
@@ -27,11 +30,17 @@ final class PanelController: NSObject, NSWindowDelegate {
 
         configurePanel()
         panel.contentViewController = NSHostingController(
-            rootView: ScratchpadView(session: session) { [weak self] in
-                Task {
-                    await self?.hide()
+            rootView: ScratchpadView(
+                session: session,
+                onEscape: { [weak self] in
+                    Task {
+                        await self?.hide()
+                    }
+                },
+                onPaletteCommand: { [weak self] command in
+                    self?.handlePaletteCommand(command)
                 }
-            }
+            )
         )
     }
 
@@ -76,9 +85,26 @@ final class PanelController: NSObject, NSWindowDelegate {
         presentPanel()
     }
 
+    func openCommandPalette() async {
+        if !panel.isVisible {
+            do {
+                try await session.restore()
+            } catch {
+                return
+            }
+        }
+
+        session.openCommandPalette()
+        presentPanel()
+    }
+
     func startRefinement() {
         guard panel.isVisible else { return }
         session.startRefinement()
+    }
+
+    func openSettings() {
+        AppSettings.present()
     }
 
     private func presentPanel() {
@@ -89,18 +115,23 @@ final class PanelController: NSObject, NSWindowDelegate {
             previousApplication = frontmostApplication
         }
 
-        positionOnPointerScreenIfNeeded()
+        positionPanelIfNeeded()
+        NSApp.activate(ignoringOtherApps: true)
+        panel.orderFrontRegardless()
         panel.makeKeyAndOrderFront(nil)
-        session.requestEditorFocus()
+        focusActiveSurface()
     }
 
     func hide() async {
         session.cancelRefinement()
+        session.closeCommandPalette()
         do {
             try await session.flush()
         } catch {
             return
         }
+
+        windowFrameStore.save(panel)
 
         let shouldRestorePreviousApplication = NSApp.isActive && panel.isKeyWindow
 
@@ -115,6 +146,8 @@ final class PanelController: NSObject, NSWindowDelegate {
 
     func flushForTermination() async -> Bool {
         session.cancelRefinement()
+        session.closeCommandPalette()
+        windowFrameStore.save(panel)
         do {
             try await session.flush()
             return true
@@ -134,6 +167,16 @@ final class PanelController: NSObject, NSWindowDelegate {
         return false
     }
 
+    func windowDidMove(_ notification: Notification) {
+        guard panel.isVisible else { return }
+        windowFrameStore.save(panel)
+    }
+
+    func windowDidResize(_ notification: Notification) {
+        guard panel.isVisible else { return }
+        windowFrameStore.save(panel)
+    }
+
     private func configurePanel() {
         panel.delegate = self
         panel.title = "Rasc"
@@ -142,12 +185,14 @@ final class PanelController: NSObject, NSWindowDelegate {
         panel.isFloatingPanel = true
         panel.hidesOnDeactivate = false
         panel.becomesKeyOnlyIfNeeded = false
-        panel.level = .floating
+        // `.screenSaver` is required for the scratchpad to appear above native fullscreen apps.
+        // `.floating` stays below fullscreen Spaces; validated on macOS 26 with `.fullScreenAuxiliary`.
+        panel.level = .screenSaver
         panel.collectionBehavior = [
-            .moveToActiveSpace,
-            .transient,
+            .canJoinAllSpaces,
             .canJoinAllApplications,
-            .fullScreenNone,
+            .fullScreenAuxiliary,
+            .stationary,
         ]
         panel.isReleasedWhenClosed = false
         panel.standardWindowButton(.zoomButton)?.isEnabled = false
@@ -155,22 +200,33 @@ final class PanelController: NSObject, NSWindowDelegate {
         panel.maxSize = NSSize(width: 800, height: 700)
     }
 
-    private func positionOnPointerScreenIfNeeded() {
-        guard let targetScreen = NSScreen.screens.first(where: { $0.frame.contains(NSEvent.mouseLocation) })
+    private func positionPanelIfNeeded() {
+        let targetScreen = NSScreen.screens.first(where: { $0.frame.contains(NSEvent.mouseLocation) })
             ?? NSScreen.main
-        else {
-            return
-        }
+        windowFrameStore.restore(into: panel, on: targetScreen)
+    }
 
-        let visibleFrame = targetScreen.visibleFrame
-        guard !visibleFrame.contains(panel.frame) else {
-            return
+    private func focusActiveSurface() {
+        switch session.surface {
+        case .search:
+            session.requestSearchFocus()
+        case .commandPalette:
+            session.requestCommandPaletteFocus()
+        case .editor, .message, .refining, .refinementPreview:
+            session.requestEditorFocus()
         }
+    }
 
-        let origin = NSPoint(
-            x: visibleFrame.midX - panel.frame.width / 2,
-            y: visibleFrame.midY - panel.frame.height / 2
-        )
-        panel.setFrameOrigin(origin)
+    private func handlePaletteCommand(_ command: PaletteCommand) {
+        switch command {
+        case .newScratch:
+            Task { await startNewScratch() }
+        case .findNote:
+            Task { await openSearch() }
+        case .refine:
+            startRefinement()
+        case .settings:
+            openSettings()
+        }
     }
 }

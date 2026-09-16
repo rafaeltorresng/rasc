@@ -242,9 +242,11 @@ App/
 
 Platform/
     PanelController.swift
+    ScratchpadPanel.swift
     HotkeyController.swift
     MenuBarController.swift
     LoginItemController.swift
+    WindowFrameStore.swift
     FocusController.swift
 
 Features/
@@ -386,17 +388,18 @@ Um `OverlayState` mutuamente exclusivo elimina boa parte dessas combinações.
 
 # 12. NSPanel
 
-A janela principal será um `NSPanel`.
-
-Configuração inicial conceitual:
+A janela principal é um `ScratchpadPanel` (`NSPanel` subclass).
 
 ```swift
 final class ScratchpadPanel: NSPanel {
-    // customized window behavior
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { false }
 }
 ```
 
-Propriedades candidatas:
+`canBecomeKey = true` é necessário para que o editor e overlays (search, command palette) recebam foco de teclado enquanto o painel permanece uma utility surface não-ativadora.
+
+Propriedades configuradas em `PanelController`:
 
 ```swift
 isFloatingPanel = true
@@ -497,29 +500,22 @@ A aparência pode ficar quase borderless sem abandonar semântica nativa de jane
 
 # 17. Window level
 
-Começar com:
+**Decisão implementada (validada no spike, macOS 26):**
 
 ```swift
-.level = .floating
+.level = .screenSaver
 ```
 
-Não utilizaria níveis agressivos como `.screenSaver`.
+O spike inicial com `.floating` falhou no requisito crítico: o scratchpad ficava invisível acima de apps em fullscreen nativo.
 
-Existem hacks de utilities que fazem isso para sobrepor absolutamente tudo, mas esse comportamento é invasivo e pode produzir conflitos com:
+`.screenSaver` é mais agressivo que o default de floating utilities, mas é o nível necessário para aparecer no Space fullscreen do app ativo quando combinado com `.fullScreenAuxiliary` e `.canJoinAllApplications`.
 
-* system UI;
-* notifications;
-* fullscreen video;
-* lock screen;
-* outras overlays.
+Trade-offs conscientes:
 
-Precisamos resolver o problema real:
+* pode conflitar com outras overlays de nível similar;
+* não deve ser usado para "ganhar de tudo" — apenas para o caso de uso de capture utility acima de fullscreen.
 
-> aparecer confiavelmente durante trabalho.
-
-Não:
-
-> ganhar de todas as janelas do sistema.
+Se o comportamento se tornar invasivo em cenários específicos (vídeo, lock screen), reavaliar com testes reais antes de regredir.
 
 ---
 
@@ -537,59 +533,57 @@ e:
 
 > quando ativada, ela é movida para o Space atual em vez de o sistema trocar de Space.
 
-Para nossa semântica, **`moveToActiveSpace` é mais coerente**.
-
-Não queremos uma superfície conceitualmente permanente em todos os Spaces.
-
-Queremos:
-
-> hotkey → scratchpad aparece onde estou agora.
-
-Portanto, o primeiro spike deve experimentar:
+O spike com `moveToActiveSpace` + `.transient` não resolveu overlay em fullscreen. A combinação implementada é:
 
 ```swift
 collectionBehavior = [
-    .moveToActiveSpace,
-    .transient
+    .canJoinAllSpaces,
+    .canJoinAllApplications,
+    .fullScreenAuxiliary,
+    .stationary,
 ]
 ```
 
-e suas combinações com fullscreen.
+Semântica desejada:
+
+> hotkey → scratchpad aparece onde estou agora, inclusive sobre apps fullscreen.
+
+`.canJoinAllSpaces` + `.fullScreenAuxiliary` permite entrar no Space fullscreen ativo; `.stationary` evita que o sistema mova a janela entre Spaces ao alternar.
 
 ---
 
 # 19. Fullscreen e Stage Manager
 
-A Apple também fornece `canJoinAllApplications`, especificamente para floating windows e system overlays que precisam poder aparecer junto das janelas de outros aplicativos em fullscreen/Stage Manager.
+A Apple fornece `canJoinAllApplications` para floating windows e system overlays que precisam aparecer junto das janelas de outros aplicativos em fullscreen/Stage Manager.
 
 Há ainda `fullScreenAuxiliary`, que coloca a janela no mesmo Space da janela fullscreen.
 
-Essas opções possuem interações e algumas categorias são mutuamente exclusivas.
-
-Logo não congelaria uma combinação em código antes do spike.
-
-Os candidatos devem ser testados em condições reais:
+**Resultado do spike (macOS 26, validado manualmente):**
 
 ```text
-moveToActiveSpace + fullScreenAuxiliary
-
-versus
-
-moveToActiveSpace + canJoinAllApplications
+ScratchpadPanel
++ .screenSaver level
++ .canJoinAllSpaces
++ .canJoinAllApplications
++ .fullScreenAuxiliary
++ .stationary
 ```
 
-com:
+Sequência de apresentação em `presentPanel()`:
 
-* Safari fullscreen;
-* Chrome fullscreen;
-* VS Code fullscreen;
-* Terminal;
-* vídeo fullscreen;
+```text
+NSApp.activate(ignoringOtherApps: true)
+→ orderFrontRegardless()
+→ makeKeyAndOrderFront(nil)
+→ focusActiveSurface()
+```
+
+Testado com sucesso acima de apps em fullscreen nativo. Ainda requer verificação manual para:
+
 * Stage Manager;
 * dois monitores;
-* Space diferente em cada monitor.
-
-Esse é um dos primeiros riscos técnicos a eliminar.
+* Space diferente em cada monitor;
+* vídeo fullscreen.
 
 ---
 
@@ -3058,9 +3052,9 @@ Decisões arquiteturais importantes devem ser registradas em pequenos ADRs.
 
 ### ADR-002 — NSPanel
 
-**Decision:** uma única `NSPanel` controlada explicitamente.
+**Decision:** uma única `ScratchpadPanel` (`NSPanel` subclass) controlada explicitamente por `PanelController`.
 
-**Why:** floating utility + focus/Spaces requirements.
+**Why:** floating utility + keyboard focus + fullscreen overlay requirements (`.screenSaver`, `.fullScreenAuxiliary`).
 
 ---
 

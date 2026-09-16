@@ -22,6 +22,7 @@ final class ScratchpadSession {
     enum Surface: Equatable {
         case editor
         case search
+        case commandPalette
         case refining
         case refinementPreview
         case message
@@ -46,6 +47,10 @@ final class ScratchpadSession {
     private(set) var selectedSearchIndex = 0
     private(set) var focusRequest = 0
     private(set) var searchFocusRequest = 0
+    var commandPaletteQuery = ""
+    private(set) var filteredCommands: [PaletteCommand] = PaletteCommand.allCases
+    private(set) var selectedCommandIndex = 0
+    private(set) var commandPaletteFocusRequest = 0
     private(set) var saveErrorMessage: String?
     private(set) var searchErrorMessage: String?
     private(set) var activeRefinementRequest: RefinementRequest?
@@ -85,6 +90,14 @@ final class ScratchpadSession {
 
     func requestEditorFocus() {
         focusRequest &+= 1
+    }
+
+    func requestSearchFocus() {
+        searchFocusRequest &+= 1
+    }
+
+    func requestCommandPaletteFocus() {
+        commandPaletteFocusRequest &+= 1
     }
 
     func restore() async throws {
@@ -163,12 +176,12 @@ final class ScratchpadSession {
     }
 
     func startNewScratch() async throws {
-        cancelRefinement()
-        clearMessage(returnToEditor: false)
+        dismissTransientSurfaces(except: nil)
         editorSelection = nil
         editorHasMultipleSelections = false
         try await flush()
         resetSearchState()
+        resetCommandPaletteState()
         noteID = nil
         activeNoteStore.noteID = nil
         text = ""
@@ -176,8 +189,7 @@ final class ScratchpadSession {
 
     func openSearch() async throws {
         try await acceptanceTask?.value
-        cancelRefinement()
-        clearMessage(returnToEditor: false)
+        dismissTransientSurfaces(except: .search)
         searchTask?.cancel()
         searchTask = nil
         surface = .search
@@ -283,6 +295,50 @@ final class ScratchpadSession {
         requestEditorFocus()
     }
 
+    func openCommandPalette() {
+        guard acceptanceTask == nil else { return }
+        dismissTransientSurfaces(except: .commandPalette)
+        surface = .commandPalette
+        commandPaletteQuery = ""
+        filteredCommands = PaletteCommand.allCases
+        selectedCommandIndex = 0
+        commandPaletteFocusRequest &+= 1
+    }
+
+    func closeCommandPalette() {
+        guard surface == .commandPalette else { return }
+        resetCommandPaletteState()
+        requestEditorFocus()
+    }
+
+    func refreshCommandPalette() {
+        guard surface == .commandPalette else { return }
+        filteredCommands = PaletteCommand.filtered(by: commandPaletteQuery)
+        selectedCommandIndex = min(selectedCommandIndex, max(filteredCommands.count - 1, 0))
+    }
+
+    func moveCommandSelection(by offset: Int) {
+        guard !filteredCommands.isEmpty else {
+            selectedCommandIndex = 0
+            return
+        }
+
+        selectedCommandIndex = min(
+            max(selectedCommandIndex + offset, 0),
+            filteredCommands.count - 1
+        )
+    }
+
+    func selectCommand(at index: Int) {
+        guard filteredCommands.indices.contains(index) else { return }
+        selectedCommandIndex = index
+    }
+
+    func selectedCommand() -> PaletteCommand? {
+        guard filteredCommands.indices.contains(selectedCommandIndex) else { return nil }
+        return filteredCommands[selectedCommandIndex]
+    }
+
     func updateEditorSelection(
         _ selection: Range<String.Index>?,
         hasMultipleSelections: Bool = false
@@ -303,6 +359,9 @@ final class ScratchpadSession {
     func startRefinement(selection: Range<String.Index>?) {
         guard surface != .search, acceptanceTask == nil else { return }
 
+        if surface == .commandPalette {
+            resetCommandPaletteState()
+        }
         cancelRefinement()
         clearMessage(returnToEditor: false)
 
@@ -341,15 +400,18 @@ final class ScratchpadSession {
     @discardableResult
     func handleEscape() -> Bool {
         switch surface {
+        case .commandPalette:
+            closeCommandPalette()
+            return true
+        case .search:
+            closeSearch()
+            return true
         case .refining, .refinementPreview:
             cancelRefinement()
             return true
         case .message:
             clearMessage(returnToEditor: true)
             requestEditorFocus()
-            return true
-        case .search:
-            closeSearch()
             return true
         case .editor:
             return false
@@ -688,6 +750,35 @@ final class ScratchpadSession {
         selectedSearchIndex = 0
         searchErrorMessage = nil
     }
+
+    private func resetCommandPaletteState() {
+        surface = .editor
+        commandPaletteQuery = ""
+        filteredCommands = PaletteCommand.allCases
+        selectedCommandIndex = 0
+    }
+
+    private func dismissTransientSurfaces(except retained: Surface?) {
+        if retained != .search {
+            if surface == .search {
+                resetSearchState()
+            } else {
+                searchTask?.cancel()
+                searchTask = nil
+                searchQuery = ""
+                searchResults = []
+                selectedSearchIndex = 0
+                searchErrorMessage = nil
+            }
+        }
+
+        if retained != .commandPalette, surface == .commandPalette {
+            resetCommandPaletteState()
+        }
+
+        cancelRefinement()
+        clearMessage(returnToEditor: false)
+    }
 }
 
 private struct PendingRefinement: Sendable {
@@ -701,8 +792,10 @@ struct ScratchpadView: View {
     @Bindable var session: ScratchpadSession
     @FocusState private var editorIsFocused: Bool
     @Environment(\.undoManager) private var undoManager
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let onEscape: () -> Void
+    let onPaletteCommand: (PaletteCommand) -> Void
 
     var body: some View {
         Group {
@@ -725,17 +818,29 @@ struct ScratchpadView: View {
                 }
             case .search:
                 HistorySearchView(session: session)
+            case .commandPalette:
+                CommandPaletteView(session: session, onExecute: onPaletteCommand)
             case .refining:
                 TextEditor(text: .constant(session.text))
                     .font(.system(size: 14, design: .monospaced))
                     .padding(20)
                     .disabled(true)
+                    .accessibilityLabel("Scratch editor")
+                    .accessibilityValue("Refining note")
                     .onExitCommand(perform: handleEscape)
                     .overlay(alignment: .bottomLeading) {
-                        Text("refining…")
-                            .font(.caption.monospaced())
-                            .foregroundStyle(.secondary)
-                            .padding(12)
+                        HStack(spacing: 6) {
+                            if !reduceMotion {
+                                ProgressView()
+                                    .controlSize(.small)
+                            }
+                            Text("refining…")
+                                .font(.caption.monospaced())
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(12)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Refining note")
                     }
             case .refinementPreview:
                 VStack(alignment: .leading, spacing: 0) {
@@ -744,6 +849,7 @@ struct ScratchpadView: View {
                         .foregroundStyle(.secondary)
                         .padding(.horizontal, 20)
                         .padding(.top, 16)
+                        .accessibilityAddTraits(.isHeader)
                     ScrollView {
                         Text(session.refinementPreview?.result.text ?? "")
                             .font(.system(size: 14, design: .monospaced))
@@ -751,12 +857,14 @@ struct ScratchpadView: View {
                             .frame(maxWidth: .infinity, alignment: .topLeading)
                             .padding(20)
                     }
+                    .accessibilityLabel("Refined preview")
                     HStack {
                         Button("Esc cancel") {
                             _ = session.handleEscape()
                         }
                         .buttonStyle(.plain)
                         .keyboardShortcut(.cancelAction)
+                        .accessibilityLabel("Cancel refinement")
                         Spacer()
                         Button("↵ accept") {
                             Task {
@@ -765,11 +873,20 @@ struct ScratchpadView: View {
                         }
                         .buttonStyle(.plain)
                         .keyboardShortcut(.defaultAction)
+                        .accessibilityLabel("Accept refinement")
                     }
                     .font(.caption.monospaced())
                     .foregroundStyle(.secondary)
                     .padding(12)
                 }
+                .refinementPreviewSurface()
+                .overlay {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+                }
+                .padding(8)
+                .accessibilityElement(children: .contain)
+                .accessibilityLabel("Refinement preview")
                 .onExitCommand(perform: handleEscape)
             }
         }
