@@ -1,4 +1,5 @@
 import AppKit
+import CoreGraphics
 import SwiftUI
 
 @MainActor
@@ -8,6 +9,7 @@ final class PanelController: NSObject, NSWindowDelegate {
     private let session: ScratchpadSession
     private let windowFrameStore: WindowFrameStore
     private var previousApplication: NSRunningApplication?
+    private var displayObservers: [NSObjectProtocol] = []
 
     init(
         repository: NoteRepository,
@@ -29,6 +31,7 @@ final class PanelController: NSObject, NSWindowDelegate {
         super.init()
 
         configurePanel()
+        observeDisplayChanges()
         panel.contentViewController = NSHostingController(
             rootView: ScratchpadView(
                 session: session,
@@ -56,7 +59,8 @@ final class PanelController: NSObject, NSWindowDelegate {
         do {
             try await session.restore()
         } catch {
-            return
+            AppDiagnostics.panelRestoreFailed()
+            session.markLoadFailed()
         }
 
         presentPanel()
@@ -66,7 +70,7 @@ final class PanelController: NSObject, NSWindowDelegate {
         do {
             try await session.startNewScratch()
         } catch {
-            return
+            session.markLoadFailed()
         }
 
         presentPanel()
@@ -79,7 +83,9 @@ final class PanelController: NSObject, NSWindowDelegate {
             }
             try await session.openSearch()
         } catch {
-            return
+            if !panel.isVisible {
+                session.markLoadFailed()
+            }
         }
 
         presentPanel()
@@ -90,7 +96,7 @@ final class PanelController: NSObject, NSWindowDelegate {
             do {
                 try await session.restore()
             } catch {
-                return
+                session.markLoadFailed()
             }
         }
 
@@ -108,6 +114,10 @@ final class PanelController: NSObject, NSWindowDelegate {
     }
 
     private func presentPanel() {
+        let startedAt = ContinuousClock.now
+        let surfaceLabel = session.surfaceDiagnosticLabel
+        AppDiagnostics.panelPresentStarted(surface: surfaceLabel)
+
         let currentApplication = NSRunningApplication.current
         let frontmostApplication = NSWorkspace.shared.frontmostApplication
 
@@ -120,6 +130,9 @@ final class PanelController: NSObject, NSWindowDelegate {
         panel.orderFrontRegardless()
         panel.makeKeyAndOrderFront(nil)
         focusActiveSurface()
+
+        let durationMs = Int((ContinuousClock.now - startedAt).components.attoseconds / 1_000_000_000_000_000)
+        AppDiagnostics.panelPresentCompleted(surface: surfaceLabel, durationMs: max(durationMs, 0))
     }
 
     func hide() async {
@@ -201,9 +214,80 @@ final class PanelController: NSObject, NSWindowDelegate {
     }
 
     private func positionPanelIfNeeded() {
-        let targetScreen = NSScreen.screens.first(where: { $0.frame.contains(NSEvent.mouseLocation) })
-            ?? NSScreen.main
-        windowFrameStore.restore(into: panel, on: targetScreen)
+        windowFrameStore.restore(into: panel, on: targetPresentationScreen())
+    }
+
+    private func revalidatePanelFrame(reason: String) {
+        windowFrameStore.ensureVisible(
+            panel,
+            on: targetPresentationScreen(),
+            reason: reason
+        )
+    }
+
+    private func targetPresentationScreen() -> NSScreen? {
+        WindowFramePlacement.preferredScreen(
+            frontmostWindowFrame: Self.frontmostWindowFrame(
+                excludingPID: NSRunningApplication.current.processIdentifier
+            ),
+            mouseLocation: NSEvent.mouseLocation,
+            screens: NSScreen.screens
+        )
+    }
+
+    private static func frontmostWindowFrame(excludingPID: pid_t) -> NSRect? {
+        guard let windowList = CGWindowListCopyWindowInfo(
+            [.optionOnScreenOnly, .excludeDesktopElements],
+            kCGNullWindowID
+        ) as? [[String: Any]] else {
+            return nil
+        }
+
+        for window in windowList {
+            guard let ownerPID = window[kCGWindowOwnerPID as String] as? pid_t,
+                  ownerPID != excludingPID,
+                  let layer = window[kCGWindowLayer as String] as? Int,
+                  layer == 0,
+                  let bounds = window[kCGWindowBounds as String] as? [String: CGFloat]
+            else {
+                continue
+            }
+
+            return NSRect(
+                x: bounds["X"] ?? 0,
+                y: bounds["Y"] ?? 0,
+                width: bounds["Width"] ?? 0,
+                height: bounds["Height"] ?? 0
+            )
+        }
+
+        return nil
+    }
+
+    private func observeDisplayChanges() {
+        let workspaceCenter = NSWorkspace.shared.notificationCenter
+        displayObservers.append(
+            workspaceCenter.addObserver(
+                forName: NSWorkspace.screensDidWakeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor in
+                    self?.revalidatePanelFrame(reason: "screens_did_wake")
+                }
+            }
+        )
+        displayObservers.append(
+            NotificationCenter.default.addObserver(
+                forName: NSApplication.didChangeScreenParametersNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor in
+                    self?.revalidatePanelFrame(reason: "screen_parameters_changed")
+                }
+            }
+        )
     }
 
     private func focusActiveSurface() {
