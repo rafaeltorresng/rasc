@@ -4,15 +4,19 @@ import KeyboardShortcuts
 extension KeyboardShortcuts.Name {
     static let toggleScratchpad = Self(
         "toggleScratchpad",
-        initial: .init(.space, modifiers: [.option])
+        initial: .init(.backslash, modifiers: [.option])
     )
 }
 
 @MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDelegate {
     private var panelController: PanelController?
+    private var menuBarController: MenuBarController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        GlobalShortcutMigration.migrateFromPreviousDefaultIfNeeded()
+        menuBarController = MenuBarController(delegate: self)
+
         Task { [weak self] in
             do {
                 let repository = try await Task.detached {
@@ -52,8 +56,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    func openCommandPalette() {
+        Task { [weak self] in
+            await self?.panelController?.openCommandPalette()
+        }
+    }
+
     func refine() {
         panelController?.startRefinement()
+    }
+
+    func openSettings() {
+        AppSettings.present()
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
@@ -71,5 +85,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         return .terminateLater
+    }
+
+    func menuBarOpenRasc() {
+        Task { [weak self] in
+            await self?.panelController?.show()
+        }
+    }
+
+    func menuBarNewScratch() {
+        startNewScratch()
+    }
+
+    func menuBarOpenSearch() {
+        openSearch()
+    }
+
+    func menuBarOpenSettings() {
+        openSettings()
+    }
+
+    func menuBarQuit() {
+        NSApp.terminate(nil)
     }
 }

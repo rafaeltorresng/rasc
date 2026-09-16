@@ -6,7 +6,7 @@ struct RascApp: App {
 
     var body: some Scene {
         Settings {
-            ShortcutSettingsView()
+            SettingsView()
         }
         .commands {
             CommandGroup(replacing: .newItem) {
@@ -26,6 +26,18 @@ struct RascApp: App {
                     appDelegate.refine()
                 }
                 .keyboardShortcut("j")
+
+                Button("Command Palette") {
+                    appDelegate.openCommandPalette()
+                }
+                .keyboardShortcut("k")
+            }
+
+            CommandGroup(replacing: .appSettings) {
+                Button("Settings…") {
+                    appDelegate.openSettings()
+                }
+                .keyboardShortcut(",")
             }
         }
     }
