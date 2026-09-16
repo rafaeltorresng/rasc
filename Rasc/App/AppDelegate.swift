@@ -10,32 +10,18 @@ extension KeyboardShortcuts.Name {
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDelegate {
-    private var panelController: PanelController?
+    private let bootstrap = AppBootstrap()
     private var menuBarController: MenuBarController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         GlobalShortcutMigration.migrateFromPreviousDefaultIfNeeded()
         menuBarController = MenuBarController(delegate: self)
+        bootstrap.start()
 
-        Task { [weak self] in
-            do {
-                let repository = try await Task.detached {
-                    try NoteRepository.openDefault()
-                }.value
-                let panelController = PanelController(repository: repository)
-                self?.panelController = panelController
-
-                KeyboardShortcuts.onKeyUp(for: .toggleScratchpad) { [weak panelController] in
-                    Task {
-                        await panelController?.toggle()
-                    }
-                }
-            } catch {
-                let alert = NSAlert()
-                alert.messageText = "Couldn't open Rasc's local notes."
-                alert.informativeText = "Your existing notes were not changed."
-                alert.alertStyle = .critical
-                alert.runModal()
+        KeyboardShortcuts.onKeyUp(for: .toggleScratchpad) { [weak self] in
+            Task { @MainActor in
+                guard let panel = await self?.bootstrap.awaitPanel() else { return }
+                await panel.toggle()
             }
         }
     }
@@ -45,25 +31,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
     }
 
     func startNewScratch() {
-        Task { [weak self] in
-            await self?.panelController?.startNewScratch()
+        Task { @MainActor in
+            await bootstrap.awaitPanel()?.startNewScratch()
         }
     }
 
     func openSearch() {
-        Task { [weak self] in
-            await self?.panelController?.openSearch()
+        Task { @MainActor in
+            await bootstrap.awaitPanel()?.openSearch()
         }
     }
 
     func openCommandPalette() {
-        Task { [weak self] in
-            await self?.panelController?.openCommandPalette()
+        Task { @MainActor in
+            await bootstrap.awaitPanel()?.openCommandPalette()
         }
     }
 
     func refine() {
-        panelController?.startRefinement()
+        bootstrap.panelIfReady()?.startRefinement()
     }
 
     func openSettings() {
@@ -71,8 +57,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        Task { [weak self] in
-            let didFlush = await self?.panelController?.flushForTermination() ?? true
+        Task { @MainActor [weak self] in
+            let didFlush = await self?.bootstrap.panelIfReady()?.flushForTermination() ?? true
             if didFlush {
                 sender.reply(toApplicationShouldTerminate: true)
             } else {
@@ -88,8 +74,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
     }
 
     func menuBarOpenRasc() {
-        Task { [weak self] in
-            await self?.panelController?.show()
+        Task { @MainActor in
+            await bootstrap.awaitPanel()?.show()
         }
     }
 
