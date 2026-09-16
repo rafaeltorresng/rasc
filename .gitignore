@@ -61,3 +61,10 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# Release artifacts
+build/
+dist/
+*.xcarchive
+*.dmg
+Config/Local.xcconfig
