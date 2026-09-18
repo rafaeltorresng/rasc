@@ -872,8 +872,10 @@ struct ScratchpadView: View {
                     .onExitCommand(perform: handleEscape)
                     .overlay(alignment: .bottomLeading) {
                         ShapingIndicator()
-                            .padding(12)
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 12)
                     }
+                    .transition(surfaceTransition)
             case .refinementPreview:
                 VStack(alignment: .leading, spacing: 0) {
                     Text("refined")
@@ -881,16 +883,18 @@ struct ScratchpadView: View {
                         .foregroundStyle(.secondary)
                         .padding(.horizontal, 20)
                         .padding(.top, 16)
+                        .padding(.bottom, 4)
                         .accessibilityAddTraits(.isHeader)
                     ScrollView {
                         Text(session.refinementPreview?.result.text ?? "")
                             .font(.system(size: 14, design: .monospaced))
                             .textSelection(.enabled)
                             .frame(maxWidth: .infinity, alignment: .topLeading)
-                            .padding(20)
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 16)
                     }
                     .accessibilityLabel("Refined preview")
-                    HStack {
+                    HStack(spacing: 16) {
                         Button("Esc cancel") {
                             _ = session.handleEscape()
                         }
@@ -909,7 +913,8 @@ struct ScratchpadView: View {
                     }
                     .font(.caption.monospaced())
                     .foregroundStyle(.secondary)
-                    .padding(12)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
                 }
                 .refinementPreviewSurface()
                 .overlay {
@@ -920,8 +925,10 @@ struct ScratchpadView: View {
                 .accessibilityElement(children: .contain)
                 .accessibilityLabel("Refinement preview")
                 .onExitCommand(perform: handleEscape)
+                .transition(surfaceTransition)
             }
         }
+        .animation(RascMotion.surface(reduceMotion: reduceMotion), value: session.surface)
         .overlay(alignment: .bottomLeading) {
             if session.scratchpadGuidance.isActive {
                 OnboardingScratchpadOverlay(
@@ -933,12 +940,37 @@ struct ScratchpadView: View {
                     .foregroundStyle(.red)
                     .padding(12)
             } else if let message = session.message {
-                Text(message.text)
-                    .font(.caption.monospaced())
-                    .foregroundStyle(.secondary)
-                    .padding(12)
+                refinementMessageView(message)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 12)
+                    .transition(.opacity)
             }
         }
+        .animation(RascMotion.surface(reduceMotion: reduceMotion), value: session.message)
+    }
+
+    private var surfaceTransition: AnyTransition {
+        if reduceMotion {
+            return .opacity
+        }
+        return .opacity.combined(with: .offset(y: 4))
+    }
+
+    @ViewBuilder
+    private func refinementMessageView(_ message: RefinementMessage) -> some View {
+        HStack(spacing: 6) {
+            if message == .alreadyUseful {
+                Image(systemName: "checkmark")
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
+            }
+            Text(message.text)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(message.text)
     }
 
     private func requestEditorFocus() {
