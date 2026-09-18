@@ -56,10 +56,16 @@
 		010000000000000000000030 /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000030 /* OnboardingWindowController.swift */; };
 		010000000000000000000031 /* OnboardingScratchpadOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000031 /* OnboardingScratchpadOverlay.swift */; };
 		010000000000000000000032 /* GlobalShortcutFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000032 /* GlobalShortcutFormatting.swift */; };
-		010000000000000000000033 /* ShapingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000033 /* ShapingIndicator.swift */; };
+		010000000000000000000033 /* RascOrb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000033 /* RascOrb.swift */; };
+		010000000000000000000039 /* ThinkingOrbsKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0D0000000000000000000003 /* ThinkingOrbsKit */; };
 		010000000000000000000034 /* OnboardingStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000034 /* OnboardingStoreTests.swift */; };
 		010000000000000000000035 /* OnboardingEligibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000035 /* OnboardingEligibilityTests.swift */; };
 		010000000000000000000036 /* OnboardingBehaviorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000036 /* OnboardingBehaviorTests.swift */; };
+		010000000000000000000037 /* RascMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000037 /* RascMotion.swift */; };
+		010000000000000000000038 /* ShortcutKeycapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000038 /* ShortcutKeycapView.swift */; };
+		01000000000000000000003A /* ThirdPartyNotices.txt in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000039 /* ThirdPartyNotices.txt */; };
+		01000000000000000000003B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003A /* Assets.xcassets */; };
+		01000000000000000000003C /* RascLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003B /* RascLogo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,10 +128,15 @@
 		020000000000000000000030 /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Onboarding/OnboardingWindowController.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000031 /* OnboardingScratchpadOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Onboarding/OnboardingScratchpadOverlay.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000032 /* GlobalShortcutFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/GlobalShortcutFormatting.swift; sourceTree = SOURCE_ROOT; };
-		020000000000000000000033 /* ShapingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/UI/ShapingIndicator.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000033 /* RascOrb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/UI/RascOrb.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000034 /* OnboardingStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStoreTests.swift; sourceTree = "<group>"; };
 		020000000000000000000035 /* OnboardingEligibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingEligibilityTests.swift; sourceTree = "<group>"; };
 		020000000000000000000036 /* OnboardingBehaviorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingBehaviorTests.swift; sourceTree = "<group>"; };
+		020000000000000000000037 /* RascMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/UI/RascMotion.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000038 /* ShortcutKeycapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/UI/ShortcutKeycapView.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000039 /* ThirdPartyNotices.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Rasc/Resources/ThirdPartyNotices.txt; sourceTree = SOURCE_ROOT; };
+		02000000000000000000003A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Rasc/Resources/Assets.xcassets; sourceTree = SOURCE_ROOT; };
+		02000000000000000000003B /* RascLogo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/UI/RascLogo.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +146,7 @@
 			files = (
 				010000000000000000000003 /* KeyboardShortcuts in Frameworks */,
 				01000000000000000000000A /* GRDB in Frameworks */,
+				010000000000000000000039 /* ThinkingOrbsKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,7 +208,12 @@
 				020000000000000000000030 /* OnboardingWindowController.swift */,
 				020000000000000000000031 /* OnboardingScratchpadOverlay.swift */,
 				020000000000000000000032 /* GlobalShortcutFormatting.swift */,
-				020000000000000000000033 /* ShapingIndicator.swift */,
+				020000000000000000000033 /* RascOrb.swift */,
+				020000000000000000000037 /* RascMotion.swift */,
+				020000000000000000000038 /* ShortcutKeycapView.swift */,
+				020000000000000000000039 /* ThirdPartyNotices.txt */,
+				02000000000000000000003A /* Assets.xcassets */,
+				02000000000000000000003B /* RascLogo.swift */,
 			);
 			name = Rasc;
 			sourceTree = "<group>";
@@ -251,6 +268,7 @@
 			packageProductDependencies = (
 				0D0000000000000000000001 /* KeyboardShortcuts */,
 				0D0000000000000000000002 /* GRDB */,
+				0D0000000000000000000003 /* ThinkingOrbsKit */,
 			);
 			productName = Rasc;
 			productReference = 020000000000000000000003 /* Rasc.app */;
@@ -305,6 +323,7 @@
 			packageReferences = (
 				0C0000000000000000000001 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 				0C0000000000000000000002 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+				0C0000000000000000000003 /* XCLocalSwiftPackageReference "ThinkingOrbsKit" */,
 			);
 			productRefGroup = 050000000000000000000004 /* Products */;
 			projectDirPath = "";
@@ -321,6 +340,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01000000000000000000003A /* ThirdPartyNotices.txt in Resources */,
+				01000000000000000000003B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -373,7 +394,10 @@
 				010000000000000000000030 /* OnboardingWindowController.swift in Sources */,
 				010000000000000000000031 /* OnboardingScratchpadOverlay.swift in Sources */,
 				010000000000000000000032 /* GlobalShortcutFormatting.swift in Sources */,
-				010000000000000000000033 /* ShapingIndicator.swift in Sources */,
+				010000000000000000000033 /* RascOrb.swift in Sources */,
+				010000000000000000000037 /* RascMotion.swift in Sources */,
+				010000000000000000000038 /* ShortcutKeycapView.swift in Sources */,
+				01000000000000000000003C /* RascLogo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -522,6 +546,7 @@
 		0B0000000000000000000003 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Rasc/Rasc.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
@@ -546,6 +571,7 @@
 		0B0000000000000000000004 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Rasc/Rasc.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
@@ -650,6 +676,13 @@
 		};
 /* End XCRemoteSwiftPackageReference section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		0C0000000000000000000003 /* XCLocalSwiftPackageReference "ThinkingOrbsKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Vendor/ThinkingOrbsKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		0D0000000000000000000001 /* KeyboardShortcuts */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -660,6 +693,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0C0000000000000000000002 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
 			productName = GRDB;
+		};
+		0D0000000000000000000003 /* ThinkingOrbsKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0C0000000000000000000003 /* XCLocalSwiftPackageReference "ThinkingOrbsKit" */;
+			productName = ThinkingOrbsKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
