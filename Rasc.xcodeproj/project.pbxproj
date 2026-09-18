@@ -48,6 +48,18 @@
 		010000000000000000000028 /* AppDiagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000027 /* AppDiagnostics.swift */; };
 		010000000000000000000029 /* AppBootstrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000028 /* AppBootstrap.swift */; };
 		01000000000000000000002A /* WindowFrameStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000029 /* WindowFrameStoreTests.swift */; };
+		01000000000000000000002B /* OnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002B /* OnboardingStep.swift */; };
+		01000000000000000000002C /* OnboardingStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002C /* OnboardingStore.swift */; };
+		01000000000000000000002D /* OnboardingEligibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002D /* OnboardingEligibility.swift */; };
+		01000000000000000000002E /* OnboardingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002E /* OnboardingCoordinator.swift */; };
+		01000000000000000000002F /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002F /* OnboardingView.swift */; };
+		010000000000000000000030 /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000030 /* OnboardingWindowController.swift */; };
+		010000000000000000000031 /* OnboardingScratchpadOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000031 /* OnboardingScratchpadOverlay.swift */; };
+		010000000000000000000032 /* GlobalShortcutFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000032 /* GlobalShortcutFormatting.swift */; };
+		010000000000000000000033 /* ShapingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000033 /* ShapingIndicator.swift */; };
+		010000000000000000000034 /* OnboardingStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000034 /* OnboardingStoreTests.swift */; };
+		010000000000000000000035 /* OnboardingEligibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000035 /* OnboardingEligibilityTests.swift */; };
+		010000000000000000000036 /* OnboardingBehaviorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000036 /* OnboardingBehaviorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +114,18 @@
 		020000000000000000000028 /* AppBootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/AppBootstrap.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000029 /* WindowFrameStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrameStoreTests.swift; sourceTree = "<group>"; };
 		02000000000000000000002A /* Rasc.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Rasc/Rasc.entitlements; sourceTree = SOURCE_ROOT; };
+		02000000000000000000002B /* OnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Onboarding/OnboardingStep.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000002C /* OnboardingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Onboarding/OnboardingStore.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000002D /* OnboardingEligibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Onboarding/OnboardingEligibility.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000002E /* OnboardingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Onboarding/OnboardingCoordinator.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000002F /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Onboarding/OnboardingView.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000030 /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Onboarding/OnboardingWindowController.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000031 /* OnboardingScratchpadOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Onboarding/OnboardingScratchpadOverlay.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000032 /* GlobalShortcutFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/GlobalShortcutFormatting.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000033 /* ShapingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/UI/ShapingIndicator.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000034 /* OnboardingStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStoreTests.swift; sourceTree = "<group>"; };
+		020000000000000000000035 /* OnboardingEligibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingEligibilityTests.swift; sourceTree = "<group>"; };
+		020000000000000000000036 /* OnboardingBehaviorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingBehaviorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +188,15 @@
 				020000000000000000000014 /* RefinementRevision.swift */,
 				020000000000000000000017 /* RefinementPrompt.swift */,
 				020000000000000000000018 /* FoundationModelsRefinementProvider.swift */,
+				02000000000000000000002B /* OnboardingStep.swift */,
+				02000000000000000000002C /* OnboardingStore.swift */,
+				02000000000000000000002D /* OnboardingEligibility.swift */,
+				02000000000000000000002E /* OnboardingCoordinator.swift */,
+				02000000000000000000002F /* OnboardingView.swift */,
+				020000000000000000000030 /* OnboardingWindowController.swift */,
+				020000000000000000000031 /* OnboardingScratchpadOverlay.swift */,
+				020000000000000000000032 /* GlobalShortcutFormatting.swift */,
+				020000000000000000000033 /* ShapingIndicator.swift */,
 			);
 			name = Rasc;
 			sourceTree = "<group>";
@@ -183,6 +216,9 @@
 				020000000000000000000022 /* PaletteCommandTests.swift */,
 				020000000000000000000024 /* GlobalShortcutMigrationTests.swift */,
 				020000000000000000000029 /* WindowFrameStoreTests.swift */,
+				020000000000000000000034 /* OnboardingStoreTests.swift */,
+				020000000000000000000035 /* OnboardingEligibilityTests.swift */,
+				020000000000000000000036 /* OnboardingBehaviorTests.swift */,
 			);
 			path = RascTests;
 			sourceTree = SOURCE_ROOT;
@@ -329,6 +365,15 @@
 				010000000000000000000015 /* RefinementRevision.swift in Sources */,
 				010000000000000000000018 /* RefinementPrompt.swift in Sources */,
 				010000000000000000000019 /* FoundationModelsRefinementProvider.swift in Sources */,
+				01000000000000000000002B /* OnboardingStep.swift in Sources */,
+				01000000000000000000002C /* OnboardingStore.swift in Sources */,
+				01000000000000000000002D /* OnboardingEligibility.swift in Sources */,
+				01000000000000000000002E /* OnboardingCoordinator.swift in Sources */,
+				01000000000000000000002F /* OnboardingView.swift in Sources */,
+				010000000000000000000030 /* OnboardingWindowController.swift in Sources */,
+				010000000000000000000031 /* OnboardingScratchpadOverlay.swift in Sources */,
+				010000000000000000000032 /* GlobalShortcutFormatting.swift in Sources */,
+				010000000000000000000033 /* ShapingIndicator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,6 +392,9 @@
 				010000000000000000000023 /* PaletteCommandTests.swift in Sources */,
 				010000000000000000000025 /* GlobalShortcutMigrationTests.swift in Sources */,
 				01000000000000000000002A /* WindowFrameStoreTests.swift in Sources */,
+				010000000000000000000034 /* OnboardingStoreTests.swift in Sources */,
+				010000000000000000000035 /* OnboardingEligibilityTests.swift in Sources */,
+				010000000000000000000036 /* OnboardingBehaviorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
