@@ -5,6 +5,23 @@ import Testing
 @Suite(.serialized)
 @MainActor
 struct ScratchpadSessionTests {
+    @Test
+    func requestingSettingsDoesNotChangeTheActiveScratchpad() throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "unfinished thought"
+
+        session.requestSettingsPresentation()
+
+        #expect(session.settingsPresentationRequest == 1)
+        #expect(session.surface == .editor)
+        #expect(session.text == "unfinished thought")
+    }
+
     @Test(arguments: ["", "  \n\t "])
     func doesNotPersistEmptyDrafts(content: String) async throws {
         let fixture = try makeFixture()
