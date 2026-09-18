@@ -56,6 +56,10 @@ struct WindowFrameStore {
         self.userDefaults = userDefaults
     }
 
+    var hasSavedFrame: Bool {
+        storedFrame != nil
+    }
+
     func restore(
         into window: NSWindow,
         on preferredScreen: NSScreen?,
