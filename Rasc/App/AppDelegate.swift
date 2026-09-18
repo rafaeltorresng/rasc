@@ -11,6 +11,7 @@ extension KeyboardShortcuts.Name {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDelegate {
     private let bootstrap = AppBootstrap()
+    private let onboardingCoordinator = OnboardingCoordinator()
     private var menuBarController: MenuBarController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -18,9 +19,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
         menuBarController = MenuBarController(delegate: self)
         bootstrap.start()
 
+        let forceResetOnboarding = ProcessInfo.processInfo.arguments.contains("-resetOnboarding")
+        Task { @MainActor in
+            await onboardingCoordinator.prepare(
+                bootstrap: bootstrap,
+                forceReset: forceResetOnboarding
+            )
+        }
+
         KeyboardShortcuts.onKeyUp(for: .toggleScratchpad) { [weak self] in
             Task { @MainActor in
-                guard let panel = await self?.bootstrap.awaitPanel() else { return }
+                guard let self else { return }
+                if await self.onboardingCoordinator.handleGlobalShortcut() {
+                    return
+                }
+                guard let panel = await self.bootstrap.awaitPanel() else { return }
                 await panel.toggle()
             }
         }
@@ -94,4 +107,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
     func menuBarQuit() {
         NSApp.terminate(nil)
     }
+
+    #if DEBUG
+    func menuBarResetOnboarding() {
+        onboardingCoordinator.resetOnboardingStateOnly()
+    }
+    #endif
 }

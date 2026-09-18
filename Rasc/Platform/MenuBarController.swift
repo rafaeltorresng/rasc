@@ -7,6 +7,9 @@ protocol MenuBarControllerDelegate: AnyObject {
     func menuBarOpenSearch()
     func menuBarOpenSettings()
     func menuBarQuit()
+    #if DEBUG
+    func menuBarResetOnboarding()
+    #endif
 }
 
 @MainActor
@@ -57,6 +60,14 @@ final class MenuBarController {
             modifierMask: .command
         ))
         menu.addItem(.separator())
+        #if DEBUG
+        menu.addItem(makeItem(
+            title: "Reset Onboarding",
+            action: #selector(resetOnboarding),
+            keyEquivalent: ""
+        ))
+        menu.addItem(.separator())
+        #endif
         menu.addItem(makeItem(
             title: "Quit Rasc",
             action: #selector(quit),
@@ -98,4 +109,10 @@ final class MenuBarController {
     @objc private func quit() {
         delegate?.menuBarQuit()
     }
+
+    #if DEBUG
+    @objc private func resetOnboarding() {
+        delegate?.menuBarResetOnboarding()
+    }
+    #endif
 }

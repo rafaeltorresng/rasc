@@ -32,6 +32,7 @@ final class ScratchpadSession {
         didSet {
             guard text != oldValue else { return }
             contentRevision &+= 1
+            onTextDidChange?(text)
             if isApplyingAcceptedRefinement { return }
             if activeRefinementID != nil {
                 cancelRefinement()
@@ -41,7 +42,17 @@ final class ScratchpadSession {
         }
     }
     private(set) var contentRevision = 0
-    private(set) var surface = Surface.editor
+    private(set) var surface = Surface.editor {
+        didSet {
+            guard oldValue != surface else { return }
+            onSurfaceDidChange?(surface)
+        }
+    }
+
+    var scratchpadGuidance = OnboardingScratchpadGuidance.inactive
+    var onTextDidChange: ((String) -> Void)?
+    var onSurfaceDidChange: ((Surface) -> Void)?
+    var onMessageDidShow: ((RefinementMessage?) -> Void)?
 
     var surfaceDiagnosticLabel: String {
         switch surface {
@@ -728,6 +739,7 @@ final class ScratchpadSession {
         messageTask?.cancel()
         self.message = message
         surface = .message
+        onMessageDidShow?(message)
         messageTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(2))
             guard !Task.isCancelled, self?.message == message else { return }
@@ -859,18 +871,8 @@ struct ScratchpadView: View {
                     .accessibilityValue("Refining note")
                     .onExitCommand(perform: handleEscape)
                     .overlay(alignment: .bottomLeading) {
-                        HStack(spacing: 6) {
-                            if !reduceMotion {
-                                ProgressView()
-                                    .controlSize(.small)
-                            }
-                            Text("refining…")
-                                .font(.caption.monospaced())
-                                .foregroundStyle(.secondary)
-                        }
-                        .padding(12)
-                        .accessibilityElement(children: .combine)
-                        .accessibilityLabel("Refining note")
+                        ShapingIndicator()
+                            .padding(12)
                     }
             case .refinementPreview:
                 VStack(alignment: .leading, spacing: 0) {
@@ -921,7 +923,12 @@ struct ScratchpadView: View {
             }
         }
         .overlay(alignment: .bottomLeading) {
-            if let saveErrorMessage = session.saveErrorMessage {
+            if session.scratchpadGuidance.isActive {
+                OnboardingScratchpadOverlay(
+                    guidance: session.scratchpadGuidance,
+                    editorText: session.text
+                )
+            } else if let saveErrorMessage = session.saveErrorMessage {
                 Text(saveErrorMessage)
                     .foregroundStyle(.red)
                     .padding(12)
