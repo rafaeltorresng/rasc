@@ -6,7 +6,7 @@ struct OnboardingScratchpadActions: @unchecked Sendable {
 }
 
 private struct OnboardingScratchpadActionsKey: EnvironmentKey {
-    nonisolated(unsafe) static let defaultValue = OnboardingScratchpadActions()
+    static let defaultValue = OnboardingScratchpadActions()
 }
 
 extension EnvironmentValues {
@@ -22,34 +22,66 @@ struct OnboardingScratchpadOverlay: View {
 
     @Environment(\.onboardingScratchpadActions) private var actions
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var showDelayedEmptyHint = false
+    @State private var emptyHintTask: Task<Void, Never>?
 
     var body: some View {
         VStack {
             Spacer()
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 8) {
                 if let unavailable = guidance.unavailablePresentation {
                     unavailableView(unavailable)
+                        .transition(.opacity)
                 } else if guidance.showEscapeHint {
                     hintRow(symbol: "Esc", text: "Hide Rasc")
+                        .transition(hintTransition)
                 } else if guidance.showRefineHint {
                     hintRow(symbol: "⌘J", text: "Refine")
-                        .transition(reduceMotion ? .opacity : .opacity.combined(with: .offset(y: 4)))
-                } else if guidance.showEmptyHint && editorText.isEmpty {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Write something unfinished…")
-                            .font(.caption.monospaced())
-                            .foregroundStyle(.secondary)
-                        Text("A thought, task, message, idea — anything.")
-                            .font(.caption2)
-                            .foregroundStyle(.tertiary)
-                    }
+                        .transition(hintTransition)
+                } else if guidance.showEmptyHint && editorText.isEmpty && showDelayedEmptyHint {
+                    emptyHint
+                        .transition(hintTransition)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(12)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 12)
         }
         .allowsHitTesting(guidance.unavailablePresentation != nil)
-        .animation(reduceMotion ? nil : .easeOut(duration: 0.18), value: guidance)
+        .animation(RascMotion.surface(reduceMotion: reduceMotion), value: guidance)
+        .onAppear {
+            scheduleEmptyHintIfNeeded()
+        }
+        .onChange(of: guidance.showEmptyHint) {
+            scheduleEmptyHintIfNeeded()
+        }
+        .onChange(of: editorText) {
+            if editorText.isEmpty {
+                scheduleEmptyHintIfNeeded()
+            } else {
+                showDelayedEmptyHint = false
+            }
+        }
+    }
+
+    private var hintTransition: AnyTransition {
+        if reduceMotion {
+            return .opacity
+        }
+        return .opacity.combined(with: .offset(y: 5))
+    }
+
+    private var emptyHint: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Write something unfinished…")
+                .font(.callout)
+                .foregroundStyle(.tertiary)
+            Text("A thought, task, message, idea — anything.")
+                .font(.caption)
+                .foregroundStyle(.quaternary)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Write something unfinished. A thought, task, message, idea — anything.")
     }
 
     @ViewBuilder
@@ -104,14 +136,37 @@ struct OnboardingScratchpadOverlay: View {
 
     private func hintRow(symbol: String, text: String) -> some View {
         HStack(spacing: 8) {
-            Text(symbol)
-                .font(.caption.monospaced().weight(.semibold))
+            ShortcutKeycapView(label: symbol, style: .compact)
             Text(text)
-                .font(.caption.monospaced())
+                .font(.caption)
                 .foregroundStyle(.secondary)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(text), \(symbol)")
+    }
+
+    private func scheduleEmptyHintIfNeeded() {
+        emptyHintTask?.cancel()
+
+        guard guidance.showEmptyHint, editorText.isEmpty else {
+            showDelayedEmptyHint = false
+            return
+        }
+
+        if reduceMotion {
+            showDelayedEmptyHint = true
+            return
+        }
+
+        guard !showDelayedEmptyHint else { return }
+
+        emptyHintTask = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(400))
+            guard !Task.isCancelled, guidance.showEmptyHint, editorText.isEmpty else { return }
+            withAnimation(RascMotion.surface(reduceMotion: false)) {
+                showDelayedEmptyHint = true
+            }
+        }
     }
 
     private func unavailableAccessibilityLabel(

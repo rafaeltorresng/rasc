@@ -19,6 +19,8 @@ final class OnboardingCoordinator {
     private(set) var captureSubstep: OnboardingCaptureSubstep = .waitingForShortcut
     private(set) var scratchpadGuidance = OnboardingScratchpadGuidance.inactive
     private(set) var isYieldingForShortcut = false
+    private(set) var shortcutKeycapPressed = false
+    private var shortcutKeycapFlashTask: Task<Void, Never>?
     private(set) var loginItemState = LoginItemState.disabled
     private(set) var loginItemError: String?
     private(set) var isUpdatingLoginItem = false
@@ -149,6 +151,20 @@ final class OnboardingCoordinator {
 
     func shouldInterceptPanelToggle() -> Bool {
         isWaitingForShortcut
+    }
+
+    func shouldFlashShortcutKeycap() -> Bool {
+        isActive && (presentedStep == .shortcut || isWaitingForShortcut)
+    }
+
+    func flashShortcutKeycap() {
+        shortcutKeycapFlashTask?.cancel()
+        shortcutKeycapPressed = true
+        shortcutKeycapFlashTask = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(140))
+            guard !Task.isCancelled else { return }
+            shortcutKeycapPressed = false
+        }
     }
 
     func dismissRefineUnavailable() {

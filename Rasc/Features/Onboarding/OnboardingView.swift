@@ -10,8 +10,7 @@ struct OnboardingView: View {
 
     var body: some View {
         ZStack {
-            Color(nsColor: .windowBackgroundColor)
-                .ignoresSafeArea()
+            OnboardingBackground()
 
             Group {
                 switch coordinator.presentedStep {
@@ -31,10 +30,14 @@ struct OnboardingView: View {
                     Color.clear
                 }
             }
-            .padding(40)
+            .padding(.horizontal, 48)
+            .padding(.vertical, 40)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .transition(RascMotion.stageTransition(reduceMotion: reduceMotion))
+            .id(coordinator.presentedStep)
         }
         .frame(width: 720, height: 520)
+        .animation(RascMotion.surface(reduceMotion: reduceMotion), value: coordinator.presentedStep)
         .onAppear {
             focusCurrentStep()
         }
@@ -47,16 +50,21 @@ struct OnboardingView: View {
     }
 
     private var welcomeContent: some View {
-        VStack(spacing: 20) {
-            ShapingBrandMark()
-                .padding(.bottom, 4)
+        VStack(spacing: 0) {
+            Spacer(minLength: 0)
+
+            RascOrb(state: .idle, size: .hero, decorative: true)
+                .padding(.bottom, 40)
 
             Text("Rasc")
-                .font(.system(size: 28, weight: .semibold))
+                .font(.system(size: 34, weight: .regular))
+                .tracking(-0.3)
+                .padding(.bottom, 20)
 
-            VStack(spacing: 8) {
+            VStack(spacing: 10) {
                 Text("A scratchpad for unfinished thoughts.")
                     .font(.title3)
+                    .fontWeight(.regular)
                     .multilineTextAlignment(.center)
 
                 Text("Capture without thinking.\nRefine without prompting.")
@@ -64,6 +72,7 @@ struct OnboardingView: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
+            .padding(.bottom, 40)
 
             VStack(spacing: 12) {
                 Button("Get started") {
@@ -81,37 +90,41 @@ struct OnboardingView: View {
                 .foregroundStyle(.secondary)
                 .accessibilityLabel("Skip setup")
             }
-            .padding(.top, 8)
 
             Text("No account · On-device")
                 .font(.caption)
                 .foregroundStyle(.tertiary)
-                .padding(.top, 4)
+                .padding(.top, 28)
+
+            Spacer(minLength: 0)
         }
-        .frame(maxWidth: 420)
+        .frame(maxWidth: 400)
     }
 
     private var shortcutContent: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 0) {
             VStack(spacing: 8) {
                 Text("One shortcut away.")
-                    .font(.title2.weight(.semibold))
+                    .font(.title2.weight(.medium))
+
                 Text("Rasc appears wherever you're working.")
                     .font(.body)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
+            .padding(.bottom, 32)
 
-            VStack(spacing: 12) {
+            VStack(spacing: 16) {
                 ShortcutKeycapView(
                     label: GlobalShortcutFormatting.currentToggleShortcutDisplay(),
-                    reduceMotion: reduceMotion
+                    style: .prominent,
+                    isPressed: coordinator.shortcutKeycapPressed
                 )
-                .accessibilityLabel("Global shortcut \(GlobalShortcutFormatting.currentToggleShortcutDisplay())")
 
                 KeyboardShortcuts.Recorder("Press to change", name: .toggleScratchpad)
                     .accessibilityLabel("Shortcut recorder")
             }
+            .padding(.bottom, 32)
 
             Button("Continue") {
                 coordinator.continueFromShortcut()
@@ -124,47 +137,57 @@ struct OnboardingView: View {
             Text("You can change this anytime in Settings.")
                 .font(.caption)
                 .foregroundStyle(.tertiary)
+                .padding(.top, 16)
 
             Button("Skip setup") {
                 coordinator.skipSetup()
             }
             .buttonStyle(.plain)
             .foregroundStyle(.secondary)
+            .padding(.top, 8)
             .accessibilityLabel("Skip setup")
         }
-        .frame(maxWidth: 420)
+        .frame(maxWidth: 400)
     }
 
     private var waitingForShortcutContent: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 24) {
             Text("Try it.")
-                .font(.title2.weight(.semibold))
-            Text("Press \(GlobalShortcutFormatting.currentToggleShortcutDisplay())")
-                .font(.title3.monospaced())
-                .accessibilityLabel("Press configured global shortcut")
+                .font(.title2.weight(.medium))
+
+            ShortcutKeycapView(
+                label: GlobalShortcutFormatting.currentToggleShortcutDisplay(),
+                style: .prominent,
+                isPressed: coordinator.shortcutKeycapPressed
+            )
         }
-        .opacity(coordinator.isYieldingForShortcut ? 0.55 : 1)
-        .animation(reduceMotion ? nil : .easeOut(duration: 0.25), value: coordinator.isYieldingForShortcut)
+        .opacity(coordinator.isYieldingForShortcut ? 0.72 : 1)
+        .scaleEffect(coordinator.isYieldingForShortcut && !reduceMotion ? 0.985 : 1)
+        .animation(RascMotion.surface(reduceMotion: reduceMotion), value: coordinator.isYieldingForShortcut)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Try it. Press \(GlobalShortcutFormatting.currentToggleShortcutDisplay())")
     }
 
     private var completionContent: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 0) {
             Text("You're ready.")
-                .font(.title2.weight(.semibold))
+                .font(.title2.weight(.medium))
+                .padding(.bottom, 8)
 
             Text("Rasc is always one shortcut away.")
                 .font(.body)
                 .foregroundStyle(.secondary)
+                .padding(.bottom, 24)
 
             ShortcutKeycapView(
                 label: GlobalShortcutFormatting.currentToggleShortcutDisplay(),
-                reduceMotion: reduceMotion
+                style: .prominent
             )
-            .padding(.vertical, 4)
+            .padding(.bottom, 32)
 
-            VStack(spacing: 10) {
+            VStack(spacing: 12) {
                 Text("Keep Rasc ready after login")
-                    .font(.headline)
+                    .font(.subheadline.weight(.medium))
 
                 if coordinator.loginItemState == .requiresApproval {
                     Text("Launch at Login needs approval in System Settings.")
@@ -196,7 +219,7 @@ struct OnboardingView: View {
                     .foregroundStyle(.tertiary)
                     .multilineTextAlignment(.center)
             }
-            .padding(.top, 8)
+            .padding(.bottom, 24)
 
             Button("Finish") {
                 coordinator.finish()
@@ -206,7 +229,7 @@ struct OnboardingView: View {
             .focused($completionFocused)
             .accessibilityLabel("Finish onboarding")
         }
-        .frame(maxWidth: 420)
+        .frame(maxWidth: 400)
     }
 
     private func focusCurrentStep() {
@@ -221,37 +244,9 @@ struct OnboardingView: View {
     }
 }
 
-private struct ShortcutKeycapView: View {
-    let label: String
-    let reduceMotion: Bool
-
-    @State private var isPressed = false
-
+private struct OnboardingBackground: View {
     var body: some View {
-        Text(label)
-            .font(.title3.monospaced())
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .background {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(Color(nsColor: .controlBackgroundColor))
-                    .shadow(
-                        color: .black.opacity(isPressed ? 0.04 : 0.12),
-                        radius: isPressed ? 1 : 4,
-                        y: isPressed ? 0 : 2
-                    )
-            }
-            .overlay {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
-            }
-            .scaleEffect(reduceMotion || !isPressed ? 1 : 0.98)
-            .offset(y: isPressed ? 1 : 0)
-            .onAppear {
-                guard !reduceMotion else { return }
-                withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
-                    isPressed = true
-                }
-            }
+        Color(nsColor: .windowBackgroundColor)
+            .ignoresSafeArea()
     }
 }
