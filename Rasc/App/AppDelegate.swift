@@ -30,6 +30,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
         KeyboardShortcuts.onKeyUp(for: .toggleScratchpad) { [weak self] in
             Task { @MainActor in
                 guard let self else { return }
+                if self.onboardingCoordinator.shouldFlashShortcutKeycap() {
+                    self.onboardingCoordinator.flashShortcutKeycap()
+                }
                 if await self.onboardingCoordinator.handleGlobalShortcut() {
                     return
                 }
