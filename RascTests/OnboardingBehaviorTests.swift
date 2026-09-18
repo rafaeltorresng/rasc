@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import Testing
 @testable import Rasc
@@ -54,9 +55,47 @@ struct OnboardingBehaviorTests {
         #expect(session.scratchpadGuidance.showRefineHint)
     }
 
+    @Test
+    func coreSurfaceMetricsKeepWritingAndTransientSurfacesInOneVisualSystem() {
+        #expect(
+            RascSurfaceMetrics.placeholderLeadingInset
+                == RascSurfaceMetrics.editorPadding
+                    + RascSurfaceMetrics.textContainerHorizontalInset
+        )
+        #expect(RascSurfaceMetrics.previewCornerRadius > RascSurfaceMetrics.feedbackCornerRadius)
+        #expect(RascSurfaceMetrics.inlineOrbSize == 20)
+    }
+
+    @Test
+    func adaptiveAccentKeepsProminentButtonLabelsReadable() throws {
+        let darkAccent = RascSurfacePalette.accentNSColor(for: .dark)
+        let lightAccent = RascSurfacePalette.accentNSColor(for: .light)
+
+        #expect(try contrastRatio(darkAccent, .white) >= 4.5)
+        #expect(try contrastRatio(lightAccent, .white) >= 4.5)
+    }
+
     private func makeFixture() throws -> ScratchpadTestFixture {
         try ScratchpadTestFixture()
     }
+}
+
+private func contrastRatio(_ first: NSColor, _ second: NSColor) throws -> Double {
+    let firstLuminance = try relativeLuminance(first)
+    let secondLuminance = try relativeLuminance(second)
+    return (max(firstLuminance, secondLuminance) + 0.05)
+        / (min(firstLuminance, secondLuminance) + 0.05)
+}
+
+private func relativeLuminance(_ color: NSColor) throws -> Double {
+    let color = try #require(color.usingColorSpace(.sRGB))
+    let components = [color.redComponent, color.greenComponent, color.blueComponent]
+        .map { component in
+            component <= 0.04045
+                ? component / 12.92
+                : pow((component + 0.055) / 1.055, 2.4)
+        }
+    return (0.2126 * components[0]) + (0.7152 * components[1]) + (0.0722 * components[2])
 }
 
 private struct ScratchpadTestFixture {
