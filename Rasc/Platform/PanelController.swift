@@ -5,17 +5,26 @@ import SwiftUI
 @MainActor
 final class PanelController: NSObject, NSWindowDelegate {
     let panel: NSPanel
+    let repository: NoteRepository
 
     private let session: ScratchpadSession
     private let windowFrameStore: WindowFrameStore
     private var previousApplication: NSRunningApplication?
     private var displayObservers: [NSObjectProtocol] = []
+    weak var onboardingDelegate: OnboardingPanelDelegate?
+
+    var scratchpadGuidance: OnboardingScratchpadGuidance = .inactive {
+        didSet {
+            session.scratchpadGuidance = scratchpadGuidance
+        }
+    }
 
     init(
         repository: NoteRepository,
         refinementProvider: any RefinementProvider = FoundationModelsRefinementProvider(),
         windowFrameStore: WindowFrameStore = WindowFrameStore()
     ) {
+        self.repository = repository
         session = ScratchpadSession(
             repository: repository,
             refinementProvider: refinementProvider
@@ -30,6 +39,7 @@ final class PanelController: NSObject, NSWindowDelegate {
 
         super.init()
 
+        wireSessionObservation()
         configurePanel()
         observeDisplayChanges()
         panel.contentViewController = NSHostingController(
@@ -44,6 +54,7 @@ final class PanelController: NSObject, NSWindowDelegate {
                     self?.handlePaletteCommand(command)
                 }
             )
+            .environment(\.onboardingScratchpadActions, onboardingScratchpadActions())
         )
     }
 
@@ -91,6 +102,16 @@ final class PanelController: NSObject, NSWindowDelegate {
         presentPanel()
     }
 
+    func startNewScratchForOnboarding() async {
+        do {
+            try await session.startNewScratch()
+        } catch {
+            session.markLoadFailed()
+        }
+
+        presentPanel()
+    }
+
     func openCommandPalette() async {
         if !panel.isVisible {
             do {
@@ -133,6 +154,7 @@ final class PanelController: NSObject, NSWindowDelegate {
 
         let durationMs = Int((ContinuousClock.now - startedAt).components.attoseconds / 1_000_000_000_000_000)
         AppDiagnostics.panelPresentCompleted(surface: surfaceLabel, durationMs: max(durationMs, 0))
+        onboardingDelegate?.panelDidShow()
     }
 
     func hide() async {
@@ -155,6 +177,7 @@ final class PanelController: NSObject, NSWindowDelegate {
         }
 
         previousApplication = nil
+        onboardingDelegate?.panelDidHide()
     }
 
     func flushForTermination() async -> Bool {
@@ -298,6 +321,33 @@ final class PanelController: NSObject, NSWindowDelegate {
             session.requestCommandPaletteFocus()
         case .editor, .message, .refining, .refinementPreview:
             session.requestEditorFocus()
+        }
+    }
+
+    private func onboardingScratchpadActions() -> OnboardingScratchpadActions {
+        OnboardingScratchpadActions(
+            dismissRefineUnavailable: { [weak self] in
+                Task { @MainActor in
+                    self?.onboardingDelegate?.dismissRefineUnavailable()
+                }
+            },
+            openRefineSystemSettings: { [weak self] in
+                Task { @MainActor in
+                    self?.onboardingDelegate?.openRefineSystemSettings()
+                }
+            }
+        )
+    }
+
+    private func wireSessionObservation() {
+        session.onTextDidChange = { [weak self] text in
+            self?.onboardingDelegate?.sessionTextDidChange(text)
+        }
+        session.onSurfaceDidChange = { [weak self] surface in
+            self?.onboardingDelegate?.sessionSurfaceDidChange(surface)
+        }
+        session.onMessageDidShow = { [weak self] message in
+            self?.onboardingDelegate?.sessionMessageDidShow(message)
         }
     }
 
