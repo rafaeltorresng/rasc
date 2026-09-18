@@ -69,6 +69,7 @@ final class ScratchpadSession {
     private(set) var selectedSearchIndex = 0
     private(set) var focusRequest = 0
     private(set) var searchFocusRequest = 0
+    private(set) var settingsPresentationRequest = 0
     var commandPaletteQuery = ""
     private(set) var filteredCommands: [PaletteCommand] = PaletteCommand.allCases
     private(set) var selectedCommandIndex = 0
@@ -120,6 +121,10 @@ final class ScratchpadSession {
 
     func requestCommandPaletteFocus() {
         commandPaletteFocusRequest &+= 1
+    }
+
+    func requestSettingsPresentation() {
+        settingsPresentationRequest &+= 1
     }
 
     func markLoadFailed() {
@@ -842,21 +847,30 @@ struct ScratchpadView: View {
         Group {
             switch session.surface {
             case .editor, .message:
-                if #available(macOS 15.0, *) {
-                    SelectableScratchEditor(session: session, onEscape: handleEscape)
-                } else {
-                    TextEditor(text: $session.text)
-                        .font(.system(size: 14, design: .monospaced))
-                        .foregroundStyle(.primary)
-                        .padding(20)
-                        .focused($editorIsFocused)
-                        .onChange(of: session.focusRequest, initial: true) {
-                            requestEditorFocus()
-                        }
-                        .onChange(of: session.text) {
-                            session.scheduleAutosave()
-                        }
-                        .onExitCommand(perform: handleEscape)
+                ZStack(alignment: .topLeading) {
+                    if #available(macOS 15.0, *) {
+                        SelectableScratchEditor(session: session, onEscape: handleEscape)
+                    } else {
+                        TextEditor(text: $session.text)
+                            .scrollContentBackground(.hidden)
+                            .background(.clear)
+                            .font(.system(size: 15))
+                            .foregroundStyle(.primary)
+                            .padding(RascSurfaceMetrics.editorPadding)
+                            .focused($editorIsFocused)
+                            .onChange(of: session.focusRequest, initial: true) {
+                                requestEditorFocus()
+                            }
+                            .onChange(of: session.text) {
+                                session.scheduleAutosave()
+                            }
+                            .onExitCommand(perform: handleEscape)
+                    }
+
+                    if session.surface == .editor, session.text.isEmpty {
+                        ScratchpadPlaceholder()
+                            .transition(.opacity)
+                    }
                 }
             case .search:
                 HistorySearchView(session: session)
@@ -864,70 +878,96 @@ struct ScratchpadView: View {
                 CommandPaletteView(session: session, onExecute: onPaletteCommand)
             case .refining:
                 TextEditor(text: .constant(session.text))
-                    .font(.system(size: 14, design: .monospaced))
-                    .padding(20)
+                    .scrollContentBackground(.hidden)
+                    .background(.clear)
+                    .font(.system(size: 15))
+                    .foregroundStyle(.primary.opacity(0.82))
+                    .padding(RascSurfaceMetrics.editorPadding)
                     .disabled(true)
                     .accessibilityLabel("Scratch editor")
                     .accessibilityValue("Refining note")
                     .onExitCommand(perform: handleEscape)
                     .overlay(alignment: .bottomLeading) {
                         ShapingIndicator()
-                            .padding(.horizontal, 16)
-                            .padding(.bottom, 12)
+                            .padding(.leading, 18)
+                            .padding(.bottom, 16)
                     }
                     .transition(surfaceTransition)
             case .refinementPreview:
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("refined")
-                        .font(.caption.monospaced())
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal, 20)
-                        .padding(.top, 16)
-                        .padding(.bottom, 4)
-                        .accessibilityAddTraits(.isHeader)
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(.secondary.opacity(0.55))
+                            .frame(width: 5, height: 5)
+                            .accessibilityHidden(true)
+
+                        Text("Refined")
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.secondary)
+                            .accessibilityAddTraits(.isHeader)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 17)
+                    .padding(.bottom, 12)
+
                     ScrollView {
                         Text(session.refinementPreview?.result.text ?? "")
-                            .font(.system(size: 14, design: .monospaced))
+                            .font(.system(size: 15))
+                            .lineSpacing(3)
                             .textSelection(.enabled)
                             .frame(maxWidth: .infinity, alignment: .topLeading)
                             .padding(.horizontal, 20)
-                            .padding(.bottom, 16)
+                            .padding(.bottom, 20)
                     }
                     .accessibilityLabel("Refined preview")
-                    HStack(spacing: 16) {
-                        Button("Esc cancel") {
+
+                    Rectangle()
+                        .fill(.primary.opacity(0.07))
+                        .frame(height: 1)
+
+                    HStack(spacing: 12) {
+                        Button {
                             _ = session.handleEscape()
+                        } label: {
+                            RefinementActionLabel(title: "Cancel", shortcut: "Esc")
                         }
                         .buttonStyle(.plain)
                         .keyboardShortcut(.cancelAction)
                         .accessibilityLabel("Cancel refinement")
+
                         Spacer()
-                        Button("↵ accept") {
+
+                        Button {
                             Task {
                                 try? await session.acceptRefinement(undoManager: undoManager)
                             }
+                        } label: {
+                            RefinementActionLabel(title: "Accept", shortcut: "↵", isPrimary: true)
                         }
                         .buttonStyle(.plain)
                         .keyboardShortcut(.defaultAction)
                         .accessibilityLabel("Accept refinement")
                     }
-                    .font(.caption.monospaced())
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 11)
                 }
                 .refinementPreviewSurface()
                 .overlay {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    RoundedRectangle(
+                        cornerRadius: RascSurfaceMetrics.previewCornerRadius,
+                        style: .continuous
+                    )
                         .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
                 }
-                .padding(8)
+                .padding(10)
                 .accessibilityElement(children: .contain)
                 .accessibilityLabel("Refinement preview")
                 .onExitCommand(perform: handleEscape)
                 .transition(surfaceTransition)
             }
         }
+        .scratchpadCanvas()
+        .presentsSettings(on: session.settingsPresentationRequest)
         .animation(RascMotion.surface(reduceMotion: reduceMotion), value: session.surface)
         .overlay(alignment: .bottomLeading) {
             if session.scratchpadGuidance.isActive {
@@ -958,19 +998,28 @@ struct ScratchpadView: View {
 
     @ViewBuilder
     private func refinementMessageView(_ message: RefinementMessage) -> some View {
-        HStack(spacing: 6) {
-            if message == .alreadyUseful {
+        if message == .alreadyUseful {
+            HStack(spacing: 7) {
                 Image(systemName: "checkmark")
                     .font(.caption2.weight(.medium))
                     .foregroundStyle(.secondary)
                     .accessibilityHidden(true)
+
+                Text(message.text)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 7)
+            .confirmationSurface()
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(message.text)
+        } else {
             Text(message.text)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .accessibilityLabel(message.text)
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(message.text)
     }
 
     private func requestEditorFocus() {
@@ -1002,9 +1051,11 @@ private struct SelectableScratchEditor: View {
 
     var body: some View {
         TextEditor(text: $session.text, selection: $selection)
-            .font(.system(size: 14, design: .monospaced))
+            .scrollContentBackground(.hidden)
+            .background(.clear)
+            .font(.system(size: 15))
             .foregroundStyle(.primary)
-            .padding(20)
+            .padding(RascSurfaceMetrics.editorPadding)
             .focused($isFocused)
             .onChange(of: session.focusRequest, initial: true) {
                 Task { @MainActor in
@@ -1051,5 +1102,52 @@ private struct SelectableScratchEditor: View {
             return ranges.ranges.count > 1
         }
         return false
+    }
+}
+
+private struct ScratchpadPlaceholder: View {
+    var body: some View {
+        Text("Write something unfinished…")
+            .font(.system(size: 15))
+            .foregroundStyle(.tertiary)
+            .padding(.leading, RascSurfaceMetrics.placeholderLeadingInset)
+            .padding(.top, RascSurfaceMetrics.placeholderTopInset)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
+}
+
+private struct RefinementActionLabel: View {
+    let title: String
+    let shortcut: String
+    var isPrimary = false
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        HStack(spacing: 7) {
+            Text(shortcut)
+                .font(.caption2.monospaced().weight(.medium))
+                .foregroundStyle(isPrimary ? .primary : .tertiary)
+
+            Text(title)
+                .font(.caption.weight(.medium))
+                .foregroundStyle(isPrimary ? .primary : .secondary)
+        }
+        .padding(.horizontal, 9)
+        .padding(.vertical, 6)
+        .background {
+            if isPrimary {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(RascSurfacePalette.subtleFill(for: colorScheme))
+            }
+        }
+        .overlay {
+            if isPrimary {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .strokeBorder(RascSurfacePalette.border(for: colorScheme), lineWidth: 1)
+            }
+        }
+        .contentShape(Rectangle())
     }
 }
