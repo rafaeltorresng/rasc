@@ -131,7 +131,7 @@ final class PanelController: NSObject, NSWindowDelegate {
     }
 
     func openSettings() {
-        AppSettings.present()
+        session.requestSettingsPresentation()
     }
 
     private func presentPanel() {
@@ -218,6 +218,7 @@ final class PanelController: NSObject, NSWindowDelegate {
         panel.title = "Rasc"
         panel.titleVisibility = .hidden
         panel.titlebarAppearsTransparent = true
+        panel.backgroundColor = RascSurfacePalette.panelBackground
         panel.isFloatingPanel = true
         panel.hidesOnDeactivate = false
         panel.becomesKeyOnlyIfNeeded = false

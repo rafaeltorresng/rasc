@@ -69,7 +69,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
     }
 
     func openSettings() {
-        AppSettings.present()
+        Task { @MainActor in
+            if let panel = await bootstrap.awaitPanel() {
+                panel.openSettings()
+            } else {
+                NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+            }
+        }
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
