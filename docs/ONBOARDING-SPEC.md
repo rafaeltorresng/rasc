@@ -1277,3 +1277,48 @@ The onboarding should not feel like something the user completes before reaching
 It should feel like:
 
 > **the first time they use Rasc.**
+
+---
+
+# 49. Implementation notes (M7)
+
+This section documents intentional differences between the specification above and the M7 implementation.
+
+## Default shortcut display
+
+**Original requirement:** examples use `⌥ Space` as the default shortcut.
+
+**Implemented behavior:** onboarding displays the production `KeyboardShortcuts` value for `.toggleScratchpad`. The app default is currently `⌥ \` (migrated from `⌥ Space` via `GlobalShortcutMigration`). The recorder and displayed shortcut always reflect the real configured value.
+
+## Existing-user migration signals
+
+**Original requirement:** saved notes, active configuration, evidence of prior usage.
+
+**Implemented behavior:** migration auto-completes onboarding when any of the following is true on first launch with onboarding enabled:
+
+- at least one saved note in SQLite;
+- `ActiveNoteStore.hasEstablishedState`;
+- a persisted scratchpad window frame in `WindowFrameStore`.
+
+Notes, shortcuts, Launch at Login, and window placement are never modified by migration.
+
+## Activation without Refine
+
+**Original requirement:** Refine encouraged but must not block activation.
+
+**Implemented behavior:** live practice completes after the user enters meaningful content (≥ 3 non-whitespace characters) and hides the production panel. Refine attempt is encouraged via `⌘J` guidance but is not required to reach the completion screen.
+
+## Contextual History hint
+
+**Original requirement:** optional post-onboarding History hint.
+
+**Implemented behavior:** deferred in M7. No proactive `⌘P` discovery UI was added.
+
+## Debug reset
+
+**Implemented behavior:**
+
+- launch argument: `-resetOnboarding`
+- Debug menu bar item: `Reset Onboarding`
+
+Both reset only onboarding `UserDefaults` keys. They do not delete notes, shortcuts, window frames, or Launch at Login state.
