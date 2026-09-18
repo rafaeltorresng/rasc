@@ -72,16 +72,17 @@ struct OnboardingScratchpadOverlay: View {
     }
 
     private var emptyHint: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("Write something unfinished…")
-                .font(.callout)
-                .foregroundStyle(.tertiary)
-            Text("A thought, task, message, idea — anything.")
+        HStack(spacing: 7) {
+            Image(systemName: "text.cursor")
+                .font(.caption2)
+                .accessibilityHidden(true)
+
+            Text("Anything unfinished is enough.")
                 .font(.caption)
-                .foregroundStyle(.quaternary)
         }
+        .foregroundStyle(.tertiary)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Write something unfinished. A thought, task, message, idea — anything.")
+        .accessibilityLabel("Anything unfinished is enough.")
     }
 
     @ViewBuilder

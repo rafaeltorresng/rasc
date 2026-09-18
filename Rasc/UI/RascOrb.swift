@@ -22,6 +22,7 @@ struct RascOrb: View {
             size: thinkingOrbSize,
             theme: .auto
         )
+        .frame(width: pointSize, height: pointSize)
         .accessibilityHidden(decorative)
     }
 
@@ -42,20 +43,32 @@ struct RascOrb: View {
             .px20
         }
     }
+
+    private var pointSize: CGFloat {
+        switch size {
+        case .hero:
+            64
+        case .inline:
+            RascSurfaceMetrics.inlineOrbSize
+        }
+    }
 }
 
 struct ShapingIndicator: View {
     var label: String? = "refining…"
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 9) {
             RascOrb(state: .shaping, size: .inline, decorative: true)
             if let label {
                 Text(label)
-                    .font(.caption.monospaced())
+                    .font(.caption.weight(.medium))
                     .foregroundStyle(.secondary)
             }
         }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 7)
+        .processingIndicatorSurface()
         .accessibilityElement(children: .combine)
         .accessibilityLabel(label ?? "Processing")
     }

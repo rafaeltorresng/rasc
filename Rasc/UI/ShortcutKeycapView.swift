@@ -12,6 +12,7 @@ struct ShortcutKeycapView: View {
     var isPressed: Bool = false
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorScheme) private var colorScheme
     @State private var isHovered = false
 
     var body: some View {
@@ -54,19 +55,30 @@ struct ShortcutKeycapView: View {
             .padding(.vertical, verticalPadding)
             .background {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(Color(nsColor: .controlBackgroundColor))
+                    .fill(RascSurfacePalette.raisedFill(for: colorScheme))
                     .shadow(
                         color: .black.opacity(shadowOpacity(pressed: pressed, elevated: elevated)),
                         radius: shadowRadius(pressed: pressed, elevated: elevated),
                         y: shadowOffset(pressed: pressed, elevated: elevated)
                     )
+                    .overlay {
+                        RoundedRectangle(cornerRadius: cornerRadius - 1, style: .continuous)
+                            .strokeBorder(
+                                RascSurfacePalette.innerHighlight(for: colorScheme),
+                                lineWidth: 0.5
+                            )
+                            .padding(1)
+                    }
             }
             .overlay {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .strokeBorder(Color.primary.opacity(borderOpacity), lineWidth: 1)
+                    .strokeBorder(
+                        RascSurfacePalette.border(for: colorScheme).opacity(borderOpacityMultiplier),
+                        lineWidth: 1
+                    )
             }
             .scaleEffect(scale(pressed: pressed))
-            .offset(y: pressed ? 1.5 : (elevated ? -0.5 : 0))
+            .offset(y: pressed ? 1 : (elevated ? -0.5 : 0))
     }
 
     private var font: Font {
@@ -104,11 +116,11 @@ struct ShortcutKeycapView: View {
         }
     }
 
-    private var borderOpacity: Double {
+    private var borderOpacityMultiplier: Double {
         switch style {
-        case .compact: 0.1
-        case .standard: 0.1
-        case .prominent: 0.12
+        case .compact: 0.82
+        case .standard: 0.92
+        case .prominent: 1
         }
     }
 
@@ -119,20 +131,20 @@ struct ShortcutKeycapView: View {
     }
 
     private func shadowOpacity(pressed: Bool, elevated: Bool) -> Double {
-        if pressed { return 0.04 }
-        if elevated { return 0.14 }
-        return 0.1
+        if pressed { return 0.025 }
+        if elevated { return 0.11 }
+        return 0.075
     }
 
     private func shadowRadius(pressed: Bool, elevated: Bool) -> CGFloat {
         if pressed { return 0.5 }
-        if elevated { return 5 }
-        return 3
+        if elevated { return 6 }
+        return 4
     }
 
     private func shadowOffset(pressed: Bool, elevated: Bool) -> CGFloat {
         if pressed { return 0 }
-        if elevated { return 2.5 }
-        return 1.5
+        if elevated { return 3 }
+        return 2
     }
 }

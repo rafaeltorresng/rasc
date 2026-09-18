@@ -5,6 +5,7 @@ struct OnboardingView: View {
     @Bindable var coordinator: OnboardingCoordinator
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorScheme) private var colorScheme
     @FocusState private var welcomeFocused: Bool
     @FocusState private var completionFocused: Bool
 
@@ -37,6 +38,7 @@ struct OnboardingView: View {
             .id(coordinator.presentedStep)
         }
         .frame(width: 720, height: 520)
+        .tint(RascSurfacePalette.accent(for: colorScheme))
         .animation(RascMotion.surface(reduceMotion: reduceMotion), value: coordinator.presentedStep)
         .onAppear {
             focusCurrentStep()
@@ -54,12 +56,12 @@ struct OnboardingView: View {
             Spacer(minLength: 0)
 
             RascOrb(state: .idle, size: .hero, decorative: true)
-                .padding(.bottom, 40)
+                .padding(.bottom, 36)
 
             Text("Rasc")
                 .font(.system(size: 34, weight: .regular))
                 .tracking(-0.3)
-                .padding(.bottom, 20)
+                .padding(.bottom, 16)
 
             VStack(spacing: 10) {
                 Text("A scratchpad for unfinished thoughts.")
@@ -72,7 +74,7 @@ struct OnboardingView: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
-            .padding(.bottom, 40)
+            .padding(.bottom, 36)
 
             VStack(spacing: 12) {
                 Button("Get started") {
@@ -103,18 +105,26 @@ struct OnboardingView: View {
 
     private var shortcutContent: some View {
         VStack(spacing: 0) {
-            VStack(spacing: 8) {
+            Spacer(minLength: 0)
+
+            VStack(spacing: 10) {
                 Text("One shortcut away.")
-                    .font(.title2.weight(.medium))
+                    .font(.system(size: 28, weight: .medium))
+                    .tracking(-0.2)
 
                 Text("Rasc appears wherever you're working.")
                     .font(.body)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
-            .padding(.bottom, 32)
+            .padding(.bottom, 28)
 
-            VStack(spacing: 16) {
+            VStack(spacing: 14) {
+                Text("YOUR SHORTCUT")
+                    .font(.caption2.weight(.medium))
+                    .tracking(0.8)
+                    .foregroundStyle(.tertiary)
+
                 ShortcutKeycapView(
                     label: GlobalShortcutFormatting.currentToggleShortcutDisplay(),
                     style: .prominent,
@@ -124,7 +134,10 @@ struct OnboardingView: View {
                 KeyboardShortcuts.Recorder("Press to change", name: .toggleScratchpad)
                     .accessibilityLabel("Shortcut recorder")
             }
-            .padding(.bottom, 32)
+            .padding(.horizontal, 26)
+            .padding(.vertical, 22)
+            .onboardingFeatureSurface()
+            .padding(.bottom, 28)
 
             Button("Continue") {
                 coordinator.continueFromShortcut()
@@ -146,21 +159,38 @@ struct OnboardingView: View {
             .foregroundStyle(.secondary)
             .padding(.top, 8)
             .accessibilityLabel("Skip setup")
+
+            Spacer(minLength: 0)
         }
-        .frame(maxWidth: 400)
+        .frame(maxWidth: 420)
     }
 
     private var waitingForShortcutContent: some View {
-        VStack(spacing: 24) {
-            Text("Try it.")
-                .font(.title2.weight(.medium))
+        VStack(spacing: 0) {
+            VStack(spacing: 10) {
+                Text("Try it.")
+                    .font(.system(size: 28, weight: .medium))
+                    .tracking(-0.2)
 
-            ShortcutKeycapView(
-                label: GlobalShortcutFormatting.currentToggleShortcutDisplay(),
-                style: .prominent,
-                isPressed: coordinator.shortcutKeycapPressed
-            )
+                Text("Press your shortcut to open Rasc.")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.bottom, 28)
+
+            VStack {
+                ShortcutKeycapView(
+                    label: GlobalShortcutFormatting.currentToggleShortcutDisplay(),
+                    style: .prominent,
+                    isPressed: coordinator.shortcutKeycapPressed
+                )
+            }
+            .padding(.horizontal, 28)
+            .padding(.vertical, 22)
+            .onboardingFeatureSurface()
         }
+        .frame(maxWidth: 400)
         .opacity(coordinator.isYieldingForShortcut ? 0.72 : 1)
         .scaleEffect(coordinator.isYieldingForShortcut && !reduceMotion ? 0.985 : 1)
         .animation(RascMotion.surface(reduceMotion: reduceMotion), value: coordinator.isYieldingForShortcut)
@@ -245,8 +275,10 @@ struct OnboardingView: View {
 }
 
 private struct OnboardingBackground: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
-        Color(nsColor: .windowBackgroundColor)
+        RascSurfacePalette.canvas(for: colorScheme)
             .ignoresSafeArea()
     }
 }

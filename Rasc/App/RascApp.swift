@@ -34,8 +34,8 @@ struct RascApp: App {
             }
 
             CommandGroup(replacing: .appSettings) {
-                Button("Settings…") {
-                    appDelegate.openSettings()
+                SettingsLink {
+                    Text("Settings…")
                 }
                 .keyboardShortcut(",")
             }
