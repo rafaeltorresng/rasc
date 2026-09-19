@@ -55,7 +55,7 @@ struct OnboardingView: View {
         VStack(spacing: 0) {
             Spacer(minLength: 0)
 
-            RascOrb(state: .idle, size: .hero, decorative: true)
+            RascOrb(state: .note, size: .hero, decorative: true)
                 .padding(.bottom, 36)
 
             Text("Rasc")
