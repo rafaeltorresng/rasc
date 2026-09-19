@@ -57,6 +57,19 @@ struct PanelControllerTests {
     }
 
     @Test
+    func hidesTrafficLightsWithoutRemovingNativeWindowBehavior() throws {
+        let panel = try makeController().panel
+
+        #expect(panel.standardWindowButton(.closeButton)?.isHidden == true)
+        #expect(panel.standardWindowButton(.miniaturizeButton)?.isHidden == true)
+        #expect(panel.standardWindowButton(.zoomButton)?.isHidden == true)
+        #expect(panel.styleMask.contains(.titled))
+        #expect(panel.styleMask.contains(.resizable))
+        #expect(panel.styleMask.contains(.fullSizeContentView))
+        #expect(panel.styleMask.contains(.nonactivatingPanel))
+    }
+
+    @Test
     func toggleHidesAVisiblePanel() async throws {
         let controller = try makeController()
         controller.panel.orderFront(nil)
