@@ -41,6 +41,7 @@ struct SettingsView: View {
     private let refinementProvider: any RefinementProvider
     private let loginItemController: LoginItemController
 
+    @Environment(\.colorScheme) private var colorScheme
     @State private var launchAtLogin = false
     @State private var loginItemState = LoginItemState.disabled
     @State private var launchAtLoginError: String?
@@ -88,6 +89,7 @@ struct SettingsView: View {
                         .foregroundStyle(.red)
                 }
             }
+            .listRowBackground(settingsSectionBackground)
 
             Section("Refine") {
                 LabeledContent(refineStatus.headline) {
@@ -98,16 +100,20 @@ struct SettingsView: View {
                 }
                 .accessibilityElement(children: .combine)
             }
+            .listRowBackground(settingsSectionBackground)
 
             Section {
                 Text("Your notes are stored locally on this Mac. Refine runs on-device when available.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            .listRowBackground(settingsSectionBackground)
         }
         .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
         .padding(20)
         .frame(width: 460)
+        .rascWindowSurface()
         .task {
             refreshLaunchAtLoginState()
             await refreshRefineStatus()
@@ -128,6 +134,11 @@ struct SettingsView: View {
                 ? "Couldn't enable Launch at Login. Check System Settings and try again."
                 : "Couldn't disable Launch at Login. Try again in System Settings."
         }
+    }
+
+    private var settingsSectionBackground: some View {
+        RoundedRectangle(cornerRadius: RascSurfaceMetrics.feedbackCornerRadius, style: .continuous)
+            .fill(RascSurfacePalette.raisedFill(for: colorScheme))
     }
 
     private func refreshLaunchAtLoginState() {
