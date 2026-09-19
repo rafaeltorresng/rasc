@@ -2,6 +2,7 @@ import SwiftUI
 
 enum RascMotion {
     static let microDuration: Double = 0.15
+    static let orbTransitionDuration: Double = 0.14
     static let surfaceDuration: Double = 0.2
     static let morphDuration: Double = 0.3
     static let heroSettleDuration: Double = 0.5
