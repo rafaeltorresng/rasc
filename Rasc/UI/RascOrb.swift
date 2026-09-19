@@ -1,9 +1,44 @@
 import SwiftUI
 import ThinkingOrbsKit
 
-enum RascOrbState {
-    case idle
-    case shaping
+enum RascOrbState: Equatable {
+    case note
+    case refining
+
+    static func resolve(isRefining: Bool) -> Self {
+        isRefining ? .refining : .note
+    }
+
+    var thinkingOrbState: OrbState {
+        switch self {
+        case .note:
+            .solving
+        case .refining:
+            .shaping
+        }
+    }
+
+    var speed: Double {
+        switch self {
+        case .note:
+            0.5
+        case .refining:
+            1
+        }
+    }
+
+    var opacity: Double {
+        switch self {
+        case .note:
+            0.88
+        case .refining:
+            0.9
+        }
+    }
+
+    var isPaused: Bool {
+        false
+    }
 }
 
 enum RascOrbSize {
@@ -16,23 +51,25 @@ struct RascOrb: View {
     let size: RascOrbSize
     var decorative: Bool = false
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         ThinkingOrb(
-            state: thinkingOrbState,
+            state: state.thinkingOrbState,
             size: thinkingOrbSize,
-            theme: .auto
+            theme: .auto,
+            speed: state.speed,
+            paused: state.isPaused
         )
         .frame(width: pointSize, height: pointSize)
+        .opacity(state.opacity)
+        .id(state)
+        .transition(.opacity)
+        .animation(
+            reduceMotion ? nil : .easeOut(duration: RascMotion.orbTransitionDuration),
+            value: state
+        )
         .accessibilityHidden(decorative)
-    }
-
-    private var thinkingOrbState: OrbState {
-        switch state {
-        case .idle:
-            .composing
-        case .shaping:
-            .shaping
-        }
     }
 
     private var thinkingOrbSize: OrbSize {
@@ -51,25 +88,5 @@ struct RascOrb: View {
         case .inline:
             RascSurfaceMetrics.inlineOrbSize
         }
-    }
-}
-
-struct ShapingIndicator: View {
-    var label: String? = "refining…"
-
-    var body: some View {
-        HStack(spacing: 9) {
-            RascOrb(state: .shaping, size: .inline, decorative: true)
-            if let label {
-                Text(label)
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 7)
-        .processingIndicatorSurface()
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(label ?? "Processing")
     }
 }

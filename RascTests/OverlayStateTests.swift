@@ -6,6 +6,22 @@ import Testing
 @MainActor
 struct OverlayStateTests {
     @Test
+    func semanticOrbStateStaysOnNoteUnlessRefining() {
+        #expect(RascOrbState.resolve(isRefining: false) == .note)
+        #expect(RascOrbState.resolve(isRefining: true) == .refining)
+    }
+
+    @Test
+    func semanticOrbStateOwnsThinkingOrbMappingAndTuning() {
+        #expect(RascOrbState.note.thinkingOrbState.rawValue == "solving")
+        #expect(RascOrbState.note.speed == 0.5)
+        #expect(RascOrbState.refining.thinkingOrbState.rawValue == "shaping")
+        #expect(RascOrbState.refining.speed == 1)
+        #expect(!RascOrbState.note.isPaused)
+        #expect(!RascOrbState.refining.isPaused)
+    }
+
+    @Test
     func openingSearchClosesCommandPalette() async throws {
         let fixture = try makeFixture()
         defer { fixture.remove() }
@@ -20,7 +36,7 @@ struct OverlayStateTests {
         try await session.openSearch()
 
         #expect(session.surface == .search)
-        #expect(session.commandPaletteQuery.isEmpty)
+        #expect(session.filteredCommands == PaletteCommand.allCases)
     }
 
     @Test
@@ -73,7 +89,7 @@ struct OverlayStateTests {
     }
 
     @Test
-    func commandPaletteFiltersCommands() throws {
+    func commandPaletteListsAllCommands() throws {
         let fixture = try makeFixture()
         defer { fixture.remove() }
         let session = ScratchpadSession(
@@ -82,14 +98,12 @@ struct OverlayStateTests {
         )
 
         session.openCommandPalette()
-        session.commandPaletteQuery = "ref"
-        session.refreshCommandPalette()
 
-        #expect(session.filteredCommands == [.refine])
+        #expect(session.filteredCommands == PaletteCommand.allCases)
     }
 
     @Test
-    func commandPaletteNavigationWrapsWithinFilteredResults() throws {
+    func commandPaletteNavigationStaysWithinAllCommands() throws {
         let fixture = try makeFixture()
         defer { fixture.remove() }
         let session = ScratchpadSession(
@@ -98,12 +112,10 @@ struct OverlayStateTests {
         )
 
         session.openCommandPalette()
-        session.commandPaletteQuery = "note"
-        session.refreshCommandPalette()
+        session.selectCommand(at: PaletteCommand.allCases.count - 1)
 
-        #expect(session.filteredCommands == [.findNote])
         session.moveCommandSelection(by: 1)
-        #expect(session.selectedCommandIndex == 0)
+        #expect(session.selectedCommandIndex == PaletteCommand.allCases.count - 1)
     }
 
     @Test
@@ -148,10 +160,10 @@ struct OverlayStateTests {
         )
 
         session.requestSearchFocus()
-        session.requestCommandPaletteFocus()
+        session.requestCommandPaletteKeyFocus()
 
         #expect(session.searchFocusRequest == 1)
-        #expect(session.commandPaletteFocusRequest == 1)
+        #expect(session.commandPaletteKeyFocusRequest == 1)
     }
 
     private func makeFixture() throws -> Fixture {

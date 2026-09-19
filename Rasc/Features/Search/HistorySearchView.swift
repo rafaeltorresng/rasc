@@ -96,30 +96,51 @@ struct HistorySearchTextField: NSViewRepresentable {
     }
 }
 
-struct HistorySearchView: View {
+struct HistorySearchInputField: View {
     @Bindable var session: ScratchpadSession
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 10) {
-                Image(systemName: "magnifyingglass")
-                    .foregroundStyle(.secondary)
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
 
-                HistorySearchTextField(
-                    text: $session.searchQuery,
-                    focusRequest: session.searchFocusRequest,
-                    onCommand: handleSearchCommand
-                )
-                    .frame(maxWidth: .infinity)
-                    .onChange(of: session.searchQuery) {
-                        session.scheduleSearch()
-                    }
+            HistorySearchTextField(
+                text: $session.searchQuery,
+                focusRequest: session.searchFocusRequest,
+                onCommand: handleSearchCommand
+            )
+            .frame(maxWidth: .infinity)
+            .onChange(of: session.searchQuery) {
+                session.scheduleSearch()
             }
-            .padding(.horizontal, 20)
-            .frame(height: 52)
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Search notes")
+    }
 
-            Divider()
+    private func handleSearchCommand(_ command: HistorySearchCommand) {
+        switch command {
+        case .moveUp:
+            session.moveSearchSelection(by: -1)
+        case .moveDown:
+            session.moveSearchSelection(by: 1)
+        case .openSelection:
+            Task {
+                _ = try? await session.openSelectedSearchResult()
+            }
+        case .closeSearch:
+            session.closeSearch()
+        }
+    }
+}
 
+struct HistorySearchView: View {
+    @Bindable var session: ScratchpadSession
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        Group {
             if let searchErrorMessage = session.searchErrorMessage {
                 ContentUnavailableView(
                     "Search unavailable",
@@ -137,18 +158,22 @@ struct HistorySearchView: View {
                 resultList
             }
         }
-        .transientSurfaceBackground()
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("History and search")
+        .padding(.top, RascSurfaceMetrics.searchContentTopInset)
+        .padding(.bottom, RascSurfaceMetrics.editorBottomPadding)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .scratchpadOverlayBackground()
+        .ignoresSafeArea(edges: .top)
         .onExitCommand {
             session.closeSearch()
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("History and search")
     }
 
     private var resultList: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(spacing: 4) {
+                LazyVStack(spacing: RascSurfaceMetrics.commandRowSpacing) {
                     ForEach(Array(session.searchResults.enumerated()), id: \.element.id) { index, note in
                         Button {
                             session.selectSearchResult(at: index)
@@ -160,7 +185,7 @@ struct HistorySearchView: View {
                         .id(note.id)
                     }
                 }
-                .padding(8)
+                .padding(.horizontal, RascSurfaceMetrics.editorHorizontalPadding)
             }
             .onChange(of: session.selectedSearchIndex) { _, index in
                 guard session.searchResults.indices.contains(index) else { return }
@@ -191,32 +216,19 @@ struct HistorySearchView: View {
                 .foregroundStyle(.tertiary)
                 .monospacedDigit()
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 9)
+        .padding(.horizontal, 10)
+        .padding(.vertical, RascSurfaceMetrics.commandRowVerticalPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .contentShape(Rectangle())
         .background(
             RoundedRectangle(cornerRadius: 7)
-                .fill(isSelected ? Color.accentColor.opacity(0.16) : Color.clear)
+                .fill(isSelected ? RascSurfacePalette.selectionFill(for: colorScheme) : Color.clear)
         )
     }
 
     private func openSelectedResult() {
         Task {
             _ = try? await session.openSelectedSearchResult()
-        }
-    }
-
-    private func handleSearchCommand(_ command: HistorySearchCommand) {
-        switch command {
-        case .moveUp:
-            session.moveSearchSelection(by: -1)
-        case .moveDown:
-            session.moveSearchSelection(by: 1)
-        case .openSelection:
-            openSelectedResult()
-        case .closeSearch:
-            session.closeSearch()
         }
     }
 }

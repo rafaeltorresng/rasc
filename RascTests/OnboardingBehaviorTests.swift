@@ -64,6 +64,8 @@ struct OnboardingBehaviorTests {
         )
         #expect(RascSurfaceMetrics.previewCornerRadius > RascSurfaceMetrics.feedbackCornerRadius)
         #expect(RascSurfaceMetrics.inlineOrbSize == 20)
+        #expect(RascSurfaceMetrics.commandPaletteHeight(commandCount: 4) == 130)
+        #expect(RascSurfaceMetrics.commandPaletteHeight(commandCount: 4) < 220)
     }
 
     @Test

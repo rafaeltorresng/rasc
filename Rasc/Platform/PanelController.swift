@@ -218,7 +218,7 @@ final class PanelController: NSObject, NSWindowDelegate {
         panel.title = "Rasc"
         panel.titleVisibility = .hidden
         panel.titlebarAppearsTransparent = true
-        panel.backgroundColor = RascSurfacePalette.panelBackground
+        panel.backgroundColor = .clear
         panel.isFloatingPanel = true
         panel.hidesOnDeactivate = false
         panel.becomesKeyOnlyIfNeeded = false
@@ -232,6 +232,13 @@ final class PanelController: NSObject, NSWindowDelegate {
             .stationary,
         ]
         panel.isReleasedWhenClosed = false
+        for buttonType in [
+            NSWindow.ButtonType.closeButton,
+            .miniaturizeButton,
+            .zoomButton,
+        ] {
+            panel.standardWindowButton(buttonType)?.isHidden = true
+        }
         panel.standardWindowButton(.zoomButton)?.isEnabled = false
         panel.minSize = NSSize(width: 360, height: 220)
         panel.maxSize = NSSize(width: 800, height: 700)
@@ -319,7 +326,7 @@ final class PanelController: NSObject, NSWindowDelegate {
         case .search:
             session.requestSearchFocus()
         case .commandPalette:
-            session.requestCommandPaletteFocus()
+            session.requestCommandPaletteKeyFocus()
         case .editor, .message, .refining, .refinementPreview:
             session.requestEditorFocus()
         }

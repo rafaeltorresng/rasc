@@ -23,147 +23,101 @@ enum CommandPaletteCommand: Equatable {
     }
 }
 
-struct CommandPaletteTextField: NSViewRepresentable {
-    @Binding var text: String
+struct CommandPaletteKeyboardHandler: NSViewRepresentable {
     let focusRequest: Int
     let onCommand: (CommandPaletteCommand) -> Void
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(parent: self)
+    func makeNSView(context: Context) -> CommandPaletteKeyView {
+        let view = CommandPaletteKeyView()
+        view.focusRingType = .none
+        return view
     }
 
-    func makeNSView(context: Context) -> NSTextField {
-        let textField = NSTextField()
-        textField.delegate = context.coordinator
-        textField.isBordered = false
-        textField.drawsBackground = false
-        textField.focusRingType = .none
-        textField.font = .systemFont(ofSize: 15)
-        textField.placeholderString = "Type a command…"
-        textField.cell?.usesSingleLineMode = true
-        textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        textField.setAccessibilityLabel("Command palette")
-        return textField
+    func updateNSView(_ nsView: CommandPaletteKeyView, context: Context) {
+        nsView.onCommand = onCommand
+        nsView.claimFocus(for: focusRequest)
+    }
+}
+
+@MainActor
+final class CommandPaletteKeyView: NSView {
+    var onCommand: ((CommandPaletteCommand) -> Void)?
+    private var fulfilledFocusRequest = -1
+
+    override var acceptsFirstResponder: Bool { true }
+
+    override func keyDown(with event: NSEvent) {
+        interpretKeyEvents([event])
     }
 
-    func updateNSView(_ textField: NSTextField, context: Context) {
-        context.coordinator.parent = self
-
-        if textField.stringValue != text {
-            textField.stringValue = text
-        }
-
-        context.coordinator.focus(textField, for: focusRequest)
+    override func moveUp(_ sender: Any?) {
+        onCommand?(.moveUp)
     }
 
-    @MainActor
-    final class Coordinator: NSObject, NSTextFieldDelegate {
-        var parent: CommandPaletteTextField
-        private var fulfilledFocusRequest: Int?
+    override func moveDown(_ sender: Any?) {
+        onCommand?(.moveDown)
+    }
 
-        init(parent: CommandPaletteTextField) {
-            self.parent = parent
-        }
+    override func insertNewline(_ sender: Any?) {
+        onCommand?(.executeSelection)
+    }
 
-        func controlTextDidChange(_ notification: Notification) {
-            guard let textField = notification.object as? NSTextField else { return }
-            parent.text = textField.stringValue
-        }
+    override func cancelOperation(_ sender: Any?) {
+        onCommand?(.closePalette)
+    }
 
-        func control(
-            _ control: NSControl,
-            textView: NSTextView,
-            doCommandBy commandSelector: Selector
-        ) -> Bool {
-            guard let command = CommandPaletteCommand(commandSelector: commandSelector) else {
-                return false
-            }
+    func claimFocus(for request: Int) {
+        guard fulfilledFocusRequest != request else { return }
 
-            parent.onCommand(command)
-            return true
-        }
-
-        func focus(_ textField: NSTextField, for request: Int) {
-            guard fulfilledFocusRequest != request else { return }
-
-            DispatchQueue.main.async { [weak self, weak textField] in
-                guard let self, let textField, let window = textField.window else { return }
-                window.makeFirstResponder(textField)
-                fulfilledFocusRequest = request
-            }
+        DispatchQueue.main.async { [weak self] in
+            guard let self, let window else { return }
+            window.makeFirstResponder(self)
+            fulfilledFocusRequest = request
         }
     }
 }
 
 struct CommandPaletteView: View {
     @Bindable var session: ScratchpadSession
+    @Environment(\.colorScheme) private var colorScheme
     let onExecute: (PaletteCommand) -> Void
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 10) {
-                Image(systemName: "command")
-                    .foregroundStyle(.secondary)
-                    .accessibilityHidden(true)
-
-                CommandPaletteTextField(
-                    text: $session.commandPaletteQuery,
-                    focusRequest: session.commandPaletteFocusRequest,
+        commandList
+            .padding(.top, RascSurfaceMetrics.commandPaletteContentTopInset)
+            .padding(.bottom, RascSurfaceMetrics.editorBottomPadding)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .scratchpadOverlayBackground()
+            .ignoresSafeArea(edges: .top)
+            .background {
+                CommandPaletteKeyboardHandler(
+                    focusRequest: session.commandPaletteKeyFocusRequest,
                     onCommand: handlePaletteCommand
                 )
-                .frame(maxWidth: .infinity)
-                .onChange(of: session.commandPaletteQuery) {
-                    session.refreshCommandPalette()
-                }
             }
-            .padding(.horizontal, 20)
-            .frame(height: 52)
-
-            Divider()
-
-            if session.filteredCommands.isEmpty {
-                ContentUnavailableView(
-                    "No matching commands",
-                    systemImage: "command"
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                commandList
+            .onExitCommand {
+                session.closeCommandPalette()
             }
-        }
-        .transientSurfaceBackground()
-        .onExitCommand {
-            session.closeCommandPalette()
-        }
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Command palette")
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel("Command palette")
     }
 
     private var commandList: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack(spacing: 4) {
-                    ForEach(Array(session.filteredCommands.enumerated()), id: \.element.id) { index, command in
-                        Button {
-                            session.selectCommand(at: index)
-                            executeSelectedCommand()
-                        } label: {
-                            commandRow(command, isSelected: index == session.selectedCommandIndex)
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel(command.title)
-                        .accessibilityHint(command.accessibilityHint)
-                        .accessibilityAddTraits(index == session.selectedCommandIndex ? .isSelected : [])
-                        .id(command.id)
-                    }
+        VStack(spacing: RascSurfaceMetrics.commandRowSpacing) {
+            ForEach(Array(session.filteredCommands.enumerated()), id: \.element.id) { index, command in
+                Button {
+                    session.selectCommand(at: index)
+                    execute(command)
+                } label: {
+                    commandRow(command, isSelected: index == session.selectedCommandIndex)
                 }
-                .padding(8)
-            }
-            .onChange(of: session.selectedCommandIndex) { _, index in
-                guard session.filteredCommands.indices.contains(index) else { return }
-                proxy.scrollTo(session.filteredCommands[index].id, anchor: .center)
+                .buttonStyle(.plain)
+                .accessibilityLabel(command.title)
+                .accessibilityHint(command.accessibilityHint)
+                .accessibilityAddTraits(index == session.selectedCommandIndex ? .isSelected : [])
             }
         }
+        .padding(.horizontal, RascSurfaceMetrics.editorHorizontalPadding)
     }
 
     private func commandRow(_ command: PaletteCommand, isSelected: Bool) -> some View {
@@ -176,18 +130,17 @@ struct CommandPaletteView: View {
                 .font(.system(size: 11, design: .monospaced))
                 .foregroundStyle(.tertiary)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 9)
+        .padding(.horizontal, 10)
+        .padding(.vertical, RascSurfaceMetrics.commandRowVerticalPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .contentShape(Rectangle())
         .background(
             RoundedRectangle(cornerRadius: 7)
-                .fill(isSelected ? Color.accentColor.opacity(0.16) : Color.clear)
+                .fill(isSelected ? RascSurfacePalette.selectionFill(for: colorScheme) : Color.clear)
         )
     }
 
-    private func executeSelectedCommand() {
-        guard let command = session.selectedCommand() else { return }
+    private func execute(_ command: PaletteCommand) {
         session.closeCommandPalette()
         onExecute(command)
     }
@@ -199,7 +152,8 @@ struct CommandPaletteView: View {
         case .moveDown:
             session.moveCommandSelection(by: 1)
         case .executeSelection:
-            executeSelectedCommand()
+            guard let selected = session.selectedCommand() else { return }
+            execute(selected)
         case .closePalette:
             session.closeCommandPalette()
         }
