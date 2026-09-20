@@ -79,8 +79,14 @@ echo "Bundle identifier: ${BUNDLE_IDENTIFIER}"
 echo "==> Version and build"
 MARKETING_VERSION="$(marketing_version_from_app "${APP_PATH}")"
 BUILD_NUMBER="$(build_number_from_app "${APP_PATH}")"
+EXPECTED_MARKETING_VERSION="$(marketing_version_from_project)"
 echo "Marketing version: ${MARKETING_VERSION}"
 echo "Build number: ${BUILD_NUMBER}"
+
+if [[ "${MARKETING_VERSION}" != "${EXPECTED_MARKETING_VERSION}" ]]; then
+  echo "error: expected marketing version ${EXPECTED_MARKETING_VERSION}, found ${MARKETING_VERSION}" >&2
+  exit 1
+fi
 
 echo "==> LSUIElement"
 LS_UI_ELEMENT="$(/usr/libexec/PlistBuddy -c 'Print :LSUIElement' "${APP_PATH}/Contents/Info.plist")"
@@ -97,6 +103,13 @@ codesign --display --verbose=4 "${APP_PATH}"
 
 SIGNATURE_INFO="$(codesign -dvvv "${APP_PATH}" 2>&1)"
 echo "${SIGNATURE_INFO}"
+
+echo "==> Hardened Runtime"
+if ! echo "${SIGNATURE_INFO}" | grep -q 'Runtime Version'; then
+  echo "error: Hardened Runtime not detected" >&2
+  exit 1
+fi
+echo "Hardened Runtime confirmed"
 
 echo "==> ad-hoc signature status"
 if echo "${SIGNATURE_INFO}" | grep -q 'Developer ID Application'; then
@@ -122,6 +135,18 @@ if echo "${ENTITLEMENTS_PLIST}" | grep -q 'get-task-allow'; then
   echo "error: debug entitlement get-task-allow is present" >&2
   exit 1
 fi
+
+echo "==> third-party notices"
+THIRD_PARTY_NOTICES="${APP_PATH}/Contents/Resources/ThirdPartyNotices.txt"
+if [[ ! -f "${THIRD_PARTY_NOTICES}" ]]; then
+  echo "error: ThirdPartyNotices.txt not found in app bundle" >&2
+  exit 1
+fi
+if ! grep -q 'ThinkingOrbsKit' "${THIRD_PARTY_NOTICES}"; then
+  echo "error: ThirdPartyNotices.txt is missing ThinkingOrbsKit attribution" >&2
+  exit 1
+fi
+echo "Third-party notices present"
 
 echo "==> bundle audit"
 if find "${APP_PATH}" -name '*.xctest' -print -quit | grep -q .; then
@@ -161,6 +186,25 @@ while IFS= read -r -d '' file; do
     exit 1
   fi
 done < <(find "${APP_PATH}" -type f -print0)
+
+ABSOLUTE_PATH_HITS=()
+while IFS= read -r -d '' file; do
+  case "$(basename "${file}")" in
+    ThirdPartyNotices.txt|*.car|*.nib|*.png|*.icns|*.ttf|*.otf|*.woff|*.woff2|*.dylib|*.bundle|Rasc)
+      continue
+      ;;
+  esac
+
+  if grep -E '/Users/[^/]+/' "${file}" >/dev/null 2>&1; then
+    ABSOLUTE_PATH_HITS+=("${file}")
+  fi
+done < <(find "${APP_PATH}" -type f -print0)
+
+if ((${#ABSOLUTE_PATH_HITS[@]} > 0)); then
+  echo "error: absolute developer-machine paths found in bundle:" >&2
+  printf '  %s\n' "${ABSOLUTE_PATH_HITS[@]}" >&2
+  exit 1
+fi
 
 echo "Bundle audit passed"
 

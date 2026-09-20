@@ -76,6 +76,8 @@
 		010000000000000000000049 /* HomeSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000049 /* HomeSessionTests.swift */; };
 		01000000000000000000004A /* SettingsWindowPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004A /* SettingsWindowPresentation.swift */; };
 		01000000000000000000004B /* SettingsWindowPresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004B /* SettingsWindowPresentationTests.swift */; };
+		01000000000000000000004C /* BetaFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004C /* BetaFeedback.swift */; };
+		01000000000000000000004D /* BetaFeedbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004D /* BetaFeedbackTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -157,6 +159,8 @@
 		020000000000000000000049 /* HomeSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSessionTests.swift; sourceTree = "<group>"; };
 		02000000000000000000004A /* SettingsWindowPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/SettingsWindowPresentation.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000004B /* SettingsWindowPresentationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowPresentationTests.swift; sourceTree = "<group>"; };
+		02000000000000000000004C /* BetaFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/BetaFeedback.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000004D /* BetaFeedbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetaFeedbackTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -240,6 +244,7 @@
 				020000000000000000000045 /* HomeSession.swift */,
 				020000000000000000000046 /* HomeTemporalGrouping.swift */,
 				02000000000000000000004A /* SettingsWindowPresentation.swift */,
+				02000000000000000000004C /* BetaFeedback.swift */,
 			);
 			name = Rasc;
 			sourceTree = "<group>";
@@ -266,6 +271,7 @@
 				020000000000000000000048 /* HomeWindowControllerTests.swift */,
 				020000000000000000000049 /* HomeSessionTests.swift */,
 				02000000000000000000004B /* SettingsWindowPresentationTests.swift */,
+				02000000000000000000004D /* BetaFeedbackTests.swift */,
 			);
 			path = RascTests;
 			sourceTree = SOURCE_ROOT;
@@ -434,6 +440,7 @@
 				010000000000000000000045 /* HomeSession.swift in Sources */,
 				010000000000000000000046 /* HomeTemporalGrouping.swift in Sources */,
 				01000000000000000000004A /* SettingsWindowPresentation.swift in Sources */,
+				01000000000000000000004C /* BetaFeedback.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -459,6 +466,7 @@
 				010000000000000000000048 /* HomeWindowControllerTests.swift in Sources */,
 				010000000000000000000049 /* HomeSessionTests.swift in Sources */,
 				01000000000000000000004B /* SettingsWindowPresentationTests.swift in Sources */,
+				01000000000000000000004D /* BetaFeedbackTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -591,7 +599,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Rasc/Info.plist;
@@ -599,7 +607,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.1.0-beta.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rafaeltorres.rasc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -616,7 +624,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Rasc/Info.plist;
@@ -624,7 +632,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.1.0-beta.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rafaeltorres.rasc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

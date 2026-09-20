@@ -6,6 +6,7 @@ protocol MenuBarControllerDelegate: AnyObject {
     func menuBarNewScratch()
     func menuBarOpenSearch()
     func menuBarOpenSettings()
+    func menuBarSendFeedback()
     func menuBarQuit()
     #if DEBUG
     func menuBarResetOnboarding()
@@ -61,6 +62,11 @@ final class MenuBarController {
             keyEquivalent: ",",
             modifierMask: .command
         ))
+        menu.addItem(makeItem(
+            title: "Send Feedback…",
+            action: #selector(sendFeedback),
+            keyEquivalent: ""
+        ))
         menu.addItem(.separator())
         #if DEBUG
         menu.addItem(makeItem(
@@ -106,6 +112,10 @@ final class MenuBarController {
 
     @objc private func openSettings() {
         delegate?.menuBarOpenSettings()
+    }
+
+    @objc private func sendFeedback() {
+        delegate?.menuBarSendFeedback()
     }
 
     @objc private func quit() {
