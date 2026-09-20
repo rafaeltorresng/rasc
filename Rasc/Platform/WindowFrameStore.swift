@@ -49,11 +49,26 @@ enum WindowFramePlacement {
 
 @MainActor
 struct WindowFrameStore {
-    private let userDefaults: UserDefaults
-    private let frameKey = "scratchpadWindowFrame"
+    static let scratchpadFrameKey = "scratchpadWindowFrame"
+    static let homeFrameKey = "homeWindowFrame"
 
-    init(userDefaults: UserDefaults = .standard) {
+    private let userDefaults: UserDefaults
+    private let frameKey: String
+
+    init(
+        frameKey: String = WindowFrameStore.scratchpadFrameKey,
+        userDefaults: UserDefaults = .standard
+    ) {
+        self.frameKey = frameKey
         self.userDefaults = userDefaults
+    }
+
+    static func scratchpad(userDefaults: UserDefaults = .standard) -> WindowFrameStore {
+        WindowFrameStore(frameKey: scratchpadFrameKey, userDefaults: userDefaults)
+    }
+
+    static func home(userDefaults: UserDefaults = .standard) -> WindowFrameStore {
+        WindowFrameStore(frameKey: homeFrameKey, userDefaults: userDefaults)
     }
 
     var hasSavedFrame: Bool {
