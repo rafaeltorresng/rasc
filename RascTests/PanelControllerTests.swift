@@ -97,10 +97,37 @@ struct PanelControllerTests {
     }
 
     @Test
+    func hostingControllerDoesNotExpandToContentIdealSize() throws {
+        let controller = try makeController()
+
+        #expect(controller.contentHostingSizingOptions == [.minSize])
+    }
+
+    @Test
+    func switchingSurfacesPreservesPanelFrame() async throws {
+        let controller = try makeController()
+        let fixedFrame = NSRect(x: 100, y: 200, width: 520, height: 340)
+        controller.panel.setFrame(fixedFrame, display: false)
+
+        await controller.openCommandPalette()
+        #expect(controller.panel.frame == fixedFrame)
+
+        controller.scratchpadSession.closeCommandPalette()
+        #expect(controller.panel.frame == fixedFrame)
+
+        try await controller.openSearch()
+        #expect(controller.panel.frame == fixedFrame)
+
+        controller.scratchpadSession.closeSearch()
+        #expect(controller.panel.frame == fixedFrame)
+    }
+
+    @Test
     func searchFieldRoutesNativeNavigationAndSubmitCommands() {
         var commands: [HistorySearchCommand] = []
         let searchField = HistorySearchTextField(
             text: .constant(""),
+            isFocused: .constant(false),
             focusRequest: 0,
             onCommand: { commands.append($0) }
         )

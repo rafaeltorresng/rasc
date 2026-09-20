@@ -26,6 +26,7 @@ enum HistorySearchCommand: Equatable {
 
 struct HistorySearchTextField: NSViewRepresentable {
     @Binding var text: String
+    @Binding var isFocused: Bool
     let focusRequest: Int
     let onCommand: (HistorySearchCommand) -> Void
 
@@ -40,8 +41,8 @@ struct HistorySearchTextField: NSViewRepresentable {
         textField.drawsBackground = false
         textField.focusRingType = .none
         textField.font = .systemFont(ofSize: 15)
-        textField.placeholderString = "Search notes…"
-        textField.setAccessibilityLabel("Search notes")
+        textField.placeholderString = "Find a note…"
+        textField.setAccessibilityLabel("Find a note")
         textField.cell?.usesSingleLineMode = true
         textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return textField
@@ -71,6 +72,14 @@ struct HistorySearchTextField: NSViewRepresentable {
             parent.text = textField.stringValue
         }
 
+        func controlTextDidBeginEditing(_ notification: Notification) {
+            parent.isFocused = true
+        }
+
+        func controlTextDidEndEditing(_ notification: Notification) {
+            parent.isFocused = false
+        }
+
         func control(
             _ control: NSControl,
             textView: NSTextView,
@@ -91,6 +100,8 @@ struct HistorySearchTextField: NSViewRepresentable {
                 guard let self, let textField, let window = textField.window else { return }
                 window.makeFirstResponder(textField)
                 fulfilledFocusRequest = request
+                parent.isFocused = window.firstResponder === textField.currentEditor()
+                    || window.firstResponder === textField
             }
         }
     }
@@ -98,25 +109,22 @@ struct HistorySearchTextField: NSViewRepresentable {
 
 struct HistorySearchInputField: View {
     @Bindable var session: ScratchpadSession
+    @State private var isFocused = false
 
     var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "magnifyingglass")
-                .foregroundStyle(.secondary)
-                .accessibilityHidden(true)
-
+        RascTransientInputShell(isFocused: isFocused) {
             HistorySearchTextField(
                 text: $session.searchQuery,
+                isFocused: $isFocused,
                 focusRequest: session.searchFocusRequest,
                 onCommand: handleSearchCommand
             )
-            .frame(maxWidth: .infinity)
-            .onChange(of: session.searchQuery) {
-                session.scheduleSearch()
-            }
+        }
+        .onChange(of: session.searchQuery) {
+            session.scheduleSearch()
         }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Search notes")
+        .accessibilityLabel("Find a note")
     }
 
     private func handleSearchCommand(_ command: HistorySearchCommand) {
@@ -137,32 +145,16 @@ struct HistorySearchInputField: View {
 
 struct HistorySearchView: View {
     @Bindable var session: ScratchpadSession
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        Group {
-            if let searchErrorMessage = session.searchErrorMessage {
-                ContentUnavailableView(
-                    "Search unavailable",
-                    systemImage: "exclamationmark.triangle",
-                    description: Text(searchErrorMessage)
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if session.searchResults.isEmpty {
-                ContentUnavailableView(
-                    session.searchQuery.isEmpty ? "No previous notes" : "No matching notes",
-                    systemImage: "text.magnifyingglass"
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                resultList
-            }
+        VStack(spacing: 0) {
+            HistorySearchHeader(session: session)
+
+            searchBody
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-        .padding(.top, RascSurfaceMetrics.searchContentTopInset)
-        .padding(.bottom, RascSurfaceMetrics.editorBottomPadding)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .scratchpadOverlayBackground()
-        .ignoresSafeArea(edges: .top)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .onExitCommand {
             session.closeSearch()
         }
@@ -170,10 +162,48 @@ struct HistorySearchView: View {
         .accessibilityLabel("History and search")
     }
 
+    @ViewBuilder
+    private var searchBody: some View {
+        Group {
+            if let searchErrorMessage = session.searchErrorMessage {
+                quietStateLabel(searchErrorMessage)
+            } else if session.searchQuery.isEmpty, !session.searchResults.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    recentSectionHeader
+                    resultList
+                }
+            } else if session.searchResults.isEmpty {
+                if session.searchQuery.isEmpty {
+                    quietStateLabel("No previous notes.")
+                } else {
+                    quietStateLabel("No notes found.")
+                }
+            } else {
+                resultList
+            }
+        }
+        .padding(.horizontal, RascSurfaceLayout.horizontalInset)
+    }
+
+    private var recentSectionHeader: some View {
+        Text("Recent")
+            .font(.system(size: 11.5, weight: .medium))
+            .foregroundStyle(.tertiary)
+            .accessibilityAddTraits(.isHeader)
+    }
+
+    private func quietStateLabel(_ text: String) -> some View {
+        Text(text)
+            .font(.system(size: 13))
+            .foregroundStyle(.secondary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityLabel(text)
+    }
+
     private var resultList: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(spacing: RascSurfaceMetrics.commandRowSpacing) {
+                LazyVStack(spacing: RascSurfaceLayout.listRowSpacing) {
                     ForEach(Array(session.searchResults.enumerated()), id: \.element.id) { index, note in
                         Button {
                             session.selectSearchResult(at: index)
@@ -183,10 +213,17 @@ struct HistorySearchView: View {
                         }
                         .buttonStyle(.plain)
                         .id(note.id)
+                        .accessibilityLabel(resultAccessibilityLabel(for: note))
+                        .accessibilityHint(index == session.selectedSearchIndex ? "Press Return to open" : "")
+                        .accessibilityAddTraits(index == session.selectedSearchIndex ? .isSelected : [])
                     }
                 }
-                .padding(.horizontal, RascSurfaceMetrics.editorHorizontalPadding)
+                .animation(
+                    RascMotion.selection(reduceMotion: reduceMotion),
+                    value: session.selectedSearchIndex
+                )
             }
+            .clipShape(Rectangle())
             .onChange(of: session.selectedSearchIndex) { _, index in
                 guard session.searchResults.indices.contains(index) else { return }
                 proxy.scrollTo(session.searchResults[index].id, anchor: .center)
@@ -195,40 +232,67 @@ struct HistorySearchView: View {
     }
 
     private func resultRow(_ note: Note, isSelected: Bool) -> some View {
-        HStack(alignment: .top, spacing: 12) {
-            VStack(alignment: .leading, spacing: 3) {
+        HStack(alignment: .top, spacing: 8) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(note.displayTitle)
-                    .font(.system(size: 13, weight: .medium))
-                    .lineLimit(1)
+                    .font(.system(size: RascSurfaceMetrics.searchTitleFontSize, weight: .medium))
+                    .foregroundStyle(.primary)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
 
-                if let snippet = note.displaySnippet {
+                if let snippet = note.displayRetrievalSnippet {
                     Text(snippet)
-                        .font(.system(size: 12))
+                        .font(.system(size: RascSurfaceMetrics.searchSnippetFontSize))
                         .foregroundStyle(.secondary)
-                        .lineLimit(1)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
                 }
             }
 
             Spacer(minLength: 8)
 
-            Text(note.updatedAt, style: .relative)
-                .font(.system(size: 11))
-                .foregroundStyle(.tertiary)
-                .monospacedDigit()
+            VStack(alignment: .trailing, spacing: 6) {
+                Text(note.updatedAt, style: .relative)
+                    .font(.system(size: RascSurfaceMetrics.searchTimestampFontSize))
+                    .foregroundStyle(.tertiary)
+                    .lineLimit(1)
+
+                if isSelected {
+                    RascKeyboardActionHint(shortcut: "↵", title: "Open")
+                        .transition(reduceMotion ? .opacity : .opacity.combined(with: .offset(y: 2)))
+                }
+            }
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, RascSurfaceMetrics.commandRowVerticalPadding)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .contentShape(Rectangle())
-        .background(
-            RoundedRectangle(cornerRadius: 7)
-                .fill(isSelected ? RascSurfacePalette.selectionFill(for: colorScheme) : Color.clear)
+        .rascTransientListRow(
+            isSelected: isSelected,
+            minHeight: RascSurfaceLayout.searchRowMinHeight
         )
+    }
+
+    private func resultAccessibilityLabel(for note: Note) -> String {
+        var components = [note.displayTitle]
+        if let snippet = note.displayRetrievalSnippet {
+            components.append(snippet)
+        }
+        components.append(note.updatedAt.formatted(.relative(presentation: .named)))
+        return components.joined(separator: ", ")
     }
 
     private func openSelectedResult() {
         Task {
             _ = try? await session.openSelectedSearchResult()
         }
+    }
+}
+
+private struct HistorySearchHeader: View {
+    @Bindable var session: ScratchpadSession
+
+    var body: some View {
+        RascSurfaceOrbHeaderRow(orbState: .searching) {
+            HistorySearchInputField(session: session)
+                .offset(y: -RascSurfaceLayout.searchFieldOrbVerticalOffset)
+        }
+        .padding(.bottom, RascSurfaceLayout.transientHeaderBodyGap)
     }
 }

@@ -79,31 +79,49 @@ final class CommandPaletteKeyView: NSView {
 
 struct CommandPaletteView: View {
     @Bindable var session: ScratchpadSession
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let onExecute: (PaletteCommand) -> Void
 
     var body: some View {
-        commandList
-            .padding(.top, RascSurfaceMetrics.commandPaletteContentTopInset)
-            .padding(.bottom, RascSurfaceMetrics.editorBottomPadding)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .scratchpadOverlayBackground()
-            .ignoresSafeArea(edges: .top)
-            .background {
-                CommandPaletteKeyboardHandler(
-                    focusRequest: session.commandPaletteKeyFocusRequest,
-                    onCommand: handlePaletteCommand
-                )
+        VStack(spacing: 0) {
+            paletteHeader
+
+            ScrollView {
+                commandList
             }
-            .onExitCommand {
-                session.closeCommandPalette()
-            }
-            .accessibilityElement(children: .contain)
-            .accessibilityLabel("Command palette")
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background {
+            CommandPaletteKeyboardHandler(
+                focusRequest: session.commandPaletteKeyFocusRequest,
+                onCommand: handlePaletteCommand
+            )
+        }
+        .onExitCommand {
+            session.closeCommandPalette()
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Command palette")
+    }
+
+    private var paletteHeader: some View {
+        HStack(alignment: .center, spacing: RascSurfaceLayout.orbToAccessoryGap) {
+            RascOrb(state: .note, size: .inline, decorative: true)
+                .frame(width: RascSurfaceLayout.orbSize, height: RascSurfaceLayout.orbSize)
+
+            Text("Commands")
+                .font(.system(size: 15, weight: .medium))
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.horizontal, RascSurfaceLayout.horizontalInset)
+        .padding(.top, RascSurfaceLayout.topInset)
+        .padding(.bottom, RascSurfaceLayout.transientHeaderBodyGap)
     }
 
     private var commandList: some View {
-        VStack(spacing: RascSurfaceMetrics.commandRowSpacing) {
+        VStack(spacing: RascSurfaceLayout.listRowSpacing) {
             ForEach(Array(session.filteredCommands.enumerated()), id: \.element.id) { index, command in
                 Button {
                     session.selectCommand(at: index)
@@ -117,26 +135,26 @@ struct CommandPaletteView: View {
                 .accessibilityAddTraits(index == session.selectedCommandIndex ? .isSelected : [])
             }
         }
-        .padding(.horizontal, RascSurfaceMetrics.editorHorizontalPadding)
+        .padding(.horizontal, RascSurfaceLayout.horizontalInset)
+        .animation(
+            RascMotion.selection(reduceMotion: reduceMotion),
+            value: session.selectedCommandIndex
+        )
     }
 
     private func commandRow(_ command: PaletteCommand, isSelected: Bool) -> some View {
         HStack(spacing: 12) {
             Text(command.title)
-                .font(.system(size: 13, weight: .medium))
+                .font(.system(size: RascSurfaceMetrics.searchTitleFontSize, weight: .medium))
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             Text(command.shortcutLabel)
-                .font(.system(size: 11, design: .monospaced))
+                .font(.system(size: RascSurfaceMetrics.searchTimestampFontSize, design: .monospaced))
                 .foregroundStyle(.tertiary)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, RascSurfaceMetrics.commandRowVerticalPadding)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .contentShape(Rectangle())
-        .background(
-            RoundedRectangle(cornerRadius: 7)
-                .fill(isSelected ? RascSurfacePalette.selectionFill(for: colorScheme) : Color.clear)
+        .rascTransientListRow(
+            isSelected: isSelected,
+            minHeight: RascSurfaceLayout.commandRowMinHeight
         )
     }
 

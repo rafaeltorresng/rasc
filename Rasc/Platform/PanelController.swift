@@ -9,6 +9,7 @@ final class PanelController: NSObject, NSWindowDelegate {
 
     private let session: ScratchpadSession
     private let windowFrameStore: WindowFrameStore
+    private var hostingController: NSHostingController<AnyView>!
     private var previousApplication: NSRunningApplication?
     private var displayObservers: [NSObjectProtocol] = []
     weak var onboardingDelegate: OnboardingPanelDelegate?
@@ -42,20 +43,31 @@ final class PanelController: NSObject, NSWindowDelegate {
         wireSessionObservation()
         configurePanel()
         observeDisplayChanges()
-        panel.contentViewController = NSHostingController(
-            rootView: ScratchpadView(
-                session: session,
-                onEscape: { [weak self] in
-                    Task {
-                        await self?.hide()
-                    }
-                },
-                onPaletteCommand: { [weak self] command in
-                    self?.handlePaletteCommand(command)
+        let rootView = ScratchpadView(
+            session: session,
+            onEscape: { [weak self] in
+                Task {
+                    await self?.hide()
                 }
-            )
-            .environment(\.onboardingScratchpadActions, onboardingScratchpadActions())
+            },
+            onPaletteCommand: { [weak self] command in
+                self?.handlePaletteCommand(command)
+            }
         )
+        .environment(\.onboardingScratchpadActions, onboardingScratchpadActions())
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+        hostingController = NSHostingController(rootView: AnyView(rootView))
+        hostingController.sizingOptions = [.minSize]
+        panel.contentViewController = hostingController
+    }
+
+    var contentHostingSizingOptions: NSHostingSizingOptions {
+        hostingController.sizingOptions
+    }
+
+    var scratchpadSession: ScratchpadSession {
+        session
     }
 
     func toggle() async {
@@ -208,7 +220,7 @@ final class PanelController: NSObject, NSWindowDelegate {
         windowFrameStore.save(panel)
     }
 
-    func windowDidResize(_ notification: Notification) {
+    func windowDidEndLiveResize(_ notification: Notification) {
         guard panel.isVisible else { return }
         windowFrameStore.save(panel)
     }

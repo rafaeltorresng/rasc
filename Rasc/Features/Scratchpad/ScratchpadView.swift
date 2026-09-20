@@ -837,28 +837,19 @@ struct ScratchpadView: View {
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            Group {
-                switch session.surface {
-                case .editor, .message:
-                    editorSurface
-                case .search:
-                    HistorySearchView(session: session)
-                case .commandPalette:
-                    CommandPaletteView(session: session, onExecute: onPaletteCommand)
-                case .refining:
-                    refiningSurface
-                case .refinementPreview:
-                    refinementPreviewSurface
-                }
-            }
+            surfaceBodyContent
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .id(session.surface)
+                .transition(RascMotion.bodyContentTransition(reduceMotion: reduceMotion))
 
-            if session.surface != .commandPalette {
-                stateAnchor
+            if showsOverlayOrb {
+                orbAnchor
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .animation(RascMotion.bodyContentAnimation(reduceMotion: reduceMotion), value: session.surface)
         .scratchpadCanvas()
         .presentsSettings(on: session.settingsPresentationRequest)
-        .animation(surfaceChangeAnimation, value: session.surface)
         .animation(RascMotion.micro(reduceMotion: reduceMotion), value: session.message)
         .overlay(alignment: .bottomLeading) {
             if session.scratchpadGuidance.isActive {
@@ -872,6 +863,54 @@ struct ScratchpadView: View {
                     .padding(12)
             }
         }
+    }
+
+    private var showsOverlayOrb: Bool {
+        switch session.surface {
+        case .editor, .refining, .refinementPreview, .message:
+            true
+        case .search, .commandPalette:
+            false
+        }
+    }
+
+    private var orbAnchor: some View {
+        HStack(alignment: .center, spacing: RascSurfaceLayout.orbToAccessoryGap) {
+            RascOrb(state: resolvedOrbState, size: .inline, decorative: true)
+                .frame(width: RascSurfaceLayout.orbSize, height: RascSurfaceLayout.orbSize)
+
+            if let statusText {
+                Text(statusText)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+        }
+        .padding(.leading, RascSurfaceLayout.horizontalInset)
+        .padding(.top, RascSurfaceLayout.topInset)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(statusText ?? "")
+        .accessibilityHidden(statusText == nil)
+    }
+
+    @ViewBuilder
+    private var surfaceBodyContent: some View {
+        switch session.surface {
+        case .editor, .message:
+            editorSurface
+        case .search:
+            HistorySearchView(session: session)
+        case .commandPalette:
+            CommandPaletteView(session: session, onExecute: onPaletteCommand)
+        case .refining:
+            refiningSurface
+        case .refinementPreview:
+            refinementPreviewSurface
+        }
+    }
+
+    private var resolvedOrbState: RascOrbState {
+        session.surface == .refining ? .refining : .note
     }
 
     @ViewBuilder
@@ -892,7 +931,6 @@ struct ScratchpadView: View {
                     .foregroundStyle(.primary)
                     .padding(.horizontal, RascSurfaceMetrics.editorHorizontalPadding)
                     .padding(.top, RascSurfaceMetrics.editorTopPadding)
-                    .padding(.bottom, RascSurfaceMetrics.editorBottomPadding)
                     .focused($editorIsFocused)
                     .onChange(of: session.focusRequest, initial: true) {
                         requestEditorFocus()
@@ -923,12 +961,10 @@ struct ScratchpadView: View {
             .foregroundStyle(.primary.opacity(0.78))
             .padding(.horizontal, RascSurfaceMetrics.editorHorizontalPadding)
             .padding(.top, RascSurfaceMetrics.editorTopPadding)
-            .padding(.bottom, RascSurfaceMetrics.editorBottomPadding)
             .disabled(true)
             .accessibilityLabel("Scratch editor")
             .accessibilityValue("Refining note")
             .onExitCommand(perform: handleEscape)
-            .transition(surfaceTransition)
     }
 
     private var refinementPreviewSurface: some View {
@@ -943,8 +979,8 @@ struct ScratchpadView: View {
                     .lineSpacing(RascSurfaceMetrics.noteLineSpacing)
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .topLeading)
-                    .padding(.horizontal, RascSurfaceMetrics.placeholderLeadingInset)
-                    .padding(.top, RascSurfaceMetrics.placeholderTopInset)
+                    .padding(.horizontal, RascSurfaceLayout.noteTextLeadingInset)
+                    .padding(.top, RascSurfaceMetrics.editorTopPadding)
                     .padding(.bottom, 20)
             }
             .accessibilityLabel("Refined preview")
@@ -982,57 +1018,6 @@ struct ScratchpadView: View {
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Refinement preview")
         .onExitCommand(perform: handleEscape)
-        .transition(surfaceTransition)
-    }
-
-    private var stateAnchor: some View {
-        HStack(spacing: 9) {
-            RascOrb(
-                state: orbState,
-                size: .inline,
-                decorative: session.surface != .search
-            )
-
-            if session.surface == .search {
-                HistorySearchInputField(session: session)
-            } else if let statusText {
-                Text(statusText)
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .transition(.opacity)
-            }
-        }
-        .padding(.leading, RascSurfaceMetrics.anchorLeadingInset)
-        .padding(.top, RascSurfaceMetrics.anchorTopInset)
-        .padding(.trailing, session.surface == .search
-            ? RascSurfaceMetrics.editorHorizontalPadding
-            : 0)
-        .frame(
-            maxWidth: .infinity,
-            minHeight: usesTransientInputAnchor
-                ? RascSurfaceMetrics.transientHeaderHeight
-                : nil,
-            alignment: .topLeading
-        )
-        .background {
-            if usesTransientInputAnchor {
-                RascSurfacePalette.canvas(for: colorScheme)
-                    .ignoresSafeArea(edges: .horizontal)
-            }
-        }
-        .allowsHitTesting(usesTransientInputAnchor)
-        .accessibilityElement(children: usesTransientInputAnchor ? .contain : .ignore)
-        .accessibilityLabel(statusText ?? "")
-        .accessibilityHidden(statusText == nil && !usesTransientInputAnchor)
-    }
-
-    private var usesTransientInputAnchor: Bool {
-        session.surface == .search
-    }
-
-    private var orbState: RascOrbState {
-        RascOrbState.resolve(isRefining: session.surface == .refining)
     }
 
     private var statusText: String? {
@@ -1046,22 +1031,6 @@ struct ScratchpadView: View {
         case .editor, .search, .commandPalette:
             nil
         }
-    }
-
-    private var surfaceChangeAnimation: Animation? {
-        switch session.surface {
-        case .commandPalette, .search:
-            nil
-        default:
-            RascMotion.surface(reduceMotion: reduceMotion)
-        }
-    }
-
-    private var surfaceTransition: AnyTransition {
-        if reduceMotion {
-            return .opacity
-        }
-        return .opacity.combined(with: .offset(y: 4))
     }
 
     private func requestEditorFocus() {
@@ -1104,7 +1073,6 @@ private struct SelectableScratchEditor: View {
             .foregroundStyle(.primary)
             .padding(.horizontal, RascSurfaceMetrics.editorHorizontalPadding)
             .padding(.top, RascSurfaceMetrics.editorTopPadding)
-            .padding(.bottom, RascSurfaceMetrics.editorBottomPadding)
             .focused($isFocused)
             .onChange(of: session.focusRequest, initial: true) {
                 Task { @MainActor in

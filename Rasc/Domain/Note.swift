@@ -36,6 +36,27 @@ struct Note: Codable, Equatable, FetchableRecord, PersistableRecord, Sendable {
         return Self.truncate(detail, to: 120)
     }
 
+    /// Snippet for retrieval UI; omits text already shown in the title when possible.
+    var displayRetrievalSnippet: String? {
+        guard let snippet = displaySnippet else { return nil }
+
+        let title = displayTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalizedSnippet = snippet.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !normalizedSnippet.isEmpty else { return nil }
+
+        if normalizedSnippet.caseInsensitiveCompare(title) == .orderedSame {
+            return nil
+        }
+
+        if normalizedSnippet.hasPrefix(title) {
+            let remainder = normalizedSnippet.dropFirst(title.count)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            return remainder.isEmpty ? nil : Self.truncate(remainder, to: 120)
+        }
+
+        return snippet
+    }
+
     private var meaningfulLines: [String] {
         content
             .split(omittingEmptySubsequences: false, whereSeparator: \.isNewline)

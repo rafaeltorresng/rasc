@@ -20,6 +20,19 @@ struct NoteRepositoryTests {
     }
 
     @Test
+    func retrievalSnippetAvoidsRepeatingTitlePrefix() {
+        let note = Note(
+            id: UUID(),
+            content: "Queue retry issue\nQueue retry issue after deploy.",
+            createdAt: .distantPast,
+            updatedAt: .distantPast,
+            deletedAt: nil
+        )
+
+        #expect(note.displayRetrievalSnippet == "after deploy.")
+    }
+
+    @Test
     func createsANoteWithTheInitialSchema() async throws {
         let databaseURL = makeDatabaseURL()
         defer { removeDatabase(at: databaseURL) }
