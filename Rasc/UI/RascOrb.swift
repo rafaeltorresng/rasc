@@ -3,16 +3,25 @@ import ThinkingOrbsKit
 
 enum RascOrbState: Equatable {
     case note
+    case searching
     case refining
 
-    static func resolve(isRefining: Bool) -> Self {
-        isRefining ? .refining : .note
+    static func resolve(isRefining: Bool, isSearching: Bool = false) -> Self {
+        if isRefining {
+            return .refining
+        }
+        if isSearching {
+            return .searching
+        }
+        return .note
     }
 
     var thinkingOrbState: OrbState {
         switch self {
         case .note:
             .solving
+        case .searching:
+            .searching
         case .refining:
             .shaping
         }
@@ -22,6 +31,8 @@ enum RascOrbState: Equatable {
         switch self {
         case .note:
             0.5
+        case .searching:
+            0.68
         case .refining:
             1
         }
@@ -30,6 +41,8 @@ enum RascOrbState: Equatable {
     var opacity: Double {
         switch self {
         case .note:
+            0.88
+        case .searching:
             0.88
         case .refining:
             0.9
@@ -63,8 +76,6 @@ struct RascOrb: View {
         )
         .frame(width: pointSize, height: pointSize)
         .opacity(state.opacity)
-        .id(state)
-        .transition(.opacity)
         .animation(
             reduceMotion ? nil : .easeOut(duration: RascMotion.orbTransitionDuration),
             value: state
@@ -86,7 +97,7 @@ struct RascOrb: View {
         case .hero:
             64
         case .inline:
-            RascSurfaceMetrics.inlineOrbSize
+            RascSurfaceLayout.orbSize
         }
     }
 }
