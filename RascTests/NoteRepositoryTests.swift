@@ -344,6 +344,55 @@ struct NoteRepositoryTests {
     }
 
     @Test
+    func opensExistingDatabaseAtCurrentSchemaWithoutDataLoss() async throws {
+        let databaseURL = makeDatabaseURL()
+        defer { removeDatabase(at: databaseURL) }
+        let database = try DatabaseQueue(path: databaseURL.path)
+        try AppDatabase.migrator.migrate(database)
+
+        let noteID = UUID()
+        let timestamp = Date(timeIntervalSince1970: 1_700_000_100)
+        try await database.write { database in
+            try database.execute(
+                sql: """
+                INSERT INTO notes (id, content, created_at, updated_at)
+                VALUES (?, ?, ?, ?)
+                """,
+                arguments: [noteID, "existing beta note", timestamp, timestamp]
+            )
+            try database.execute(
+                sql: """
+                INSERT INTO refinement_revisions (
+                    id, note_id, before_content, after_content, provider,
+                    model_identifier, prompt_version, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                arguments: [
+                    UUID(),
+                    noteID,
+                    "existing beta note",
+                    "existing beta note refined",
+                    "foundation-models",
+                    "system-language-model.default",
+                    "refine-v1",
+                    timestamp,
+                ]
+            )
+        }
+
+        let repository = try NoteRepository(databaseURL: databaseURL)
+        let note = try #require(try await repository.fetch(id: noteID))
+        #expect(note.content == "existing beta note")
+
+        let searchResults = try await repository.search("beta", limit: 20)
+        #expect(searchResults.contains(where: { $0.id == noteID }))
+
+        let revisions = try await repository.refinementRevisions(for: noteID)
+        #expect(revisions.count == 1)
+        #expect(revisions[0].afterContent == "existing beta note refined")
+    }
+
+    @Test
     func acceptsARefinementAndWritesOneCompleteRevisionAtomically() async throws {
         let repository = try makeRepository()
         let note = try await repository.createScratch(content: "rough café 👩🏽‍💻 note")

@@ -106,6 +106,10 @@ struct SettingsView: View {
                 Text("Your notes are stored locally on this Mac. Refine runs on-device when available.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+
+                Button("Send Feedback…") {
+                    BetaFeedback.open()
+                }
             }
             .listRowBackground(settingsSectionBackground)
         }

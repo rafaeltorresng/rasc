@@ -117,6 +117,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
         openSettings()
     }
 
+    func menuBarSendFeedback() {
+        BetaFeedback.open()
+    }
+
     func menuBarQuit() {
         NSApp.terminate(nil)
     }
