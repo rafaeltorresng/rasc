@@ -83,7 +83,7 @@ build_number_from_app() {
 
 beta_dmg_path() {
   local version="$1"
-  echo "${BETA_DIR}/Rasc-${version}-beta.dmg"
+  echo "${BETA_DIR}/Rasc-${version}.dmg"
 }
 
 beta_checksum_path() {
