@@ -26,9 +26,11 @@ final class MenuBarController {
     private func configureMenu() {
         guard let button = statusItem.button else { return }
 
-        if let image = NSImage(systemSymbolName: "note.text", accessibilityDescription: "Rasc") {
-            image.isTemplate = true
+        if let image = NSImage(named: "MenuBarIcon") {
             button.image = image
+        } else if let fallback = NSImage(systemSymbolName: "note.text", accessibilityDescription: nil) {
+            fallback.isTemplate = true
+            button.image = fallback
         }
         button.setAccessibilityLabel("Rasc")
 
