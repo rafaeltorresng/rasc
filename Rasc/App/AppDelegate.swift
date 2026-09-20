@@ -16,6 +16,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         GlobalShortcutMigration.migrateFromPreviousDefaultIfNeeded()
+        SettingsWindowPresentation.installIfNeeded()
+        SettingsWindowPresentation.onSettingsWindowWillPresent = { [weak self] in
+            await self?.bootstrap.prepareForSettingsPresentation()
+        }
         menuBarController = MenuBarController(delegate: self)
         bootstrap.start()
 
@@ -70,11 +74,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
 
     func openSettings() {
         Task { @MainActor in
-            if let panel = await bootstrap.awaitPanel() {
-                panel.openSettings()
-            } else {
-                NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-            }
+            await bootstrap.openSettings()
         }
     }
 
@@ -95,10 +95,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
         return .terminateLater
     }
 
-    func menuBarOpenRasc() {
+    func openHome() {
         Task { @MainActor in
-            await bootstrap.awaitPanel()?.show()
+            await bootstrap.openHome()
         }
+    }
+
+    func menuBarOpenRasc() {
+        openHome()
     }
 
     func menuBarNewScratch() {

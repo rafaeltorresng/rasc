@@ -67,6 +67,15 @@
 		01000000000000000000003B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003A /* Assets.xcassets */; };
 		01000000000000000000003C /* RascLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003B /* RascLogo.swift */; };
 		01000000000000000000003D /* RascSurfaceShell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003C /* RascSurfaceShell.swift */; };
+		010000000000000000000043 /* HomeWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000043 /* HomeWindowController.swift */; };
+		010000000000000000000044 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000044 /* HomeView.swift */; };
+		010000000000000000000045 /* HomeSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000045 /* HomeSession.swift */; };
+		010000000000000000000046 /* HomeTemporalGrouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000046 /* HomeTemporalGrouping.swift */; };
+		010000000000000000000047 /* HomeTemporalGroupingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000047 /* HomeTemporalGroupingTests.swift */; };
+		010000000000000000000048 /* HomeWindowControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000048 /* HomeWindowControllerTests.swift */; };
+		010000000000000000000049 /* HomeSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000049 /* HomeSessionTests.swift */; };
+		01000000000000000000004A /* SettingsWindowPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004A /* SettingsWindowPresentation.swift */; };
+		01000000000000000000004B /* SettingsWindowPresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004B /* SettingsWindowPresentationTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -139,6 +148,15 @@
 		02000000000000000000003A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Rasc/Resources/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		02000000000000000000003B /* RascLogo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/UI/RascLogo.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000003C /* RascSurfaceShell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/UI/RascSurfaceShell.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000043 /* HomeWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Home/HomeWindowController.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000044 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Home/HomeView.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000045 /* HomeSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Home/HomeSession.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000046 /* HomeTemporalGrouping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Home/HomeTemporalGrouping.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000047 /* HomeTemporalGroupingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTemporalGroupingTests.swift; sourceTree = "<group>"; };
+		020000000000000000000048 /* HomeWindowControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeWindowControllerTests.swift; sourceTree = "<group>"; };
+		020000000000000000000049 /* HomeSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSessionTests.swift; sourceTree = "<group>"; };
+		02000000000000000000004A /* SettingsWindowPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/SettingsWindowPresentation.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000004B /* SettingsWindowPresentationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowPresentationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -217,6 +235,11 @@
 				020000000000000000000039 /* ThirdPartyNotices.txt */,
 				02000000000000000000003A /* Assets.xcassets */,
 				02000000000000000000003B /* RascLogo.swift */,
+				020000000000000000000043 /* HomeWindowController.swift */,
+				020000000000000000000044 /* HomeView.swift */,
+				020000000000000000000045 /* HomeSession.swift */,
+				020000000000000000000046 /* HomeTemporalGrouping.swift */,
+				02000000000000000000004A /* SettingsWindowPresentation.swift */,
 			);
 			name = Rasc;
 			sourceTree = "<group>";
@@ -239,6 +262,10 @@
 				020000000000000000000034 /* OnboardingStoreTests.swift */,
 				020000000000000000000035 /* OnboardingEligibilityTests.swift */,
 				020000000000000000000036 /* OnboardingBehaviorTests.swift */,
+				020000000000000000000047 /* HomeTemporalGroupingTests.swift */,
+				020000000000000000000048 /* HomeWindowControllerTests.swift */,
+				020000000000000000000049 /* HomeSessionTests.swift */,
+				02000000000000000000004B /* SettingsWindowPresentationTests.swift */,
 			);
 			path = RascTests;
 			sourceTree = SOURCE_ROOT;
@@ -402,6 +429,11 @@
 				01000000000000000000003D /* RascSurfaceShell.swift in Sources */,
 				010000000000000000000038 /* ShortcutKeycapView.swift in Sources */,
 				01000000000000000000003C /* RascLogo.swift in Sources */,
+				010000000000000000000043 /* HomeWindowController.swift in Sources */,
+				010000000000000000000044 /* HomeView.swift in Sources */,
+				010000000000000000000045 /* HomeSession.swift in Sources */,
+				010000000000000000000046 /* HomeTemporalGrouping.swift in Sources */,
+				01000000000000000000004A /* SettingsWindowPresentation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,6 +455,10 @@
 				010000000000000000000034 /* OnboardingStoreTests.swift in Sources */,
 				010000000000000000000035 /* OnboardingEligibilityTests.swift in Sources */,
 				010000000000000000000036 /* OnboardingBehaviorTests.swift in Sources */,
+				010000000000000000000047 /* HomeTemporalGroupingTests.swift in Sources */,
+				010000000000000000000048 /* HomeWindowControllerTests.swift in Sources */,
+				010000000000000000000049 /* HomeSessionTests.swift in Sources */,
+				01000000000000000000004B /* SettingsWindowPresentationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

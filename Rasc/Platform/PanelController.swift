@@ -13,6 +13,9 @@ final class PanelController: NSObject, NSWindowDelegate {
     private var previousApplication: NSRunningApplication?
     private var displayObservers: [NSObjectProtocol] = []
     weak var onboardingDelegate: OnboardingPanelDelegate?
+    var onOpenHome: (() -> Void)?
+    var onOpenSettings: (() -> Void)?
+    var onDidHide: (() -> Void)?
 
     var scratchpadGuidance: OnboardingScratchpadGuidance = .inactive {
         didSet {
@@ -23,7 +26,7 @@ final class PanelController: NSObject, NSWindowDelegate {
     init(
         repository: NoteRepository,
         refinementProvider: any RefinementProvider = FoundationModelsRefinementProvider(),
-        windowFrameStore: WindowFrameStore = WindowFrameStore()
+        windowFrameStore: WindowFrameStore = .scratchpad()
     ) {
         self.repository = repository
         session = ScratchpadSession(
@@ -52,6 +55,9 @@ final class PanelController: NSObject, NSWindowDelegate {
             },
             onPaletteCommand: { [weak self] command in
                 self?.handlePaletteCommand(command)
+            },
+            onOpenHome: { [weak self] in
+                self?.onOpenHome?()
             }
         )
         .environment(\.onboardingScratchpadActions, onboardingScratchpadActions())
@@ -146,6 +152,21 @@ final class PanelController: NSObject, NSWindowDelegate {
         session.requestSettingsPresentation()
     }
 
+    func openNote(id: UUID) async {
+        do {
+            if !panel.isVisible {
+                try await session.restore()
+            }
+            let opened = try await session.openNote(id: id)
+            guard opened else { return }
+        } catch {
+            session.markLoadFailed()
+            return
+        }
+
+        presentPanel()
+    }
+
     private func presentPanel() {
         let startedAt = ContinuousClock.now
         let surfaceLabel = session.surfaceDiagnosticLabel
@@ -190,6 +211,7 @@ final class PanelController: NSObject, NSWindowDelegate {
 
         previousApplication = nil
         onboardingDelegate?.panelDidHide()
+        onDidHide?()
     }
 
     func flushForTermination() async -> Bool {
@@ -379,8 +401,12 @@ final class PanelController: NSObject, NSWindowDelegate {
             Task { await openSearch() }
         case .refine:
             startRefinement()
+        case .openHome:
+            session.closeCommandPalette()
+            onOpenHome?()
         case .settings:
-            openSettings()
+            session.closeCommandPalette()
+            onOpenSettings?()
         }
     }
 }

@@ -114,6 +114,7 @@ struct SettingsView: View {
         .padding(20)
         .frame(width: 460)
         .rascWindowSurface()
+        .registersSettingsOpenAction()
         .task {
             refreshLaunchAtLoginState()
             await refreshRefineStatus()

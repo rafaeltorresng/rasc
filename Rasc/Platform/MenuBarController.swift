@@ -36,7 +36,7 @@ final class MenuBarController {
         menu.autoenablesItems = false
 
         menu.addItem(makeItem(
-            title: "Open Rasc",
+            title: "Open Home",
             action: #selector(openRasc),
             keyEquivalent: ""
         ))

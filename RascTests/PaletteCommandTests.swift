@@ -11,5 +11,6 @@ struct PaletteCommandTests {
     func fuzzyFilterMatchesTitles() {
         #expect(PaletteCommand.filtered(by: "sett") == [.settings])
         #expect(PaletteCommand.filtered(by: "find") == [.findNote])
+        #expect(PaletteCommand.filtered(by: "home") == [.openHome])
     }
 }

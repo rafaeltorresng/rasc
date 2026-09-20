@@ -158,6 +158,15 @@ actor NoteRepository {
         }
     }
 
+    func fetchAllNonDeleted() throws -> [Note] {
+        try database.read { database in
+            try Note
+                .filter(Note.Columns.deletedAt == nil)
+                .order(Note.Columns.updatedAt.desc, Column.rowID.desc)
+                .fetchAll(database)
+        }
+    }
+
     func search(_ query: String, limit: Int) throws -> [Note] {
         let normalizedQuery = query.precomposedStringWithCanonicalMapping
             .trimmingCharacters(in: .whitespacesAndNewlines)

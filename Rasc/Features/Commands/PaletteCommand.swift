@@ -3,6 +3,7 @@ import Foundation
 enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
     case newScratch
     case findNote
+    case openHome
     case refine
     case settings
 
@@ -14,6 +15,8 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             "New Scratch"
         case .findNote:
             "Find Note"
+        case .openHome:
+            "Open Home"
         case .refine:
             "Refine"
         case .settings:
@@ -27,6 +30,8 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             "⌘N"
         case .findNote:
             "⌘P"
+        case .openHome:
+            ""
         case .refine:
             "⌘J"
         case .settings:
@@ -40,6 +45,8 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             "Creates a new empty scratch"
         case .findNote:
             "Opens history and search"
+        case .openHome:
+            "Opens Rasc Home"
         case .refine:
             "Refines the current note"
         case .settings:

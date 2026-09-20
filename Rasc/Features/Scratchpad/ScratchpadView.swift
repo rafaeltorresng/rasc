@@ -310,17 +310,39 @@ final class ScratchpadSession {
             return false
         }
 
-        let selectedNoteID = searchResults[selectedSearchIndex].id
-        let selectedQuery = searchQuery
+        return try await openNote(id: searchResults[selectedSearchIndex].id, fromSearchQuery: searchQuery)
+    }
+
+    @discardableResult
+    func openNote(id: UUID) async throws -> Bool {
+        try await openNote(id: id, fromSearchQuery: nil)
+    }
+
+    @discardableResult
+    private func openNote(id: UUID, fromSearchQuery: String?) async throws -> Bool {
+        if fromSearchQuery != nil {
+            guard surface == .search else { return false }
+        } else {
+            dismissTransientSurfaces(except: nil)
+        }
+
         cancelRefinement()
         try await flush()
-        guard surface == .search, searchQuery == selectedQuery else { return false }
 
-        guard let selectedNote = try await repository.fetch(id: selectedNoteID) else {
-            try await refreshSearch()
+        if let fromSearchQuery {
+            guard surface == .search, searchQuery == fromSearchQuery else { return false }
+        }
+
+        guard let selectedNote = try await repository.fetch(id: id) else {
+            if fromSearchQuery != nil {
+                try await refreshSearch()
+            }
             return false
         }
-        guard surface == .search, searchQuery == selectedQuery else { return false }
+
+        if let fromSearchQuery {
+            guard surface == .search, searchQuery == fromSearchQuery else { return false }
+        }
 
         noteID = selectedNote.id
         activeNoteStore.noteID = selectedNote.id
@@ -328,6 +350,7 @@ final class ScratchpadSession {
         editorHasMultipleSelections = false
         text = selectedNote.content
         resetSearchState()
+        surface = .editor
         requestEditorFocus()
         return true
     }
@@ -834,6 +857,7 @@ struct ScratchpadView: View {
 
     let onEscape: () -> Void
     let onPaletteCommand: (PaletteCommand) -> Void
+    let onOpenHome: () -> Void
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -848,7 +872,13 @@ struct ScratchpadView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .animation(RascMotion.bodyContentAnimation(reduceMotion: reduceMotion), value: session.surface)
+        .overlay(alignment: .topTrailing) {
+            if showsHomeAffordance {
+                homeAffordance
+            }
+        }
         .scratchpadCanvas()
+        .registersSettingsOpenAction()
         .presentsSettings(on: session.settingsPresentationRequest)
         .animation(RascMotion.micro(reduceMotion: reduceMotion), value: session.message)
         .overlay(alignment: .bottomLeading) {
@@ -872,6 +902,30 @@ struct ScratchpadView: View {
         case .search, .commandPalette:
             false
         }
+    }
+
+    private var showsHomeAffordance: Bool {
+        switch session.surface {
+        case .editor, .message:
+            true
+        case .search, .commandPalette, .refining, .refinementPreview:
+            false
+        }
+    }
+
+    private var homeAffordance: some View {
+        Button(action: onOpenHome) {
+            Image(systemName: "house")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(.secondary.opacity(0.72))
+                .frame(width: 28, height: 28)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .help("Open Home")
+        .accessibilityLabel("Open Rasc Home")
+        .padding(.trailing, RascSurfaceLayout.horizontalInset)
+        .padding(.top, RascSurfaceLayout.topInset)
     }
 
     private var orbAnchor: some View {
