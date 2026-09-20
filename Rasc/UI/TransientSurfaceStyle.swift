@@ -2,34 +2,40 @@ import AppKit
 import SwiftUI
 
 enum RascSurfaceMetrics {
-    static let editorHorizontalPadding: CGFloat = 20
+    static let editorHorizontalPadding = RascSurfaceLayout.horizontalInset
     static let editorPadding = editorHorizontalPadding
-    static let inlineOrbSize: CGFloat = 20
-    static let anchorLeadingInset: CGFloat = 20
-    static let anchorTopInset: CGFloat = 2
-    static let anchorContentGap: CGFloat = 10
-    static let transientInputRowInset: CGFloat = 6
-    static let anchorBandHeight: CGFloat = anchorTopInset + inlineOrbSize
-    static let transientHeaderHeight: CGFloat = anchorBandHeight + transientInputRowInset
-    static let editorTopPadding: CGFloat = anchorBandHeight + anchorContentGap
-    static let editorBottomPadding: CGFloat = 12
-    static let textContainerHorizontalInset: CGFloat = 5
-    static let placeholderLeadingInset = editorHorizontalPadding + textContainerHorizontalInset
-    static let placeholderTopInset = editorTopPadding + 2
-    static let transientFieldLeadingInset = anchorLeadingInset + inlineOrbSize + 14
-    static let commandListTopInset: CGFloat = 6
-    static let commandPaletteContentTopInset: CGFloat = editorHorizontalPadding
-    static let searchContentTopInset: CGFloat = transientHeaderHeight + commandListTopInset
-    static let commandRowSpacing: CGFloat = 2
-    static let commandRowVerticalPadding: CGFloat = 5
-    static let commandRowTextHeight: CGFloat = 13
-    static let commandRowHeight: CGFloat = commandRowVerticalPadding * 2 + commandRowTextHeight
+    static let inlineOrbSize = RascSurfaceLayout.orbSize
+    static let anchorLeadingInset = RascSurfaceLayout.horizontalInset
+    static let anchorTopInset = RascSurfaceLayout.topInset
+    static let anchorContentGap = RascSurfaceLayout.scratchpadContentGap
+    static let anchorBandHeight: CGFloat = RascSurfaceLayout.topInset + RascSurfaceLayout.orbSize
+    static let searchFieldHeight = RascSurfaceLayout.searchFieldHeight
+    static let searchFieldCornerRadius = RascSurfaceLayout.searchFieldCornerRadius
+    static let editorTopPadding = RascSurfaceLayout.scratchpadEditorTopPadding
+    static let editorBottomPadding = RascSurfaceLayout.bottomInset
+    static let textContainerHorizontalInset = RascSurfaceLayout.textContainerHorizontalInset
+    static let placeholderLeadingInset = RascSurfaceLayout.noteTextLeadingInset
+    static let placeholderTopInset = RascSurfaceLayout.scratchpadEditorTopPadding
+    static let commandRowSpacing = RascSurfaceLayout.listRowSpacing
+    static let commandRowVerticalPadding = RascSurfaceLayout.listRowVerticalPadding
+    static let commandRowCornerRadius = RascSurfaceLayout.listRowCornerRadius
+    static let commandRowTextHeight: CGFloat = 14.5
+    static let commandRowHeight = RascSurfaceLayout.commandRowMinHeight
+    static let searchRowSpacing = RascSurfaceLayout.listRowSpacing
+    static let searchRowVerticalPadding = RascSurfaceLayout.listRowVerticalPadding
+    static let searchRowCornerRadius = RascSurfaceLayout.listRowCornerRadius
+    static let searchTitleFontSize: CGFloat = 14.5
+    static let searchSnippetFontSize: CGFloat = 13
+    static let searchTimestampFontSize: CGFloat = 11.5
 
     static func commandPaletteHeight(commandCount: Int) -> CGFloat {
         let clampedCount = max(commandCount, 1)
-        let rowsHeight = CGFloat(clampedCount) * commandRowHeight
-            + CGFloat(clampedCount - 1) * commandRowSpacing
-        return commandPaletteContentTopInset + rowsHeight + editorBottomPadding
+        let rowsHeight = CGFloat(clampedCount) * RascSurfaceLayout.commandRowMinHeight
+            + CGFloat(clampedCount - 1) * RascSurfaceLayout.listRowSpacing
+        let headerHeight = RascSurfaceLayout.topInset
+            + RascSurfaceLayout.orbSize
+            + RascSurfaceLayout.transientHeaderBodyGap
+        return headerHeight + rowsHeight + RascSurfaceLayout.bottomInset
     }
     static let noteFontSize: CGFloat = 16
     static let noteLineSpacing: CGFloat = 4.5
@@ -92,6 +98,14 @@ enum RascSurfacePalette {
 
     static func selectionFill(for colorScheme: ColorScheme) -> Color {
         violet(for: colorScheme).opacity(colorScheme == .dark ? 0.18 : 0.13)
+    }
+
+    static func selectionStroke(for colorScheme: ColorScheme) -> Color {
+        violet(for: colorScheme).opacity(colorScheme == .dark ? 0.42 : 0.34)
+    }
+
+    static func focusedFieldBorder(for colorScheme: ColorScheme) -> Color {
+        violet(for: colorScheme).opacity(colorScheme == .dark ? 0.52 : 0.44)
     }
 
     private static let warmBackground = NSColor(
@@ -223,6 +237,76 @@ extension View {
 
     func rascWindowSurface() -> some View {
         modifier(RascWindowSurfaceModifier())
+    }
+}
+
+struct RascTransientSelectionBackground: View {
+    let cornerRadius: CGFloat
+
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorSchemeContrast) private var colorSchemeContrast
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            .fill(RascSurfacePalette.selectionFill(for: colorScheme))
+            .overlay {
+                if colorSchemeContrast == .increased {
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .strokeBorder(
+                            RascSurfacePalette.selectionStroke(for: colorScheme),
+                            lineWidth: 1
+                        )
+                }
+            }
+    }
+}
+
+struct RascKeyboardActionHint: View {
+    let shortcut: String
+    let title: String
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Text(shortcut)
+                .font(.system(size: 11, weight: .medium))
+            Text(title)
+                .font(.system(size: 11, weight: .medium))
+        }
+        .foregroundStyle(RascSurfacePalette.violet(for: colorScheme).opacity(0.82))
+    }
+}
+
+struct RascTransientInputShell<Content: View>: View {
+    let isFocused: Bool
+    @ViewBuilder var content: () -> Content
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        content()
+            .frame(maxWidth: .infinity, minHeight: RascSurfaceMetrics.searchFieldHeight, alignment: .leading)
+            .padding(.horizontal, 12)
+            .background {
+                RoundedRectangle(
+                    cornerRadius: RascSurfaceMetrics.searchFieldCornerRadius,
+                    style: .continuous
+                )
+                .fill(RascSurfacePalette.raisedFill(for: colorScheme))
+            }
+            .overlay {
+                RoundedRectangle(
+                    cornerRadius: RascSurfaceMetrics.searchFieldCornerRadius,
+                    style: .continuous
+                )
+                .strokeBorder(
+                    isFocused
+                        ? RascSurfacePalette.focusedFieldBorder(for: colorScheme)
+                        : RascSurfacePalette.border(for: colorScheme).opacity(0.72),
+                    lineWidth: 1
+                )
+            }
     }
 }
 
