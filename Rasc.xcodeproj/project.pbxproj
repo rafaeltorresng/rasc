@@ -66,6 +66,7 @@
 		01000000000000000000003A /* ThirdPartyNotices.txt in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000039 /* ThirdPartyNotices.txt */; };
 		01000000000000000000003B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003A /* Assets.xcassets */; };
 		01000000000000000000003C /* RascLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003B /* RascLogo.swift */; };
+		01000000000000000000003D /* RascSurfaceShell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003C /* RascSurfaceShell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -137,6 +138,7 @@
 		020000000000000000000039 /* ThirdPartyNotices.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Rasc/Resources/ThirdPartyNotices.txt; sourceTree = SOURCE_ROOT; };
 		02000000000000000000003A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Rasc/Resources/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		02000000000000000000003B /* RascLogo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/UI/RascLogo.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000003C /* RascSurfaceShell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/UI/RascSurfaceShell.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -210,6 +212,7 @@
 				020000000000000000000032 /* GlobalShortcutFormatting.swift */,
 				020000000000000000000033 /* RascOrb.swift */,
 				020000000000000000000037 /* RascMotion.swift */,
+				02000000000000000000003C /* RascSurfaceShell.swift */,
 				020000000000000000000038 /* ShortcutKeycapView.swift */,
 				020000000000000000000039 /* ThirdPartyNotices.txt */,
 				02000000000000000000003A /* Assets.xcassets */,
@@ -396,6 +399,7 @@
 				010000000000000000000032 /* GlobalShortcutFormatting.swift in Sources */,
 				010000000000000000000033 /* RascOrb.swift in Sources */,
 				010000000000000000000037 /* RascMotion.swift in Sources */,
+				01000000000000000000003D /* RascSurfaceShell.swift in Sources */,
 				010000000000000000000038 /* ShortcutKeycapView.swift in Sources */,
 				01000000000000000000003C /* RascLogo.swift in Sources */,
 			);
