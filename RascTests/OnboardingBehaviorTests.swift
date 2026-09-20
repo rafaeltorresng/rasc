@@ -59,13 +59,13 @@ struct OnboardingBehaviorTests {
     func coreSurfaceMetricsKeepWritingAndTransientSurfacesInOneVisualSystem() {
         #expect(
             RascSurfaceMetrics.placeholderLeadingInset
-                == RascSurfaceMetrics.editorPadding
-                    + RascSurfaceMetrics.textContainerHorizontalInset
+                == RascSurfaceLayout.horizontalInset
+                    + RascSurfaceLayout.textContainerHorizontalInset
         )
         #expect(RascSurfaceMetrics.previewCornerRadius > RascSurfaceMetrics.feedbackCornerRadius)
         #expect(RascSurfaceMetrics.inlineOrbSize == 20)
-        #expect(RascSurfaceMetrics.commandPaletteHeight(commandCount: 4) == 130)
-        #expect(RascSurfaceMetrics.commandPaletteHeight(commandCount: 4) < 220)
+        #expect(RascSurfaceMetrics.commandPaletteHeight(commandCount: 4) == 248)
+        #expect(RascSurfaceMetrics.commandPaletteHeight(commandCount: 4) < 360)
     }
 
     @Test

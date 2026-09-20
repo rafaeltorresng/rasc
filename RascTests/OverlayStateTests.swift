@@ -6,18 +6,43 @@ import Testing
 @MainActor
 struct OverlayStateTests {
     @Test
-    func semanticOrbStateStaysOnNoteUnlessRefining() {
+    func surfaceLayoutKeepsSharedOrbAnchorWithoutUniversalBodyOrigin() {
+        #expect(RascSurfaceLayout.horizontalInset == 20)
+        #expect(RascSurfaceLayout.topInset == 2)
+        #expect(RascSurfaceLayout.orbSize == 20)
+        #expect(RascSurfaceLayout.scratchpadContentGap >= 14)
+        #expect(RascSurfaceLayout.scratchpadContentGap <= 18)
+        #expect(
+            RascSurfaceMetrics.editorTopPadding
+                == RascSurfaceLayout.topInset
+                    + RascSurfaceLayout.orbSize
+                    + RascSurfaceLayout.scratchpadContentGap
+        )
+        #expect(RascSurfaceMetrics.placeholderLeadingInset == RascSurfaceLayout.noteTextLeadingInset)
+        #expect(RascSurfaceLayout.orbLeading == 20)
+        #expect(RascSurfaceLayout.orbTop == 2)
+        #expect(RascSurfaceLayout.orbSize == 20)
+        #expect(RascSurfaceLayout.searchFieldOrbVerticalOffset == 6)
+    }
+
+    @Test
+    func semanticOrbStateStaysOnNoteUnlessRefiningOrSearching() {
         #expect(RascOrbState.resolve(isRefining: false) == .note)
+        #expect(RascOrbState.resolve(isRefining: false, isSearching: true) == .searching)
         #expect(RascOrbState.resolve(isRefining: true) == .refining)
+        #expect(RascOrbState.resolve(isRefining: true, isSearching: true) == .refining)
     }
 
     @Test
     func semanticOrbStateOwnsThinkingOrbMappingAndTuning() {
         #expect(RascOrbState.note.thinkingOrbState.rawValue == "solving")
         #expect(RascOrbState.note.speed == 0.5)
+        #expect(RascOrbState.searching.thinkingOrbState.rawValue == "searching")
+        #expect(RascOrbState.searching.speed == 0.68)
         #expect(RascOrbState.refining.thinkingOrbState.rawValue == "shaping")
         #expect(RascOrbState.refining.speed == 1)
         #expect(!RascOrbState.note.isPaused)
+        #expect(!RascOrbState.searching.isPaused)
         #expect(!RascOrbState.refining.isPaused)
     }
 
