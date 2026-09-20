@@ -105,9 +105,12 @@ struct PanelControllerTests {
 
     @Test
     func switchingSurfacesPreservesPanelFrame() async throws {
-        let controller = try makeController()
+        let userDefaults = UserDefaults(suiteName: "RascTests.\(UUID().uuidString)")!
+        let store = WindowFrameStore.scratchpad(userDefaults: userDefaults)
+        let controller = try makeController(windowFrameStore: store)
         let fixedFrame = NSRect(x: 100, y: 200, width: 520, height: 340)
         controller.panel.setFrame(fixedFrame, display: false)
+        store.save(controller.panel)
 
         await controller.openCommandPalette()
         #expect(controller.panel.frame == fixedFrame)

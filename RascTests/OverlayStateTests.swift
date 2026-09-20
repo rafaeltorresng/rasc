@@ -153,7 +153,7 @@ struct OverlayStateTests {
         )
 
         session.openCommandPalette()
-        session.selectCommand(at: 2)
+        session.selectCommand(at: PaletteCommand.allCases.firstIndex(of: .refine) ?? 0)
 
         #expect(session.selectedCommand() == .refine)
     }
