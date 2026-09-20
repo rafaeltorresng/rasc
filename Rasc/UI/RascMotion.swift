@@ -2,6 +2,9 @@ import SwiftUI
 
 enum RascMotion {
     static let microDuration: Double = 0.15
+    static let selectionDuration: Double = 0.135
+    static let headerAccessoryDuration: Double = 0.17
+    static let bodyContentDuration: Double = 0.2
     static let orbTransitionDuration: Double = 0.14
     static let surfaceDuration: Double = 0.2
     static let morphDuration: Double = 0.3
@@ -16,6 +19,32 @@ enum RascMotion {
 
     static func micro(reduceMotion: Bool) -> Animation? {
         reduceMotion ? .easeOut(duration: 0.1) : micro
+    }
+
+    static func selection(reduceMotion: Bool) -> Animation? {
+        reduceMotion ? .easeOut(duration: 0.1) : .easeOut(duration: selectionDuration)
+    }
+
+    static func headerAccessoryAnimation(reduceMotion: Bool) -> Animation? {
+        reduceMotion ? .easeOut(duration: 0.1) : .easeOut(duration: headerAccessoryDuration)
+    }
+
+    static func bodyContentAnimation(reduceMotion: Bool) -> Animation? {
+        reduceMotion ? .easeOut(duration: 0.1) : .easeOut(duration: bodyContentDuration)
+    }
+
+    static func headerAccessoryTransition(reduceMotion: Bool) -> AnyTransition {
+        if reduceMotion {
+            return .opacity
+        }
+        return .opacity.combined(with: .offset(y: 3))
+    }
+
+    static func bodyContentTransition(reduceMotion: Bool) -> AnyTransition {
+        if reduceMotion {
+            return .opacity
+        }
+        return .opacity.combined(with: .offset(y: 3))
     }
 
     static func surface(reduceMotion: Bool) -> Animation? {
