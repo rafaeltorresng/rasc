@@ -58,6 +58,12 @@ final class PanelController: NSObject, NSWindowDelegate {
             },
             onOpenHome: { [weak self] in
                 self?.onOpenHome?()
+            },
+            onKeep: { [weak self] in
+                Task { await self?.keepActiveNote() }
+            },
+            onUnkeep: { [weak self] in
+                Task { await self?.unkeepActiveNote() }
             }
         )
         .environment(\.onboardingScratchpadActions, onboardingScratchpadActions())
@@ -150,6 +156,48 @@ final class PanelController: NSObject, NSWindowDelegate {
 
     func openSettings() {
         session.requestSettingsPresentation()
+    }
+
+    func keepActiveNote() async {
+        do {
+            let outcome = try await session.keepActiveNote()
+            if outcome == .keptShouldHide {
+                try? await Task.sleep(for: .milliseconds(450))
+                await hide()
+            }
+        } catch {
+            session.markLoadFailed()
+        }
+    }
+
+    func unkeepActiveNote() async {
+        do {
+            try await session.unkeepActiveNote()
+        } catch {
+            session.markLoadFailed()
+        }
+    }
+
+    func copyActiveNote() async {
+        guard let text = try? await session.copyActiveNoteText() else { return }
+        NoteHandoff.copyPlainText(text)
+    }
+
+    func shareActiveNote() {
+        Task { @MainActor in
+            guard let text = try? await session.copyActiveNoteText(),
+                  let contentView = panel.contentView
+            else { return }
+            NoteHandoff.presentSharePicker(for: text, relativeTo: contentView)
+        }
+    }
+
+    func discardActiveNote() async {
+        do {
+            try await session.discardActiveNote()
+        } catch {
+            session.markLoadFailed()
+        }
     }
 
     func openNote(id: UUID) async {
@@ -395,6 +443,16 @@ final class PanelController: NSObject, NSWindowDelegate {
 
     private func handlePaletteCommand(_ command: PaletteCommand) {
         switch command {
+        case .keep:
+            Task { await keepActiveNote() }
+        case .unkeep:
+            Task { await unkeepActiveNote() }
+        case .copyNote:
+            Task { await copyActiveNote() }
+        case .shareNote:
+            shareActiveNote()
+        case .discardNote:
+            Task { await discardActiveNote() }
         case .newScratch:
             Task { await startNewScratch() }
         case .findNote:

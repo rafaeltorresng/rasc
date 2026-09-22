@@ -61,7 +61,7 @@ struct OverlayStateTests {
         try await session.openSearch()
 
         #expect(session.surface == .search)
-        #expect(session.filteredCommands == PaletteCommand.allCases)
+        #expect(session.filteredCommands == expectedPaletteCommands(for: session))
     }
 
     @Test
@@ -124,7 +124,7 @@ struct OverlayStateTests {
 
         session.openCommandPalette()
 
-        #expect(session.filteredCommands == PaletteCommand.allCases)
+        #expect(session.filteredCommands == expectedPaletteCommands(for: session))
     }
 
     @Test
@@ -137,10 +137,11 @@ struct OverlayStateTests {
         )
 
         session.openCommandPalette()
-        session.selectCommand(at: PaletteCommand.allCases.count - 1)
+        let commands = expectedPaletteCommands(for: session)
+        session.selectCommand(at: commands.count - 1)
 
         session.moveCommandSelection(by: 1)
-        #expect(session.selectedCommandIndex == PaletteCommand.allCases.count - 1)
+        #expect(session.selectedCommandIndex == commands.count - 1)
     }
 
     @Test
@@ -153,7 +154,8 @@ struct OverlayStateTests {
         )
 
         session.openCommandPalette()
-        session.selectCommand(at: PaletteCommand.allCases.firstIndex(of: .refine) ?? 0)
+        let commands = expectedPaletteCommands(for: session)
+        session.selectCommand(at: commands.firstIndex(of: .refine) ?? 0)
 
         #expect(session.selectedCommand() == .refine)
     }
@@ -189,6 +191,14 @@ struct OverlayStateTests {
 
         #expect(session.searchFocusRequest == 1)
         #expect(session.commandPaletteKeyFocusRequest == 1)
+    }
+
+    private func expectedPaletteCommands(for session: ScratchpadSession) -> [PaletteCommand] {
+        PaletteCommand.availableCommands(
+            isKept: session.isActiveNoteKept,
+            hasPersistableContent: session.hasPersistableContent,
+            canPerformCompletion: session.canPerformThoughtCompletion
+        )
     }
 
     private func makeFixture() throws -> Fixture {

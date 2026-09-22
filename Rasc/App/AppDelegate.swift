@@ -78,6 +78,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
         bootstrap.panelIfReady()?.startRefinement()
     }
 
+    func keepActiveNote() {
+        Task { @MainActor in
+            await bootstrap.awaitPanel()?.keepActiveNote()
+        }
+    }
+
+    func unkeepActiveNote() {
+        Task { @MainActor in
+            await bootstrap.awaitPanel()?.unkeepActiveNote()
+        }
+    }
+
+    func copyActiveNote() {
+        Task { @MainActor in
+            await bootstrap.awaitPanel()?.copyActiveNote()
+        }
+    }
+
+    func shareActiveNote() {
+        bootstrap.panelIfReady()?.shareActiveNote()
+    }
+
+    func discardActiveNote() {
+        Task { @MainActor in
+            await bootstrap.awaitPanel()?.discardActiveNote()
+        }
+    }
+
     func openSettings() {
         Task { @MainActor in
             await bootstrap.openSettings()

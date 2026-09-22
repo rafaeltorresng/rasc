@@ -252,6 +252,12 @@ struct HistorySearchView: View {
             Spacer(minLength: 8)
 
             VStack(alignment: .trailing, spacing: 6) {
+                if note.isKept {
+                    Text("Kept")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                }
+
                 Text(note.updatedAt, style: .relative)
                     .font(.system(size: RascSurfaceMetrics.searchTimestampFontSize))
                     .foregroundStyle(.tertiary)
@@ -271,6 +277,9 @@ struct HistorySearchView: View {
 
     private func resultAccessibilityLabel(for note: Note) -> String {
         var components = [note.displayTitle]
+        if note.isKept {
+            components.append("Kept")
+        }
         if let snippet = note.displayRetrievalSnippet {
             components.append(snippet)
         }

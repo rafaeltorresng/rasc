@@ -53,7 +53,8 @@ actor NoteRepository {
                 content: content,
                 createdAt: now,
                 updatedAt: now,
-                deletedAt: nil
+                deletedAt: nil,
+                keptAt: nil
             )
             try note.insert(database)
             return note
@@ -204,6 +205,46 @@ actor NoteRepository {
                 .updateAll(database, [
                     Note.Columns.deletedAt.set(to: Date()),
                 ])
+        }
+    }
+
+    func keep(id: UUID) throws -> Note {
+        guard let note = try fetch(id: id) else {
+            throw PersistenceError.staleContent
+        }
+        guard Self.hasMeaningfulContent(note.content) else {
+            throw PersistenceError.emptyContent
+        }
+
+        return try database.write { database in
+            let now = Date()
+            let updatedCount = try Note
+                .filter(Note.Columns.id == id)
+                .filter(Note.Columns.deletedAt == nil)
+                .updateAll(database, [
+                    Note.Columns.keptAt.set(to: now),
+                    Note.Columns.updatedAt.set(to: now),
+                ])
+            guard updatedCount == 1 else {
+                throw PersistenceError.staleContent
+            }
+            return try Note.fetchOne(database, key: id)!
+        }
+    }
+
+    func unkeep(id: UUID) throws -> Note {
+        return try database.write { database in
+            let updatedCount = try Note
+                .filter(Note.Columns.id == id)
+                .filter(Note.Columns.deletedAt == nil)
+                .updateAll(database, [
+                    Note.Columns.keptAt.set(to: nil),
+                    Note.Columns.updatedAt.set(to: Date()),
+                ])
+            guard updatedCount == 1 else {
+                throw PersistenceError.staleContent
+            }
+            return try Note.fetchOne(database, key: id)!
         }
     }
 

@@ -167,18 +167,18 @@ struct HomeView: View {
 
     private var chronologicalGrid: some View {
         VStack(alignment: .leading, spacing: HomeLayout.temporalGroupSpacing) {
-            ForEach(session.temporalGroups) { group in
+            ForEach(session.browseGroups) { group in
                 VStack(alignment: .leading, spacing: HomeLayout.temporalLabelSpacing) {
-                    Text(group.section.rawValue)
+                    Text(group.sectionTitle)
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(isKeptSection(group) ? Color.primary.opacity(0.88) : Color.secondary)
                         .accessibilityAddTraits(.isHeader)
 
                     noteGrid(for: group.notes, style: .browse)
                 }
             }
         }
-        .animation(RascMotion.bodyContentAnimation(reduceMotion: reduceMotion), value: session.temporalGroups.map(\.id))
+        .animation(RascMotion.bodyContentAnimation(reduceMotion: reduceMotion), value: session.browseGroups.map(\.id))
     }
 
     private var searchResultsGrid: some View {
@@ -226,6 +226,13 @@ struct HomeView: View {
     private func openSelectedNote() {
         guard let note = session.selectedNote() else { return }
         onOpenNote(note.id)
+    }
+
+    private func isKeptSection(_ group: HomeBrowseGroup) -> Bool {
+        if case .kept = group.kind {
+            return true
+        }
+        return false
     }
 }
 
@@ -298,12 +305,26 @@ private struct HomeNoteCard: View {
             onOpen()
         } label: {
             VStack(alignment: .leading, spacing: 8) {
-                Text(note.displayTitle)
-                    .font(.system(size: 14.5, weight: .medium))
-                    .foregroundStyle(.primary)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text(note.displayTitle)
+                        .font(.system(size: 14.5, weight: .medium))
+                        .foregroundStyle(.primary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    if note.isKept {
+                        Text("Kept")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(
+                                Capsule(style: .continuous)
+                                    .fill(RascSurfacePalette.subtleFill(for: colorScheme))
+                            )
+                    }
+                }
 
                 if let snippet = note.displayRetrievalSnippet ?? note.displaySnippet {
                     Text(snippet)
@@ -338,6 +359,9 @@ private struct HomeNoteCard: View {
 
     private var accessibilityLabel: String {
         var components = [note.displayTitle]
+        if note.isKept {
+            components.append("Kept")
+        }
         if let snippet = note.displayRetrievalSnippet ?? note.displaySnippet {
             components.append(snippet)
         }
