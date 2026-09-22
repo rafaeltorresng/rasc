@@ -1,0 +1,1254 @@
+{
+  "byDisposition": {
+    "ambiguous": {
+      "ambiguousCases": 6,
+      "ambiguousSafe": 6,
+      "caseVariantCorrectionSuccess": 0,
+      "cases": 6,
+      "changed": 0,
+      "exactCorrectionSuccess": 0,
+      "excessiveExpansions": 0,
+      "expectedSuccess": 6,
+      "harmfulEdits": 0,
+      "inventedInformation": 0,
+      "noChange": 6,
+      "providerErrors": 0,
+      "rejected": 0,
+      "shouldChangeCases": 0,
+      "shouldChangeSuccess": 0,
+      "shouldNotChangeAccuracy": 0,
+      "shouldNotChangeCases": 0,
+      "unnecessaryEdits": 0,
+      "usefulRepairsMissed": 0,
+      "usefulRepairsRetained": 0,
+      "wrongLanguageOutputs": 0
+    },
+    "shouldChange": {
+      "ambiguousCases": 0,
+      "ambiguousSafe": 0,
+      "caseVariantCorrectionSuccess": 0,
+      "cases": 21,
+      "changed": 0,
+      "exactCorrectionSuccess": 0,
+      "excessiveExpansions": 0,
+      "expectedSuccess": 0,
+      "harmfulEdits": 0,
+      "inventedInformation": 0,
+      "noChange": 21,
+      "providerErrors": 0,
+      "rejected": 0,
+      "shouldChangeCases": 21,
+      "shouldChangeSuccess": 0,
+      "shouldNotChangeAccuracy": 0,
+      "shouldNotChangeCases": 0,
+      "unnecessaryEdits": 0,
+      "usefulRepairsMissed": 21,
+      "usefulRepairsRetained": 0,
+      "wrongLanguageOutputs": 0
+    },
+    "shouldNotChange": {
+      "ambiguousCases": 0,
+      "ambiguousSafe": 0,
+      "caseVariantCorrectionSuccess": 0,
+      "cases": 15,
+      "changed": 0,
+      "exactCorrectionSuccess": 0,
+      "excessiveExpansions": 0,
+      "expectedSuccess": 15,
+      "harmfulEdits": 0,
+      "inventedInformation": 0,
+      "noChange": 15,
+      "providerErrors": 0,
+      "rejected": 0,
+      "shouldChangeCases": 0,
+      "shouldChangeSuccess": 0,
+      "shouldNotChangeAccuracy": 15,
+      "shouldNotChangeCases": 15,
+      "unnecessaryEdits": 0,
+      "usefulRepairsMissed": 0,
+      "usefulRepairsRetained": 0,
+      "wrongLanguageOutputs": 0
+    }
+  },
+  "byLanguage": {
+    "en": {
+      "ambiguousCases": 2,
+      "ambiguousSafe": 2,
+      "caseVariantCorrectionSuccess": 0,
+      "cases": 14,
+      "changed": 0,
+      "exactCorrectionSuccess": 0,
+      "excessiveExpansions": 0,
+      "expectedSuccess": 7,
+      "harmfulEdits": 0,
+      "inventedInformation": 0,
+      "noChange": 14,
+      "providerErrors": 0,
+      "rejected": 0,
+      "shouldChangeCases": 7,
+      "shouldChangeSuccess": 0,
+      "shouldNotChangeAccuracy": 5,
+      "shouldNotChangeCases": 5,
+      "unnecessaryEdits": 0,
+      "usefulRepairsMissed": 7,
+      "usefulRepairsRetained": 0,
+      "wrongLanguageOutputs": 0
+    },
+    "es": {
+      "ambiguousCases": 2,
+      "ambiguousSafe": 2,
+      "caseVariantCorrectionSuccess": 0,
+      "cases": 14,
+      "changed": 0,
+      "exactCorrectionSuccess": 0,
+      "excessiveExpansions": 0,
+      "expectedSuccess": 7,
+      "harmfulEdits": 0,
+      "inventedInformation": 0,
+      "noChange": 14,
+      "providerErrors": 0,
+      "rejected": 0,
+      "shouldChangeCases": 7,
+      "shouldChangeSuccess": 0,
+      "shouldNotChangeAccuracy": 5,
+      "shouldNotChangeCases": 5,
+      "unnecessaryEdits": 0,
+      "usefulRepairsMissed": 7,
+      "usefulRepairsRetained": 0,
+      "wrongLanguageOutputs": 0
+    },
+    "pt": {
+      "ambiguousCases": 2,
+      "ambiguousSafe": 2,
+      "caseVariantCorrectionSuccess": 0,
+      "cases": 14,
+      "changed": 0,
+      "exactCorrectionSuccess": 0,
+      "excessiveExpansions": 0,
+      "expectedSuccess": 7,
+      "harmfulEdits": 0,
+      "inventedInformation": 0,
+      "noChange": 14,
+      "providerErrors": 0,
+      "rejected": 0,
+      "shouldChangeCases": 7,
+      "shouldChangeSuccess": 0,
+      "shouldNotChangeAccuracy": 5,
+      "shouldNotChangeCases": 5,
+      "unnecessaryEdits": 0,
+      "usefulRepairsMissed": 7,
+      "usefulRepairsRetained": 0,
+      "wrongLanguageOutputs": 0
+    }
+  },
+  "cases": [
+    {
+      "caseID": "otpc-pt-change-001",
+      "input": "nao",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "nao",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-pt-change-002",
+      "input": "voce",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "voce",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-pt-change-003",
+      "input": "tambem",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "tambem",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-pt-change-004",
+      "input": "reuniao",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "reuniao",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-pt-change-005",
+      "input": "mensgem",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "mensgem",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-pt-change-006",
+      "input": "urgnete",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "urgnete",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-pt-change-007",
+      "input": "tudobem",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "tudobem",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-pt-nochange-001",
+      "input": "café",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "café",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-pt-nochange-002",
+      "input": "deploy",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "deploy",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-pt-nochange-003",
+      "input": "API",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "API",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-pt-nochange-004",
+      "input": "Swift",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "Swift",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-pt-nochange-005",
+      "input": "blz",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "blz",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-pt-ambiguous-001",
+      "input": "ok",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "ok",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-pt-ambiguous-002",
+      "input": "draft",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "draft",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-en-change-001",
+      "input": "recieve",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "recieve",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-en-change-002",
+      "input": "adress",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "adress",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-en-change-003",
+      "input": "definately",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "definately",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-en-change-004",
+      "input": "seperate",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "seperate",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-en-change-005",
+      "input": "untill",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "untill",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-en-change-006",
+      "input": "teh",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "teh",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-en-change-007",
+      "input": "alot",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "alot",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-en-nochange-001",
+      "input": "tomorrow",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "tomorrow",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-en-nochange-002",
+      "input": "deploy",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "deploy",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-en-nochange-003",
+      "input": "API",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "API",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-en-nochange-004",
+      "input": "Redis",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "Redis",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-en-nochange-005",
+      "input": "gonna",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "gonna",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-en-ambiguous-001",
+      "input": "fine",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "fine",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-en-ambiguous-002",
+      "input": "draft",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "draft",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-es-change-001",
+      "input": "manana",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "manana",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-es-change-002",
+      "input": "tambien",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "tambien",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-es-change-003",
+      "input": "informacion",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "informacion",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-es-change-004",
+      "input": "reunion",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "reunion",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-es-change-005",
+      "input": "necsario",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "necsario",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-es-change-006",
+      "input": "urgnte",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "urgnte",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-es-change-007",
+      "input": "porfavor",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "porfavor",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-es-nochange-001",
+      "input": "vale",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "vale",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-es-nochange-002",
+      "input": "deploy",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "deploy",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-es-nochange-003",
+      "input": "API",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "API",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-es-nochange-004",
+      "input": "Redis",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "Redis",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-es-nochange-005",
+      "input": "mañana",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "mañana",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-es-ambiguous-001",
+      "input": "ok",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "ok",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    },
+    {
+      "caseID": "otpc-es-ambiguous-002",
+      "input": "chat",
+      "outcome": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "output": "chat",
+        "reason": "Unconditional one-content-unit abstention.",
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      }
+    }
+  ],
+  "challengeHumanValidated": false,
+  "challengePath": "Evals/Refine/challenges/one-token-positive-controls.v1.jsonl",
+  "experiment": "M12B-004B-one-token-positive-controls",
+  "holdoutUsed": false,
+  "metrics": {
+    "ambiguousCases": 6,
+    "ambiguousSafe": 6,
+    "caseVariantCorrectionSuccess": 0,
+    "cases": 42,
+    "changed": 0,
+    "exactCorrectionSuccess": 0,
+    "excessiveExpansions": 0,
+    "expectedSuccess": 21,
+    "harmPreventedPerUsefulRepairLost": 6.5,
+    "harmPreventedVsCurrent": 26,
+    "harmfulEdits": 0,
+    "inventedInformation": 0,
+    "noChange": 42,
+    "providerErrors": 0,
+    "rejected": 0,
+    "shouldChangeCases": 21,
+    "shouldChangeSuccess": 0,
+    "shouldNotChangeAccuracy": 15,
+    "shouldNotChangeCases": 15,
+    "tradeoffExplanation": "6.50 harms prevented per currently demonstrated useful repair lost.",
+    "unnecessaryEdits": 0,
+    "usefulRepairsLostVsCurrent": 4,
+    "usefulRepairsMissed": 21,
+    "usefulRepairsRetained": 0,
+    "wrongLanguageOutputs": 0
+  },
+  "policy": "A — unconditional one-content-unit whole-note noChange",
+  "productionModified": false,
+  "schemaVersion": 1,
+  "sourcePromptVersion": "refine-v2-language",
+  "stability": {
+    "actionInstabilityCaseIDs": [],
+    "actionInstabilityCases": 0,
+    "cases": 15,
+    "casesDetail": [
+      {
+        "actionInstability": false,
+        "actions": [
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange"
+        ],
+        "caseID": "otpc-en-change-001",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange"
+        ],
+        "caseID": "otpc-en-change-006",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange"
+        ],
+        "caseID": "otpc-en-change-007",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange"
+        ],
+        "caseID": "otpc-en-nochange-002",
+        "expectedSuccesses": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange"
+        ],
+        "caseID": "otpc-en-nochange-005",
+        "expectedSuccesses": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange"
+        ],
+        "caseID": "otpc-es-change-001",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange"
+        ],
+        "caseID": "otpc-es-change-006",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange"
+        ],
+        "caseID": "otpc-es-change-007",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange"
+        ],
+        "caseID": "otpc-es-nochange-001",
+        "expectedSuccesses": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange"
+        ],
+        "caseID": "otpc-es-nochange-002",
+        "expectedSuccesses": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange"
+        ],
+        "caseID": "otpc-pt-change-001",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange"
+        ],
+        "caseID": "otpc-pt-change-005",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange"
+        ],
+        "caseID": "otpc-pt-change-007",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange"
+        ],
+        "caseID": "otpc-pt-nochange-002",
+        "expectedSuccesses": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange",
+          "noChange"
+        ],
+        "caseID": "otpc-pt-nochange-005",
+        "expectedSuccesses": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      }
+    ],
+    "providerErrorRuns": 0,
+    "runsPerCase": 5,
+    "successInstabilityCaseIDs": [],
+    "successInstabilityCases": 0
+  },
+  "usefulRepairsLostCaseIDs": [
+    "otpc-pt-change-006",
+    "otpc-en-change-001",
+    "otpc-en-change-004",
+    "otpc-en-change-005"
+  ]
+}

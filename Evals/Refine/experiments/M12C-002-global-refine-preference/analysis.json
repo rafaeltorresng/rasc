@@ -1,0 +1,119 @@
+{
+  "baseline": "M12C-001",
+  "blockers": [
+    "protected literal failure under preference",
+    "wrong language under preference"
+  ],
+  "challengeAdherence": {
+    "byProfile": {
+      "adversarial": {
+        "suppressedForSafety": 9,
+        "violated": 3
+      },
+      "avoid-formality": {
+        "partially": 2,
+        "satisfied": 2
+      },
+      "bullets": {
+        "notApplicable": 1,
+        "partially": 3,
+        "satisfied": 1
+      },
+      "casual": {
+        "partially": 4,
+        "satisfied": 3
+      },
+      "combo": {
+        "partially": 2,
+        "satisfied": 3,
+        "violated": 1
+      },
+      "concise": {
+        "partially": 1,
+        "satisfied": 6,
+        "violated": 1
+      },
+      "empty": {
+        "notApplicable": 5
+      },
+      "technical": {
+        "partially": 2,
+        "satisfied": 2,
+        "violated": 1
+      }
+    },
+    "overall": {
+      "notApplicable": 6,
+      "partially": 14,
+      "satisfied": 17,
+      "suppressedForSafety": 9,
+      "violated": 6
+    }
+  },
+  "challengeSafety": {
+    "excessiveExpansionCount": 1,
+    "inappropriateForcedChangeCount": 1,
+    "inventedInformationCount": 0,
+    "protectedLiteralFailureCount": 2,
+    "runs": 52,
+    "selectionFailureCount": 0,
+    "wrongLanguageCount": 5
+  },
+  "decision": "REJECT",
+  "emptyPreferenceRegression": {
+    "dev": {
+      "criticalFailureCount": {
+        "current": null,
+        "delta": null,
+        "m12c001": null
+      },
+      "objectivePassRate": {
+        "current": 0.6683937823834197,
+        "delta": 0.0259,
+        "m12c001": 0.6424870466321243
+      },
+      "split": "dev"
+    },
+    "regression": {
+      "criticalFailureCount": {
+        "current": null,
+        "delta": null,
+        "m12c001": null
+      },
+      "objectivePassRate": {
+        "current": 0.6666666666666666,
+        "delta": 0.1667,
+        "m12c001": 0.5
+      },
+      "split": "regression"
+    },
+    "validation": {
+      "criticalFailureCount": {
+        "current": null,
+        "delta": null,
+        "m12c001": null
+      },
+      "objectivePassRate": {
+        "current": 0.5964912280701754,
+        "delta": 0.0175,
+        "m12c001": 0.5789473684210527
+      },
+      "split": "validation"
+    }
+  },
+  "generatedAt": "2026-09-22T15:15:40.431281+00:00",
+  "latency": {
+    "p50": 813.713,
+    "p95": 1050.076
+  },
+  "promptIntegration": {
+    "blockTag": "<refine_preference>",
+    "omittedWhenEmpty": true,
+    "version": "refine-v2-global-preference"
+  },
+  "stability": {
+    "cases": 27,
+    "decisionInstabilityCases": 19,
+    "outputInstabilityCases": 24
+  }
+}

@@ -1,0 +1,1061 @@
+{
+  "challenge": {
+    "contextLeaksFinal": 1,
+    "counterfactualCatches": [
+      {
+        "caseID": "selection-audit-015",
+        "reason": "contextLeak",
+        "runIndex": 0
+      }
+    ],
+    "counterfactualDuplicateAfterContextGuardWouldCatch": 1,
+    "counterfactualFalsePositiveCases": [],
+    "counterfactualFalsePositives": 0,
+    "decisionFlappingCases": [],
+    "existingGuardInterceptions": 34,
+    "falsePositiveRejections": 0,
+    "falsePositives": [],
+    "finalFailureBreakdown": {
+      "contextLeak": 1
+    },
+    "finalFailures": [
+      {
+        "caseID": "selection-audit-015",
+        "output": "retry again",
+        "reason": "contextLeak",
+        "runIndex": 0
+      }
+    ],
+    "finalSafetyInstabilityCases": [],
+    "finalUserVisibleSelectionFailures": 1,
+    "interceptionBreakdown": {
+      "context_leak": 4,
+      "language_contract_violation_rejected_to_noChange": 2,
+      "no_change": 22,
+      "protectedLiteral:identifier:protectedLiteralDropped": 1,
+      "protectedLiteral:identifier:protectedLiteralMutated": 2,
+      "protectedLiteral:money:valueChanged": 1,
+      "protectedLiteral:time:valueChanged": 1,
+      "protectedLiteral:url:protectedLiteralMutated": 1
+    },
+    "interceptions": [
+      {
+        "caseID": "selection-audit-003",
+        "rawFailure": null,
+        "reason": "language_contract_violation_rejected_to_noChange",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-005",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-006",
+        "rawFailure": null,
+        "reason": "language_contract_violation_rejected_to_noChange",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-007",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-008",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-009",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-010",
+        "rawFailure": "contextLeak",
+        "reason": "context_leak",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-011",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-013",
+        "rawFailure": "contextLeak",
+        "reason": "context_leak",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-014",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-016",
+        "rawFailure": "contextLeak",
+        "reason": "context_leak",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-017",
+        "rawFailure": null,
+        "reason": "protectedLiteral:identifier:protectedLiteralDropped",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-018",
+        "rawFailure": "contextLeak",
+        "reason": "context_leak",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-019",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-021",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-022",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-026",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-027",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-028",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-029",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-030",
+        "rawFailure": null,
+        "reason": "protectedLiteral:time:valueChanged",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-031",
+        "rawFailure": null,
+        "reason": "protectedLiteral:identifier:protectedLiteralMutated",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-032",
+        "rawFailure": null,
+        "reason": "protectedLiteral:url:protectedLiteralMutated",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-033",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-034",
+        "rawFailure": "protectedLiteralCorruption",
+        "reason": "protectedLiteral:money:valueChanged",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-035",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-036",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-037",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-039",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-040",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-041",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-042",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-043",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-044",
+        "rawFailure": null,
+        "reason": "protectedLiteral:identifier:protectedLiteralMutated",
+        "runIndex": 0
+      }
+    ],
+    "outsideSelectionRewritesFinal": 0,
+    "protectedLiteralCorruptionsFinal": 0,
+    "rawProposalInstabilityCases": [],
+    "rawUnsafeBreakdown": {
+      "contextLeak": 5,
+      "protectedLiteralCorruption": 1
+    },
+    "rawUnsafeCases": [
+      {
+        "caseID": "selection-audit-010",
+        "reason": "contextLeak",
+        "runIndex": 0,
+        "theme": "replacementExpansion"
+      },
+      {
+        "caseID": "selection-audit-013",
+        "reason": "contextLeak",
+        "runIndex": 0,
+        "theme": "replacementExpansion"
+      },
+      {
+        "caseID": "selection-audit-015",
+        "reason": "contextLeak",
+        "runIndex": 0,
+        "theme": "duplicateText"
+      },
+      {
+        "caseID": "selection-audit-016",
+        "reason": "contextLeak",
+        "runIndex": 0,
+        "theme": "duplicateText"
+      },
+      {
+        "caseID": "selection-audit-018",
+        "reason": "contextLeak",
+        "runIndex": 0,
+        "theme": "duplicateText"
+      },
+      {
+        "caseID": "selection-audit-034",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 0,
+        "theme": "insideLiteralPreservation"
+      }
+    ],
+    "rawUnsafeSelectionProposals": 6,
+    "runs": 45,
+    "safeRefinementsAccepted": 10,
+    "usefulRefinementsLost": 0,
+    "wrongLanguageFinal": 0
+  },
+  "challengeCoverage": {
+    "cases": 45,
+    "criticalCases": 21,
+    "languages": {
+      "en": 20,
+      "es": 3,
+      "mixed": 4,
+      "pt": 18
+    },
+    "themes": {
+      "contextLeak": 9,
+      "duplicateText": 5,
+      "insideLiteralPreservation": 8,
+      "mixedTechnical": 2,
+      "outsideLiteralContamination": 8,
+      "positionBoundary": 7,
+      "replacementExpansion": 6
+    }
+  },
+  "challengeStability": {
+    "contextLeaksFinal": 0,
+    "counterfactualCatches": [],
+    "counterfactualDuplicateAfterContextGuardWouldCatch": 0,
+    "counterfactualFalsePositiveCases": [],
+    "counterfactualFalsePositives": 0,
+    "decisionFlappingCases": [
+      "selection-audit-028",
+      "selection-audit-032",
+      "selection-audit-033"
+    ],
+    "existingGuardInterceptions": 62,
+    "falsePositiveRejections": 0,
+    "falsePositives": [],
+    "finalFailureBreakdown": {},
+    "finalFailures": [],
+    "finalSafetyInstabilityCases": [
+      "selection-audit-001",
+      "selection-audit-002",
+      "selection-audit-004",
+      "selection-audit-005",
+      "selection-audit-007",
+      "selection-audit-008",
+      "selection-audit-020",
+      "selection-audit-021",
+      "selection-audit-022",
+      "selection-audit-023",
+      "selection-audit-024",
+      "selection-audit-026",
+      "selection-audit-027",
+      "selection-audit-028",
+      "selection-audit-032",
+      "selection-audit-033"
+    ],
+    "finalUserVisibleSelectionFailures": 0,
+    "interceptionBreakdown": {
+      "language_contract_violation_rejected_to_noChange": 6,
+      "no_change": 35,
+      "protectedLiteral:handle:protectedLiteralMutated": 1,
+      "protectedLiteral:identifier:protectedLiteralDropped": 2,
+      "protectedLiteral:identifier:protectedLiteralMutated": 3,
+      "protectedLiteral:money:currencyDropped": 2,
+      "protectedLiteral:money:valueChanged": 5,
+      "protectedLiteral:time:valueChanged": 5,
+      "protectedLiteral:url:protectedLiteralMutated": 3
+    },
+    "interceptions": [
+      {
+        "caseID": "selection-audit-002",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 1
+      },
+      {
+        "caseID": "selection-audit-002",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 2
+      },
+      {
+        "caseID": "selection-audit-003",
+        "rawFailure": null,
+        "reason": "language_contract_violation_rejected_to_noChange",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-003",
+        "rawFailure": null,
+        "reason": "language_contract_violation_rejected_to_noChange",
+        "runIndex": 1
+      },
+      {
+        "caseID": "selection-audit-003",
+        "rawFailure": null,
+        "reason": "language_contract_violation_rejected_to_noChange",
+        "runIndex": 2
+      },
+      {
+        "caseID": "selection-audit-003",
+        "rawFailure": null,
+        "reason": "language_contract_violation_rejected_to_noChange",
+        "runIndex": 3
+      },
+      {
+        "caseID": "selection-audit-003",
+        "rawFailure": null,
+        "reason": "language_contract_violation_rejected_to_noChange",
+        "runIndex": 4
+      },
+      {
+        "caseID": "selection-audit-004",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-004",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 1
+      },
+      {
+        "caseID": "selection-audit-004",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 2
+      },
+      {
+        "caseID": "selection-audit-004",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 3
+      },
+      {
+        "caseID": "selection-audit-005",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-005",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 1
+      },
+      {
+        "caseID": "selection-audit-005",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 2
+      },
+      {
+        "caseID": "selection-audit-005",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 3
+      },
+      {
+        "caseID": "selection-audit-007",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 1
+      },
+      {
+        "caseID": "selection-audit-008",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 3
+      },
+      {
+        "caseID": "selection-audit-008",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 4
+      },
+      {
+        "caseID": "selection-audit-021",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 1
+      },
+      {
+        "caseID": "selection-audit-021",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 2
+      },
+      {
+        "caseID": "selection-audit-021",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 3
+      },
+      {
+        "caseID": "selection-audit-021",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 4
+      },
+      {
+        "caseID": "selection-audit-022",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 4
+      },
+      {
+        "caseID": "selection-audit-023",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-024",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 3
+      },
+      {
+        "caseID": "selection-audit-026",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 1
+      },
+      {
+        "caseID": "selection-audit-026",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 2
+      },
+      {
+        "caseID": "selection-audit-026",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 3
+      },
+      {
+        "caseID": "selection-audit-026",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 4
+      },
+      {
+        "caseID": "selection-audit-027",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-027",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 1
+      },
+      {
+        "caseID": "selection-audit-027",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 2
+      },
+      {
+        "caseID": "selection-audit-027",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 4
+      },
+      {
+        "caseID": "selection-audit-028",
+        "rawFailure": "protectedLiteralCorruption",
+        "reason": "protectedLiteral:money:currencyDropped",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-028",
+        "rawFailure": "protectedLiteralCorruption",
+        "reason": "protectedLiteral:money:currencyDropped",
+        "runIndex": 3
+      },
+      {
+        "caseID": "selection-audit-029",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-029",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 1
+      },
+      {
+        "caseID": "selection-audit-029",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 2
+      },
+      {
+        "caseID": "selection-audit-029",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 3
+      },
+      {
+        "caseID": "selection-audit-029",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 4
+      },
+      {
+        "caseID": "selection-audit-030",
+        "rawFailure": "protectedLiteralCorruption",
+        "reason": "protectedLiteral:time:valueChanged",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-030",
+        "rawFailure": null,
+        "reason": "protectedLiteral:time:valueChanged",
+        "runIndex": 1
+      },
+      {
+        "caseID": "selection-audit-030",
+        "rawFailure": null,
+        "reason": "protectedLiteral:time:valueChanged",
+        "runIndex": 2
+      },
+      {
+        "caseID": "selection-audit-030",
+        "rawFailure": "protectedLiteralCorruption",
+        "reason": "protectedLiteral:time:valueChanged",
+        "runIndex": 3
+      },
+      {
+        "caseID": "selection-audit-030",
+        "rawFailure": "protectedLiteralCorruption",
+        "reason": "protectedLiteral:time:valueChanged",
+        "runIndex": 4
+      },
+      {
+        "caseID": "selection-audit-031",
+        "rawFailure": null,
+        "reason": "protectedLiteral:identifier:protectedLiteralMutated",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-031",
+        "rawFailure": "protectedLiteralCorruption",
+        "reason": "protectedLiteral:identifier:protectedLiteralDropped",
+        "runIndex": 1
+      },
+      {
+        "caseID": "selection-audit-031",
+        "rawFailure": null,
+        "reason": "protectedLiteral:identifier:protectedLiteralDropped",
+        "runIndex": 2
+      },
+      {
+        "caseID": "selection-audit-031",
+        "rawFailure": null,
+        "reason": "protectedLiteral:identifier:protectedLiteralMutated",
+        "runIndex": 3
+      },
+      {
+        "caseID": "selection-audit-031",
+        "rawFailure": null,
+        "reason": "protectedLiteral:identifier:protectedLiteralMutated",
+        "runIndex": 4
+      },
+      {
+        "caseID": "selection-audit-032",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-032",
+        "rawFailure": null,
+        "reason": "protectedLiteral:url:protectedLiteralMutated",
+        "runIndex": 1
+      },
+      {
+        "caseID": "selection-audit-032",
+        "rawFailure": null,
+        "reason": "protectedLiteral:url:protectedLiteralMutated",
+        "runIndex": 2
+      },
+      {
+        "caseID": "selection-audit-032",
+        "rawFailure": null,
+        "reason": "protectedLiteral:url:protectedLiteralMutated",
+        "runIndex": 3
+      },
+      {
+        "caseID": "selection-audit-032",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 4
+      },
+      {
+        "caseID": "selection-audit-033",
+        "rawFailure": null,
+        "reason": "language_contract_violation_rejected_to_noChange",
+        "runIndex": 1
+      },
+      {
+        "caseID": "selection-audit-033",
+        "rawFailure": null,
+        "reason": "protectedLiteral:handle:protectedLiteralMutated",
+        "runIndex": 2
+      },
+      {
+        "caseID": "selection-audit-034",
+        "rawFailure": "protectedLiteralCorruption",
+        "reason": "protectedLiteral:money:valueChanged",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-audit-034",
+        "rawFailure": "protectedLiteralCorruption",
+        "reason": "protectedLiteral:money:valueChanged",
+        "runIndex": 1
+      },
+      {
+        "caseID": "selection-audit-034",
+        "rawFailure": "protectedLiteralCorruption",
+        "reason": "protectedLiteral:money:valueChanged",
+        "runIndex": 2
+      },
+      {
+        "caseID": "selection-audit-034",
+        "rawFailure": "protectedLiteralCorruption",
+        "reason": "protectedLiteral:money:valueChanged",
+        "runIndex": 3
+      },
+      {
+        "caseID": "selection-audit-034",
+        "rawFailure": "protectedLiteralCorruption",
+        "reason": "protectedLiteral:money:valueChanged",
+        "runIndex": 4
+      }
+    ],
+    "outsideSelectionRewritesFinal": 0,
+    "protectedLiteralCorruptionsFinal": 0,
+    "rawProposalInstabilityCases": [
+      "selection-audit-001",
+      "selection-audit-002",
+      "selection-audit-003",
+      "selection-audit-004",
+      "selection-audit-005",
+      "selection-audit-007",
+      "selection-audit-008",
+      "selection-audit-020",
+      "selection-audit-021",
+      "selection-audit-022",
+      "selection-audit-023",
+      "selection-audit-024",
+      "selection-audit-026",
+      "selection-audit-027",
+      "selection-audit-028",
+      "selection-audit-030",
+      "selection-audit-031",
+      "selection-audit-032",
+      "selection-audit-033"
+    ],
+    "rawUnsafeBreakdown": {
+      "protectedLiteralCorruption": 14
+    },
+    "rawUnsafeCases": [
+      {
+        "caseID": "selection-audit-028",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 0,
+        "theme": "insideLiteralPreservation"
+      },
+      {
+        "caseID": "selection-audit-028",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 1,
+        "theme": "insideLiteralPreservation"
+      },
+      {
+        "caseID": "selection-audit-028",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 2,
+        "theme": "insideLiteralPreservation"
+      },
+      {
+        "caseID": "selection-audit-028",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 3,
+        "theme": "insideLiteralPreservation"
+      },
+      {
+        "caseID": "selection-audit-028",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 4,
+        "theme": "insideLiteralPreservation"
+      },
+      {
+        "caseID": "selection-audit-030",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 0,
+        "theme": "insideLiteralPreservation"
+      },
+      {
+        "caseID": "selection-audit-030",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 3,
+        "theme": "insideLiteralPreservation"
+      },
+      {
+        "caseID": "selection-audit-030",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 4,
+        "theme": "insideLiteralPreservation"
+      },
+      {
+        "caseID": "selection-audit-031",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 1,
+        "theme": "insideLiteralPreservation"
+      },
+      {
+        "caseID": "selection-audit-034",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 0,
+        "theme": "insideLiteralPreservation"
+      },
+      {
+        "caseID": "selection-audit-034",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 1,
+        "theme": "insideLiteralPreservation"
+      },
+      {
+        "caseID": "selection-audit-034",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 2,
+        "theme": "insideLiteralPreservation"
+      },
+      {
+        "caseID": "selection-audit-034",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 3,
+        "theme": "insideLiteralPreservation"
+      },
+      {
+        "caseID": "selection-audit-034",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 4,
+        "theme": "insideLiteralPreservation"
+      }
+    ],
+    "rawUnsafeSelectionProposals": 14,
+    "runs": 105,
+    "safeRefinementsAccepted": 43,
+    "usefulRefinementsLost": 0,
+    "wrongLanguageFinal": 0
+  },
+  "combinedPrimaryMetrics": {
+    "contextLeaksFinal": 1,
+    "existingGuardInterceptions": 40,
+    "falsePositiveRejections": 0,
+    "finalUserVisibleSelectionFailures": 1,
+    "outsideSelectionRewritesFinal": 0,
+    "protectedLiteralCorruptionsFinal": 0,
+    "rawUnsafeSelectionProposals": 11,
+    "runs": 163,
+    "safeRefinementsAccepted": 17,
+    "usefulRefinementsLost": 0
+  },
+  "counterfactual": {
+    "casesCaught": [
+      {
+        "caseID": "selection-audit-015",
+        "reason": "contextLeak",
+        "runIndex": 0
+      }
+    ],
+    "falsePositives": 0,
+    "implemented": false,
+    "rule": "When selected text appears at least twice in the note, reject replacements that are longer than the selection and appear verbatim in the after-context window.",
+    "usefulRefinementsLost": 0,
+    "wouldCatch": 1
+  },
+  "datasets": {
+    "challengeSha256": "7f624039f74d322b0521bc194abd59d31d901a3ca4c1c23d89472786a76955dc",
+    "corpusV1Sha256": "422154c7256fe1e58b08025baf75ee1bb4f30b3bcb418acbccfba5bb61ab7d0b",
+    "splitsV1Sha256": "c934a983258fb858636eb6e035c993fc42cf82db2ebd898a9a7810446a5d897f"
+  },
+  "evaluationOnly": true,
+  "existingDevSelection": {
+    "contextLeaksFinal": 0,
+    "counterfactualCatches": [],
+    "counterfactualDuplicateAfterContextGuardWouldCatch": 0,
+    "counterfactualFalsePositiveCases": [],
+    "counterfactualFalsePositives": 0,
+    "decisionFlappingCases": [],
+    "existingGuardInterceptions": 5,
+    "falsePositiveRejections": 0,
+    "falsePositives": [],
+    "finalFailureBreakdown": {},
+    "finalFailures": [],
+    "finalSafetyInstabilityCases": [],
+    "finalUserVisibleSelectionFailures": 0,
+    "interceptionBreakdown": {
+      "context_leak": 1,
+      "no_change": 3,
+      "protectedLiteral:identifier:protectedLiteralDropped": 1
+    },
+    "interceptions": [
+      {
+        "caseID": "selection-extra-001",
+        "rawFailure": "protectedLiteralCorruption",
+        "reason": "protectedLiteral:identifier:protectedLiteralDropped",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-extra-002",
+        "rawFailure": "contextLeak",
+        "reason": "context_leak",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-extra-006",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-leak-test-007",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      },
+      {
+        "caseID": "selection-pt-tiny-008",
+        "rawFailure": null,
+        "reason": "no_change",
+        "runIndex": 0
+      }
+    ],
+    "outsideSelectionRewritesFinal": 0,
+    "protectedLiteralCorruptionsFinal": 0,
+    "rawProposalInstabilityCases": [],
+    "rawUnsafeBreakdown": {
+      "contextLeak": 1,
+      "protectedLiteralCorruption": 3
+    },
+    "rawUnsafeCases": [
+      {
+        "caseID": "selection-extra-001",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 0,
+        "theme": null
+      },
+      {
+        "caseID": "selection-extra-002",
+        "reason": "contextLeak",
+        "runIndex": 0,
+        "theme": null
+      },
+      {
+        "caseID": "selection-extra-005",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 0,
+        "theme": null
+      },
+      {
+        "caseID": "selection-extra-007",
+        "reason": "protectedLiteralCorruption",
+        "runIndex": 0,
+        "theme": null
+      }
+    ],
+    "rawUnsafeSelectionProposals": 4,
+    "runs": 12,
+    "safeRefinementsAccepted": 7,
+    "usefulRefinementsLost": 0,
+    "wrongLanguageFinal": 0
+  },
+  "existingValidationSelection": {
+    "contextLeaksFinal": 0,
+    "counterfactualCatches": [],
+    "counterfactualDuplicateAfterContextGuardWouldCatch": 0,
+    "counterfactualFalsePositiveCases": [],
+    "counterfactualFalsePositives": 0,
+    "decisionFlappingCases": [],
+    "existingGuardInterceptions": 1,
+    "falsePositiveRejections": 0,
+    "falsePositives": [],
+    "finalFailureBreakdown": {},
+    "finalFailures": [],
+    "finalSafetyInstabilityCases": [],
+    "finalUserVisibleSelectionFailures": 0,
+    "interceptionBreakdown": {
+      "context_leak": 1
+    },
+    "interceptions": [
+      {
+        "caseID": "selection-extra-008",
+        "rawFailure": "contextLeak",
+        "reason": "context_leak",
+        "runIndex": 0
+      }
+    ],
+    "outsideSelectionRewritesFinal": 0,
+    "protectedLiteralCorruptionsFinal": 0,
+    "rawProposalInstabilityCases": [],
+    "rawUnsafeBreakdown": {
+      "contextLeak": 1
+    },
+    "rawUnsafeCases": [
+      {
+        "caseID": "selection-extra-008",
+        "reason": "contextLeak",
+        "runIndex": 0,
+        "theme": null
+      }
+    ],
+    "rawUnsafeSelectionProposals": 1,
+    "runs": 1,
+    "safeRefinementsAccepted": 0,
+    "usefulRefinementsLost": 0,
+    "wrongLanguageFinal": 0
+  },
+  "experiment": "M12B-006A-selection-reliability",
+  "holdoutUsed": false,
+  "productionChanged": false,
+  "productionFoundation": [
+    "M12B-001",
+    "M12B-004C",
+    "M12B-005B",
+    "M12B-005D",
+    "M12B-005E",
+    "M12B-005F"
+  ],
+  "recommendation": "B",
+  "schemaVersion": 1,
+  "summaryMetrics": {
+    "challenge": {
+      "guardRejectionCount": 6,
+      "rawProposalCorruptionCount": 6,
+      "userVisibleHarmfulEditCount": 11,
+      "userVisibleProtectedLiteralCorruptionCount": 0
+    },
+    "challengeStability": {
+      "guardRejectionCount": 21,
+      "rawProposalCorruptionCount": 21,
+      "userVisibleHarmfulEditCount": 10,
+      "userVisibleProtectedLiteralCorruptionCount": 0
+    },
+    "existingDevSelection": {
+      "guardRejectionCount": 1,
+      "rawProposalCorruptionCount": 1,
+      "userVisibleHarmfulEditCount": 6,
+      "userVisibleProtectedLiteralCorruptionCount": 0
+    },
+    "existingValidationSelection": {
+      "guardRejectionCount": 0,
+      "rawProposalCorruptionCount": 0,
+      "userVisibleHarmfulEditCount": 0,
+      "userVisibleProtectedLiteralCorruptionCount": 0
+    }
+  }
+}

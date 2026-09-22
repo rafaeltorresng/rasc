@@ -15,6 +15,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
     private var menuBarController: MenuBarController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        #if DEBUG
+        if RefineReviewCommandLine.runIfRequested() { return }
+        if RefineEvalLanguageResolverCommandLine.runIfRequested() { return }
+        if RefineEvalCommandLine.runIfRequested() { return }
+        #endif
+
         GlobalShortcutMigration.migrateFromPreviousDefaultIfNeeded()
         SettingsWindowPresentation.installIfNeeded()
         SettingsWindowPresentation.onSettingsWindowWillPresent = { [weak self] in

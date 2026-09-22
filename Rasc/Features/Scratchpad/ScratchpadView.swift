@@ -86,6 +86,7 @@ final class ScratchpadSession {
     private let repository: NoteRepository
     private let refinementProvider: (any RefinementProvider)?
     private let activeNoteStore: ActiveNoteStore
+    private let languageSettings: RefineLanguageSettingsStore
     private var noteID: UUID?
     private var autosaveTask: Task<Void, Never>?
     private var searchTask: Task<Void, Never>?
@@ -105,11 +106,13 @@ final class ScratchpadSession {
     init(
         repository: NoteRepository,
         refinementProvider: (any RefinementProvider)? = nil,
-        userDefaults: UserDefaults = .standard
+        userDefaults: UserDefaults = .standard,
+        languageSettings: RefineLanguageSettingsStore? = nil
     ) {
         self.repository = repository
         self.refinementProvider = refinementProvider
         activeNoteStore = ActiveNoteStore(userDefaults: userDefaults)
+        self.languageSettings = languageSettings ?? RefineLanguageSettingsStore(userDefaults: userDefaults)
     }
 
     func requestEditorFocus() {
@@ -625,7 +628,7 @@ final class ScratchpadSession {
                 return
             }
 
-            let languagePolicy = RefineLanguagePolicy.productionDefault
+            let languagePolicy = languageSettings.resolveEffectivePreference().effectivePolicy
             let request = RefinementRequest(
                 requestID: draft.requestID,
                 snapshot: NoteSnapshot(
@@ -834,16 +837,15 @@ final class ScratchpadSession {
         searchErrorMessage = nil
     }
 
-    private func refreshPaletteCommands() {
-        filteredCommands = PaletteCommand.allCases
-    }
-
     private func resetCommandPaletteState() {
         surface = .editor
         refreshPaletteCommands()
         selectedCommandIndex = 0
     }
 
+    private func refreshPaletteCommands() {
+        filteredCommands = PaletteCommand.allCases
+    }
 
     private func dismissTransientSurfaces(except retained: Surface?) {
         if retained != .search {
