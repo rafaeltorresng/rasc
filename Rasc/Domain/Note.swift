@@ -9,6 +9,7 @@ struct Note: Codable, Equatable, FetchableRecord, PersistableRecord, Sendable {
     let createdAt: Date
     var updatedAt: Date
     var deletedAt: Date?
+    var keptAt: Date?
 
     enum Columns: String, ColumnExpression {
         case id
@@ -16,6 +17,7 @@ struct Note: Codable, Equatable, FetchableRecord, PersistableRecord, Sendable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
         case deletedAt = "deleted_at"
+        case keptAt = "kept_at"
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -24,6 +26,11 @@ struct Note: Codable, Equatable, FetchableRecord, PersistableRecord, Sendable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
         case deletedAt = "deleted_at"
+        case keptAt = "kept_at"
+    }
+
+    var isKept: Bool {
+        keptAt != nil
     }
 
     var displayTitle: String {
