@@ -38,7 +38,7 @@ struct HomeSessionTests {
         await session.reloadImmediately()
 
         let title = await MainActor.run {
-            session.temporalGroups.flatMap(\.notes).first?.displayTitle
+            session.browseGroups.flatMap(\.notes).first?.displayTitle
         }
         #expect(title == "revised title line")
     }
@@ -56,7 +56,7 @@ struct HomeSessionTests {
         await session.reloadImmediately()
 
         let noteIDs = await MainActor.run {
-            session.temporalGroups.flatMap(\.notes).map(\.id)
+            session.browseGroups.flatMap(\.notes).map(\.id)
         }
 
         #expect(noteIDs == [kept.id])
