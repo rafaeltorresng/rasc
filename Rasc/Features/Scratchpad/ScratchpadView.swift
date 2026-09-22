@@ -14,6 +14,7 @@ final class ScratchpadSession {
         case cancelled
         case runawayExpansion = "runaway_expansion"
         case contextLeak = "context_leak"
+        case selectionDuplicateContextLeak = "selectionDuplicateContextLeak"
         case invalidReplacement = "invalid_replacement"
         case unavailable
         case noChange = "no_change"
@@ -27,6 +28,7 @@ final class ScratchpadSession {
         case refinementPreview
         case message
     }
+
 
     var text = "" {
         didSet {
@@ -130,6 +132,7 @@ final class ScratchpadSession {
         saveErrorMessage = "Couldn't load local notes."
     }
 
+
     func restore() async throws {
         try await acceptanceTask?.value
         cancelRefinement()
@@ -168,6 +171,7 @@ final class ScratchpadSession {
         noteID = note.id
         text = note.content
     }
+
 
     func scheduleAutosave() {
         let previousAutosave = autosaveTask
@@ -213,6 +217,7 @@ final class ScratchpadSession {
         resetSearchState()
         resetCommandPaletteState()
         noteID = nil
+        activeNoteKeptAt = nil
         activeNoteStore.noteID = nil
         text = ""
     }
@@ -346,6 +351,7 @@ final class ScratchpadSession {
 
         noteID = selectedNote.id
         activeNoteStore.noteID = selectedNote.id
+        activeNoteKeptAt = selectedNote.keptAt
         editorSelection = nil
         editorHasMultipleSelections = false
         text = selectedNote.content
@@ -365,7 +371,7 @@ final class ScratchpadSession {
         guard acceptanceTask == nil else { return }
         dismissTransientSurfaces(except: .commandPalette)
         surface = .commandPalette
-        filteredCommands = PaletteCommand.allCases
+        refreshPaletteCommands()
         selectedCommandIndex = 0
         requestCommandPaletteKeyFocus()
     }
@@ -619,6 +625,7 @@ final class ScratchpadSession {
                 return
             }
 
+            let languagePolicy = RefineLanguagePolicy.productionDefault
             let request = RefinementRequest(
                 requestID: draft.requestID,
                 snapshot: NoteSnapshot(
@@ -626,9 +633,16 @@ final class ScratchpadSession {
                     revision: draft.revision,
                     text: draft.text,
                     selection: draft.selection
-                )
+                ),
+                languagePolicy: languagePolicy
             )
             activeRefinementRequest = request
+
+            if RefinementPreflightPolicy.result(for: request) != nil {
+                logRefinementRejection(.noChange)
+                finishRefinement(with: .alreadyUseful)
+                return
+            }
 
             guard let refinementProvider else {
                 logRefinementRejection(.unavailable)
@@ -649,11 +663,15 @@ final class ScratchpadSession {
                 return
             }
 
-            let result = try await refinementProvider.refine(request)
+            let providerResult = try await refinementProvider.refine(request)
             guard isCurrent(request), !Task.isCancelled else {
                 logRefinementRejection(Task.isCancelled ? .cancelled : .staleResult)
                 return
             }
+            let exactLiteralResult = RefineProtectedLiteralValidator.finalize(providerResult, for: request)
+            let moneyResult = RefineMoneyLiteralValidator.finalize(exactLiteralResult, for: request)
+            let percentageResult = RefinePercentageLiteralValidator.finalize(moneyResult, for: request)
+            let result = RefineTimeLiteralValidator.finalize(percentageResult, for: request)
 
             switch result.decision {
             case .noChange:
@@ -670,6 +688,10 @@ final class ScratchpadSession {
                 }
                 guard request.isReplacementOnly(result.text) else {
                     rejectRefinementResult(request, reason: .contextLeak)
+                    return
+                }
+                guard !request.hasDuplicateContextLeak(result.text) else {
+                    rejectRefinementResult(request, reason: .selectionDuplicateContextLeak)
                     return
                 }
                 guard result.text != request.inputText else {
@@ -812,11 +834,16 @@ final class ScratchpadSession {
         searchErrorMessage = nil
     }
 
+    private func refreshPaletteCommands() {
+        filteredCommands = PaletteCommand.allCases
+    }
+
     private func resetCommandPaletteState() {
         surface = .editor
-        filteredCommands = PaletteCommand.allCases
+        refreshPaletteCommands()
         selectedCommandIndex = 0
     }
+
 
     private func dismissTransientSurfaces(except retained: Surface?) {
         if retained != .search {
@@ -894,6 +921,7 @@ struct ScratchpadView: View {
             }
         }
     }
+
 
     private var showsOverlayOrb: Bool {
         switch session.surface {
@@ -1083,7 +1111,13 @@ struct ScratchpadView: View {
         case .message:
             session.message == .alreadyUseful ? "Already useful" : session.message?.text
         case .editor, .search, .commandPalette:
-            nil
+            if let transientFeedback = session.transientFeedback {
+                transientFeedback
+            } else if session.isActiveNoteKept {
+                "Kept"
+            } else {
+                nil
+            }
         }
     }
 
