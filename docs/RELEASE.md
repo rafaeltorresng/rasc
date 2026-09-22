@@ -10,8 +10,8 @@ Sparkle and automatic updates are intentionally out of scope for this milestone.
 | --- | --- |
 | Product name | Rasc |
 | Bundle identifier | `com.rafaeltorres.rasc` |
-| Marketing version | `0.1.0-beta.1` (private beta); use semver for public releases |
-| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`2` for beta.1) |
+| Marketing version | `0.1.0-beta.2` (current canonical private beta); use semver for public releases |
+| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`3` for beta.2) |
 | Deployment target | macOS 14.0 |
 | Hardened Runtime | Enabled for Debug and Release |
 | App Sandbox | Enabled |
