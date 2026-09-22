@@ -1,0 +1,47 @@
+{
+  "audit": "M13A",
+  "generatedAt": "2026-09-22T16:12:00Z",
+  "environment": {
+    "platform": "macOS",
+    "runner": "xcodebuild test AppReliabilityScaleTests"
+  },
+  "noteCounts": [10, 100, 1000],
+  "samples": [
+    {
+      "noteCount": 10,
+      "bootstrapMs": 4.35,
+      "recentNoteLoadMs": 0.28,
+      "searchMs": 1.02,
+      "noteSwitchMs": 0.0,
+      "autosaveMs": 0.49
+    },
+    {
+      "noteCount": 100,
+      "bootstrapMs": 4.42,
+      "recentNoteLoadMs": 0.39,
+      "searchMs": 1.02,
+      "noteSwitchMs": 0.001,
+      "autosaveMs": 0.79
+    },
+    {
+      "noteCount": 1000,
+      "bootstrapMs": 5.91,
+      "recentNoteLoadMs": 0.58,
+      "searchMs": 1.67,
+      "noteSwitchMs": 0.0,
+      "autosaveMs": 0.58
+    }
+  ],
+  "summary": {
+    "bootstrapMs": { "p50": 4.42, "p95": 5.91 },
+    "recentNoteLoadMs": { "p50": 0.39, "p95": 0.58 },
+    "searchMs": { "p50": 1.02, "p95": 1.67 },
+    "noteSwitchMs": { "p50": 0.0, "p95": 0.001 },
+    "autosaveMs": { "p50": 0.58, "p95": 0.79 }
+  },
+  "thresholdsPassed": true,
+  "notes": [
+    "Local temp SQLite on developer machine; not a shipping perf guarantee.",
+    "Home load not separately instrumented; uses same repository search/recent paths."
+  ]
+}
