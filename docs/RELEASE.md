@@ -234,6 +234,17 @@ Starting with **0.1.0-beta.2**, retain every shipped or private-release artifact
 3. beta.1 → beta.2 upgrade was **not testable** (beta.1 artifact not retained). Not a blocker for beta.2 acceptance.
 4. Store artifacts outside git if needed; record paths and SHA256 in the release manifest.
 
+### RC build commands (private beta, ad-hoc)
+
+```bash
+./Scripts/release/build-rc.sh
+./Scripts/release/verify-private-beta.sh build/rc/Rasc-<version>.dmg
+./Scripts/release/verify-rc-bundle.sh build/rc/export/Rasc.app
+./Scripts/release/generate-rc-manifest.sh build/rc/Rasc-<version>.dmg
+```
+
+Output directory: `build/rc/`.
+
 ## Incrementing versions
 
 - User-visible version: update `MARKETING_VERSION` (for example `0.1.0`, `0.1.1`).
