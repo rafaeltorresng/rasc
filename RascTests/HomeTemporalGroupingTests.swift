@@ -82,7 +82,8 @@ struct HomeTemporalGroupingTests {
             content: "Example note",
             createdAt: updatedAt,
             updatedAt: updatedAt,
-            deletedAt: nil
+            deletedAt: nil,
+            keptAt: nil
         )
     }
 }
