@@ -78,6 +78,20 @@
 		01000000000000000000004B /* SettingsWindowPresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004B /* SettingsWindowPresentationTests.swift */; };
 		01000000000000000000004C /* BetaFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004C /* BetaFeedback.swift */; };
 		01000000000000000000004D /* BetaFeedbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004D /* BetaFeedbackTests.swift */; };
+		010000000000000000000059 /* RefineLanguageDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000059 /* RefineLanguageDetection.swift */; };
+		01000000000000000000005A /* RefineLanguagePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005A /* RefineLanguagePolicy.swift */; };
+		01000000000000000000005B /* RefineLanguageResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005B /* RefineLanguageResolver.swift */; };
+		01000000000000000000006E /* RefineLanguageResolverV1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006E /* RefineLanguageResolverV1.swift */; };
+		01000000000000000000005C /* RefineLanguageValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005C /* RefineLanguageValidator.swift */; };
+		010000000000000000000071 /* RefineIndependentLanguageAssessment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000071 /* RefineIndependentLanguageAssessment.swift */; };
+		010000000000000000000075 /* RefineLanguageSourceEvidence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000072 /* RefineLanguageSourceEvidence.swift */; };
+		010000000000000000000076 /* RefineUnresolvedLanguageGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000073 /* RefineUnresolvedLanguageGuard.swift */; };
+		010000000000000000000077 /* RefinementImplementationBaseline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000074 /* RefinementImplementationBaseline.swift */; };
+		010000000000000000000079 /* RefineSupportedLocales.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000076 /* RefineSupportedLocales.swift */; };
+		010000000000000000000058 /* RefineReliabilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000058 /* RefineReliabilityTests.swift */; };
+		01000000000000000000005E /* RefinementLanguageTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005E /* RefinementLanguageTrace.swift */; };
+		010000000000000000000069 /* RefineProtectedLiteralValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000069 /* RefineProtectedLiteralValidator.swift */; };
+		01000000000000000000006A /* RefinementSelectionDuplicateContextGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006A /* RefinementSelectionDuplicateContextGuard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -161,6 +175,20 @@
 		02000000000000000000004B /* SettingsWindowPresentationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowPresentationTests.swift; sourceTree = "<group>"; };
 		02000000000000000000004C /* BetaFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/BetaFeedback.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000004D /* BetaFeedbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetaFeedbackTests.swift; sourceTree = "<group>"; };
+		020000000000000000000059 /* RefineLanguageDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineLanguageDetection.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000005A /* RefineLanguagePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineLanguagePolicy.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000005B /* RefineLanguageResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineLanguageResolver.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000006E /* RefineLanguageResolverV1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineLanguageResolverV1.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000005C /* RefineLanguageValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineLanguageValidator.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000071 /* RefineIndependentLanguageAssessment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineIndependentLanguageAssessment.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000072 /* RefineLanguageSourceEvidence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineLanguageSourceEvidence.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000073 /* RefineUnresolvedLanguageGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineUnresolvedLanguageGuard.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000074 /* RefinementImplementationBaseline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefinementImplementationBaseline.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000076 /* RefineSupportedLocales.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineSupportedLocales.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000058 /* RefineReliabilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefineReliabilityTests.swift; sourceTree = "<group>"; };
+		02000000000000000000005E /* RefinementLanguageTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Domain/RefinementLanguageTrace.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000069 /* RefineProtectedLiteralValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineProtectedLiteralValidator.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000006A /* RefinementSelectionDuplicateContextGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Domain/RefinementSelectionDuplicateContextGuard.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,10 +248,23 @@
 				02000000000000000000000E /* ActiveNoteStore.swift */,
 				02000000000000000000000F /* HistorySearchView.swift */,
 				020000000000000000000010 /* Refinement.swift */,
+				02000000000000000000006A /* RefinementSelectionDuplicateContextGuard.swift */,
+				02000000000000000000005E /* RefinementLanguageTrace.swift */,
 				020000000000000000000011 /* RefinementProvider.swift */,
 				020000000000000000000014 /* RefinementRevision.swift */,
 				020000000000000000000017 /* RefinementPrompt.swift */,
+				020000000000000000000059 /* RefineLanguageDetection.swift */,
+				02000000000000000000005A /* RefineLanguagePolicy.swift */,
+				02000000000000000000005B /* RefineLanguageResolver.swift */,
+				02000000000000000000006E /* RefineLanguageResolverV1.swift */,
+				02000000000000000000005C /* RefineLanguageValidator.swift */,
+				020000000000000000000071 /* RefineIndependentLanguageAssessment.swift */,
+				020000000000000000000072 /* RefineLanguageSourceEvidence.swift */,
+				020000000000000000000073 /* RefineUnresolvedLanguageGuard.swift */,
+				020000000000000000000074 /* RefinementImplementationBaseline.swift */,
+				020000000000000000000076 /* RefineSupportedLocales.swift */,
 				020000000000000000000018 /* FoundationModelsRefinementProvider.swift */,
+				020000000000000000000069 /* RefineProtectedLiteralValidator.swift */,
 				02000000000000000000002B /* OnboardingStep.swift */,
 				02000000000000000000002C /* OnboardingStore.swift */,
 				02000000000000000000002D /* OnboardingEligibility.swift */,
@@ -272,6 +313,7 @@
 				020000000000000000000049 /* HomeSessionTests.swift */,
 				02000000000000000000004B /* SettingsWindowPresentationTests.swift */,
 				02000000000000000000004D /* BetaFeedbackTests.swift */,
+				020000000000000000000058 /* RefineReliabilityTests.swift */,
 			);
 			path = RascTests;
 			sourceTree = SOURCE_ROOT;
@@ -418,10 +460,12 @@
 				01000000000000000000000F /* ActiveNoteStore.swift in Sources */,
 				010000000000000000000010 /* HistorySearchView.swift in Sources */,
 				010000000000000000000011 /* Refinement.swift in Sources */,
+				01000000000000000000006A /* RefinementSelectionDuplicateContextGuard.swift in Sources */,
 				010000000000000000000012 /* RefinementProvider.swift in Sources */,
 				010000000000000000000015 /* RefinementRevision.swift in Sources */,
 				010000000000000000000018 /* RefinementPrompt.swift in Sources */,
 				010000000000000000000019 /* FoundationModelsRefinementProvider.swift in Sources */,
+				010000000000000000000069 /* RefineProtectedLiteralValidator.swift in Sources */,
 				01000000000000000000002B /* OnboardingStep.swift in Sources */,
 				01000000000000000000002C /* OnboardingStore.swift in Sources */,
 				01000000000000000000002D /* OnboardingEligibility.swift in Sources */,
@@ -441,6 +485,17 @@
 				010000000000000000000046 /* HomeTemporalGrouping.swift in Sources */,
 				01000000000000000000004A /* SettingsWindowPresentation.swift in Sources */,
 				01000000000000000000004C /* BetaFeedback.swift in Sources */,
+				010000000000000000000059 /* RefineLanguageDetection.swift in Sources */,
+				01000000000000000000005A /* RefineLanguagePolicy.swift in Sources */,
+				01000000000000000000005B /* RefineLanguageResolver.swift in Sources */,
+				01000000000000000000006E /* RefineLanguageResolverV1.swift in Sources */,
+				01000000000000000000005C /* RefineLanguageValidator.swift in Sources */,
+				010000000000000000000071 /* RefineIndependentLanguageAssessment.swift in Sources */,
+				010000000000000000000075 /* RefineLanguageSourceEvidence.swift in Sources */,
+				010000000000000000000076 /* RefineUnresolvedLanguageGuard.swift in Sources */,
+				010000000000000000000077 /* RefinementImplementationBaseline.swift in Sources */,
+				010000000000000000000079 /* RefineSupportedLocales.swift in Sources */,
+				01000000000000000000005E /* RefinementLanguageTrace.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,6 +522,7 @@
 				010000000000000000000049 /* HomeSessionTests.swift in Sources */,
 				01000000000000000000004B /* SettingsWindowPresentationTests.swift in Sources */,
 				01000000000000000000004D /* BetaFeedbackTests.swift in Sources */,
+				010000000000000000000058 /* RefineReliabilityTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -595,7 +651,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Rasc/Rasc.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;

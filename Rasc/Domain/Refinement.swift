@@ -1,5 +1,156 @@
 import Foundation
 
+enum RefinementContentUnitKind: String, Codable, Equatable, Sendable {
+    case lexicalWord
+    case wordWithAttachedPunctuation
+    case url
+    case email
+    case handle
+    case number
+    case money
+    case emoji
+    case technicalIdentifier
+    case codeLike
+    case mixedAlphanumericIdentifier
+}
+
+struct RefinementContentUnitClassifier {
+    static func classify(_ text: String) -> RefinementContentUnitKind? {
+        let candidate = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !candidate.isEmpty else { return nil }
+
+        // A money amount is one structural unit even when its currency marker and
+        // value are separated by whitespace. No other multi-part form is joined.
+        if matches(candidate, pattern: #"^(?:R\$|US\$|[$€£¥])(?:\s*[+-]?(?:\d+(?:[.,]\d+)*))?$"#) {
+            return .money
+        }
+
+        guard candidate.split(whereSeparator: { $0.isWhitespace }).count == 1 else {
+            return nil
+        }
+
+        return classifyUnspaced(candidate, allowsAttachedPunctuation: true)
+    }
+
+    private static func classifyUnspaced(
+        _ candidate: String,
+        allowsAttachedPunctuation: Bool
+    ) -> RefinementContentUnitKind? {
+        if matches(candidate, pattern: #"(?i)^(?:https?://|www\.)\S+$"#) {
+            return .url
+        }
+        if matches(candidate, pattern: #"^[^\s@]+@[^\s@]+\.[^\s@]+$"#) {
+            return .email
+        }
+        if matches(candidate, pattern: #"^@[\p{L}\p{M}\p{N}_][\p{L}\p{M}\p{N}_.-]*$"#) {
+            return .handle
+        }
+        if matches(candidate, pattern: #"^(?:R\$|US\$|[$€£¥])(?:[+-]?(?:\d+(?:[.,]\d+)*))?$"#) {
+            return .money
+        }
+        if matches(candidate, pattern: #"^[+-]?(?:\d+(?:[.,]\d+)*)$"#) {
+            return .number
+        }
+        if isEmojiSequence(candidate) {
+            return .emoji
+        }
+        if matches(candidate, pattern: #"^[\p{L}\p{M}]+(?:['’\-][\p{L}\p{M}]+)*$"#) {
+            return .lexicalWord
+        }
+        if matches(candidate, pattern: #"^(?=.*[\p{L}\p{N}])(?=.*[_\.])[\p{L}\p{M}\p{N}_.-]+$"#) {
+            return .technicalIdentifier
+        }
+        if matches(candidate, pattern: #"^(?=.*\p{L})(?=.*\p{N})[\p{L}\p{M}\p{N}-]+$"#) {
+            return .mixedAlphanumericIdentifier
+        }
+        if allowsAttachedPunctuation {
+            let attachedPunctuation = CharacterSet(charactersIn: "?!.,:;()[]{}<>'\"“”‘’")
+            let core = candidate.trimmingCharacters(in: attachedPunctuation)
+            if core != candidate,
+               !core.isEmpty,
+               classifyUnspaced(core, allowsAttachedPunctuation: false) != nil {
+                return .wordWithAttachedPunctuation
+            }
+        }
+        if containsLetterOrNumber(candidate), containsCodeSymbol(candidate) {
+            return .codeLike
+        }
+
+        guard allowsAttachedPunctuation else { return nil }
+        let core = candidate.trimmingCharacters(in: .punctuationCharacters)
+        guard core != candidate,
+              !core.isEmpty,
+              classifyUnspaced(core, allowsAttachedPunctuation: false) != nil
+        else {
+            return nil
+        }
+        return .wordWithAttachedPunctuation
+    }
+
+    private static func matches(_ text: String, pattern: String) -> Bool {
+        text.range(of: pattern, options: .regularExpression) != nil
+    }
+
+    private static func containsLetterOrNumber(_ text: String) -> Bool {
+        text.unicodeScalars.contains {
+            CharacterSet.alphanumerics.contains($0)
+        }
+    }
+
+    private static func containsCodeSymbol(_ text: String) -> Bool {
+        text.unicodeScalars.contains {
+            CharacterSet.symbols.contains($0) || CharacterSet.punctuationCharacters.contains($0)
+        }
+    }
+
+    private static func isEmojiSequence(_ text: String) -> Bool {
+        var hasEmoji = false
+        for scalar in text.unicodeScalars {
+            if scalar.properties.isEmojiPresentation
+                || (scalar.properties.isEmoji && scalar.value >= 0x238C) {
+                hasEmoji = true
+                continue
+            }
+            if scalar.value == 0x200D
+                || scalar.value == 0xFE0F
+                || (0x1F3FB...0x1F3FF).contains(scalar.value) {
+                continue
+            }
+            return false
+        }
+        return hasEmoji
+    }
+}
+
+enum RefinementPreflightReason: String, Codable, Equatable, Sendable {
+    case wholeNoteSingleContentUnit = "whole_note_single_content_unit"
+}
+
+enum RefinementPreflightOutcome: Equatable, Sendable {
+    case proceed
+    case noChange(RefinementPreflightReason)
+}
+
+struct RefinementPreflightPolicy {
+    static func evaluate(_ request: RefinementRequest) -> RefinementPreflightOutcome {
+        guard request.scope == .wholeNote,
+              RefinementContentUnitClassifier.classify(request.inputText) != nil
+        else {
+            return .proceed
+        }
+        return .noChange(.wholeNoteSingleContentUnit)
+    }
+
+    static func result(for request: RefinementRequest) -> RefinementResult? {
+        guard case .noChange = evaluate(request) else { return nil }
+        return RefinementResult(
+            decision: .noChange,
+            kind: .alreadyGood,
+            text: request.inputText
+        )
+    }
+}
+
 struct NoteSnapshot: Equatable, Sendable {
     let noteID: UUID
     let revision: Int
@@ -49,10 +200,16 @@ struct RefinementRequest: Equatable, Sendable {
     let snapshot: NoteSnapshot
     let scope: RefinementScope
     let inputText: String
+    let languagePolicy: RefineLanguagePolicy
 
-    init(requestID: UUID = UUID(), snapshot: NoteSnapshot) {
+    init(
+        requestID: UUID = UUID(),
+        snapshot: NoteSnapshot,
+        languagePolicy: RefineLanguagePolicy = .productionDefault
+    ) {
         self.requestID = requestID
         self.snapshot = snapshot
+        self.languagePolicy = languagePolicy
         scope = snapshot.selection == nil ? .wholeNote : .selection
         inputText = snapshot.selectedText ?? snapshot.text
     }
@@ -156,6 +313,22 @@ struct RefinementResult: Codable, Equatable, Sendable {
     let decision: RefinementDecision
     let kind: RefinementKind
     let text: String
+    let languageTrace: RefinementLanguageTrace?
+    let protectedLiteralTrace: RefinementProtectedLiteralTrace?
+
+    init(
+        decision: RefinementDecision,
+        kind: RefinementKind,
+        text: String,
+        languageTrace: RefinementLanguageTrace? = nil,
+        protectedLiteralTrace: RefinementProtectedLiteralTrace? = nil
+    ) {
+        self.decision = decision
+        self.kind = kind
+        self.text = text
+        self.languageTrace = languageTrace
+        self.protectedLiteralTrace = protectedLiteralTrace
+    }
 }
 
 enum RefinementUnavailableReason: Equatable, Sendable {

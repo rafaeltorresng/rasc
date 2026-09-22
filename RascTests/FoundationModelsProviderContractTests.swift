@@ -6,7 +6,7 @@ import Testing
 struct FoundationModelsProviderContractTests {
     @Test
     func refineV1InstructionsAreVersionedAndConservative() {
-        #expect(RefinementPrompt.version == "refine-v1")
+        #expect(RefinementPrompt.version == "refine-v2-language-preference")
         #expect(RefinementPrompt.instructions == """
             You are Rasc's Refine engine. Transform only the note content supplied by the user.
             Apply the smallest useful transformation.
@@ -109,7 +109,7 @@ struct FoundationModelsProviderContractTests {
         #expect(provider.metadata == RefinementMetadata(
             provider: "foundation-models",
             modelIdentifier: "system-language-model.default",
-            promptVersion: "refine-v1"
+            promptVersion: "refine-v2-language-preference"
         ))
     }
 }
