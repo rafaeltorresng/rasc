@@ -102,6 +102,9 @@
 		01000000000000000000007A /* RefineLanguagePreferenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000077 /* RefineLanguagePreferenceTests.swift */; };
 		01000000000000000000007B /* AppReliabilityLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000078 /* AppReliabilityLifecycleTests.swift */; };
 		01000000000000000000007C /* AppReliabilityScaleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000079 /* AppReliabilityScaleTests.swift */; };
+		01000000000000000000007D /* HomeLifecycleGrouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007D /* HomeLifecycleGrouping.swift */; };
+		01000000000000000000007E /* NoteHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007E /* NoteHandoff.swift */; };
+		01000000000000000000007F /* ThoughtCompletionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007F /* ThoughtCompletionTests.swift */; };
 		010000000000000000000058 /* RefineReliabilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000058 /* RefineReliabilityTests.swift */; };
 		01000000000000000000005D /* RefineLanguageContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005D /* RefineLanguageContractTests.swift */; };
 		01000000000000000000005E /* RefinementLanguageTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005E /* RefinementLanguageTrace.swift */; };
@@ -228,6 +231,9 @@
 		020000000000000000000077 /* RefineLanguagePreferenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefineLanguagePreferenceTests.swift; sourceTree = "<group>"; };
 		020000000000000000000078 /* AppReliabilityLifecycleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReliabilityLifecycleTests.swift; sourceTree = "<group>"; };
 		020000000000000000000079 /* AppReliabilityScaleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReliabilityScaleTests.swift; sourceTree = "<group>"; };
+		02000000000000000000007D /* HomeLifecycleGrouping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Home/HomeLifecycleGrouping.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000007E /* NoteHandoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/NoteHandoff.swift; sourceTree = SOURCE_ROOT; };
+		02000000000000000000007F /* ThoughtCompletionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThoughtCompletionTests.swift; sourceTree = "<group>"; };
 		020000000000000000000058 /* RefineReliabilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefineReliabilityTests.swift; sourceTree = "<group>"; };
 		02000000000000000000005D /* RefineLanguageContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefineLanguageContractTests.swift; sourceTree = "<group>"; };
 		02000000000000000000005E /* RefinementLanguageTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Domain/RefinementLanguageTrace.swift; sourceTree = SOURCE_ROOT; };
@@ -343,8 +349,10 @@
 				020000000000000000000044 /* HomeView.swift */,
 				020000000000000000000045 /* HomeSession.swift */,
 				020000000000000000000046 /* HomeTemporalGrouping.swift */,
+				02000000000000000000007D /* HomeLifecycleGrouping.swift */,
 				02000000000000000000004A /* SettingsWindowPresentation.swift */,
 				02000000000000000000004C /* BetaFeedback.swift */,
+				02000000000000000000007E /* NoteHandoff.swift */,
 				02000000000000000000004E /* RefineEvalModels.swift */,
 				02000000000000000000004F /* ProtectedTokenExtractor.swift */,
 				020000000000000000000050 /* RefineEvalLanguageAnalyzer.swift */,
@@ -399,6 +407,7 @@
 				020000000000000000000077 /* RefineLanguagePreferenceTests.swift */,
 				020000000000000000000078 /* AppReliabilityLifecycleTests.swift */,
 				020000000000000000000079 /* AppReliabilityScaleTests.swift */,
+				02000000000000000000007F /* ThoughtCompletionTests.swift */,
 				020000000000000000000067 /* RefineAdjudicationTests.swift */,
 			);
 			path = RascTests;
@@ -572,8 +581,10 @@
 				010000000000000000000044 /* HomeView.swift in Sources */,
 				010000000000000000000045 /* HomeSession.swift in Sources */,
 				010000000000000000000046 /* HomeTemporalGrouping.swift in Sources */,
+				01000000000000000000007D /* HomeLifecycleGrouping.swift in Sources */,
 				01000000000000000000004A /* SettingsWindowPresentation.swift in Sources */,
 				01000000000000000000004C /* BetaFeedback.swift in Sources */,
+				01000000000000000000007E /* NoteHandoff.swift in Sources */,
 				01000000000000000000004E /* RefineEvalModels.swift in Sources */,
 				01000000000000000000004F /* ProtectedTokenExtractor.swift in Sources */,
 				010000000000000000000050 /* RefineEvalLanguageAnalyzer.swift in Sources */,
@@ -636,6 +647,7 @@
 				01000000000000000000007A /* RefineLanguagePreferenceTests.swift in Sources */,
 				01000000000000000000007B /* AppReliabilityLifecycleTests.swift in Sources */,
 				01000000000000000000007C /* AppReliabilityScaleTests.swift in Sources */,
+				01000000000000000000007F /* ThoughtCompletionTests.swift in Sources */,
 				010000000000000000000067 /* RefineAdjudicationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -769,7 +781,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Rasc/Info.plist;
@@ -777,7 +789,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0-beta.2;
+				MARKETING_VERSION = 0.1.0-beta.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rafaeltorres.rasc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -794,7 +806,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Rasc/Info.plist;
@@ -802,7 +814,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0-beta.2;
+				MARKETING_VERSION = 0.1.0-beta.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rafaeltorres.rasc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
