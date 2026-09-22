@@ -6,6 +6,63 @@ import Testing
 @MainActor
 struct RefinementSessionTests {
     @Test
+    func wholeNoteSingleContentUnitReturnsNoChangeWithoutInvokingTheProvider() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let provider = ControlledRefinementProvider()
+        let session = fixture.makeSession(provider: provider)
+        session.text = "deploy?"
+
+        session.startRefinement()
+        try await waitUntil { session.message == .alreadyUseful }
+
+        #expect(session.surface == .message)
+        #expect(session.text == "deploy?")
+        #expect(session.refinementPreview == nil)
+        #expect(await provider.availabilityRequestCount == 0)
+        #expect(await provider.generationRequestCount == 0)
+    }
+
+    @Test
+    func multipleContentUnitsStillInvokeTheExistingProviderPath() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let provider = ControlledRefinementProvider()
+        let session = fixture.makeSession(provider: provider)
+        session.text = "deploy retry"
+
+        session.startRefinement()
+        let request = await provider.nextRequest()
+
+        #expect(await provider.availabilityRequestCount == 1)
+        #expect(await provider.generationRequestCount == 1)
+        session.cancelRefinement()
+        await provider.fail(requestID: request.requestID, with: .providerFailure)
+        await Task.yield()
+    }
+
+    @Test
+    func singleContentUnitSelectionStillInvokesTheExistingProviderPath() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let provider = ControlledRefinementProvider()
+        let session = fixture.makeSession(provider: provider)
+        session.text = "Keep deploy available for selection refinement."
+        let selection = try #require(session.text.range(of: "deploy"))
+
+        session.startRefinement(selection: selection)
+        let request = await provider.nextRequest()
+
+        #expect(request.scope == .selection)
+        #expect(request.inputText == "deploy")
+        #expect(await provider.availabilityRequestCount == 1)
+        #expect(await provider.generationRequestCount == 1)
+        session.cancelRefinement()
+        await provider.fail(requestID: request.requestID, with: .providerFailure)
+        await Task.yield()
+    }
+
+    @Test
     func commandJCreatesAFullNoteRequestFromTheCurrentInMemoryContent() async throws {
         let fixture = try makeFixture()
         defer { fixture.remove() }
@@ -266,7 +323,7 @@ struct RefinementSessionTests {
         defer { fixture.remove() }
         let provider = ControlledRefinementProvider()
         let session = fixture.makeSession(provider: provider)
-        session.text = "before"
+        session.text = "before edit"
         session.startRefinement()
         let request = await provider.nextRequest()
 
@@ -410,6 +467,28 @@ struct RefinementSessionTests {
     }
 
     @Test
+    func duplicateContextSelectionResultIsRejectedBeforePreviewAndDoesNotMutateTheNote() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let provider = ControlledRefinementProvider()
+        let session = fixture.makeSession(provider: provider)
+        session.text = "call retry later then retry again"
+        let selection = try #require(session.text.range(of: "retry"))
+
+        session.startRefinement(selection: selection)
+        let request = await provider.nextRequest()
+        await provider.succeed(
+            requestID: request.requestID,
+            with: .init(decision: .changed, kind: .message, text: "retry again")
+        )
+        try await waitUntil { session.message == .couldNotSafelyRefineSelection }
+
+        #expect(session.refinementPreview == nil)
+        #expect(session.text == "call retry later then retry again")
+        #expect(try await fixture.repository.refinementRevisions(for: request.snapshot.noteID).isEmpty)
+    }
+
+    @Test
     func runawaySelectionResultIsRejectedBeforePreviewAndDoesNotMutateTheNote() async throws {
         let fixture = try makeFixture()
         defer { fixture.remove() }
@@ -507,15 +586,103 @@ struct RefinementSessionTests {
         defer { fixture.remove() }
         let provider = ControlledRefinementProvider()
         let session = fixture.makeSession(provider: provider)
-        session.text = "original"
+        session.text = "original note"
         session.startRefinement()
         let request = await provider.nextRequest()
 
         await provider.fail(requestID: request.requestID, with: .providerFailure)
         try await waitUntil { session.message == .couldNotRefine }
 
-        #expect(session.text == "original")
+        #expect(session.text == "original note")
         #expect(try await fixture.repository.refinementRevisions(for: request.snapshot.noteID).isEmpty)
+    }
+
+    @Test
+    func protectedLiteralViolationReturnsExistingNoChangeAfterExactlyOneGeneration() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let provider = ControlledRefinementProvider()
+        let session = fixture.makeSession(provider: provider)
+        session.text = "check next_retry_at tomorrow"
+
+        session.startRefinement()
+        let request = await provider.nextRequest()
+        await provider.succeed(
+            requestID: request.requestID,
+            with: .init(decision: .changed, kind: .technical, text: "Check retry tomorrow.")
+        )
+        try await waitUntil { session.message == .alreadyUseful }
+
+        #expect(session.text == "check next_retry_at tomorrow")
+        #expect(session.refinementPreview == nil)
+        #expect(await provider.generationRequestCount == 1)
+        #expect(await provider.availabilityRequestCount == 1)
+    }
+
+    @Test
+    func moneyLiteralViolationReturnsExistingNoChangeAfterExactlyOneGeneration() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let provider = ControlledRefinementProvider()
+        let session = fixture.makeSession(provider: provider)
+        session.text = "pagar R$ 99,90 amanhã"
+
+        session.startRefinement()
+        let request = await provider.nextRequest()
+        await provider.succeed(
+            requestID: request.requestID,
+            with: .init(decision: .changed, kind: .unknown, text: "Pagar $ 99.90 amanhã.")
+        )
+        try await waitUntil { session.message == .alreadyUseful }
+
+        #expect(session.text == "pagar R$ 99,90 amanhã")
+        #expect(session.refinementPreview == nil)
+        #expect(await provider.generationRequestCount == 1)
+        #expect(await provider.availabilityRequestCount == 1)
+    }
+
+    @Test
+    func percentageLiteralViolationReturnsExistingNoChangeAfterExactlyOneGeneration() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let provider = ControlledRefinementProvider()
+        let session = fixture.makeSession(provider: provider)
+        session.text = "desconto 50% hoje"
+
+        session.startRefinement()
+        let request = await provider.nextRequest()
+        await provider.succeed(
+            requestID: request.requestID,
+            with: .init(decision: .changed, kind: .unknown, text: "Desconto de 55% hoje.")
+        )
+        try await waitUntil { session.message == .alreadyUseful }
+
+        #expect(session.text == "desconto 50% hoje")
+        #expect(session.refinementPreview == nil)
+        #expect(await provider.generationRequestCount == 1)
+        #expect(await provider.availabilityRequestCount == 1)
+    }
+
+    @Test
+    func timeLiteralViolationReturnsExistingNoChangeAfterExactlyOneGeneration() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let provider = ControlledRefinementProvider()
+        let session = fixture.makeSession(provider: provider)
+        session.text = "reunião 15h amanhã"
+
+        session.startRefinement()
+        let request = await provider.nextRequest()
+        await provider.succeed(
+            requestID: request.requestID,
+            with: .init(decision: .changed, kind: .unknown, text: "Reunião às 17h amanhã.")
+        )
+        try await waitUntil { session.message == .alreadyUseful }
+
+        #expect(session.text == "reunião 15h amanhã")
+        #expect(session.refinementPreview == nil)
+        #expect(await provider.generationRequestCount == 1)
+        #expect(await provider.availabilityRequestCount == 1)
     }
 
     @Test
@@ -545,7 +712,7 @@ struct RefinementSessionTests {
         defer { fixture.remove() }
         let provider = ControlledRefinementProvider()
         let session = fixture.makeSession(provider: provider)
-        session.text = "original"
+        session.text = "original note"
         session.startRefinement()
         let request = await provider.nextRequest()
 
@@ -557,7 +724,7 @@ struct RefinementSessionTests {
         await Task.yield()
 
         #expect(session.surface == .editor)
-        #expect(session.text == "original")
+        #expect(session.text == "original note")
         #expect(session.refinementPreview == nil)
     }
 
@@ -619,6 +786,7 @@ private actor ControlledRefinementProvider: RefinementProvider {
     )
 
     private let configuredAvailability: RefinementAvailability
+    private var availabilityRequests: [RefinementRequest] = []
     private var requests: [RefinementRequest] = []
     private var requestContinuations: [CheckedContinuation<RefinementRequest, Never>] = []
     private var responseContinuations: [UUID: CheckedContinuation<RefinementResult, Error>] = [:]
@@ -628,9 +796,11 @@ private actor ControlledRefinementProvider: RefinementProvider {
     }
 
     var generationRequestCount: Int { requests.count }
+    var availabilityRequestCount: Int { availabilityRequests.count }
 
     func availability(for request: RefinementRequest) async -> RefinementAvailability {
-        configuredAvailability
+        availabilityRequests.append(request)
+        return configuredAvailability
     }
 
     func refine(_ request: RefinementRequest) async throws -> RefinementResult {
