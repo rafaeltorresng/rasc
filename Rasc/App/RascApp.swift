@@ -33,6 +33,25 @@ struct RascApp: App {
                 .keyboardShortcut("k")
             }
 
+            CommandGroup(after: .pasteboard) {
+                Button("Keep") {
+                    appDelegate.keepActiveNote()
+                }
+                .keyboardShortcut("k", modifiers: [.command, .shift])
+
+                Button("Copy Note") {
+                    appDelegate.copyActiveNote()
+                }
+
+                Button("Share…") {
+                    appDelegate.shareActiveNote()
+                }
+
+                Button("Discard Note") {
+                    appDelegate.discardActiveNote()
+                }
+            }
+
             CommandGroup(replacing: .appSettings) {
                 SettingsLink {
                     Text("Settings…")
