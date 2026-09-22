@@ -87,7 +87,9 @@
 		010000000000000000000075 /* RefineLanguageSourceEvidence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000072 /* RefineLanguageSourceEvidence.swift */; };
 		010000000000000000000076 /* RefineUnresolvedLanguageGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000073 /* RefineUnresolvedLanguageGuard.swift */; };
 		010000000000000000000077 /* RefinementImplementationBaseline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000074 /* RefinementImplementationBaseline.swift */; };
+		010000000000000000000078 /* RefineLanguageSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000075 /* RefineLanguageSettingsStore.swift */; };
 		010000000000000000000079 /* RefineSupportedLocales.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000076 /* RefineSupportedLocales.swift */; };
+		01000000000000000000007A /* RefineLanguagePreferenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000077 /* RefineLanguagePreferenceTests.swift */; };
 		010000000000000000000058 /* RefineReliabilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000058 /* RefineReliabilityTests.swift */; };
 		01000000000000000000005E /* RefinementLanguageTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005E /* RefinementLanguageTrace.swift */; };
 		010000000000000000000069 /* RefineProtectedLiteralValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000069 /* RefineProtectedLiteralValidator.swift */; };
@@ -184,7 +186,9 @@
 		020000000000000000000072 /* RefineLanguageSourceEvidence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineLanguageSourceEvidence.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000073 /* RefineUnresolvedLanguageGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineUnresolvedLanguageGuard.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000074 /* RefinementImplementationBaseline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefinementImplementationBaseline.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000075 /* RefineLanguageSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Settings/RefineLanguageSettingsStore.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000076 /* RefineSupportedLocales.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineSupportedLocales.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000077 /* RefineLanguagePreferenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefineLanguagePreferenceTests.swift; sourceTree = "<group>"; };
 		020000000000000000000058 /* RefineReliabilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefineReliabilityTests.swift; sourceTree = "<group>"; };
 		02000000000000000000005E /* RefinementLanguageTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Domain/RefinementLanguageTrace.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000069 /* RefineProtectedLiteralValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineProtectedLiteralValidator.swift; sourceTree = SOURCE_ROOT; };
@@ -237,6 +241,7 @@
 				02000000000000000000001D /* CommandPaletteView.swift */,
 				02000000000000000000001E /* SettingsView.swift */,
 				020000000000000000000026 /* AppSettings.swift */,
+				020000000000000000000075 /* RefineLanguageSettingsStore.swift */,
 				020000000000000000000027 /* AppDiagnostics.swift */,
 				020000000000000000000028 /* AppBootstrap.swift */,
 				02000000000000000000001F /* TransientSurfaceStyle.swift */,
@@ -314,6 +319,7 @@
 				02000000000000000000004B /* SettingsWindowPresentationTests.swift */,
 				02000000000000000000004D /* BetaFeedbackTests.swift */,
 				020000000000000000000058 /* RefineReliabilityTests.swift */,
+				020000000000000000000077 /* RefineLanguagePreferenceTests.swift */,
 			);
 			path = RascTests;
 			sourceTree = SOURCE_ROOT;
@@ -494,6 +500,7 @@
 				010000000000000000000075 /* RefineLanguageSourceEvidence.swift in Sources */,
 				010000000000000000000076 /* RefineUnresolvedLanguageGuard.swift in Sources */,
 				010000000000000000000077 /* RefinementImplementationBaseline.swift in Sources */,
+				010000000000000000000078 /* RefineLanguageSettingsStore.swift in Sources */,
 				010000000000000000000079 /* RefineSupportedLocales.swift in Sources */,
 				01000000000000000000005E /* RefinementLanguageTrace.swift in Sources */,
 			);
@@ -523,6 +530,7 @@
 				01000000000000000000004B /* SettingsWindowPresentationTests.swift in Sources */,
 				01000000000000000000004D /* BetaFeedbackTests.swift in Sources */,
 				010000000000000000000058 /* RefineReliabilityTests.swift in Sources */,
+				01000000000000000000007A /* RefineLanguagePreferenceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
