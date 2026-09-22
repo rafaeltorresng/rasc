@@ -1,0 +1,209 @@
+{
+  "baselineExperiment": "M12B-006A-selection-reliability",
+  "baselinePrimaryMetrics": {
+    "contextLeaksFinal": 1,
+    "existingGuardInterceptions": 40,
+    "falsePositiveRejections": 0,
+    "finalUserVisibleSelectionFailures": 1,
+    "outsideSelectionRewritesFinal": 0,
+    "protectedLiteralCorruptionsFinal": 0,
+    "rawUnsafeSelectionProposals": 11,
+    "runs": 163,
+    "safeRefinementsAccepted": 17,
+    "usefulRefinementsLost": 0
+  },
+  "candidateMetrics": {
+    "falsePositiveRejections": 0,
+    "finalDuplicateContextLeaks": 0,
+    "finalSelectionFailures": 0,
+    "guardInterceptions": 1,
+    "rawDuplicateContextLeakProposals": 1,
+    "usefulRefinementsLost": 0
+  },
+  "causalGuardInterceptions": {
+    "selection-audit-015": 1
+  },
+  "challenge": {
+    "decisionFlappingCases": [],
+    "falsePositiveRejections": 0,
+    "falsePositives": [],
+    "finalDuplicateCases": [],
+    "finalDuplicateContextLeaks": 0,
+    "finalSafetyInstabilityCases": [],
+    "finalSelectionFailures": 0,
+    "guardInterceptions": 0,
+    "interceptions": [],
+    "rawDuplicateCases": [
+      {
+        "caseID": "selection-audit-016",
+        "rawText": "revisar amanhã de novo",
+        "runIndex": 0
+      }
+    ],
+    "rawDuplicateContextLeakProposals": 1,
+    "rawProposalInstabilityCases": [],
+    "runs": 45,
+    "usefulRefinementsLost": 0
+  },
+  "decision": "ACCEPT",
+  "existingDevSelection": {
+    "decisionFlappingCases": [],
+    "falsePositiveRejections": 0,
+    "falsePositives": [],
+    "finalDuplicateCases": [],
+    "finalDuplicateContextLeaks": 0,
+    "finalSafetyInstabilityCases": [],
+    "finalSelectionFailures": 0,
+    "guardInterceptions": 0,
+    "interceptions": [],
+    "rawDuplicateCases": [],
+    "rawDuplicateContextLeakProposals": 0,
+    "rawProposalInstabilityCases": [],
+    "runs": 12,
+    "usefulRefinementsLost": 0
+  },
+  "existingValidationSelection": {
+    "decisionFlappingCases": [],
+    "falsePositiveRejections": 0,
+    "falsePositives": [],
+    "finalDuplicateCases": [],
+    "finalDuplicateContextLeaks": 0,
+    "finalSafetyInstabilityCases": [],
+    "finalSelectionFailures": 0,
+    "guardInterceptions": 0,
+    "interceptions": [],
+    "rawDuplicateCases": [],
+    "rawDuplicateContextLeakProposals": 0,
+    "rawProposalInstabilityCases": [],
+    "runs": 1,
+    "usefulRefinementsLost": 0
+  },
+  "experiment": "M12B-006B-duplicate-context-selection",
+  "regression": {
+    "decisionFlappingCases": [],
+    "falsePositiveRejections": 0,
+    "falsePositives": [],
+    "finalDuplicateCases": [],
+    "finalDuplicateContextLeaks": 0,
+    "finalSafetyInstabilityCases": [],
+    "finalSelectionFailures": 0,
+    "guardInterceptions": 0,
+    "interceptions": [],
+    "rawDuplicateCases": [],
+    "rawDuplicateContextLeakProposals": 0,
+    "rawProposalInstabilityCases": [],
+    "runs": 6,
+    "usefulRefinementsLost": 0
+  },
+  "schemaVersion": 1,
+  "selectionAudit015StabilityRuns": [
+    {
+      "finalDecision": "noChange",
+      "finalOutput": "retry",
+      "productionRejection": "no_change",
+      "rawProposal": "retry",
+      "runIndex": 0
+    },
+    {
+      "finalDecision": "noChange",
+      "finalOutput": "retry",
+      "productionRejection": "selectionDuplicateContextLeak",
+      "rawProposal": "retry again",
+      "runIndex": 1
+    },
+    {
+      "finalDecision": "noChange",
+      "finalOutput": "retry",
+      "productionRejection": "no_change",
+      "rawProposal": "retry",
+      "runIndex": 2
+    },
+    {
+      "finalDecision": "noChange",
+      "finalOutput": "retry",
+      "productionRejection": "no_change",
+      "rawProposal": "retry",
+      "runIndex": 3
+    },
+    {
+      "finalDecision": "noChange",
+      "finalOutput": "retry",
+      "productionRejection": "no_change",
+      "rawProposal": "retry",
+      "runIndex": 4
+    }
+  ],
+  "stability": {
+    "decisionFlappingCases": [
+      "selection-audit-028",
+      "selection-audit-029",
+      "selection-audit-030",
+      "selection-audit-031",
+      "selection-audit-032",
+      "selection-audit-033"
+    ],
+    "falsePositiveRejections": 0,
+    "falsePositives": [],
+    "finalDuplicateCases": [],
+    "finalDuplicateContextLeaks": 0,
+    "finalSafetyInstabilityCases": [
+      "selection-audit-001",
+      "selection-audit-002",
+      "selection-audit-004",
+      "selection-audit-007",
+      "selection-audit-008",
+      "selection-audit-015",
+      "selection-audit-020",
+      "selection-audit-021",
+      "selection-audit-022",
+      "selection-audit-023",
+      "selection-audit-024",
+      "selection-audit-026",
+      "selection-audit-028",
+      "selection-audit-029",
+      "selection-audit-030",
+      "selection-audit-031",
+      "selection-audit-032",
+      "selection-audit-033"
+    ],
+    "finalSelectionFailures": 0,
+    "guardInterceptions": 1,
+    "interceptions": [
+      {
+        "caseID": "selection-audit-015",
+        "runIndex": 1
+      }
+    ],
+    "rawDuplicateCases": [
+      {
+        "caseID": "selection-audit-015",
+        "rawText": "retry again",
+        "runIndex": 1
+      }
+    ],
+    "rawDuplicateContextLeakProposals": 1,
+    "rawProposalInstabilityCases": [
+      "selection-audit-001",
+      "selection-audit-002",
+      "selection-audit-003",
+      "selection-audit-004",
+      "selection-audit-007",
+      "selection-audit-008",
+      "selection-audit-015",
+      "selection-audit-020",
+      "selection-audit-021",
+      "selection-audit-022",
+      "selection-audit-023",
+      "selection-audit-024",
+      "selection-audit-026",
+      "selection-audit-028",
+      "selection-audit-029",
+      "selection-audit-030",
+      "selection-audit-031",
+      "selection-audit-032",
+      "selection-audit-033"
+    ],
+    "runs": 110,
+    "usefulRefinementsLost": 0
+  }
+}

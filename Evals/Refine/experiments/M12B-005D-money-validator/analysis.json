@@ -1,0 +1,683 @@
+{
+  "bySplit": {
+    "dev": {
+      "after": {
+        "actionInstability": null,
+        "changed": 137,
+        "criticalFailures": 56,
+        "latencyP50Ms": 704.0619850158691,
+        "latencyP95Ms": 1066.593050956726,
+        "noChange": 54,
+        "objectivePass": 112,
+        "objectivePassRate": 0.5803108808290155,
+        "otherOrError": 2,
+        "passFailInstability": null,
+        "runs": 193
+      },
+      "before": {
+        "actionInstability": null,
+        "changed": 143,
+        "criticalFailures": 57,
+        "latencyP50Ms": 747.9939460754395,
+        "latencyP95Ms": 1101.6180515289307,
+        "noChange": 48,
+        "objectivePass": 115,
+        "objectivePassRate": 0.5958549222797928,
+        "otherOrError": 2,
+        "passFailInstability": null,
+        "runs": 193
+      }
+    },
+    "regression": {
+      "after": {
+        "actionInstability": null,
+        "changed": 5,
+        "criticalFailures": 2,
+        "latencyP50Ms": 736.8189096450806,
+        "latencyP95Ms": 1161.5420579910278,
+        "noChange": 1,
+        "objectivePass": 4,
+        "objectivePassRate": 0.6666666666666666,
+        "otherOrError": 0,
+        "passFailInstability": null,
+        "runs": 6
+      },
+      "before": {
+        "actionInstability": null,
+        "changed": 4,
+        "criticalFailures": 1,
+        "latencyP50Ms": 714.8730754852295,
+        "latencyP95Ms": 1291.3999557495117,
+        "noChange": 2,
+        "objectivePass": 5,
+        "objectivePassRate": 0.8333333333333334,
+        "otherOrError": 0,
+        "passFailInstability": null,
+        "runs": 6
+      }
+    },
+    "validation": {
+      "after": {
+        "actionInstability": null,
+        "changed": 47,
+        "criticalFailures": 18,
+        "latencyP50Ms": 735.1590394973755,
+        "latencyP95Ms": 1089.311957359314,
+        "noChange": 10,
+        "objectivePass": 30,
+        "objectivePassRate": 0.5263157894736842,
+        "otherOrError": 0,
+        "passFailInstability": null,
+        "runs": 57
+      },
+      "before": {
+        "actionInstability": null,
+        "changed": 44,
+        "criticalFailures": 19,
+        "latencyP50Ms": 758.6660385131836,
+        "latencyP95Ms": 1256.8109035491943,
+        "noChange": 13,
+        "objectivePass": 31,
+        "objectivePassRate": 0.543859649122807,
+        "otherOrError": 0,
+        "passFailInstability": null,
+        "runs": 57
+      }
+    }
+  },
+  "causalAnalysis": {
+    "dev": {
+      "causalPassImprovements": [],
+      "causalPassRegressions": [],
+      "nonInterceptedPassChanges": [
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "acronym-002",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "already-good-002",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "already-good-004",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "already-good-007",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "already-good-009",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "already-good-010",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "es-003",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "incomplete-001",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "incomplete-003",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "incomplete-008",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "injection-002",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "injection-004",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "leakage-001",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "legacy-casual-intentional-pt-001",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "legacy-mixed-language-001",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "legacy-planning-abbreviated-pt-001",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "legacy-selection-pt-ola-tudobem-001",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "medium-en-009",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "meeting-dump-004",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "message-draft-001",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "message-draft-005",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "mixed-pt-en-004",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "mixed-tech-001",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "numbers-005",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "protected-003",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "selection-extra-006",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "short-en-003",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "short-pt-006",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "short-pt-009",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "telegraphic-en-002",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "telegraphic-pt-003",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "telegraphic-pt-004",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "telegraphic-pt-007",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-en-033",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-en-038",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-en-040",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-en-044",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-en-045",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-en-048",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-en-061",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-en-062",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-en-064",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-es-003",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-es-004",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-es-008",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-pt-004",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-pt-012",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-pt-015",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-pt-016",
+          "runIndex": 0
+        }
+      ],
+      "rawProposalDifferences": 128
+    },
+    "regression": {
+      "causalPassImprovements": [],
+      "causalPassRegressions": [],
+      "nonInterceptedPassChanges": [
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "regression-already-good-rewritten-004",
+          "runIndex": 0
+        }
+      ],
+      "rawProposalDifferences": 4
+    },
+    "validation": {
+      "causalPassImprovements": [],
+      "causalPassRegressions": [],
+      "nonInterceptedPassChanges": [
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "legacy-messy-thought-pt-001",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "medium-en-008",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "short-en-009",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "short-pt-007",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "telegraphic-en-008",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-en-036",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-pt-014",
+          "runIndex": 0
+        }
+      ],
+      "rawProposalDifferences": 34
+    }
+  },
+  "challenge": {
+    "cases": 16,
+    "humanValidated": false,
+    "maintainerApproved": false,
+    "metrics": {
+      "ambiguousTransformationsRejected": 0,
+      "corruptionsCaught": 1,
+      "corruptionsContainedByEarlierExactGuard": 0,
+      "coveredRuns": 16,
+      "falseNegativeCorruptions": 0,
+      "falsePositiveRejections": 0,
+      "finalMoneySafetyInstabilityCases": [],
+      "finalUserVisibleMoneyCorruptions": 0,
+      "guardRejections": 1,
+      "guardRejectionsByReason": {
+        "literalDropped": 1
+      },
+      "rawAmbiguousTransformations": 0,
+      "rawBreakdown": {
+        "literalDropped": 1
+      },
+      "rawMoneyBearingProposals": 14,
+      "rawMoneyCorruptions": 1,
+      "rawMoneySafetyInstabilityCases": [],
+      "rejectionCases": [
+        {
+          "caseID": "semantic-money-012",
+          "reason": "literalDropped",
+          "runIndex": 0,
+          "scope": "wholeNote"
+        }
+      ],
+      "safeNormalizationsAccepted": 3,
+      "selectionGuardRejections": 0,
+      "usefulRefinementsLost": 0,
+      "visibleCorruptions": [],
+      "wholeNoteGuardRejections": 1
+    }
+  },
+  "datasets": {
+    "corpusV1Sha256": "422154c7256fe1e58b08025baf75ee1bb4f30b3bcb418acbccfba5bb61ab7d0b",
+    "regressionSha256": "18f398a8d40696445c5eb59674fefb2489d6e53b86eefee90ef8a8065d569481",
+    "semanticChallengeSha256": "8104d9aaf5f58a2cda4ba16f17a51f89208203898cf19ac6659714e0c6d90301",
+    "splitsV1Sha256": "c934a983258fb858636eb6e035c993fc42cf82db2ebd898a9a7810446a5d897f"
+  },
+  "decision": "ACCEPT",
+  "experiment": "M12B-005D-money-validator",
+  "explicitlyExcluded": [
+    "time",
+    "percentage",
+    "date",
+    "genericNumber",
+    "decimal",
+    "formattedNumber"
+  ],
+  "holdoutUsed": false,
+  "knownRealFailure": {
+    "currencyChanged": [
+      "invalid",
+      "currencyChanged"
+    ],
+    "currencyDropped": [
+      "invalid",
+      "currencyDropped"
+    ],
+    "existingM12B005BObservedRuns": [
+      {
+        "proposal": "$ 99.90",
+        "runIndex": 2
+      },
+      {
+        "proposal": "99.90",
+        "runIndex": 3
+      }
+    ],
+    "finalizerCoveredByTests": true,
+    "source": "R$ 99,90"
+  },
+  "moneyMetrics": {
+    "ambiguousTransformationsRejected": 0,
+    "corruptionsCaught": 2,
+    "corruptionsContainedByEarlierExactGuard": 2,
+    "coveredRuns": 9,
+    "falseNegativeCorruptions": 0,
+    "falsePositiveRejections": 0,
+    "finalMoneySafetyInstabilityCases": [],
+    "finalUserVisibleMoneyCorruptions": 0,
+    "guardRejections": 2,
+    "guardRejectionsByReason": {
+      "multiplicityChanged": 2
+    },
+    "rawAmbiguousTransformations": 0,
+    "rawBreakdown": {
+      "multiplicityChanged": 4
+    },
+    "rawMoneyBearingProposals": 8,
+    "rawMoneyCorruptions": 4,
+    "rawMoneySafetyInstabilityCases": [],
+    "rejectionCases": [
+      {
+        "caseID": "long-pt-004",
+        "reason": "multiplicityChanged",
+        "runIndex": 0,
+        "scope": "wholeNote"
+      },
+      {
+        "caseID": "long-pt-003",
+        "reason": "multiplicityChanged",
+        "runIndex": 0,
+        "scope": "wholeNote"
+      }
+    ],
+    "safeNormalizationsAccepted": 1,
+    "selectionGuardRejections": 0,
+    "usefulRefinementsLost": 0,
+    "visibleCorruptions": [],
+    "wholeNoteGuardRejections": 2
+  },
+  "multiplicity": {
+    "duplicateTestsPassed": true,
+    "oneToOneMultisetMatching": true
+  },
+  "productionFoundation": [
+    "M12B-001",
+    "M12B-004C",
+    "M12B-005B"
+  ],
+  "providerCalls": {
+    "maximumPerRequest": 1,
+    "provedByUnitTest": true,
+    "repairOrRegenerationCalls": 0
+  },
+  "schemaVersion": 1,
+  "scope": [
+    "money"
+  ],
+  "selection": {
+    "outsideSelectionMoneyRequired": false,
+    "scopeTestsPassed": true
+  },
+  "stability": {
+    "after": {
+      "actionInstability": 20,
+      "changed": 185,
+      "criticalFailures": 87,
+      "latencyP50Ms": 694.6309804916382,
+      "latencyP95Ms": 942.5489902496338,
+      "noChange": 120,
+      "objectivePass": 203,
+      "objectivePassRate": 0.6655737704918033,
+      "otherOrError": 0,
+      "passFailInstability": 23,
+      "runs": 305
+    },
+    "before": {
+      "actionInstability": 20,
+      "changed": 185,
+      "criticalFailures": 100,
+      "latencyP50Ms": 715.2949571609497,
+      "latencyP95Ms": 1031.6580533981323,
+      "noChange": 120,
+      "objectivePass": 188,
+      "objectivePassRate": 0.6163934426229508,
+      "otherOrError": 0,
+      "passFailInstability": 21,
+      "runs": 305
+    },
+    "money": {
+      "ambiguousTransformationsRejected": 0,
+      "corruptionsCaught": 3,
+      "corruptionsContainedByEarlierExactGuard": 0,
+      "coveredRuns": 15,
+      "falseNegativeCorruptions": 0,
+      "falsePositiveRejections": 0,
+      "finalMoneySafetyInstabilityCases": [],
+      "finalUserVisibleMoneyCorruptions": 0,
+      "guardRejections": 3,
+      "guardRejectionsByReason": {
+        "currencyChanged": 1,
+        "currencyDropped": 1,
+        "valueChanged": 1
+      },
+      "rawAmbiguousTransformations": 0,
+      "rawBreakdown": {
+        "currencyChanged": 1,
+        "currencyDropped": 1,
+        "valueChanged": 1
+      },
+      "rawMoneyBearingProposals": 10,
+      "rawMoneyCorruptions": 3,
+      "rawMoneySafetyInstabilityCases": [
+        "selection-extra-005"
+      ],
+      "rejectionCases": [
+        {
+          "caseID": "selection-extra-005",
+          "reason": "valueChanged",
+          "runIndex": 0,
+          "scope": "selection"
+        },
+        {
+          "caseID": "selection-extra-005",
+          "reason": "currencyChanged",
+          "runIndex": 1,
+          "scope": "selection"
+        },
+        {
+          "caseID": "selection-extra-005",
+          "reason": "currencyDropped",
+          "runIndex": 2,
+          "scope": "selection"
+        }
+      ],
+      "safeNormalizationsAccepted": 2,
+      "selectionGuardRejections": 3,
+      "usefulRefinementsLost": 0,
+      "visibleCorruptions": [],
+      "wholeNoteGuardRejections": 0
+    }
+  },
+  "tests": {
+    "completeSuite": "passed",
+    "completeSuiteTestCount": 210,
+    "debugBuild": "passed",
+    "finalContractSuite": "passed",
+    "finalContractSuiteTestCount": 33,
+    "initialTargetedContractAndSessionTestCount": 62,
+    "initialTargetedContractAndSessionTests": "passed",
+    "nonBlockingWarning": "Existing duplicate RefineLanguageDetection.swift project reference warning."
+  }
+}

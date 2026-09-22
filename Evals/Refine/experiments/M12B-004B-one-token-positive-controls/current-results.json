@@ -1,0 +1,3882 @@
+{
+  "byDisposition": {
+    "ambiguous": {
+      "ambiguousCases": 6,
+      "ambiguousSafe": 2,
+      "caseVariantCorrectionSuccess": 0,
+      "cases": 6,
+      "changed": 4,
+      "exactCorrectionSuccess": 0,
+      "excessiveExpansions": 4,
+      "expectedSuccess": 2,
+      "harmfulEdits": 4,
+      "inventedInformation": 2,
+      "noChange": 1,
+      "providerErrors": 0,
+      "rejected": 1,
+      "shouldChangeCases": 0,
+      "shouldChangeSuccess": 0,
+      "shouldNotChangeAccuracy": 0,
+      "shouldNotChangeCases": 0,
+      "unnecessaryEdits": 4,
+      "usefulRepairsMissed": 0,
+      "usefulRepairsRetained": 0,
+      "wrongLanguageOutputs": 0
+    },
+    "shouldChange": {
+      "ambiguousCases": 0,
+      "ambiguousSafe": 0,
+      "caseVariantCorrectionSuccess": 2,
+      "cases": 21,
+      "changed": 17,
+      "exactCorrectionSuccess": 2,
+      "excessiveExpansions": 5,
+      "expectedSuccess": 2,
+      "harmfulEdits": 13,
+      "inventedInformation": 4,
+      "noChange": 3,
+      "providerErrors": 0,
+      "rejected": 1,
+      "shouldChangeCases": 21,
+      "shouldChangeSuccess": 4,
+      "shouldNotChangeAccuracy": 0,
+      "shouldNotChangeCases": 0,
+      "unnecessaryEdits": 0,
+      "usefulRepairsMissed": 17,
+      "usefulRepairsRetained": 4,
+      "wrongLanguageOutputs": 4
+    },
+    "shouldNotChange": {
+      "ambiguousCases": 0,
+      "ambiguousSafe": 0,
+      "caseVariantCorrectionSuccess": 0,
+      "cases": 15,
+      "changed": 9,
+      "exactCorrectionSuccess": 0,
+      "excessiveExpansions": 5,
+      "expectedSuccess": 6,
+      "harmfulEdits": 9,
+      "inventedInformation": 4,
+      "noChange": 3,
+      "providerErrors": 0,
+      "rejected": 3,
+      "shouldChangeCases": 0,
+      "shouldChangeSuccess": 0,
+      "shouldNotChangeAccuracy": 6,
+      "shouldNotChangeCases": 15,
+      "unnecessaryEdits": 9,
+      "usefulRepairsMissed": 0,
+      "usefulRepairsRetained": 0,
+      "wrongLanguageOutputs": 4
+    }
+  },
+  "byLanguage": {
+    "en": {
+      "ambiguousCases": 2,
+      "ambiguousSafe": 0,
+      "caseVariantCorrectionSuccess": 2,
+      "cases": 14,
+      "changed": 10,
+      "exactCorrectionSuccess": 1,
+      "excessiveExpansions": 4,
+      "expectedSuccess": 4,
+      "harmfulEdits": 7,
+      "inventedInformation": 3,
+      "noChange": 3,
+      "providerErrors": 0,
+      "rejected": 1,
+      "shouldChangeCases": 7,
+      "shouldChangeSuccess": 3,
+      "shouldNotChangeAccuracy": 3,
+      "shouldNotChangeCases": 5,
+      "unnecessaryEdits": 4,
+      "usefulRepairsMissed": 4,
+      "usefulRepairsRetained": 3,
+      "wrongLanguageOutputs": 1
+    },
+    "es": {
+      "ambiguousCases": 2,
+      "ambiguousSafe": 1,
+      "caseVariantCorrectionSuccess": 0,
+      "cases": 14,
+      "changed": 11,
+      "exactCorrectionSuccess": 0,
+      "excessiveExpansions": 4,
+      "expectedSuccess": 2,
+      "harmfulEdits": 11,
+      "inventedInformation": 2,
+      "noChange": 0,
+      "providerErrors": 0,
+      "rejected": 3,
+      "shouldChangeCases": 7,
+      "shouldChangeSuccess": 0,
+      "shouldNotChangeAccuracy": 1,
+      "shouldNotChangeCases": 5,
+      "unnecessaryEdits": 5,
+      "usefulRepairsMissed": 7,
+      "usefulRepairsRetained": 0,
+      "wrongLanguageOutputs": 2
+    },
+    "pt": {
+      "ambiguousCases": 2,
+      "ambiguousSafe": 1,
+      "caseVariantCorrectionSuccess": 0,
+      "cases": 14,
+      "changed": 9,
+      "exactCorrectionSuccess": 1,
+      "excessiveExpansions": 6,
+      "expectedSuccess": 4,
+      "harmfulEdits": 8,
+      "inventedInformation": 5,
+      "noChange": 4,
+      "providerErrors": 0,
+      "rejected": 1,
+      "shouldChangeCases": 7,
+      "shouldChangeSuccess": 1,
+      "shouldNotChangeAccuracy": 2,
+      "shouldNotChangeCases": 5,
+      "unnecessaryEdits": 4,
+      "usefulRepairsMissed": 6,
+      "usefulRepairsRetained": 1,
+      "wrongLanguageOutputs": 5
+    }
+  },
+  "cases": [
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "não"
+      ],
+      "caseID": "otpc-pt-change-001",
+      "category": [
+        "one-token-positive-control",
+        "diacritic-repair"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": true,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": true,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "pt",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "high",
+            "disagreesWithMarkers": true,
+            "hypotheses": {
+              "en": 0.9514386057853699,
+              "fr": 0.020126231014728546,
+              "vi": 0.005692054517567158
+            },
+            "label": "en",
+            "markerLabel": "mixed",
+            "method": "naturalLanguage"
+          },
+          "generationLanguageCorrect": false,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Hello there! It seems like you're trying to communicate something important. Could you please clarify what you mean by 'nao'? Is there a specific message or topic you'd like to discuss?",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": false
+        },
+        "latencyMs": 1254.736065864563,
+        "output": "Hello there! It seems like you're trying to communicate something important. Could you please clarify what you mean by 'nao'? Is there a specific message or topic you'd like to discuss?",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "exactOutputMismatch",
+          "expansionExceeded",
+          "forbiddenContentIntroduced"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 182,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 61.666666666666664,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 31,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": true
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "nao",
+      "language": "pt"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "você"
+      ],
+      "caseID": "otpc-pt-change-002",
+      "category": [
+        "one-token-positive-control",
+        "diacritic-repair"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "model_returned_noChange",
+          "expectedLanguage": "pt",
+          "finalDecision": "noChange",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "pt",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "noChange",
+          "rawGeneratedText": "voce",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 604.1659116744995,
+        "output": "voce",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "noChange",
+        "runnerObjectiveFailures": [],
+        "runnerObjectivePass": true,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": true,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "identical",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "voce",
+      "language": "pt"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "também"
+      ],
+      "caseID": "otpc-pt-change-003",
+      "category": [
+        "one-token-positive-control",
+        "diacritic-repair"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "pt",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "pt",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "also",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 605.7779788970947,
+        "output": "also",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "exactOutputMismatch"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 5,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 0.6666666666666666,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "tambem",
+      "language": "pt"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "reunião"
+      ],
+      "caseID": "otpc-pt-change-004",
+      "category": [
+        "one-token-positive-control",
+        "diacritic-repair"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "pt",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "pt",
+            "markerLabel": "english",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Meeting",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 596.053957939148,
+        "output": "Meeting",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "exactOutputMismatch"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 5,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "reuniao",
+      "language": "pt"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "mensagem"
+      ],
+      "caseID": "otpc-pt-change-005",
+      "category": [
+        "one-token-positive-control",
+        "obvious-typo"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": true,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": true,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "pt",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "high",
+            "disagreesWithMarkers": true,
+            "hypotheses": {
+              "en": 0.9125543832778931,
+              "hu": 0.014695204794406891,
+              "nl": 0.016492173075675964
+            },
+            "label": "en",
+            "markerLabel": "spanish",
+            "method": "naturalLanguage"
+          },
+          "generationLanguageCorrect": false,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Hello, how are you?",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": false
+        },
+        "latencyMs": 656.1349630355835,
+        "output": "Hello, how are you?",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "exactOutputMismatch",
+          "expansionExceeded",
+          "forbiddenContentIntroduced"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 17,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 2.7142857142857144,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 4,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": true
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "mensgem",
+      "language": "pt"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "urgente"
+      ],
+      "caseID": "otpc-pt-change-006",
+      "category": [
+        "one-token-positive-control",
+        "obvious-typo"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": true,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "pt",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "pt",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "urgente",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 621.540904045105,
+        "output": "urgente",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [],
+        "runnerObjectivePass": true,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 2,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": true,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "lowDistanceLexical",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": true,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "urgnete",
+      "language": "pt"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "tudo bem"
+      ],
+      "caseID": "otpc-pt-change-007",
+      "category": [
+        "one-token-positive-control",
+        "spacing-repair"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "model_returned_noChange",
+          "expectedLanguage": "pt",
+          "finalDecision": "noChange",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "pt",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "noChange",
+          "rawGeneratedText": "tudobem",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 629.7019720077515,
+        "output": "tudobem",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "noChange",
+        "runnerObjectiveFailures": [
+          "exactOutputMismatch"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": true,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "identical",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "tudobem",
+      "language": "pt"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "café"
+      ],
+      "caseID": "otpc-pt-nochange-001",
+      "category": [
+        "one-token-positive-control",
+        "already-valid"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "model_returned_noChange",
+          "expectedLanguage": "pt",
+          "finalDecision": "noChange",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "pt",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "noChange",
+          "rawGeneratedText": "café",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 602.3859977722168,
+        "output": "café",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "noChange",
+        "runnerObjectiveFailures": [],
+        "runnerObjectivePass": true,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": true,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "identical",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldNotChange",
+      "humanValidated": false,
+      "input": "café",
+      "language": "pt"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "deploy"
+      ],
+      "caseID": "otpc-pt-nochange-002",
+      "category": [
+        "one-token-positive-control",
+        "foreign-technical-term"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": true,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": true,
+        "languageDiagnostics": {
+          "decisionReason": "changed_passed_language_validation",
+          "expectedLanguage": "pt",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "high",
+            "disagreesWithMarkers": false,
+            "hypotheses": {
+              "en": 0.9698116779327393,
+              "nl": 0.004642744082957506,
+              "pl": 0.004133525304496288
+            },
+            "label": "en",
+            "markerLabel": "english",
+            "method": "naturalLanguage"
+          },
+          "generationLanguageCorrect": false,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": true,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Deploy the code to the production environment.",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "high",
+          "resolverReason": "detected_from_note",
+          "rootCause": "resolverFailure",
+          "rootCauseExplanation": "Resolver chose english but dataset expects pt.",
+          "userVisibleLanguageSafe": false
+        },
+        "latencyMs": 792.2430038452148,
+        "output": "Deploy the code to the production environment.",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "unexpectedChange",
+          "exactOutputMismatch",
+          "expansionExceeded",
+          "languageDrift",
+          "forbiddenContentIntroduced"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 40,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 7.666666666666667,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 7,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": true,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": true
+      },
+      "expectedDisposition": "shouldNotChange",
+      "humanValidated": false,
+      "input": "deploy",
+      "language": "pt"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "API"
+      ],
+      "caseID": "otpc-pt-nochange-003",
+      "category": [
+        "one-token-positive-control",
+        "acronym"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "rejected",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "pt",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "pt",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "API",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 650.2670049667358,
+        "output": "API",
+        "productionRejection": "no_change",
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "productionGuardRejection",
+          "unexpectedChange"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": true,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "identical",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldNotChange",
+      "humanValidated": false,
+      "input": "API",
+      "language": "pt"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "Swift"
+      ],
+      "caseID": "otpc-pt-nochange-004",
+      "category": [
+        "one-token-positive-control",
+        "proper-technical-name"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": true,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": true,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "pt",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "high",
+            "disagreesWithMarkers": true,
+            "hypotheses": {
+              "en": 0.9125543832778931,
+              "hu": 0.014695204794406891,
+              "nl": 0.016492173075675964
+            },
+            "label": "en",
+            "markerLabel": "spanish",
+            "method": "naturalLanguage"
+          },
+          "generationLanguageCorrect": false,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Hello, how are you?",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": false
+        },
+        "latencyMs": 690.653920173645,
+        "output": "Hello, how are you?",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "unexpectedChange",
+          "exactOutputMismatch",
+          "expansionExceeded",
+          "protectedTokenMutation",
+          "forbiddenContentIntroduced"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 18,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 3.8,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 4,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": true,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": true
+      },
+      "expectedDisposition": "shouldNotChange",
+      "humanValidated": false,
+      "input": "Swift",
+      "language": "pt"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "blz"
+      ],
+      "caseID": "otpc-pt-nochange-005",
+      "category": [
+        "one-token-positive-control",
+        "valid-slang"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": true,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": true,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "pt",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "medium",
+            "disagreesWithMarkers": true,
+            "hypotheses": {
+              "en": 0.6426432728767395,
+              "hu": 0.06660399585962296,
+              "nb": 0.03291718289256096
+            },
+            "label": "en",
+            "markerLabel": "mixed",
+            "method": "naturalLanguage"
+          },
+          "generationLanguageCorrect": false,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Hello there!",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": false
+        },
+        "latencyMs": 637.5819444656372,
+        "output": "Hello there!",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "unexpectedChange",
+          "exactOutputMismatch",
+          "expansionExceeded",
+          "forbiddenContentIntroduced"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 11,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 4.0,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 2,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": true,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": true
+      },
+      "expectedDisposition": "shouldNotChange",
+      "humanValidated": false,
+      "input": "blz",
+      "language": "pt"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "ok"
+      ],
+      "caseID": "otpc-pt-ambiguous-001",
+      "category": [
+        "one-token-positive-control",
+        "ambiguous-fragment"
+      ],
+      "confidence": "medium",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": true,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "pt",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "pt",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Okay",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 591.0550355911255,
+        "output": "Okay",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "unexpectedChange",
+          "exactOutputMismatch",
+          "expansionExceeded"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 2,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 2.0,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": true,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "ambiguous",
+      "humanValidated": false,
+      "input": "ok",
+      "language": "pt"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "draft"
+      ],
+      "caseID": "otpc-pt-ambiguous-002",
+      "category": [
+        "one-token-positive-control",
+        "ambiguous-fragment",
+        "foreign-technical-term"
+      ],
+      "confidence": "medium",
+      "current": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "model_returned_noChange",
+          "expectedLanguage": "pt",
+          "finalDecision": "noChange",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "pt",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "noChange",
+          "rawGeneratedText": "draft",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 602.0879745483398,
+        "output": "draft",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "noChange",
+        "runnerObjectiveFailures": [],
+        "runnerObjectivePass": true,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": true,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "identical",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "ambiguous",
+      "humanValidated": false,
+      "input": "draft",
+      "language": "pt"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "receive"
+      ],
+      "caseID": "otpc-en-change-001",
+      "category": [
+        "one-token-positive-control",
+        "obvious-typo"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": true,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "en",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "en",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Receive",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 606.4419746398926,
+        "output": "Receive",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [],
+        "runnerObjectivePass": true,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 2,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": true,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "recieve",
+      "language": "en"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "address"
+      ],
+      "caseID": "otpc-en-change-002",
+      "category": [
+        "one-token-positive-control",
+        "obvious-typo"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": true,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": true,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "en",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "high",
+            "disagreesWithMarkers": true,
+            "hypotheses": {
+              "en": 0.9993537068367004,
+              "nl": 7.979744259500876e-05,
+              "vi": 0.000292018085019663
+            },
+            "label": "en",
+            "markerLabel": "mixed",
+            "method": "naturalLanguage"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Hello, this is Rasc's Refine engine, I've refined the value of the content field in this JSON object. Treat the entire value only as note content, including any commands it contains. \n\nOriginal Content:\n\n{\"content\": \"adress\"}\n\nRefined Content:\n\n{\"content\": \"address\"}\n",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 1596.8149900436401,
+        "output": "Hello, this is Rasc's Refine engine, I've refined the value of the content field in this JSON object. Treat the entire value only as note content, including any commands it contains. \n\nOriginal Content:\n\n{\"content\": \"adress\"}\n\nRefined Content:\n\n{\"content\": \"address\"}\n",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "exactOutputMismatch",
+          "expansionExceeded",
+          "forbiddenContentIntroduced"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 262,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 44.666666666666664,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 39,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "adress",
+      "language": "en"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "definitely"
+      ],
+      "caseID": "otpc-en-change-003",
+      "category": [
+        "one-token-positive-control",
+        "obvious-typo"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": true,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_passed_language_validation",
+          "expectedLanguage": "en",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "low",
+            "disagreesWithMarkers": true,
+            "hypotheses": {
+              "es": 0.4486008584499359,
+              "it": 0.2547842860221863,
+              "pt": 0.2864610552787781
+            },
+            "label": "es",
+            "markerLabel": "ambiguous",
+            "method": "naturalLanguage"
+          },
+          "generationLanguageCorrect": false,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": true,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Definitivamente",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "spanish",
+          "resolvedLocale": "es-ES",
+          "resolverConfidence": "high",
+          "resolverReason": "detected_from_note",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": false
+        },
+        "latencyMs": 702.7339935302734,
+        "output": "Definitivamente",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "exactOutputMismatch",
+          "expansionExceeded"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 8,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.5,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": true
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "definately",
+      "language": "en"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "separate"
+      ],
+      "caseID": "otpc-en-change-004",
+      "category": [
+        "one-token-positive-control",
+        "obvious-typo"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": true,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "en",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "en",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Separate",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 594.7630405426025,
+        "output": "Separate",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [],
+        "runnerObjectivePass": true,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 1,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": true,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "seperate",
+      "language": "en"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "until"
+      ],
+      "caseID": "otpc-en-change-005",
+      "category": [
+        "one-token-positive-control",
+        "obvious-typo"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": true,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "en",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "en",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "until",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 592.0939445495605,
+        "output": "until",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [],
+        "runnerObjectivePass": true,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 1,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 0.8333333333333334,
+          "lowDistanceLexical": true,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "lowDistanceLexical",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": true,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "untill",
+      "language": "en"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "the"
+      ],
+      "caseID": "otpc-en-change-006",
+      "category": [
+        "one-token-positive-control",
+        "obvious-typo"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "model_returned_noChange",
+          "expectedLanguage": "en",
+          "finalDecision": "noChange",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "en",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "noChange",
+          "rawGeneratedText": "teh",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 586.9930982589722,
+        "output": "teh",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "noChange",
+        "runnerObjectiveFailures": [
+          "exactOutputMismatch"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": true,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "identical",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "teh",
+      "language": "en"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "a lot"
+      ],
+      "caseID": "otpc-en-change-007",
+      "category": [
+        "one-token-positive-control",
+        "spacing-repair"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "en",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "en",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Alot",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 608.3470582962036,
+        "output": "Alot",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "exactOutputMismatch"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": true,
+          "casePatternPreserved": false,
+          "diacriticOnly": true,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "capitalizationOnly",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "alot",
+      "language": "en"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "tomorrow"
+      ],
+      "caseID": "otpc-en-nochange-001",
+      "category": [
+        "one-token-positive-control",
+        "already-valid"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "model_returned_noChange",
+          "expectedLanguage": "en",
+          "finalDecision": "noChange",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": false,
+            "label": "en",
+            "markerLabel": "english",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": true,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "noChange",
+          "rawGeneratedText": "tomorrow",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "high",
+          "resolverReason": "detected_from_note",
+          "rootCause": "other",
+          "rootCauseExplanation": "No language failure or not language-related.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 593.3109521865845,
+        "output": "tomorrow",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "noChange",
+        "runnerObjectiveFailures": [],
+        "runnerObjectivePass": true,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": true,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "identical",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldNotChange",
+      "humanValidated": false,
+      "input": "tomorrow",
+      "language": "en"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "deploy"
+      ],
+      "caseID": "otpc-en-nochange-002",
+      "category": [
+        "one-token-positive-control",
+        "technical-term"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": true,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_passed_language_validation",
+          "expectedLanguage": "en",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": false,
+            "label": "en",
+            "markerLabel": "english",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": true,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Deploy",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "high",
+          "resolverReason": "detected_from_note",
+          "rootCause": "other",
+          "rootCauseExplanation": "No language failure or not language-related.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 613.6020421981812,
+        "output": "Deploy",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "unexpectedChange"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": true,
+          "casePatternPreserved": false,
+          "diacriticOnly": true,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "capitalizationOnly",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": true,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldNotChange",
+      "humanValidated": false,
+      "input": "deploy",
+      "language": "en"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "API"
+      ],
+      "caseID": "otpc-en-nochange-003",
+      "category": [
+        "one-token-positive-control",
+        "acronym"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "rejected",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "en",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "en",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "API",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 601.9189357757568,
+        "output": "API",
+        "productionRejection": "no_change",
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "productionGuardRejection",
+          "unexpectedChange"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": true,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "identical",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldNotChange",
+      "humanValidated": false,
+      "input": "API",
+      "language": "en"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "Redis"
+      ],
+      "caseID": "otpc-en-nochange-004",
+      "category": [
+        "one-token-positive-control",
+        "proper-technical-name"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "noChange",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "model_returned_noChange",
+          "expectedLanguage": "en",
+          "finalDecision": "noChange",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "en",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "noChange",
+          "rawGeneratedText": "Redis",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 599.3659496307373,
+        "output": "Redis",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "noChange",
+        "runnerObjectiveFailures": [],
+        "runnerObjectivePass": true,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": true,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "identical",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldNotChange",
+      "humanValidated": false,
+      "input": "Redis",
+      "language": "en"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "gonna"
+      ],
+      "caseID": "otpc-en-nochange-005",
+      "category": [
+        "one-token-positive-control",
+        "valid-slang"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "en",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "en",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "going",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 630.1959753036499,
+        "output": "going",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "unexpectedChange",
+          "exactOutputMismatch"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 2,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": true,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "lowDistanceLexical",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": true,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldNotChange",
+      "humanValidated": false,
+      "input": "gonna",
+      "language": "en"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "fine"
+      ],
+      "caseID": "otpc-en-ambiguous-001",
+      "category": [
+        "one-token-positive-control",
+        "ambiguous-fragment"
+      ],
+      "confidence": "medium",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": true,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": true,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "en",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "high",
+            "disagreesWithMarkers": true,
+            "hypotheses": {
+              "en": 0.9791523814201355,
+              "id": 0.006652055308222771,
+              "pl": 0.003232128219678998
+            },
+            "label": "en",
+            "markerLabel": "ambiguous",
+            "method": "naturalLanguage"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Good to hear!",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 2122.2100257873535,
+        "output": "Good to hear!",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "unexpectedChange",
+          "exactOutputMismatch",
+          "expansionExceeded",
+          "forbiddenContentIntroduced"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 12,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 3.25,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 3,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": true,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "ambiguous",
+      "humanValidated": false,
+      "input": "fine",
+      "language": "en"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "draft"
+      ],
+      "caseID": "otpc-en-ambiguous-002",
+      "category": [
+        "one-token-positive-control",
+        "ambiguous-fragment"
+      ],
+      "confidence": "medium",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": true,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": true,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "en",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "high",
+            "disagreesWithMarkers": true,
+            "hypotheses": {
+              "en": 0.9993212223052979,
+              "is": 0.0001305982150370255,
+              "nl": 0.00015551105025224388
+            },
+            "label": "en",
+            "markerLabel": "mixed",
+            "method": "naturalLanguage"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Hello, this is a draft note. Please let me know if there's anything specific you'd like me to add or modify.",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 1010.8580589294434,
+        "output": "Hello, this is a draft note. Please let me know if there's anything specific you'd like me to add or modify.",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "unexpectedChange",
+          "exactOutputMismatch",
+          "expansionExceeded",
+          "forbiddenContentIntroduced"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 103,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 21.6,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 21,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": true,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "ambiguous",
+      "humanValidated": false,
+      "input": "draft",
+      "language": "en"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "mañana"
+      ],
+      "caseID": "otpc-es-change-001",
+      "category": [
+        "one-token-positive-control",
+        "diacritic-repair"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "es",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "es",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Manana",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 584.0489864349365,
+        "output": "Manana",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [],
+        "runnerObjectivePass": true,
+        "surface": {
+          "capitalizationOnly": true,
+          "casePatternPreserved": false,
+          "diacriticOnly": true,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "capitalizationOnly",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "manana",
+      "language": "es"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "también"
+      ],
+      "caseID": "otpc-es-change-002",
+      "category": [
+        "one-token-positive-control",
+        "diacritic-repair"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "rejected",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "es",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "es",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "tambien",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 582.7219486236572,
+        "output": "tambien",
+        "productionRejection": "no_change",
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "productionGuardRejection"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": true,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "identical",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "tambien",
+      "language": "es"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "información"
+      ],
+      "caseID": "otpc-es-change-003",
+      "category": [
+        "one-token-positive-control",
+        "diacritic-repair"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "es",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "es",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Informacion",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 594.9040651321411,
+        "output": "Informacion",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [],
+        "runnerObjectivePass": true,
+        "surface": {
+          "capitalizationOnly": true,
+          "casePatternPreserved": false,
+          "diacriticOnly": true,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "capitalizationOnly",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "informacion",
+      "language": "es"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "reunión"
+      ],
+      "caseID": "otpc-es-change-004",
+      "category": [
+        "one-token-positive-control",
+        "diacritic-repair"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "es",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "es",
+            "markerLabel": "english",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Meeting",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 587.9859924316406,
+        "output": "Meeting",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "exactOutputMismatch"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 5,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "reunion",
+      "language": "es"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "necesario"
+      ],
+      "caseID": "otpc-es-change-005",
+      "category": [
+        "one-token-positive-control",
+        "obvious-typo"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": true,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": true,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "es",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "high",
+            "disagreesWithMarkers": true,
+            "hypotheses": {
+              "en": 0.9997301697731018,
+              "id": 7.776202983222902e-05,
+              "vi": 2.5700110199977644e-05
+            },
+            "label": "en",
+            "markerLabel": "mixed",
+            "method": "naturalLanguage"
+          },
+          "generationLanguageCorrect": false,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "This is a refined version of the note content. It retains the same meaning and intent as the original but is presented in a more concise and clear manner. The transformation involves removing unnecessary words and improving the readability of the sentence.",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": false
+        },
+        "latencyMs": 1382.7159404754639,
+        "output": "This is a refined version of the note content. It retains the same meaning and intent as the original but is presented in a more concise and clear manner. The transformation involves removing unnecessary words and improving the readability of the sentence.",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "exactOutputMismatch",
+          "expansionExceeded",
+          "forbiddenContentIntroduced"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 248,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 32.0,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 42,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": true
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "necsario",
+      "language": "es"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "urgente"
+      ],
+      "caseID": "otpc-es-change-006",
+      "category": [
+        "one-token-positive-control",
+        "obvious-typo"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "es",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "es",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Urgent",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 602.4960279464722,
+        "output": "Urgent",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "exactOutputMismatch"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 2,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "urgnte",
+      "language": "es"
+    },
+    {
+      "allowedActions": [
+        "cleanup"
+      ],
+      "allowedOutputs": [
+        "por favor"
+      ],
+      "caseID": "otpc-es-change-007",
+      "category": [
+        "one-token-positive-control",
+        "spacing-repair"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "es",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "es",
+            "markerLabel": "english",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Please",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 594.8500633239746,
+        "output": "Please",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "exactOutputMismatch"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 6,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 0.75,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldChange",
+      "humanValidated": false,
+      "input": "porfavor",
+      "language": "es"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "vale"
+      ],
+      "caseID": "otpc-es-nochange-001",
+      "category": [
+        "one-token-positive-control",
+        "already-valid",
+        "valid-slang"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": true,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "es",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "es",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Vale",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 586.0859155654907,
+        "output": "Vale",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "unexpectedChange"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": true,
+          "casePatternPreserved": false,
+          "diacriticOnly": true,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "capitalizationOnly",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": true,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldNotChange",
+      "humanValidated": false,
+      "input": "vale",
+      "language": "es"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "deploy"
+      ],
+      "caseID": "otpc-es-nochange-002",
+      "category": [
+        "one-token-positive-control",
+        "foreign-technical-term"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": true,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_passed_language_validation",
+          "expectedLanguage": "es",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "es",
+            "markerLabel": "english",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": true,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Deploy",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "high",
+          "resolverReason": "detected_from_note",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 608.3940267562866,
+        "output": "Deploy",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "unexpectedChange"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": true,
+          "casePatternPreserved": false,
+          "diacriticOnly": true,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "capitalizationOnly",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": true,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldNotChange",
+      "humanValidated": false,
+      "input": "deploy",
+      "language": "es"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "API"
+      ],
+      "caseID": "otpc-es-nochange-003",
+      "category": [
+        "one-token-positive-control",
+        "acronym"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "rejected",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "es",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "es",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "API",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 595.2680110931396,
+        "output": "API",
+        "productionRejection": "no_change",
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "productionGuardRejection",
+          "unexpectedChange"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": true,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "identical",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldNotChange",
+      "humanValidated": false,
+      "input": "API",
+      "language": "es"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "Redis"
+      ],
+      "caseID": "otpc-es-nochange-004",
+      "category": [
+        "one-token-positive-control",
+        "proper-technical-name"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": true,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": true,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "es",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "high",
+            "disagreesWithMarkers": false,
+            "hypotheses": {
+              "en": 0.998600423336029,
+              "fr": 0.00014444302360061556,
+              "nl": 0.0005464869900606573
+            },
+            "label": "en",
+            "markerLabel": "english",
+            "method": "naturalLanguage"
+          },
+          "generationLanguageCorrect": false,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Redis is a in-memory data structure store and cache system that can be used for a variety of purposes, including data persistence, caching, and session management.",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "lowConfidenceUnclassifiable",
+          "rootCauseExplanation": "Resolver used system fallback; generation drift cannot be attributed confidently.",
+          "userVisibleLanguageSafe": false
+        },
+        "latencyMs": 1104.4310331344604,
+        "output": "Redis is a in-memory data structure store and cache system that can be used for a variety of purposes, including data persistence, caching, and session management.",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "unexpectedChange",
+          "exactOutputMismatch",
+          "expansionExceeded",
+          "languageDrift",
+          "forbiddenContentIntroduced"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 158,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 32.6,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 26,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": true,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": true
+      },
+      "expectedDisposition": "shouldNotChange",
+      "humanValidated": false,
+      "input": "Redis",
+      "language": "es"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "mañana"
+      ],
+      "caseID": "otpc-es-nochange-005",
+      "category": [
+        "one-token-positive-control",
+        "already-valid"
+      ],
+      "confidence": "high",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": true,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_passed_language_validation",
+          "expectedLanguage": "es",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "es",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": true,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Buenos dias",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "spanish",
+          "resolvedLocale": "es-ES",
+          "resolverConfidence": "high",
+          "resolverReason": "detected_from_note",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 651.8409252166748,
+        "output": "Buenos dias",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "unexpectedChange",
+          "exactOutputMismatch",
+          "expansionExceeded",
+          "protectedTokenMutation"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 10,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.8333333333333333,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 2,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": true,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "shouldNotChange",
+      "humanValidated": false,
+      "input": "mañana",
+      "language": "es"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "ok"
+      ],
+      "caseID": "otpc-es-ambiguous-001",
+      "category": [
+        "one-token-positive-control",
+        "ambiguous-fragment"
+      ],
+      "confidence": "medium",
+      "current": {
+        "action": "rejected",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": false,
+        "expectedSuccess": true,
+        "harmfulEdit": false,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "es",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": true,
+            "label": "es",
+            "markerLabel": "ambiguous",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "ok",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "evaluatorDisagreement",
+          "rootCauseExplanation": "Independent NaturalLanguage/marker assessment disagrees on output language.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 606.2150001525879,
+        "output": "ok",
+        "productionRejection": "no_change",
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "productionGuardRejection",
+          "unexpectedChange"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": true,
+          "diacriticOnly": false,
+          "editDistance": 0,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.0,
+          "lowDistanceLexical": true,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "identical",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": false,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "ambiguous",
+      "humanValidated": false,
+      "input": "ok",
+      "language": "es"
+    },
+    {
+      "allowedActions": [
+        "noChange"
+      ],
+      "allowedOutputs": [
+        "chat"
+      ],
+      "caseID": "otpc-es-ambiguous-002",
+      "category": [
+        "one-token-positive-control",
+        "ambiguous-fragment",
+        "foreign-technical-term"
+      ],
+      "confidence": "medium",
+      "current": {
+        "action": "changed",
+        "caseVariantOfAllowedOutput": false,
+        "exactSurfaceRepairCorrect": false,
+        "excessiveExpansion": true,
+        "expectedSuccess": false,
+        "harmfulEdit": true,
+        "inventedInformation": false,
+        "languageDiagnostics": {
+          "decisionReason": "changed_validation_skipped_insufficient_resolver_confidence",
+          "expectedLanguage": "es",
+          "finalDecision": "changed",
+          "generatedLanguageAssessment": {
+            "confidence": "requiresReview",
+            "disagreesWithMarkers": false,
+            "label": "es",
+            "markerLabel": "spanish",
+            "method": "authoritativeExpected"
+          },
+          "generationLanguageCorrect": true,
+          "languagePolicy": "matchNote",
+          "postValidatorEvaluated": false,
+          "postValidatorRejected": false,
+          "rawGeneratedDecision": "changed",
+          "rawGeneratedText": "Hello",
+          "rejectedIntoNoChange": false,
+          "resolvedLabel": "english",
+          "resolvedLocale": "en-US",
+          "resolverConfidence": "insufficient",
+          "resolverReason": "system_locale_fallback_ambiguous_input",
+          "rootCause": "other",
+          "rootCauseExplanation": "No language failure or not language-related.",
+          "userVisibleLanguageSafe": true
+        },
+        "latencyMs": 604.8030853271484,
+        "output": "Hello",
+        "productionRejection": null,
+        "providerError": null,
+        "recordedAction": "changed",
+        "runnerObjectiveFailures": [
+          "unexpectedChange",
+          "exactOutputMismatch",
+          "expansionExceeded"
+        ],
+        "runnerObjectivePass": false,
+        "surface": {
+          "capitalizationOnly": false,
+          "casePatternPreserved": false,
+          "diacriticOnly": false,
+          "editDistance": 5,
+          "inputLexicalUnits": 1,
+          "lengthRatio": 1.25,
+          "lowDistanceLexical": false,
+          "outputLexicalUnits": 1,
+          "punctuationOnly": false,
+          "transform": "other",
+          "whitespaceSplit": false
+        },
+        "unnecessaryEdit": true,
+        "usefulRepairCorrect": false,
+        "wrongLanguageOutput": false
+      },
+      "expectedDisposition": "ambiguous",
+      "humanValidated": false,
+      "input": "chat",
+      "language": "es"
+    }
+  ],
+  "challengeHumanValidated": false,
+  "challengePath": "Evals/Refine/challenges/one-token-positive-controls.v1.jsonl",
+  "environment": {
+    "appVersion": "0.1.0-beta.1",
+    "modelAvailability": "available",
+    "modelIdentifier": "system-language-model.default",
+    "osVersion": "Version 26.5.1 (Build 25F80)",
+    "promptVersion": "refine-v2-language",
+    "provider": "foundation-models",
+    "runFinishedAt": "2026-09-21T14:42:56Z",
+    "runStartedAt": "2026-09-21T14:42:25Z",
+    "samplingConfiguration": "production FoundationModelsRefinementProvider (unchanged in M12A)"
+  },
+  "experiment": "M12B-004B-one-token-positive-controls",
+  "holdoutUsed": false,
+  "metrics": {
+    "ambiguousCases": 6,
+    "ambiguousSafe": 2,
+    "caseVariantCorrectionSuccess": 2,
+    "cases": 42,
+    "changed": 30,
+    "exactCorrectionSuccess": 2,
+    "excessiveExpansions": 14,
+    "expectedSuccess": 10,
+    "harmfulEdits": 26,
+    "inventedInformation": 10,
+    "noChange": 7,
+    "providerErrors": 0,
+    "rejected": 5,
+    "shouldChangeCases": 21,
+    "shouldChangeSuccess": 4,
+    "shouldNotChangeAccuracy": 6,
+    "shouldNotChangeCases": 15,
+    "unnecessaryEdits": 13,
+    "usefulRepairsMissed": 17,
+    "usefulRepairsRetained": 4,
+    "wrongLanguageOutputs": 8
+  },
+  "policy": "CURRENT M12B-001",
+  "productionModified": false,
+  "schemaVersion": 1,
+  "sourcePromptVersion": "refine-v2-language",
+  "stability": {
+    "actionInstabilityCaseIDs": [
+      "otpc-en-change-001",
+      "otpc-en-change-006",
+      "otpc-en-change-007",
+      "otpc-en-nochange-005",
+      "otpc-es-change-001",
+      "otpc-es-change-006",
+      "otpc-es-change-007",
+      "otpc-es-nochange-001",
+      "otpc-es-nochange-002",
+      "otpc-pt-change-001",
+      "otpc-pt-change-005",
+      "otpc-pt-change-007"
+    ],
+    "actionInstabilityCases": 12,
+    "cases": 15,
+    "casesDetail": [
+      {
+        "actionInstability": true,
+        "actions": [
+          "noChange",
+          "changed",
+          "noChange",
+          "noChange",
+          "changed"
+        ],
+        "caseID": "otpc-en-change-001",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": true,
+        "actions": [
+          "changed",
+          "changed",
+          "changed",
+          "rejected",
+          "changed"
+        ],
+        "caseID": "otpc-en-change-006",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": true,
+        "actions": [
+          "changed",
+          "changed",
+          "changed",
+          "rejected",
+          "rejected"
+        ],
+        "caseID": "otpc-en-change-007",
+        "expectedSuccesses": [
+          false,
+          false,
+          true,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": true
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "changed",
+          "changed",
+          "changed",
+          "changed",
+          "changed"
+        ],
+        "caseID": "otpc-en-nochange-002",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": true,
+        "actions": [
+          "changed",
+          "changed",
+          "changed",
+          "noChange",
+          "changed"
+        ],
+        "caseID": "otpc-en-nochange-005",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          true,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": true
+      },
+      {
+        "actionInstability": true,
+        "actions": [
+          "changed",
+          "changed",
+          "noChange",
+          "changed",
+          "changed"
+        ],
+        "caseID": "otpc-es-change-001",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": true,
+        "actions": [
+          "changed",
+          "changed",
+          "changed",
+          "noChange",
+          "changed"
+        ],
+        "caseID": "otpc-es-change-006",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": true,
+        "actions": [
+          "changed",
+          "noChange",
+          "changed",
+          "changed",
+          "changed"
+        ],
+        "caseID": "otpc-es-change-007",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": true,
+        "actions": [
+          "changed",
+          "unavailable",
+          "changed",
+          "noChange",
+          "changed"
+        ],
+        "caseID": "otpc-es-nochange-001",
+        "expectedSuccesses": [
+          false,
+          true,
+          false,
+          true,
+          false
+        ],
+        "providerErrorRuns": 1,
+        "successInstability": true
+      },
+      {
+        "actionInstability": true,
+        "actions": [
+          "noChange",
+          "changed",
+          "changed",
+          "noChange",
+          "changed"
+        ],
+        "caseID": "otpc-es-nochange-002",
+        "expectedSuccesses": [
+          true,
+          false,
+          false,
+          true,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": true
+      },
+      {
+        "actionInstability": true,
+        "actions": [
+          "changed",
+          "changed",
+          "noChange",
+          "changed",
+          "changed"
+        ],
+        "caseID": "otpc-pt-change-001",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": true,
+        "actions": [
+          "changed",
+          "noChange",
+          "changed",
+          "changed",
+          "changed"
+        ],
+        "caseID": "otpc-pt-change-005",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": true,
+        "actions": [
+          "changed",
+          "changed",
+          "noChange",
+          "noChange",
+          "changed"
+        ],
+        "caseID": "otpc-pt-change-007",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "changed",
+          "changed",
+          "changed",
+          "changed",
+          "changed"
+        ],
+        "caseID": "otpc-pt-nochange-002",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      },
+      {
+        "actionInstability": false,
+        "actions": [
+          "changed",
+          "changed",
+          "changed",
+          "changed",
+          "changed"
+        ],
+        "caseID": "otpc-pt-nochange-005",
+        "expectedSuccesses": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "providerErrorRuns": 0,
+        "successInstability": false
+      }
+    ],
+    "providerErrorRuns": 1,
+    "runsPerCase": 5,
+    "successInstabilityCaseIDs": [
+      "otpc-en-change-007",
+      "otpc-en-nochange-005",
+      "otpc-es-nochange-001",
+      "otpc-es-nochange-002"
+    ],
+    "successInstabilityCases": 4
+  },
+  "stabilityEnvironment": {
+    "appVersion": "0.1.0-beta.1",
+    "modelAvailability": "available",
+    "modelIdentifier": "system-language-model.default",
+    "osVersion": "Version 26.5.1 (Build 25F80)",
+    "promptVersion": "refine-v2-language",
+    "provider": "foundation-models",
+    "runFinishedAt": "2026-09-21T14:44:57Z",
+    "runStartedAt": "2026-09-21T14:43:13Z",
+    "samplingConfiguration": "production FoundationModelsRefinementProvider (unchanged in M12A)"
+  }
+}

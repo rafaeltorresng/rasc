@@ -1,0 +1,3488 @@
+{
+  "cases": [
+    {
+      "actual": {
+        "deterministicFailures": [],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": true,
+        "output": "maybe",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "noChange",
+        "unnecessaryEdit": false,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "noChange",
+        "userVisibleHarmful": false,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "en",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange"
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "en-US"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-en-001",
+      "categories": [
+        "tiny",
+        "one-word",
+        "ambiguous"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "maybe",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "B",
+        "reason": "The actual user-visible result was already noChange; the counterfactual is behaviorally equivalent."
+      },
+      "frontierSecondary": {
+        "benchmarkJudgment": "benchmarkCorrect",
+        "benchmarkRationale": "The conventional reading is English and the benchmark correctly prefers conservative noChange for the one-word input.",
+        "productConfidence": "high",
+        "productFailureLabels": [],
+        "productJudgment": "languageAmbiguous",
+        "productRationale": "The one-word input is genuinely language-ambiguous, and conservative noChange is safe.",
+        "proposedConstraintCorrection": null
+      },
+      "input": "maybe",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "maybe",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "maybe",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "maybe",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "ambiguous fragment",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": true,
+        "changedCount": 2,
+        "noChangeCount": 3,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 0,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "identical",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "en",
+        "tiny",
+        "ambiguous"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "maybe",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [
+          "unexpectedChange",
+          "expansionExceeded",
+          "forbiddenContentIntroduced"
+        ],
+        "excessiveExpansion": true,
+        "inventedInformationIndicator": true,
+        "objectivePass": false,
+        "output": "Deploy the new feature to production.",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "changed",
+        "unnecessaryEdit": true,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "changed",
+        "userVisibleHarmful": true,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "en",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange"
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "en-US"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-en-002",
+      "categories": [
+        "tiny",
+        "one-word",
+        "technical"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "deploy",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "A",
+        "reason": "The recorded visible change failed existing constraints; forced noChange passes and removes the edit."
+      },
+      "frontierSecondary": {
+        "benchmarkJudgment": "benchmarkCorrect",
+        "benchmarkRationale": "The one-word technical input correctly requires noChange and a tight expansion limit.",
+        "productConfidence": "high",
+        "productFailureLabels": [
+          "inventedInformation",
+          "excessiveExpansion"
+        ],
+        "productJudgment": "productFailure",
+        "productRationale": "The output invents both a new feature and a production destination from a one-word note.",
+        "proposedConstraintCorrection": null
+      },
+      "input": "deploy",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "deploy",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "deploy",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "deploy",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "foreign technical term",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": false,
+        "changedCount": 5,
+        "noChangeCount": 0,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 32,
+        "lengthRatio": 6.166666666666667,
+        "outputUnitCount": 6,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "other",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "en",
+        "tiny",
+        "technical"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "deploy",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [
+          "unexpectedChange"
+        ],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": false,
+        "output": "Urgent",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "changed",
+        "unnecessaryEdit": true,
+        "unnecessarySurfaceEdit": true,
+        "userVisibleAction": "changed",
+        "userVisibleHarmful": true,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "en",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange"
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "en-US"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-en-003",
+      "categories": [
+        "tiny",
+        "one-word",
+        "task-hint"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "urgent",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "A",
+        "reason": "The recorded visible change failed existing constraints; forced noChange passes and removes the edit."
+      },
+      "frontierSecondary": {
+        "benchmarkJudgment": "benchmarkCorrect",
+        "benchmarkRationale": "The one-word task hint correctly prefers noChange and disallows unsupported expansion.",
+        "productConfidence": "high",
+        "productFailureLabels": [
+          "unnecessaryEdit"
+        ],
+        "productJudgment": "productFailure",
+        "productRationale": "Capitalization alone is not a useful improvement to this one-word note.",
+        "proposedConstraintCorrection": null
+      },
+      "input": "urgent",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "urgent",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "urgent",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "changed",
+          "deterministicFailures": [
+            "unexpectedChange"
+          ],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": false,
+          "output": "Urgent",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": true
+        }
+      },
+      "semanticSubtype": "capitalization-only issue",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": true,
+        "changedCount": 1,
+        "noChangeCount": 4,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": true,
+        "diacriticOnly": false,
+        "editDistance": 1,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": true,
+        "transform": "capitalizationOnly",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "en",
+        "tiny",
+        "task-hint"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "urgent",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": true,
+        "output": "ok",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "noChange",
+        "unnecessaryEdit": false,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "noChange",
+        "userVisibleHarmful": false,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "en",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange"
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "en-US"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-en-004",
+      "categories": [
+        "tiny",
+        "one-word",
+        "already-good"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "ok",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "B",
+        "reason": "The actual user-visible result was already noChange; the counterfactual is behaviorally equivalent."
+      },
+      "frontierSecondary": {
+        "benchmarkJudgment": "benchmarkExpectationWrong",
+        "benchmarkRationale": "Standalone 'ok' is language-neutral in practice; assigning English certainty is not justified.",
+        "productConfidence": "high",
+        "productFailureLabels": [],
+        "productJudgment": "languageAmbiguous",
+        "productRationale": "The tiny input is language-ambiguous, and noChange is the appropriate conservative result.",
+        "proposedConstraintCorrection": {
+          "expectedLanguage": null,
+          "semanticNotes": "Clear the expected-language assertion for this language-neutral acknowledgement; retain preferred noChange."
+        }
+      },
+      "input": "ok",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "ok",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "ok",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "ok",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "already-valid word",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": true,
+        "changedCount": 1,
+        "noChangeCount": 4,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 0,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "identical",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "en",
+        "tiny",
+        "already-good"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "ok",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [
+          "unexpectedChange"
+        ],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": false,
+        "output": "Retry",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "changed",
+        "unnecessaryEdit": true,
+        "unnecessarySurfaceEdit": true,
+        "userVisibleAction": "changed",
+        "userVisibleHarmful": true,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "en",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange"
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "en-US"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-en-005",
+      "categories": [
+        "tiny",
+        "one-word",
+        "technical"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "retry",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "A",
+        "reason": "The recorded visible change failed existing constraints; forced noChange passes and removes the edit."
+      },
+      "frontierSecondary": {
+        "benchmarkJudgment": "benchmarkExpectationWrong",
+        "benchmarkRationale": "Standalone 'retry' is cross-language technical vocabulary and does not justify an English language assertion.",
+        "productConfidence": "high",
+        "productFailureLabels": [
+          "unnecessaryEdit"
+        ],
+        "productJudgment": "productFailure",
+        "productRationale": "Capitalizing an ambiguous one-word technical note provides no meaningful improvement.",
+        "proposedConstraintCorrection": {
+          "expectedLanguage": null,
+          "semanticNotes": "Clear the expected-language assertion for this ambiguous technical token; retain preferred noChange."
+        }
+      },
+      "input": "retry",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "retry",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "retry",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "changed",
+          "deterministicFailures": [
+            "unexpectedChange"
+          ],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": false,
+          "output": "Retry",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": true
+        }
+      },
+      "semanticSubtype": "capitalization-only issue",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": false,
+        "changedCount": 5,
+        "noChangeCount": 0,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": true,
+        "diacriticOnly": false,
+        "editDistance": 1,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": true,
+        "transform": "capitalizationOnly",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "en",
+        "tiny",
+        "technical"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "retry",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": true,
+        "output": "draft",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "noChange",
+        "unnecessaryEdit": false,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "noChange",
+        "userVisibleHarmful": false,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "en",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange"
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "en-US"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-en-010",
+      "categories": [
+        "tiny",
+        "one-word",
+        "message"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "draft",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "B",
+        "reason": "The actual user-visible result was already noChange; the counterfactual is behaviorally equivalent."
+      },
+      "frontierSecondary": null,
+      "input": "draft",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "draft",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "draft",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "draft",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "ambiguous fragment",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": true,
+        "changedCount": 1,
+        "noChangeCount": 4,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 0,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "identical",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "en",
+        "tiny",
+        "message"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "draft",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": true,
+        "output": "talvez",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "noChange",
+        "unnecessaryEdit": false,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "noChange",
+        "userVisibleHarmful": false,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "pt",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange",
+          "semanticNotes": "Single-word or fragment input must not expand with invented context."
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "pt-BR"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-pt-001",
+      "categories": [
+        "tiny",
+        "one-word",
+        "ambiguous"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "talvez",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "B",
+        "reason": "The actual user-visible result was already noChange; the counterfactual is behaviorally equivalent."
+      },
+      "frontierSecondary": {
+        "benchmarkJudgment": "benchmarkCorrect",
+        "benchmarkRationale": "The word is clearly Portuguese and the benchmark correctly requires conservative noChange.",
+        "productConfidence": "high",
+        "productFailureLabels": [],
+        "productJudgment": "outputAcceptable",
+        "productRationale": "This one-word Portuguese note cannot be safely improved without guessing, so noChange is appropriate.",
+        "proposedConstraintCorrection": null
+      },
+      "input": "talvez",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "talvez",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "talvez",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "talvez",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "ambiguous fragment",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": true,
+        "changedCount": 3,
+        "noChangeCount": 2,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 0,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "identical",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "pt",
+        "tiny",
+        "ambiguous"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "talvez",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [
+          "unexpectedChange"
+        ],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": false,
+        "output": "Deploy?",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "changed",
+        "unnecessaryEdit": true,
+        "unnecessarySurfaceEdit": true,
+        "userVisibleAction": "changed",
+        "userVisibleHarmful": true,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "pt",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange",
+          "semanticNotes": "Single-word or fragment input must not expand with invented context."
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "pt-BR"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-pt-002",
+      "categories": [
+        "tiny",
+        "one-word",
+        "question"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "deploy?",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "A",
+        "reason": "The recorded visible change failed existing constraints; forced noChange passes and removes the edit."
+      },
+      "frontierSecondary": null,
+      "input": "deploy?",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "deploy?",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "deploy?",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "changed",
+          "deterministicFailures": [
+            "unexpectedChange"
+          ],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": false,
+          "output": "Deploy?",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": true
+        }
+      },
+      "semanticSubtype": "capitalization-only issue",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": true,
+        "changedCount": 3,
+        "noChangeCount": 2,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": true,
+        "diacriticOnly": false,
+        "editDistance": 1,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": true,
+        "transform": "capitalizationOnly",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "pt",
+        "tiny",
+        "question"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": true,
+        "eligibleContentUnit": true,
+        "lexicalCore": "deploy",
+        "primaryShape": "wordWithAttachedPunctuation",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": true,
+        "output": "café",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "noChange",
+        "unnecessaryEdit": false,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "noChange",
+        "userVisibleHarmful": false,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "pt",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange",
+          "semanticNotes": "Single-word or fragment input must not expand with invented context."
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "pt-BR"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-pt-004",
+      "categories": [
+        "tiny",
+        "one-word",
+        "proper-noun"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "café",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "B",
+        "reason": "The actual user-visible result was already noChange; the counterfactual is behaviorally equivalent."
+      },
+      "frontierSecondary": null,
+      "input": "café",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "café",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "café",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "café",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "already-valid word",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": true,
+        "changedCount": 4,
+        "noChangeCount": 1,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 0,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "identical",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "pt",
+        "tiny",
+        "proper-noun"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "café",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": true,
+        "output": "ok",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "noChange",
+        "unnecessaryEdit": false,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "noChange",
+        "userVisibleHarmful": false,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "pt",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange",
+          "semanticNotes": "Single-word or fragment input must not expand with invented context."
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "pt-BR"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-pt-005",
+      "categories": [
+        "tiny",
+        "one-word",
+        "already-good"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "ok",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "B",
+        "reason": "The actual user-visible result was already noChange; the counterfactual is behaviorally equivalent."
+      },
+      "frontierSecondary": null,
+      "input": "ok",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "ok",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "ok",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "ok",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "already-valid word",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": true,
+        "changedCount": 3,
+        "noChangeCount": 2,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 0,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "identical",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "pt",
+        "tiny",
+        "already-good"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "ok",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [
+          "unexpectedChange"
+        ],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": false,
+        "output": "Retry",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "changed",
+        "unnecessaryEdit": true,
+        "unnecessarySurfaceEdit": true,
+        "userVisibleAction": "changed",
+        "userVisibleHarmful": true,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "pt",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange",
+          "semanticNotes": "Single-word or fragment input must not expand with invented context."
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "pt-BR"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-pt-006",
+      "categories": [
+        "tiny",
+        "one-word",
+        "technical"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "retry",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "A",
+        "reason": "The recorded visible change failed existing constraints; forced noChange passes and removes the edit."
+      },
+      "frontierSecondary": null,
+      "input": "retry",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "retry",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "retry",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "changed",
+          "deterministicFailures": [
+            "unexpectedChange"
+          ],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": false,
+          "output": "Retry",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": true
+        }
+      },
+      "semanticSubtype": "capitalization-only issue",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": false,
+        "changedCount": 5,
+        "noChangeCount": 0,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": true,
+        "diacriticOnly": false,
+        "editDistance": 1,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": true,
+        "transform": "capitalizationOnly",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "pt",
+        "tiny",
+        "technical"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "retry",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [
+          "unexpectedChange"
+        ],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": false,
+        "output": "$",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "changed",
+        "unnecessaryEdit": true,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "changed",
+        "userVisibleHarmful": true,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "pt",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange",
+          "semanticNotes": "Single-word or fragment input must not expand with invented context."
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "pt-BR"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-pt-008",
+      "categories": [
+        "tiny",
+        "one-word",
+        "money-fragment"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "R$",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "E",
+        "reason": "Frontier review materially disagrees with the deterministic benchmark verdict or its recorded failure constraints."
+      },
+      "frontierSecondary": {
+        "benchmarkJudgment": "benchmarkExpectationWrong",
+        "benchmarkRationale": "A currency symbol does not establish prose language, and the symbol itself must be explicitly protected.",
+        "productConfidence": "high",
+        "productFailureLabels": [
+          "protectedTokenMutation",
+          "meaningChanged"
+        ],
+        "productJudgment": "productFailure",
+        "productRationale": "The Brazilian-real token is changed to a generic dollar sign, altering the currency meaning.",
+        "proposedConstraintCorrection": {
+          "expectedLanguage": null,
+          "mustPreserveTokens": [
+            "R$"
+          ],
+          "preferredAction": "noChange",
+          "semanticNotes": "Clear the expected-language assertion and preserve the BRL currency symbol exactly."
+        }
+      },
+      "input": "R$",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "R$",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "R$",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "R$",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "URL / handle / number / money / emoji",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": true,
+        "changedCount": 3,
+        "noChangeCount": 2,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 1,
+        "lengthRatio": 0.5,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "other",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "pt",
+        "tiny",
+        "money-fragment"
+      ],
+      "tokenShape": {
+        "ambiguityReason": "Currency marker lacks an amount.",
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "R$",
+        "primaryShape": "moneyFragment",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": true,
+        "output": "@ana",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "noChange",
+        "unnecessaryEdit": false,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "noChange",
+        "userVisibleHarmful": false,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "pt",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange",
+          "semanticNotes": "Single-word or fragment input must not expand with invented context."
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "pt-BR"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-pt-009",
+      "categories": [
+        "tiny",
+        "one-word",
+        "handle"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "@ana",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "B",
+        "reason": "The actual user-visible result was already noChange; the counterfactual is behaviorally equivalent."
+      },
+      "frontierSecondary": null,
+      "input": "@ana",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "@ana",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "@ana",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "@ana",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "URL / handle / number / money / emoji",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": true,
+        "changedCount": 4,
+        "noChangeCount": 1,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 0,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "identical",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "pt",
+        "tiny",
+        "handle"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "@ana",
+        "primaryShape": "handle",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [
+          "unexpectedChange",
+          "expansionExceeded",
+          "forbiddenContentIntroduced"
+        ],
+        "excessiveExpansion": true,
+        "inventedInformationIndicator": true,
+        "objectivePass": false,
+        "output": "I have found a bug.",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "changed",
+        "unnecessaryEdit": true,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "changed",
+        "userVisibleHarmful": true,
+        "wrongLanguageIndicator": true,
+        "wrongLanguageReason": "Evaluation-only English marker indicator: found, have."
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "pt",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange",
+          "semanticNotes": "Single-word or fragment input must not expand with invented context."
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "pt-BR"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-pt-010",
+      "categories": [
+        "tiny",
+        "one-word",
+        "technical"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "bug",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "A",
+        "reason": "The recorded visible change failed existing constraints; forced noChange passes and removes the edit."
+      },
+      "frontierSecondary": null,
+      "input": "bug",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "bug",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "bug",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "bug",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "foreign technical term",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": true,
+        "changedCount": 4,
+        "noChangeCount": 1,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 16,
+        "lengthRatio": 6.333333333333333,
+        "outputUnitCount": 5,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "other",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "pt",
+        "tiny",
+        "technical"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "bug",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [
+          "unexpectedChange",
+          "expansionExceeded",
+          "forbiddenContentIntroduced"
+        ],
+        "excessiveExpansion": true,
+        "inventedInformationIndicator": true,
+        "objectivePass": false,
+        "output": "You are welcome to chat with me anytime.",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "changed",
+        "unnecessaryEdit": true,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "changed",
+        "userVisibleHarmful": true,
+        "wrongLanguageIndicator": true,
+        "wrongLanguageReason": "Evaluation-only English marker indicator: anytime, are, me, to, welcome."
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "pt",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange",
+          "semanticNotes": "Single-word or fragment input must not expand with invented context."
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "pt-BR"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-pt-011",
+      "categories": [
+        "tiny",
+        "one-word",
+        "already-good"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "sim",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "A",
+        "reason": "The recorded visible change failed existing constraints; forced noChange passes and removes the edit."
+      },
+      "frontierSecondary": null,
+      "input": "sim",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "sim",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "sim",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "sim",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "already-valid word",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": true,
+        "changedCount": 4,
+        "noChangeCount": 1,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 38,
+        "lengthRatio": 13.333333333333334,
+        "outputUnitCount": 8,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "other",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "pt",
+        "tiny",
+        "already-good"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "sim",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [
+          "unexpectedChange"
+        ],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": false,
+        "output": "Hmm",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "changed",
+        "unnecessaryEdit": true,
+        "unnecessarySurfaceEdit": true,
+        "userVisibleAction": "changed",
+        "userVisibleHarmful": true,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "pt",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange",
+          "semanticNotes": "Single-word or fragment input must not expand with invented context."
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "pt-BR"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-pt-012",
+      "categories": [
+        "tiny",
+        "one-word",
+        "ambiguous"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "hmm",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "A",
+        "reason": "The recorded visible change failed existing constraints; forced noChange passes and removes the edit."
+      },
+      "frontierSecondary": null,
+      "input": "hmm",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "hmm",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "hmm",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "changed",
+          "deterministicFailures": [
+            "unexpectedChange"
+          ],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": false,
+          "output": "Hmm",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": true
+        }
+      },
+      "semanticSubtype": "capitalization-only issue",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": true,
+        "changedCount": 3,
+        "noChangeCount": 2,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": true,
+        "diacriticOnly": false,
+        "editDistance": 1,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": true,
+        "transform": "capitalizationOnly",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "pt",
+        "tiny",
+        "ambiguous"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "hmm",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [
+          "unexpectedChange",
+          "expansionExceeded"
+        ],
+        "excessiveExpansion": true,
+        "inventedInformationIndicator": false,
+        "objectivePass": false,
+        "output": "Hello",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "changed",
+        "unnecessaryEdit": true,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "changed",
+        "userVisibleHarmful": true,
+        "wrongLanguageIndicator": true,
+        "wrongLanguageReason": "Evaluation-only English marker indicator: hello."
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "pt",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange",
+          "semanticNotes": "Single-word or fragment input must not expand with invented context."
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "pt-BR"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-pt-014",
+      "categories": [
+        "tiny",
+        "one-word",
+        "message"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "oi",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "A",
+        "reason": "The recorded visible change failed existing constraints; forced noChange passes and removes the edit."
+      },
+      "frontierSecondary": null,
+      "input": "oi",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "oi",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "oi",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "oi",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "ambiguous fragment",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": true,
+        "changedCount": 2,
+        "noChangeCount": 3,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 5,
+        "lengthRatio": 2.5,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "other",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "pt",
+        "tiny",
+        "message"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "oi",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [
+          "unexpectedChange",
+          "expansionExceeded",
+          "forbiddenContentIntroduced"
+        ],
+        "excessiveExpansion": true,
+        "inventedInformationIndicator": true,
+        "objectivePass": false,
+        "output": "Hello, team! I've reviewed the draft and noticed a few areas that could be improved for clarity and conciseness. Here are some suggestions: 1. Use specific numbers for quantities whenever possible. 2. Break down complex sentences into simpler ones. 3. Consider adding more context or examples to clarify some points. 4. Ensure that all instructions are clear and unambiguous. 5. Review the formatting to make it more visually appealing. Let me know your thoughts on these suggestions!",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "changed",
+        "unnecessaryEdit": true,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "changed",
+        "userVisibleHarmful": true,
+        "wrongLanguageIndicator": true,
+        "wrongLanguageReason": "Evaluation-only English marker indicator: adding, and, appealing, are, areas."
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "pt",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange",
+          "semanticNotes": "Single-word or fragment input must not expand with invented context."
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "pt-BR"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-pt-015",
+      "categories": [
+        "tiny",
+        "one-word",
+        "mixed-en"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "draft",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "A",
+        "reason": "The recorded visible change failed existing constraints; forced noChange passes and removes the edit."
+      },
+      "frontierSecondary": null,
+      "input": "draft",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "draft",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "draft",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "draft",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "foreign technical term",
+      "split": "dev",
+      "stability": {
+        "actionFlapping": true,
+        "changedCount": 1,
+        "noChangeCount": 4,
+        "runCount": 5
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 479,
+        "lengthRatio": 96.8,
+        "outputUnitCount": 77,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "other",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "pt",
+        "tiny",
+        "mixed-en"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "draft",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [
+          "unexpectedChange"
+        ],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": false,
+        "output": "Deploy?",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "changed",
+        "unnecessaryEdit": true,
+        "unnecessarySurfaceEdit": true,
+        "userVisibleAction": "changed",
+        "userVisibleHarmful": true,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange"
+          ],
+          "expectedLanguage": "pt",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.2,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange",
+          "semanticNotes": "Observed: one-word input expanded with invented deployment context."
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "pt-BR"
+        },
+        "severity": "critical"
+      },
+      "caseID": "regression-pt-tiny-expanded-001",
+      "categories": [
+        "regression",
+        "tiny",
+        "invented-context"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "deploy?",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "A",
+        "reason": "The recorded visible change failed existing constraints; forced noChange passes and removes the edit."
+      },
+      "frontierSecondary": {
+        "benchmarkJudgment": "deferBenchmarkReview",
+        "benchmarkRationale": "The case input and Refine result are unavailable in the review payload, so the expectation cannot be independently validated.",
+        "productConfidence": "low",
+        "productFailureLabels": [],
+        "productJudgment": "defer",
+        "productRationale": "No Refine output is available for blind product judgment.",
+        "proposedConstraintCorrection": null
+      },
+      "input": "deploy?",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "deploy?",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "deploy?",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "changed",
+          "deterministicFailures": [
+            "unexpectedChange"
+          ],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": false,
+          "output": "Deploy?",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": true
+        }
+      },
+      "semanticSubtype": "capitalization-only issue",
+      "split": "regression",
+      "stability": {
+        "actionFlapping": false,
+        "changedCount": 0,
+        "noChangeCount": 0,
+        "runCount": 0
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": true,
+        "diacriticOnly": false,
+        "editDistance": 1,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": true,
+        "transform": "capitalizationOnly",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "pt",
+        "regression",
+        "critical"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": true,
+        "eligibleContentUnit": true,
+        "lexicalCore": "deploy",
+        "primaryShape": "wordWithAttachedPunctuation",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": true,
+        "output": "tomorrow",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "noChange",
+        "unnecessaryEdit": false,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "noChange",
+        "userVisibleHarmful": false,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "en",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange"
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "en-US"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-en-006",
+      "categories": [
+        "tiny",
+        "one-word",
+        "date-hint"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "tomorrow",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "B",
+        "reason": "The actual user-visible result was already noChange; the counterfactual is behaviorally equivalent."
+      },
+      "frontierSecondary": null,
+      "input": "tomorrow",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "tomorrow",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "tomorrow",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "tomorrow",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "ambiguous fragment",
+      "split": "validation",
+      "stability": {
+        "actionFlapping": false,
+        "changedCount": 0,
+        "noChangeCount": 0,
+        "runCount": 0
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 0,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "identical",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "en",
+        "tiny",
+        "date-hint"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "tomorrow",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [
+          "productionGuardRejection",
+          "unexpectedChange"
+        ],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": false,
+        "output": "@sam",
+        "productionRejection": "no_change",
+        "protectedTokenFailure": false,
+        "recordedAction": "changed",
+        "unnecessaryEdit": false,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "noChange",
+        "userVisibleHarmful": false,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "en",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange"
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "en-US"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-en-007",
+      "categories": [
+        "tiny",
+        "one-word",
+        "handle"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "@sam",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "B",
+        "reason": "The actual user-visible result was already noChange; the counterfactual is behaviorally equivalent."
+      },
+      "frontierSecondary": null,
+      "input": "@sam",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "@sam",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "@sam",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "@sam",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "URL / handle / number / money / emoji",
+      "split": "validation",
+      "stability": {
+        "actionFlapping": false,
+        "changedCount": 0,
+        "noChangeCount": 0,
+        "runCount": 0
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 0,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "identical",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "en",
+        "tiny",
+        "handle"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "@sam",
+        "primaryShape": "handle",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": true,
+        "output": "bug",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "noChange",
+        "unnecessaryEdit": false,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "noChange",
+        "userVisibleHarmful": false,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "en",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange"
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "en-US"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-en-008",
+      "categories": [
+        "tiny",
+        "one-word",
+        "technical"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "bug",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "B",
+        "reason": "The actual user-visible result was already noChange; the counterfactual is behaviorally equivalent."
+      },
+      "frontierSecondary": null,
+      "input": "bug",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "bug",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "bug",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "bug",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "foreign technical term",
+      "split": "validation",
+      "stability": {
+        "actionFlapping": false,
+        "changedCount": 0,
+        "noChangeCount": 0,
+        "runCount": 0
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 0,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "identical",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "en",
+        "tiny",
+        "technical"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "bug",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [
+          "unexpectedChange"
+        ],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": false,
+        "output": "Amanhã",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "changed",
+        "unnecessaryEdit": true,
+        "unnecessarySurfaceEdit": true,
+        "userVisibleAction": "changed",
+        "userVisibleHarmful": true,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "pt",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange",
+          "semanticNotes": "Single-word or fragment input must not expand with invented context."
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "pt-BR"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-pt-007",
+      "categories": [
+        "tiny",
+        "one-word",
+        "date-hint"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "amanhã",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "A",
+        "reason": "The recorded visible change failed existing constraints; forced noChange passes and removes the edit."
+      },
+      "frontierSecondary": null,
+      "input": "amanhã",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "amanhã",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "amanhã",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "changed",
+          "deterministicFailures": [
+            "unexpectedChange"
+          ],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": false,
+          "output": "Amanhã",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": true
+        }
+      },
+      "semanticSubtype": "capitalization-only issue",
+      "split": "validation",
+      "stability": {
+        "actionFlapping": false,
+        "changedCount": 0,
+        "noChangeCount": 0,
+        "runCount": 0
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": true,
+        "diacriticOnly": false,
+        "editDistance": 1,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": true,
+        "transform": "capitalizationOnly",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "pt",
+        "tiny",
+        "date-hint"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "amanhã",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    },
+    {
+      "actual": {
+        "deterministicFailures": [],
+        "excessiveExpansion": false,
+        "inventedInformationIndicator": false,
+        "objectivePass": true,
+        "output": "queue",
+        "productionRejection": null,
+        "protectedTokenFailure": false,
+        "recordedAction": "noChange",
+        "unnecessaryEdit": false,
+        "unnecessarySurfaceEdit": false,
+        "userVisibleAction": "noChange",
+        "userVisibleHarmful": false,
+        "wrongLanguageIndicator": false,
+        "wrongLanguageReason": null
+      },
+      "benchmark": {
+        "expected": {
+          "allowedActions": [
+            "noChange",
+            "cleanup"
+          ],
+          "expectedLanguage": "pt",
+          "expectsNoChange": true,
+          "maxExpansionRatio": 1.3,
+          "mustNotIntroduceInformation": true,
+          "preferredAction": "noChange",
+          "semanticNotes": "Single-word or fragment input must not expand with invented context."
+        },
+        "languagePolicy": {
+          "mode": "matchNote",
+          "preferredLocale": "pt-BR"
+        },
+        "severity": "critical"
+      },
+      "caseID": "tiny-pt-013",
+      "categories": [
+        "tiny",
+        "one-word",
+        "technical-en"
+      ],
+      "counterfactual": {
+        "action": "noChange",
+        "deterministicFailures": [],
+        "expectedUsefulChangeMiss": false,
+        "languageSafe": true,
+        "objectivePass": true,
+        "output": "queue",
+        "overAbstention": false,
+        "protectedTokenSafe": true,
+        "userVisibleHarmful": false
+      },
+      "effect": {
+        "code": "B",
+        "reason": "The actual user-visible result was already noChange; the counterfactual is behaviorally equivalent."
+      },
+      "frontierSecondary": null,
+      "input": "queue",
+      "policies": {
+        "A": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "queue",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "B": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "queue",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        },
+        "C": {
+          "action": "noChange",
+          "deterministicFailures": [],
+          "expectedUsefulChangeMiss": false,
+          "languageSafe": true,
+          "objectivePass": true,
+          "output": "queue",
+          "overAbstention": false,
+          "protectedTokenSafe": true,
+          "userVisibleHarmful": false
+        }
+      },
+      "semanticSubtype": "foreign technical term",
+      "split": "validation",
+      "stability": {
+        "actionFlapping": false,
+        "changedCount": 0,
+        "noChangeCount": 0,
+        "runCount": 0
+      },
+      "surfaceAnalysis": {
+        "capitalizationOnly": false,
+        "diacriticOnly": false,
+        "editDistance": 0,
+        "lengthRatio": 1.0,
+        "outputUnitCount": 1,
+        "punctuationOnly": false,
+        "strictSurfaceEnvelope": false,
+        "transform": "identical",
+        "whitespaceSplit": false
+      },
+      "tags": [
+        "pt",
+        "tiny",
+        "technical-en"
+      ],
+      "tokenShape": {
+        "ambiguityReason": null,
+        "attachedPunctuation": false,
+        "eligibleContentUnit": true,
+        "lexicalCore": "queue",
+        "primaryShape": "lexicalWord",
+        "unitCount": 1
+      }
+    }
+  ],
+  "classificationAmbiguities": [
+    {
+      "assignedShape": "moneyFragment",
+      "caseID": "tiny-pt-008",
+      "included": true,
+      "input": "R$",
+      "reason": "Currency marker lacks an amount."
+    }
+  ],
+  "excluded": {
+    "ambiguousClassifications": [],
+    "nonExecutableWholeNote": [
+      "tiny-pt-003"
+    ],
+    "selectionSubgroup": [
+      {
+        "actualAction": "changed",
+        "actualOutput": "next_retry_at",
+        "caseID": "selection-extra-001",
+        "input": "next_retry_at",
+        "split": "dev",
+        "tokenShape": {
+          "ambiguityReason": null,
+          "attachedPunctuation": false,
+          "eligibleContentUnit": true,
+          "lexicalCore": "next_retry_at",
+          "primaryShape": "identifier",
+          "unitCount": 1
+        }
+      },
+      {
+        "actualAction": "changed",
+        "actualOutput": "Talvez seja melhor esperar.",
+        "caseID": "selection-extra-002",
+        "input": "Talvez",
+        "split": "dev",
+        "tokenShape": {
+          "ambiguityReason": null,
+          "attachedPunctuation": false,
+          "eligibleContentUnit": true,
+          "lexicalCore": "Talvez",
+          "primaryShape": "lexicalWord",
+          "unitCount": 1
+        }
+      },
+      {
+        "actualAction": "changed",
+        "actualOutput": "eleicao",
+        "caseID": "selection-leak-test-007",
+        "input": "selection",
+        "split": "dev",
+        "tokenShape": {
+          "ambiguityReason": null,
+          "attachedPunctuation": false,
+          "eligibleContentUnit": true,
+          "lexicalCore": "selection",
+          "primaryShape": "lexicalWord",
+          "unitCount": 1
+        }
+      },
+      {
+        "actualAction": "changed",
+        "actualOutput": "talvez seja",
+        "caseID": "selection-pt-tiny-008",
+        "input": "talvez",
+        "split": "dev",
+        "tokenShape": {
+          "ambiguityReason": null,
+          "attachedPunctuation": false,
+          "eligibleContentUnit": true,
+          "lexicalCore": "talvez",
+          "primaryShape": "lexicalWord",
+          "unitCount": 1
+        }
+      }
+    ]
+  },
+  "experiment": "M12B-004A-one-token-counterfactual",
+  "frontierSecondary": {
+    "benchmarkJudgments": {
+      "benchmarkCorrect": 4,
+      "benchmarkExpectationWrong": 3,
+      "deferBenchmarkReview": 1
+    },
+    "changedAmbiguous": 1,
+    "changedOutputAcceptable": 0,
+    "changedProductFailure": 4,
+    "coveredCaseIDs": [
+      "tiny-en-001",
+      "tiny-en-002",
+      "tiny-en-003",
+      "tiny-en-004",
+      "tiny-en-005",
+      "tiny-pt-001",
+      "tiny-pt-008",
+      "regression-pt-tiny-expanded-001"
+    ],
+    "coveredCases": 8,
+    "materialDisagreementCaseIDs": [
+      "tiny-pt-008"
+    ],
+    "productJudgments": {
+      "defer": 1,
+      "languageAmbiguous": 2,
+      "outputAcceptable": 1,
+      "productFailure": 4
+    }
+  },
+  "language": {
+    "actualWrongLanguageCaseIDs": [
+      "tiny-pt-010",
+      "tiny-pt-011",
+      "tiny-pt-014",
+      "tiny-pt-015"
+    ],
+    "actualWrongLanguageCount": 4,
+    "counterfactualWrongLanguageCount": 0,
+    "eliminatedByForcedNoChange": 4,
+    "method": "Recorded languageDrift plus explicit evaluation-only lexical marker indicator; no resolver inference or production change."
+  },
+  "metrics": {
+    "actual": {
+      "changed": 14,
+      "excessiveExpansion": 5,
+      "inventedInformationIndicators": 4,
+      "noChange": 10,
+      "objectivePass": 10,
+      "protectedTokenFailures": 0,
+      "unnecessaryEdits": 13,
+      "unnecessarySurfaceEdits": 7,
+      "userVisibleChanged": 13,
+      "userVisibleHarmfulEdits": 13,
+      "userVisibleNoChange": 11,
+      "wrongLanguageOutputs": 4
+    },
+    "counterfactual": {
+      "changed": 0,
+      "excessiveExpansion": 0,
+      "expectedUsefulChangeMisses": 0,
+      "inventedInformationIndicators": 0,
+      "noChange": 24,
+      "objectivePass": 24,
+      "overAbstention": 0,
+      "protectedTokenFailures": 0,
+      "unnecessaryEdits": 0,
+      "unnecessarySurfaceEdits": 0,
+      "userVisibleHarmfulEdits": 0,
+      "wrongLanguageOutputs": 0
+    },
+    "effectCounts": {
+      "A": 12,
+      "B": 11,
+      "E": 1
+    },
+    "eligibleCases": 24,
+    "harmPrevented": 13,
+    "harmPreventedPerUsefulRefinementLost": null,
+    "tradeoffExplanation": "13 harms prevented with no observed useful refinement loss; no finite ratio is reported.",
+    "usefulRefinementLost": 0
+  },
+  "modelRun": false,
+  "policies": {
+    "A": {
+      "cases": 24,
+      "changed": 0,
+      "expectedUsefulChangeMisses": 0,
+      "harmPrevented": 13,
+      "harmPreventedPerUsefulRefinementLost": null,
+      "noChange": 24,
+      "objectivePass": 24,
+      "overAbstention": 0,
+      "protectedTokenFailures": 0,
+      "retainedChangedCaseIDs": [],
+      "tradeoffExplanation": "13 harms prevented with no observed useful refinement loss; no finite ratio is reported.",
+      "usefulRefinementLost": 0,
+      "userVisibleHarmfulEdits": 0,
+      "wrongLanguageOutputs": 0
+    },
+    "B": {
+      "cases": 24,
+      "changed": 0,
+      "expectedUsefulChangeMisses": 0,
+      "harmPrevented": 13,
+      "harmPreventedPerUsefulRefinementLost": null,
+      "noChange": 24,
+      "objectivePass": 24,
+      "overAbstention": 0,
+      "protectedTokenFailures": 0,
+      "retainedChangedCaseIDs": [],
+      "tradeoffExplanation": "13 harms prevented with no observed useful refinement loss; no finite ratio is reported.",
+      "usefulRefinementLost": 0,
+      "userVisibleHarmfulEdits": 0,
+      "wrongLanguageOutputs": 0
+    },
+    "C": {
+      "cases": 24,
+      "changed": 7,
+      "expectedUsefulChangeMisses": 0,
+      "harmPrevented": 6,
+      "harmPreventedPerUsefulRefinementLost": null,
+      "noChange": 17,
+      "objectivePass": 17,
+      "overAbstention": 0,
+      "protectedTokenFailures": 0,
+      "retainedChangedCaseIDs": [
+        "regression-pt-tiny-expanded-001",
+        "tiny-en-003",
+        "tiny-en-005",
+        "tiny-pt-002",
+        "tiny-pt-006",
+        "tiny-pt-007",
+        "tiny-pt-012"
+      ],
+      "tradeoffExplanation": "6 harms prevented with no observed useful refinement loss; no finite ratio is reported.",
+      "usefulRefinementLost": 0,
+      "userVisibleHarmfulEdits": 7,
+      "wrongLanguageOutputs": 0
+    }
+  },
+  "productionModified": false,
+  "recommendation": {
+    "choice": "A",
+    "implemented": false,
+    "label": "implement unconditional one-token whole-note noChange gate",
+    "rationale": "All observed eligible benchmarks allow and prefer noChange; forced noChange prevents every visible harmful edit, loses no demonstrated useful refinement, eliminates clear wrong-language outputs, and preserves protected-token safety. The strict surface envelope re-admits capitalization-only failures, while no positive orthographic repair exists to justify an exception."
+  },
+  "schemaVersion": 1,
+  "scope": {
+    "holdoutLoaded": false,
+    "primaryScope": "wholeNote",
+    "splits": [
+      "dev",
+      "validation",
+      "regression"
+    ],
+    "stabilityUsedAsSecondaryEvidence": true
+  },
+  "shapeCounts": {
+    "handle": 2,
+    "lexicalWord": 19,
+    "moneyFragment": 1,
+    "wordWithAttachedPunctuation": 2
+  },
+  "sourceArtifacts": {
+    "corpus": "Evals/Refine/corpus.v1.jsonl (dev/validation assignments only)",
+    "frontierSecondary": "Evals/Refine/frontier-adjudications.v1.jsonl",
+    "m12b001Dev": "Evals/Refine/experiments/M12B-001-language-contract/reports/dev/results.json",
+    "m12b001Regression": "Evals/Refine/experiments/M12B-001-language-contract/reports/regression/results.json",
+    "m12b001Stability": "Evals/Refine/experiments/M12B-001-language-contract/reports/stability/results.json",
+    "m12b001Validation": "Evals/Refine/experiments/M12B-001-language-contract/reports/validation/results.json",
+    "permanentRegressionCorpus": "Evals/Refine/regression.jsonl",
+    "splitAssignments": "Evals/Refine/splits.v1.json"
+  },
+  "sourcePromptVersion": "refine-v2-language",
+  "splitCounts": {
+    "dev": 18,
+    "regression": 1,
+    "validation": 5
+  },
+  "stability": {
+    "actualActionFlappingCaseIDs": [
+      "tiny-en-001",
+      "tiny-en-003",
+      "tiny-en-004",
+      "tiny-en-010",
+      "tiny-pt-001",
+      "tiny-pt-002",
+      "tiny-pt-004",
+      "tiny-pt-005",
+      "tiny-pt-008",
+      "tiny-pt-009",
+      "tiny-pt-010",
+      "tiny-pt-011",
+      "tiny-pt-012",
+      "tiny-pt-014",
+      "tiny-pt-015"
+    ],
+    "actualActionFlappingCases": 15,
+    "casesWithFiveRuns": 18,
+    "counterfactualActionFlappingCases": 0
+  },
+  "subtypeCounts": {
+    "URL / handle / number / money / emoji": 3,
+    "already-valid word": 4,
+    "ambiguous fragment": 5,
+    "capitalization-only issue": 7,
+    "foreign technical term": 5
+  },
+  "tokenDefinition": {
+    "classificationPrecedence": [
+      "url",
+      "email",
+      "handle",
+      "money",
+      "moneyFragment",
+      "number",
+      "emoji",
+      "identifier",
+      "lexicalWord/wordWithAttachedPunctuation",
+      "mixedAlphanumericIdentifier",
+      "codeLike",
+      "ambiguousOther"
+    ],
+    "punctuationAttachedToWordRemainsOneUnit": true,
+    "punctuationOnlyEligible": false,
+    "summary": "A primary one-token input is exactly one deterministic lexical/content unit after trimming. Whitespace separates units, but a single group is then shape-classified rather than accepted naively: Unicode lexical words may carry leading/trailing punctuation; URLs, emails, handles, identifiers, code-like forms, numbers, money, emoji sequences, and mixed alphanumeric identifiers are each one content unit. Punctuation-only and unresolved ambiguous-other groups are listed separately and excluded."
+  }
+}

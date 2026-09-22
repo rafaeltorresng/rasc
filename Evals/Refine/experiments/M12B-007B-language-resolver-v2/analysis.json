@@ -1,0 +1,719 @@
+{
+  "baselineCombined": {
+    "finalWrongLanguageChanges": 48,
+    "languageFalseRejections": 0,
+    "latencyMs": {
+      "mean": 905.5,
+      "p50": 722.9,
+      "p95": 1114.8
+    },
+    "noChangeFromLanguageValidation": 3,
+    "rawEnToOther": 7,
+    "rawEsToEn": 1,
+    "rawPtToEn": 43,
+    "rawWrongLanguageProposals": 57,
+    "resolverV1": {
+      "missing": 29,
+      "unresolved": 227
+    },
+    "resolverV2": {
+      "en": 50,
+      "es": 28,
+      "missing": 29,
+      "mixed": 69,
+      "pt": 40,
+      "unresolved": 40
+    },
+    "runs": 256,
+    "unresolvedLostUsefulRefinement": 0,
+    "unresolvedRate": 0.1562,
+    "usefulRefinementsAccepted": 98,
+    "validatorCaughtWrongLanguage": 0,
+    "wrongLanguageReachedPreview": 43
+  },
+  "baselineEndToEndDelta": {
+    "fixCount": 34,
+    "fixes": [
+      "already-good-006",
+      "already-good-010",
+      "emoji-003",
+      "es-003",
+      "factual-003",
+      "incomplete-002",
+      "legacy-casual-intentional-pt-001",
+      "medium-en-009",
+      "medium-pt-001",
+      "medium-pt-006",
+      "medium-pt-010",
+      "medium-pt-011",
+      "message-draft-001",
+      "messy-003",
+      "names-005",
+      "numbers-002",
+      "numbers-004",
+      "numbers-005",
+      "regression-already-good-rewritten-004",
+      "short-en-009",
+      "short-pt-006",
+      "short-pt-011",
+      "telegraphic-pt-003",
+      "uncertainty-pt-001",
+      "variant-en-052",
+      "variant-en-060",
+      "variant-pt-004",
+      "variant-pt-005",
+      "variant-pt-017",
+      "variant-pt-018",
+      "variant-pt-021",
+      "variant-pt-025",
+      "variant-pt-027",
+      "variant-pt-028"
+    ],
+    "netImprovement": 28,
+    "regressionCount": 6,
+    "regressions": [
+      "legacy-selection-unicode-pt-001",
+      "numbers-003",
+      "short-pt-009",
+      "short-pt-012",
+      "telegraphic-pt-009",
+      "variant-pt-013"
+    ]
+  },
+  "causalFixes": [
+    "already-good-006",
+    "already-good-010",
+    "emoji-003",
+    "es-003",
+    "factual-003",
+    "incomplete-002",
+    "legacy-casual-intentional-pt-001",
+    "medium-en-009",
+    "medium-pt-001",
+    "medium-pt-006",
+    "medium-pt-010",
+    "medium-pt-011",
+    "message-draft-001",
+    "messy-003",
+    "names-005",
+    "numbers-002",
+    "numbers-004",
+    "numbers-005",
+    "regression-already-good-rewritten-004",
+    "short-en-009",
+    "short-pt-006",
+    "short-pt-011",
+    "telegraphic-pt-003",
+    "uncertainty-pt-001",
+    "variant-en-052",
+    "variant-en-060",
+    "variant-pt-004",
+    "variant-pt-005",
+    "variant-pt-017",
+    "variant-pt-018",
+    "variant-pt-021",
+    "variant-pt-025",
+    "variant-pt-027",
+    "variant-pt-028"
+  ],
+  "causalRegressions": [
+    "legacy-selection-unicode-pt-001",
+    "numbers-003",
+    "short-pt-009",
+    "short-pt-012",
+    "telegraphic-pt-009",
+    "variant-pt-013"
+  ],
+  "combined": {
+    "finalWrongLanguageChanges": 20,
+    "languageFalseRejections": 13,
+    "latencyMs": {
+      "mean": 731.0,
+      "p50": 754.2,
+      "p95": 1114.0
+    },
+    "noChangeFromLanguageValidation": 16,
+    "rawEnToOther": 2,
+    "rawEsToEn": 0,
+    "rawPtToEn": 25,
+    "rawWrongLanguageProposals": 29,
+    "resolverV1": {
+      "missing": 27,
+      "unresolved": 229
+    },
+    "resolverV2": {
+      "en": 62,
+      "es": 14,
+      "missing": 27,
+      "mixed": 2,
+      "pt": 89,
+      "unresolved": 62
+    },
+    "runs": 256,
+    "unresolvedLostUsefulRefinement": 0,
+    "unresolvedRate": 0.2422,
+    "usefulRefinementsAccepted": 126,
+    "validatorCaughtWrongLanguage": 0,
+    "wrongLanguageReachedPreview": 17
+  },
+  "decision": "ACCEPT",
+  "decisionRationale": "Resolver v2 materially reduced final wrong-language edits (48→20 vs M12B-005F baseline), fixed 11/18 frontier cases with zero remaining frontier wrong-language previews, removed false-Spanish resolver failures, and improved net language safety by 28 cases despite 6 short-PT unresolved-path regressions.",
+  "experiment": "M12B-007B-language-resolver-v2",
+  "failureClusters": {
+    "evaluatorDisagreement": 12,
+    "lowConfidenceUnclassifiable": 3,
+    "resolverFailure": 4,
+    "validatorFalseNegative": 1
+  },
+  "frontierCases": [
+    {
+      "caseID": "already-good-001",
+      "cohortOutcome": "fixed",
+      "expectedLanguage": "pt",
+      "finalAction": "changed",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "mixed",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "pt",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "pt",
+      "validatorOutcome": "passed_or_skipped"
+    },
+    {
+      "caseID": "already-good-006",
+      "cohortOutcome": "fixed",
+      "expectedLanguage": "pt",
+      "finalAction": "changed",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "mixed",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "pt",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "pt",
+      "validatorOutcome": "passed_or_skipped"
+    },
+    {
+      "caseID": "es-003",
+      "cohortOutcome": "fixed",
+      "expectedLanguage": "es",
+      "finalAction": "changed",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "mixed",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "es",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "es",
+      "validatorOutcome": "passed_or_skipped"
+    },
+    {
+      "caseID": "factual-001",
+      "cohortOutcome": "safeNoChange",
+      "expectedLanguage": "pt",
+      "finalAction": "noChange",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "pt",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "it",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "pt",
+      "validatorOutcome": "passed_or_skipped"
+    },
+    {
+      "caseID": "factual-003",
+      "cohortOutcome": "other",
+      "expectedLanguage": "pt",
+      "finalAction": "noChange",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "es",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "pt",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "pt",
+      "validatorOutcome": "passed_or_skipped"
+    },
+    {
+      "caseID": "medium-pt-001",
+      "cohortOutcome": "fixed",
+      "expectedLanguage": "pt",
+      "finalAction": "changed",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "mixed",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "pt",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "pt",
+      "validatorOutcome": "passed_or_skipped"
+    },
+    {
+      "caseID": "medium-pt-010",
+      "cohortOutcome": "safeNoChange",
+      "expectedLanguage": "pt",
+      "finalAction": "noChange",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "mixed",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "pt",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "pt",
+      "validatorOutcome": "rejected"
+    },
+    {
+      "caseID": "messy-003",
+      "cohortOutcome": "fixed",
+      "expectedLanguage": "pt",
+      "finalAction": "changed",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "mixed",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "pt",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "pt",
+      "validatorOutcome": "passed_or_skipped"
+    },
+    {
+      "caseID": "question-003",
+      "cohortOutcome": "other",
+      "expectedLanguage": "es",
+      "finalAction": "noChange",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "mixed",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "es",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "es",
+      "validatorOutcome": "passed_or_skipped"
+    },
+    {
+      "caseID": "short-pt-006",
+      "cohortOutcome": "fixed",
+      "expectedLanguage": "pt",
+      "finalAction": "changed",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "mixed",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "pt",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "pt",
+      "validatorOutcome": "passed_or_skipped"
+    },
+    {
+      "caseID": "short-pt-014",
+      "cohortOutcome": "fixed",
+      "expectedLanguage": "pt",
+      "finalAction": "changed",
+      "legacyResolverConfidence": "insufficient",
+      "legacyResolverTarget": "en",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "pt",
+      "v2ResolverConfidence": "insufficient",
+      "v2ResolverTarget": "ambiguous",
+      "validatorOutcome": "passed_or_skipped"
+    },
+    {
+      "caseID": "variant-pt-002",
+      "cohortOutcome": "safeNoChange",
+      "expectedLanguage": "pt",
+      "finalAction": "noChange",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "pt",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "en",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "pt",
+      "validatorOutcome": "rejected"
+    },
+    {
+      "caseID": "variant-pt-004",
+      "cohortOutcome": "fixed",
+      "expectedLanguage": "pt",
+      "finalAction": "changed",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "mixed",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "pt",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "pt",
+      "validatorOutcome": "passed_or_skipped"
+    },
+    {
+      "caseID": "variant-pt-005",
+      "cohortOutcome": "fixed",
+      "expectedLanguage": "pt",
+      "finalAction": "changed",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "mixed",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "pt",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "pt",
+      "validatorOutcome": "passed_or_skipped"
+    },
+    {
+      "caseID": "variant-pt-008",
+      "cohortOutcome": "fixed",
+      "expectedLanguage": "pt",
+      "finalAction": "changed",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "mixed",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "pt",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "pt",
+      "validatorOutcome": "passed_or_skipped"
+    },
+    {
+      "caseID": "variant-pt-016",
+      "cohortOutcome": "unresolved",
+      "expectedLanguage": "pt",
+      "finalAction": "noChange",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "es",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "pt",
+      "v2ResolverConfidence": "insufficient",
+      "v2ResolverTarget": "ambiguous",
+      "validatorOutcome": "passed_or_skipped"
+    },
+    {
+      "caseID": "variant-pt-021",
+      "cohortOutcome": "fixed",
+      "expectedLanguage": "pt",
+      "finalAction": "changed",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "mixed",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "pt",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "pt",
+      "validatorOutcome": "passed_or_skipped"
+    },
+    {
+      "caseID": "variant-pt-028",
+      "cohortOutcome": "safeNoChange",
+      "expectedLanguage": "pt",
+      "finalAction": "noChange",
+      "legacyResolverConfidence": "high",
+      "legacyResolverTarget": "mixed",
+      "originalWrongLanguageFixed": true,
+      "rawGeneratedLanguage": "pt",
+      "v2ResolverConfidence": "high",
+      "v2ResolverTarget": "pt",
+      "validatorOutcome": "rejected"
+    }
+  ],
+  "frontierSummary": {
+    "fixed": 11,
+    "other": 2,
+    "safeNoChange": 4,
+    "unresolved": 1
+  },
+  "generatedAt": "2026-09-22T02:25:24Z",
+  "mixedPTTechnical": {
+    "cases": 15,
+    "finalWrongLanguage": 0,
+    "rows": [
+      {
+        "caseID": "legacy-mixed-language-001",
+        "finalWrongLanguage": false,
+        "legacyTarget": "mixed",
+        "v2Target": "mixed"
+      },
+      {
+        "caseID": "legacy-technical-mixed-001",
+        "finalWrongLanguage": false,
+        "legacyTarget": "mixed",
+        "v2Target": "en"
+      },
+      {
+        "caseID": "mixed-pt-en-004",
+        "finalWrongLanguage": false,
+        "legacyTarget": "pt",
+        "v2Target": "pt"
+      },
+      {
+        "caseID": "mixed-pt-en-006",
+        "finalWrongLanguage": false,
+        "legacyTarget": "mixed",
+        "v2Target": "pt"
+      },
+      {
+        "caseID": "mixed-pt-en-009",
+        "finalWrongLanguage": false,
+        "legacyTarget": "pt",
+        "v2Target": "pt"
+      },
+      {
+        "caseID": "mixed-tech-001",
+        "finalWrongLanguage": false,
+        "legacyTarget": "en",
+        "v2Target": "en"
+      },
+      {
+        "caseID": "mixed-tech-004",
+        "finalWrongLanguage": false,
+        "legacyTarget": "es",
+        "v2Target": "en"
+      },
+      {
+        "caseID": "mixed-tech-005",
+        "finalWrongLanguage": false,
+        "legacyTarget": "es",
+        "v2Target": "ambiguous"
+      },
+      {
+        "caseID": "mixed-tech-006",
+        "finalWrongLanguage": false,
+        "legacyTarget": "en",
+        "v2Target": "ambiguous"
+      },
+      {
+        "caseID": "mixed-tech-008",
+        "finalWrongLanguage": false,
+        "legacyTarget": "es",
+        "v2Target": "en"
+      },
+      {
+        "caseID": "protected-003",
+        "finalWrongLanguage": false,
+        "legacyTarget": "mixed",
+        "v2Target": "en"
+      },
+      {
+        "caseID": "selection-extra-006",
+        "finalWrongLanguage": false,
+        "legacyTarget": "pt",
+        "v2Target": "pt"
+      },
+      {
+        "caseID": "mixed-pt-en-001",
+        "finalWrongLanguage": false,
+        "legacyTarget": "mixed",
+        "v2Target": "mixed"
+      },
+      {
+        "caseID": "mixed-pt-en-002",
+        "finalWrongLanguage": false,
+        "legacyTarget": "en",
+        "v2Target": "pt"
+      },
+      {
+        "caseID": "mixed-tech-002",
+        "finalWrongLanguage": false,
+        "legacyTarget": "es",
+        "v2Target": "ambiguous"
+      }
+    ],
+    "v2PortugueseTargets": 5
+  },
+  "resolverComparison": {
+    "v1Shadow": {
+      "missing": 27,
+      "unresolved": 229
+    },
+    "v2Production": {
+      "en": 62,
+      "es": 14,
+      "missing": 27,
+      "mixed": 2,
+      "pt": 89,
+      "unresolved": 62
+    }
+  },
+  "splits": {
+    "dev": {
+      "finalWrongLanguageChanges": 15,
+      "languageFalseRejections": 11,
+      "latencyMs": {
+        "mean": 734.2,
+        "p50": 754.3,
+        "p95": 1120.0
+      },
+      "noChangeFromLanguageValidation": 13,
+      "rawEnToOther": 2,
+      "rawEsToEn": 0,
+      "rawPtToEn": 18,
+      "rawWrongLanguageProposals": 22,
+      "resolverV1": {
+        "missing": 19,
+        "unresolved": 174
+      },
+      "resolverV2": {
+        "en": 47,
+        "es": 13,
+        "missing": 19,
+        "mixed": 1,
+        "pt": 66,
+        "unresolved": 47
+      },
+      "runs": 193,
+      "stability": null,
+      "unresolvedLostUsefulRefinement": 0,
+      "unresolvedRate": 0.2435,
+      "usefulRefinementsAccepted": 94,
+      "validatorCaughtWrongLanguage": 0,
+      "wrongLanguageReachedPreview": 12
+    },
+    "language-slice": {
+      "finalWrongLanguageChanges": 2,
+      "languageFalseRejections": 4,
+      "latencyMs": {
+        "mean": 602.1,
+        "p50": 738.8,
+        "p95": 1060.8
+      },
+      "noChangeFromLanguageValidation": 4,
+      "rawEnToOther": 0,
+      "rawEsToEn": 0,
+      "rawPtToEn": 1,
+      "rawWrongLanguageProposals": 2,
+      "resolverV1": {
+        "missing": 18,
+        "unresolved": 43
+      },
+      "resolverV2": {
+        "en": 5,
+        "es": 13,
+        "missing": 18,
+        "mixed": 1,
+        "pt": 19,
+        "unresolved": 5
+      },
+      "runs": 61,
+      "stability": null,
+      "unresolvedLostUsefulRefinement": 0,
+      "unresolvedRate": 0.082,
+      "usefulRefinementsAccepted": 24,
+      "validatorCaughtWrongLanguage": 0,
+      "wrongLanguageReachedPreview": 2
+    },
+    "regression": {
+      "finalWrongLanguageChanges": 0,
+      "languageFalseRejections": 0,
+      "latencyMs": {
+        "mean": 641.5,
+        "p50": 746.2,
+        "p95": null
+      },
+      "noChangeFromLanguageValidation": 0,
+      "rawEnToOther": 0,
+      "rawEsToEn": 0,
+      "rawPtToEn": 0,
+      "rawWrongLanguageProposals": 0,
+      "resolverV1": {
+        "missing": 1,
+        "unresolved": 5
+      },
+      "resolverV2": {
+        "missing": 1,
+        "pt": 4,
+        "unresolved": 1
+      },
+      "runs": 6,
+      "stability": null,
+      "unresolvedLostUsefulRefinement": 0,
+      "unresolvedRate": 0.1667,
+      "usefulRefinementsAccepted": 2,
+      "validatorCaughtWrongLanguage": 0,
+      "wrongLanguageReachedPreview": 0
+    },
+    "stability": {
+      "finalWrongLanguageChanges": 1,
+      "languageFalseRejections": 1,
+      "latencyMs": {
+        "mean": 568.4,
+        "p50": 738.9,
+        "p95": 900.1
+      },
+      "noChangeFromLanguageValidation": 1,
+      "rawEnToOther": 0,
+      "rawEsToEn": 0,
+      "rawPtToEn": 1,
+      "rawWrongLanguageProposals": 2,
+      "resolverV1": {
+        "missing": 18,
+        "unresolved": 43
+      },
+      "resolverV2": {
+        "en": 15,
+        "es": 4,
+        "missing": 18,
+        "pt": 19,
+        "unresolved": 5
+      },
+      "runs": 61,
+      "stability": {
+        "changedNoChangeInstability": {
+          "casesWithMultipleRuns": 61,
+          "unstableCases": 18
+        },
+        "finalWrongLanguageSafetyInstability": {
+          "casesWithMultipleRuns": 61,
+          "unstableCases": 1
+        },
+        "languageOutputInstability": {
+          "casesWithMultipleRuns": 61,
+          "unstableCases": 3
+        },
+        "passFailInstability": {
+          "casesWithMultipleRuns": 61,
+          "unstableCases": 18
+        },
+        "resolverV1Instability": {
+          "casesWithMultipleRuns": 61,
+          "unstableCases": 0
+        },
+        "resolverV2Instability": {
+          "casesWithMultipleRuns": 61,
+          "unstableCases": 0
+        }
+      },
+      "unresolvedLostUsefulRefinement": 0,
+      "unresolvedRate": 0.082,
+      "usefulRefinementsAccepted": 21,
+      "validatorCaughtWrongLanguage": 0,
+      "wrongLanguageReachedPreview": 1
+    },
+    "validation": {
+      "finalWrongLanguageChanges": 5,
+      "languageFalseRejections": 2,
+      "latencyMs": {
+        "mean": 729.5,
+        "p50": 753.5,
+        "p95": 1031.9
+      },
+      "noChangeFromLanguageValidation": 3,
+      "rawEnToOther": 0,
+      "rawEsToEn": 0,
+      "rawPtToEn": 7,
+      "rawWrongLanguageProposals": 7,
+      "resolverV1": {
+        "missing": 7,
+        "unresolved": 50
+      },
+      "resolverV2": {
+        "en": 15,
+        "es": 1,
+        "missing": 7,
+        "mixed": 1,
+        "pt": 19,
+        "unresolved": 14
+      },
+      "runs": 57,
+      "stability": null,
+      "unresolvedLostUsefulRefinement": 0,
+      "unresolvedRate": 0.2456,
+      "usefulRefinementsAccepted": 30,
+      "validatorCaughtWrongLanguage": 0,
+      "wrongLanguageReachedPreview": 5
+    }
+  },
+  "step1BoundaryFix": {
+    "boundaryFixedFalseSpanish": 0,
+    "boundaryFixedOverallAccuracy": 0.7959,
+    "frontierFixesAfterBoundary": 14,
+    "frontierFixesBeforeBoundary": 9,
+    "priorCandidateOverallAccuracy": 0.7347,
+    "priorFalseSpanish": 17,
+    "step1Gate": "PASS"
+  }
+}
