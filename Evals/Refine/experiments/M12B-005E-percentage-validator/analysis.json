@@ -1,0 +1,587 @@
+{
+  "bySplit": {
+    "dev": {
+      "after": {
+        "actionInstability": null,
+        "changed": 146,
+        "criticalFailures": 52,
+        "latencyP50Ms": 713.860034942627,
+        "latencyP95Ms": 1057.569980621338,
+        "noChange": 45,
+        "objectivePass": 118,
+        "objectivePassRate": 0.6113989637305699,
+        "otherOrError": 2,
+        "passFailInstability": null,
+        "runs": 193
+      },
+      "before": {
+        "actionInstability": null,
+        "changed": 137,
+        "criticalFailures": 56,
+        "latencyP50Ms": 704.0619850158691,
+        "latencyP95Ms": 1066.593050956726,
+        "noChange": 54,
+        "objectivePass": 112,
+        "objectivePassRate": 0.5803108808290155,
+        "otherOrError": 2,
+        "passFailInstability": null,
+        "runs": 193
+      }
+    },
+    "regression": {
+      "after": {
+        "actionInstability": null,
+        "changed": 5,
+        "criticalFailures": 2,
+        "latencyP50Ms": 762.0530128479004,
+        "latencyP95Ms": 1249.2539882659912,
+        "noChange": 1,
+        "objectivePass": 4,
+        "objectivePassRate": 0.6666666666666666,
+        "otherOrError": 0,
+        "passFailInstability": null,
+        "runs": 6
+      },
+      "before": {
+        "actionInstability": null,
+        "changed": 5,
+        "criticalFailures": 2,
+        "latencyP50Ms": 736.8189096450806,
+        "latencyP95Ms": 1161.5420579910278,
+        "noChange": 1,
+        "objectivePass": 4,
+        "objectivePassRate": 0.6666666666666666,
+        "otherOrError": 0,
+        "passFailInstability": null,
+        "runs": 6
+      }
+    },
+    "validation": {
+      "after": {
+        "actionInstability": null,
+        "changed": 46,
+        "criticalFailures": 19,
+        "latencyP50Ms": 741.8370246887207,
+        "latencyP95Ms": 1080.083966255188,
+        "noChange": 11,
+        "objectivePass": 32,
+        "objectivePassRate": 0.5614035087719298,
+        "otherOrError": 0,
+        "passFailInstability": null,
+        "runs": 57
+      },
+      "before": {
+        "actionInstability": null,
+        "changed": 47,
+        "criticalFailures": 18,
+        "latencyP50Ms": 735.1590394973755,
+        "latencyP95Ms": 1089.311957359314,
+        "noChange": 10,
+        "objectivePass": 30,
+        "objectivePassRate": 0.5263157894736842,
+        "otherOrError": 0,
+        "passFailInstability": null,
+        "runs": 57
+      }
+    }
+  },
+  "causalAnalysis": {
+    "dev": {
+      "causalPassImprovements": [],
+      "causalPassRegressions": [],
+      "nonInterceptedPassChanges": [
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "acronym-002",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "already-good-002",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "already-good-004",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "already-good-007",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "already-good-009",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "already-good-010",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "factual-003",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "incomplete-005",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "leakage-001",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "medium-en-009",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "mixed-pt-en-004",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "mixed-pt-en-006",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "mixed-tech-001",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "mixed-tech-006",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "numbers-005",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "protected-002",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "protected-003",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "question-003",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "selection-extra-001",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "selection-extra-005",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "selection-extra-006",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "short-en-005",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "short-pt-006",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "short-pt-009",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "telegraphic-en-002",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "telegraphic-pt-003",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "telegraphic-pt-007",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-en-033",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-en-038",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-en-040",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-en-048",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-en-052",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-en-062",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-en-064",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-es-003",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-es-004",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-pt-005",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-pt-015",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-pt-016",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-pt-028",
+          "runIndex": 0
+        }
+      ],
+      "rawProposalDifferences": 119
+    },
+    "regression": {
+      "causalPassImprovements": [],
+      "causalPassRegressions": [],
+      "nonInterceptedPassChanges": [],
+      "rawProposalDifferences": 2
+    },
+    "validation": {
+      "causalPassImprovements": [],
+      "causalPassRegressions": [],
+      "nonInterceptedPassChanges": [
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "acronym-005",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "legacy-messy-thought-pt-001",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "mixed-tech-002",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "names-004",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "names-005",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "short-en-009",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "short-pt-007",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "telegraphic-en-007",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "telegraphic-en-008",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-en-050",
+          "runIndex": 0
+        },
+        {
+          "afterPass": true,
+          "beforePass": false,
+          "caseID": "variant-pt-014",
+          "runIndex": 0
+        },
+        {
+          "afterPass": false,
+          "beforePass": true,
+          "caseID": "variant-pt-027",
+          "runIndex": 0
+        }
+      ],
+      "rawProposalDifferences": 36
+    }
+  },
+  "challenge": {
+    "cases": 16,
+    "humanValidated": false,
+    "maintainerApproved": false,
+    "metrics": {
+      "ambiguousTransformationsRejected": 0,
+      "corruptionsCaught": 0,
+      "corruptionsContainedByEarlierGuard": 0,
+      "coveredRuns": 16,
+      "falseNegativeCorruptions": 0,
+      "falsePositiveRejections": 0,
+      "finalPercentageSafetyInstabilityCases": [],
+      "finalUserVisiblePercentageCorruptions": 0,
+      "guardRejections": 0,
+      "guardRejectionsByReason": {},
+      "rawAmbiguousTransformations": 0,
+      "rawBreakdown": {},
+      "rawPercentageBearingProposals": 13,
+      "rawPercentageCorruptions": 0,
+      "rawPercentageSafetyInstabilityCases": [],
+      "rejectionCases": [],
+      "safeNormalizationsAccepted": 2,
+      "selectionGuardRejections": 0,
+      "usefulRefinementsLost": 0,
+      "visibleCorruptions": [],
+      "wholeNoteGuardRejections": 0
+    }
+  },
+  "datasets": {
+    "corpusV1Sha256": "422154c7256fe1e58b08025baf75ee1bb4f30b3bcb418acbccfba5bb61ab7d0b",
+    "regressionSha256": "18f398a8d40696445c5eb59674fefb2489d6e53b86eefee90ef8a8065d569481",
+    "semanticChallengeSha256": "8104d9aaf5f58a2cda4ba16f17a51f89208203898cf19ac6659714e0c6d90301",
+    "splitsV1Sha256": "c934a983258fb858636eb6e035c993fc42cf82db2ebd898a9a7810446a5d897f"
+  },
+  "decision": "ACCEPT",
+  "experiment": "M12B-005E-percentage-validator",
+  "explicitlyExcluded": [
+    "time",
+    "money",
+    "date",
+    "genericNumber",
+    "decimal",
+    "formattedNumber"
+  ],
+  "holdoutUsed": false,
+  "knownRealFailure": {
+    "finalizerCoveredByTests": true,
+    "literalDroppedWithoutMarker": [
+      "invalid",
+      "literalDropped"
+    ],
+    "representationChangedToDecimal": [
+      "invalid",
+      "literalDropped"
+    ],
+    "source": "50%",
+    "valueChanged": [
+      "invalid",
+      "valueChanged"
+    ]
+  },
+  "multiplicity": {
+    "duplicateTestsPassed": true,
+    "oneToOneMultisetMatching": true
+  },
+  "percentageMetrics": {
+    "ambiguousTransformationsRejected": 0,
+    "corruptionsCaught": 0,
+    "corruptionsContainedByEarlierGuard": 0,
+    "coveredRuns": 4,
+    "falseNegativeCorruptions": 0,
+    "falsePositiveRejections": 0,
+    "finalPercentageSafetyInstabilityCases": [],
+    "finalUserVisiblePercentageCorruptions": 0,
+    "guardRejections": 0,
+    "guardRejectionsByReason": {},
+    "rawAmbiguousTransformations": 0,
+    "rawBreakdown": {},
+    "rawPercentageBearingProposals": 4,
+    "rawPercentageCorruptions": 0,
+    "rawPercentageSafetyInstabilityCases": [],
+    "rejectionCases": [],
+    "safeNormalizationsAccepted": 0,
+    "selectionGuardRejections": 0,
+    "usefulRefinementsLost": 0,
+    "visibleCorruptions": [],
+    "wholeNoteGuardRejections": 0
+  },
+  "productionFoundation": [
+    "M12B-001",
+    "M12B-004C",
+    "M12B-005B",
+    "M12B-005D"
+  ],
+  "providerCalls": {
+    "maximumPerRequest": 1,
+    "provedByUnitTest": true,
+    "repairOrRegenerationCalls": 0
+  },
+  "schemaVersion": 1,
+  "scope": [
+    "percentage"
+  ],
+  "selection": {
+    "outsideSelectionPercentageRequired": false,
+    "scopeTestsPassed": true
+  },
+  "stability": {
+    "after": {
+      "actionInstability": 23,
+      "changed": 180,
+      "criticalFailures": 93,
+      "latencyP50Ms": 711.6869688034058,
+      "latencyP95Ms": 896.2459564208984,
+      "noChange": 125,
+      "objectivePass": 192,
+      "objectivePassRate": 0.6295081967213115,
+      "otherOrError": 0,
+      "passFailInstability": 26,
+      "runs": 305
+    },
+    "before": {
+      "actionInstability": 20,
+      "changed": 185,
+      "criticalFailures": 87,
+      "latencyP50Ms": 694.6309804916382,
+      "latencyP95Ms": 942.5489902496338,
+      "noChange": 120,
+      "objectivePass": 203,
+      "objectivePassRate": 0.6655737704918033,
+      "otherOrError": 0,
+      "passFailInstability": 23,
+      "runs": 305
+    },
+    "percentage": {
+      "ambiguousTransformationsRejected": 0,
+      "corruptionsCaught": 0,
+      "corruptionsContainedByEarlierGuard": 0,
+      "coveredRuns": 0,
+      "falseNegativeCorruptions": 0,
+      "falsePositiveRejections": 0,
+      "finalPercentageSafetyInstabilityCases": [],
+      "finalUserVisiblePercentageCorruptions": 0,
+      "guardRejections": 0,
+      "guardRejectionsByReason": {},
+      "rawAmbiguousTransformations": 0,
+      "rawBreakdown": {},
+      "rawPercentageBearingProposals": 0,
+      "rawPercentageCorruptions": 0,
+      "rawPercentageSafetyInstabilityCases": [],
+      "rejectionCases": [],
+      "safeNormalizationsAccepted": 0,
+      "selectionGuardRejections": 0,
+      "usefulRefinementsLost": 0,
+      "visibleCorruptions": [],
+      "wholeNoteGuardRejections": 0
+    }
+  },
+  "tests": {
+    "completeSuite": "passed",
+    "completeSuiteSuiteCount": 23,
+    "completeSuiteTestCount": 217,
+    "debugBuild": "passed",
+    "nonBlockingWarning": "Existing duplicate RefineLanguageDetection.swift project reference warning."
+  }
+}

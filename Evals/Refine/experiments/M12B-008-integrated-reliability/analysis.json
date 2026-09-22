@@ -1,0 +1,2193 @@
+{
+  "acceptedStackReference": "M12B-007G-strict-unresolved-language",
+  "challenges": {
+    "language-cohort": {
+      "changedRate": 0.25,
+      "criticalFailureCount": 4,
+      "decomposedLanguageMetrics": {
+        "finalUserVisibleLanguageSafe": {
+          "failureCount": 6,
+          "rate": 0.5714285714285714,
+          "requiresReviewCount": 0,
+          "successCount": 8
+        },
+        "inputLanguageResolution": {
+          "failureCount": 13,
+          "rate": 0.07142857142857142,
+          "requiresReviewCount": 0,
+          "successCount": 1
+        },
+        "languageValidatorOutcome": {
+          "failureCount": 0,
+          "rate": 1,
+          "requiresReviewCount": 0,
+          "successCount": 14
+        },
+        "rawGenerationLanguageCorrect": {
+          "failureCount": 11,
+          "rate": 0.21428571428571427,
+          "requiresReviewCount": 0,
+          "successCount": 3
+        },
+        "technicalTermPreservation": {
+          "failureCount": 12,
+          "rate": 0.14285714285714285,
+          "requiresReviewCount": 0,
+          "successCount": 2
+        }
+      },
+      "failureBreakdown": {
+        "finalUserVisibleFailureCounts": {
+          "protectedLiteralCorruption": 2,
+          "wrongLanguage": 3
+        },
+        "rawModelFailureCounts": {
+          "protectedLiteralCorruption": 1,
+          "wrongLanguage": 11
+        }
+      },
+      "guarantees": {
+        "languageSafety": {
+          "finalVisibleFailures": 6,
+          "guardInterceptions": 4,
+          "rawWrongLanguage": 11
+        },
+        "oneContentUnitPreflightNoChange": 0,
+        "protectedLiterals": {
+          "finalVisibleFailures": 0,
+          "guardInterceptions": 1,
+          "rawFailures": 1
+        },
+        "selectionGuards": {
+          "duplicateContextGuardHits": 0,
+          "finalVisibleSelectionFailures": 0,
+          "rawUnsafeProposalsCaught": 0
+        },
+        "strictUnresolvedGuard": {
+          "catches": 4,
+          "interceptions": 4
+        }
+      },
+      "languageMetrics": {
+        "enDriftCases": 0,
+        "esToEnDriftCases": 0,
+        "falseRejections": 0,
+        "generationContractViolations": 0,
+        "generationLanguageCorrectRate": 0.21428571428571427,
+        "languageSafetyRejections": 5,
+        "mixedLanguageFailures": 0,
+        "ptToEnDriftCases": 4,
+        "resolverMistakes": 2,
+        "rootCauseCounts": {
+          "evaluatorDisagreement": 8,
+          "lowConfidenceUnclassifiable": 3,
+          "other": 1,
+          "resolverFailure": 2
+        },
+        "userVisibleLanguageSafeRate": 0.5714285714285714,
+        "validatorCatches": 0,
+        "validatorMisses": 0
+      },
+      "latencyP50": 0.19991397857666016,
+      "latencyP95": 833.6039781570435,
+      "modelProposalFailureCount": 0,
+      "modelProposalFailureRate": 0,
+      "noChangeRate": 0.75,
+      "objectivePassRate": 0.8125,
+      "overAbstentionRate": 0,
+      "protectedLiteralMetrics": {
+        "coveredRuns": 4,
+        "guardRejectionCount": 1,
+        "proposalFailureWithSafetySuccessCount": 1,
+        "rawProposalCorruptionCount": 1,
+        "rejectionsByClass": {
+          "identifier": 1
+        },
+        "userVisibleProtectedLiteralCorruptionCount": 0
+      },
+      "provenance": null,
+      "runs": 32,
+      "stabilityDecomposition": {},
+      "usefulChangedRate": 0.25,
+      "userVisibleHarmfulEditCount": 8,
+      "userVisibleHarmfulEditRate": 0.25
+    },
+    "one-token": {
+      "changedRate": 0,
+      "criticalFailureCount": 7,
+      "decomposedLanguageMetrics": {
+        "finalUserVisibleLanguageSafe": {
+          "failureCount": 0,
+          "rate": 0,
+          "requiresReviewCount": 0,
+          "successCount": 0
+        },
+        "inputLanguageResolution": {
+          "failureCount": 0,
+          "rate": 0,
+          "requiresReviewCount": 0,
+          "successCount": 0
+        },
+        "languageValidatorOutcome": {
+          "failureCount": 0,
+          "rate": 0,
+          "requiresReviewCount": 0,
+          "successCount": 0
+        },
+        "rawGenerationLanguageCorrect": {
+          "failureCount": 0,
+          "rate": 0,
+          "requiresReviewCount": 0,
+          "successCount": 0
+        },
+        "technicalTermPreservation": {
+          "failureCount": 0,
+          "rate": 0,
+          "requiresReviewCount": 0,
+          "successCount": 0
+        }
+      },
+      "failureBreakdown": {
+        "finalUserVisibleFailureCounts": {},
+        "rawModelFailureCounts": {}
+      },
+      "guarantees": {
+        "languageSafety": {
+          "finalVisibleFailures": 0,
+          "guardInterceptions": 0,
+          "rawWrongLanguage": 0
+        },
+        "oneContentUnitPreflightNoChange": 0,
+        "protectedLiterals": {
+          "finalVisibleFailures": 0,
+          "guardInterceptions": 0,
+          "rawFailures": 0
+        },
+        "selectionGuards": {
+          "duplicateContextGuardHits": 0,
+          "finalVisibleSelectionFailures": 0,
+          "rawUnsafeProposalsCaught": 0
+        },
+        "strictUnresolvedGuard": {
+          "catches": 0,
+          "interceptions": 0
+        }
+      },
+      "languageMetrics": {
+        "enDriftCases": 0,
+        "esToEnDriftCases": 0,
+        "falseRejections": 0,
+        "generationContractViolations": 0,
+        "generationLanguageCorrectRate": 0,
+        "languageSafetyRejections": 0,
+        "mixedLanguageFailures": 0,
+        "ptToEnDriftCases": 0,
+        "resolverMistakes": 0,
+        "rootCauseCounts": {},
+        "userVisibleLanguageSafeRate": 0,
+        "validatorCatches": 0,
+        "validatorMisses": 0
+      },
+      "latencyP50": 0.01895427703857422,
+      "latencyP95": 0.049948692321777344,
+      "modelProposalFailureCount": 0,
+      "modelProposalFailureRate": 0,
+      "noChangeRate": 1,
+      "objectivePassRate": 0.6904761904761905,
+      "overAbstentionRate": 1,
+      "protectedLiteralMetrics": {
+        "coveredRuns": 0,
+        "guardRejectionCount": 0,
+        "proposalFailureWithSafetySuccessCount": 0,
+        "rawProposalCorruptionCount": 0,
+        "rejectionsByClass": {},
+        "userVisibleProtectedLiteralCorruptionCount": 0
+      },
+      "provenance": null,
+      "runs": 42,
+      "stabilityDecomposition": {},
+      "usefulChangedRate": 0,
+      "userVisibleHarmfulEditCount": 0,
+      "userVisibleHarmfulEditRate": 0
+    },
+    "selection": {
+      "changedRate": 0.8,
+      "criticalFailureCount": 12,
+      "decomposedLanguageMetrics": {
+        "finalUserVisibleLanguageSafe": {
+          "failureCount": 0,
+          "rate": 1,
+          "requiresReviewCount": 0,
+          "successCount": 44
+        },
+        "inputLanguageResolution": {
+          "failureCount": 8,
+          "rate": 0.8181818181818182,
+          "requiresReviewCount": 0,
+          "successCount": 36
+        },
+        "languageValidatorOutcome": {
+          "failureCount": 2,
+          "rate": 0.9545454545454546,
+          "requiresReviewCount": 0,
+          "successCount": 42
+        },
+        "rawGenerationLanguageCorrect": {
+          "failureCount": 1,
+          "rate": 0.9772727272727273,
+          "requiresReviewCount": 0,
+          "successCount": 43
+        },
+        "technicalTermPreservation": {
+          "failureCount": 44,
+          "rate": 0,
+          "requiresReviewCount": 0,
+          "successCount": 0
+        }
+      },
+      "failureBreakdown": {
+        "finalUserVisibleFailureCounts": {
+          "unnecessaryEdit": 1
+        },
+        "rawModelFailureCounts": {
+          "moneyCorruption": 1,
+          "outsideSelectionRewrite": 4,
+          "percentageCorruption": 1,
+          "protectedLiteralCorruption": 3,
+          "selectionLeak": 1,
+          "timeCorruption": 1,
+          "wrongLanguage": 1
+        }
+      },
+      "guarantees": {
+        "languageSafety": {
+          "finalVisibleFailures": 0,
+          "guardInterceptions": 2,
+          "rawWrongLanguage": 1
+        },
+        "oneContentUnitPreflightNoChange": 0,
+        "protectedLiterals": {
+          "finalVisibleFailures": 0,
+          "guardInterceptions": 6,
+          "rawFailures": 6
+        },
+        "selectionGuards": {
+          "duplicateContextGuardHits": 1,
+          "finalVisibleSelectionFailures": 5,
+          "rawUnsafeProposalsCaught": 5
+        },
+        "strictUnresolvedGuard": {
+          "catches": 0,
+          "interceptions": 0
+        }
+      },
+      "languageMetrics": {
+        "enDriftCases": 0,
+        "esToEnDriftCases": 0,
+        "falseRejections": 0,
+        "generationContractViolations": 0,
+        "generationLanguageCorrectRate": 0.9772727272727273,
+        "languageSafetyRejections": 8,
+        "mixedLanguageFailures": 0,
+        "ptToEnDriftCases": 0,
+        "resolverMistakes": 2,
+        "rootCauseCounts": {
+          "evaluatorDisagreement": 26,
+          "other": 16,
+          "resolverFailure": 2
+        },
+        "userVisibleLanguageSafeRate": 1,
+        "validatorCatches": 0,
+        "validatorMisses": 0
+      },
+      "latencyP50": 744.9029684066772,
+      "latencyP95": 856.9200038909912,
+      "modelProposalFailureCount": 0,
+      "modelProposalFailureRate": 0,
+      "noChangeRate": 0.17777777777777778,
+      "objectivePassRate": 0.5333333333333333,
+      "overAbstentionRate": 0,
+      "protectedLiteralMetrics": {
+        "coveredRuns": 12,
+        "guardRejectionCount": 6,
+        "proposalFailureWithSafetySuccessCount": 6,
+        "rawProposalCorruptionCount": 6,
+        "rejectionsByClass": {
+          "identifier": 3,
+          "money": 1,
+          "percentage": 1,
+          "time": 1
+        },
+        "userVisibleProtectedLiteralCorruptionCount": 0
+      },
+      "provenance": null,
+      "runs": 45,
+      "stabilityDecomposition": {},
+      "usefulChangedRate": 0.4444444444444444,
+      "userVisibleHarmfulEditCount": 17,
+      "userVisibleHarmfulEditRate": 0.37777777777777777
+    },
+    "semantic-money": {
+      "changedRate": 0.875,
+      "criticalFailureCount": 1,
+      "decomposedLanguageMetrics": {
+        "finalUserVisibleLanguageSafe": {
+          "failureCount": 1,
+          "rate": 0.9375,
+          "requiresReviewCount": 0,
+          "successCount": 15
+        },
+        "inputLanguageResolution": {
+          "failureCount": 2,
+          "rate": 0.875,
+          "requiresReviewCount": 0,
+          "successCount": 14
+        },
+        "languageValidatorOutcome": {
+          "failureCount": 0,
+          "rate": 1,
+          "requiresReviewCount": 0,
+          "successCount": 16
+        },
+        "rawGenerationLanguageCorrect": {
+          "failureCount": 1,
+          "rate": 0.9375,
+          "requiresReviewCount": 0,
+          "successCount": 15
+        },
+        "technicalTermPreservation": {
+          "failureCount": 15,
+          "rate": 0.0625,
+          "requiresReviewCount": 0,
+          "successCount": 1
+        }
+      },
+      "failureBreakdown": {
+        "finalUserVisibleFailureCounts": {
+          "protectedLiteralCorruption": 1,
+          "wrongLanguage": 1
+        },
+        "rawModelFailureCounts": {
+          "moneyCorruption": 1,
+          "wrongLanguage": 1
+        }
+      },
+      "guarantees": {
+        "languageSafety": {
+          "finalVisibleFailures": 1,
+          "guardInterceptions": 0,
+          "rawWrongLanguage": 1
+        },
+        "oneContentUnitPreflightNoChange": 0,
+        "protectedLiterals": {
+          "finalVisibleFailures": 0,
+          "guardInterceptions": 1,
+          "rawFailures": 1
+        },
+        "selectionGuards": {
+          "duplicateContextGuardHits": 0,
+          "finalVisibleSelectionFailures": 0,
+          "rawUnsafeProposalsCaught": 0
+        },
+        "strictUnresolvedGuard": {
+          "catches": 0,
+          "interceptions": 0
+        }
+      },
+      "languageMetrics": {
+        "enDriftCases": 0,
+        "esToEnDriftCases": 0,
+        "falseRejections": 0,
+        "generationContractViolations": 0,
+        "generationLanguageCorrectRate": 0.9375,
+        "languageSafetyRejections": 1,
+        "mixedLanguageFailures": 0,
+        "ptToEnDriftCases": 1,
+        "resolverMistakes": 1,
+        "rootCauseCounts": {
+          "evaluatorDisagreement": 6,
+          "other": 9,
+          "resolverFailure": 1
+        },
+        "userVisibleLanguageSafeRate": 0.9375,
+        "validatorCatches": 0,
+        "validatorMisses": 0
+      },
+      "latencyP50": 841.9860601425171,
+      "latencyP95": 984.3249320983887,
+      "modelProposalFailureCount": 0,
+      "modelProposalFailureRate": 0,
+      "noChangeRate": 0.125,
+      "objectivePassRate": 0.9375,
+      "overAbstentionRate": 0,
+      "protectedLiteralMetrics": {
+        "coveredRuns": 16,
+        "guardRejectionCount": 1,
+        "proposalFailureWithSafetySuccessCount": 1,
+        "rawProposalCorruptionCount": 1,
+        "rejectionsByClass": {
+          "money": 1
+        },
+        "userVisibleProtectedLiteralCorruptionCount": 0
+      },
+      "provenance": null,
+      "runs": 16,
+      "stabilityDecomposition": {},
+      "usefulChangedRate": 0.9285714285714286,
+      "userVisibleHarmfulEditCount": 14,
+      "userVisibleHarmfulEditRate": 0.875
+    },
+    "semantic-percentage": {
+      "changedRate": 0.9375,
+      "criticalFailureCount": 1,
+      "decomposedLanguageMetrics": {
+        "finalUserVisibleLanguageSafe": {
+          "failureCount": 2,
+          "rate": 0.875,
+          "requiresReviewCount": 0,
+          "successCount": 14
+        },
+        "inputLanguageResolution": {
+          "failureCount": 2,
+          "rate": 0.875,
+          "requiresReviewCount": 0,
+          "successCount": 14
+        },
+        "languageValidatorOutcome": {
+          "failureCount": 0,
+          "rate": 1,
+          "requiresReviewCount": 0,
+          "successCount": 16
+        },
+        "rawGenerationLanguageCorrect": {
+          "failureCount": 2,
+          "rate": 0.875,
+          "requiresReviewCount": 0,
+          "successCount": 14
+        },
+        "technicalTermPreservation": {
+          "failureCount": 15,
+          "rate": 0.0625,
+          "requiresReviewCount": 0,
+          "successCount": 1
+        }
+      },
+      "failureBreakdown": {
+        "finalUserVisibleFailureCounts": {
+          "protectedLiteralCorruption": 1,
+          "wrongLanguage": 2
+        },
+        "rawModelFailureCounts": {
+          "wrongLanguage": 2
+        }
+      },
+      "guarantees": {
+        "languageSafety": {
+          "finalVisibleFailures": 2,
+          "guardInterceptions": 0,
+          "rawWrongLanguage": 2
+        },
+        "oneContentUnitPreflightNoChange": 0,
+        "protectedLiterals": {
+          "finalVisibleFailures": 0,
+          "guardInterceptions": 0,
+          "rawFailures": 0
+        },
+        "selectionGuards": {
+          "duplicateContextGuardHits": 0,
+          "finalVisibleSelectionFailures": 0,
+          "rawUnsafeProposalsCaught": 0
+        },
+        "strictUnresolvedGuard": {
+          "catches": 0,
+          "interceptions": 0
+        }
+      },
+      "languageMetrics": {
+        "enDriftCases": 0,
+        "esToEnDriftCases": 0,
+        "falseRejections": 0,
+        "generationContractViolations": 0,
+        "generationLanguageCorrectRate": 0.875,
+        "languageSafetyRejections": 0,
+        "mixedLanguageFailures": 0,
+        "ptToEnDriftCases": 0,
+        "resolverMistakes": 0,
+        "rootCauseCounts": {
+          "evaluatorDisagreement": 12,
+          "other": 4
+        },
+        "userVisibleLanguageSafeRate": 0.875,
+        "validatorCatches": 0,
+        "validatorMisses": 0
+      },
+      "latencyP50": 784.6699953079224,
+      "latencyP95": 865.0200366973877,
+      "modelProposalFailureCount": 0,
+      "modelProposalFailureRate": 0,
+      "noChangeRate": 0.0625,
+      "objectivePassRate": 0.9375,
+      "overAbstentionRate": 0,
+      "protectedLiteralMetrics": {
+        "coveredRuns": 16,
+        "guardRejectionCount": 0,
+        "proposalFailureWithSafetySuccessCount": 0,
+        "rawProposalCorruptionCount": 0,
+        "rejectionsByClass": {},
+        "userVisibleProtectedLiteralCorruptionCount": 0
+      },
+      "provenance": null,
+      "runs": 16,
+      "stabilityDecomposition": {},
+      "usefulChangedRate": 0.9333333333333333,
+      "userVisibleHarmfulEditCount": 15,
+      "userVisibleHarmfulEditRate": 0.9375
+    },
+    "semantic-protected": {
+      "changedRate": 0.85,
+      "criticalFailureCount": 4,
+      "decomposedLanguageMetrics": {
+        "finalUserVisibleLanguageSafe": {
+          "failureCount": 6,
+          "rate": 0.925,
+          "requiresReviewCount": 0,
+          "successCount": 74
+        },
+        "inputLanguageResolution": {
+          "failureCount": 8,
+          "rate": 0.9,
+          "requiresReviewCount": 0,
+          "successCount": 72
+        },
+        "languageValidatorOutcome": {
+          "failureCount": 2,
+          "rate": 0.975,
+          "requiresReviewCount": 0,
+          "successCount": 78
+        },
+        "rawGenerationLanguageCorrect": {
+          "failureCount": 8,
+          "rate": 0.9,
+          "requiresReviewCount": 0,
+          "successCount": 72
+        },
+        "technicalTermPreservation": {
+          "failureCount": 79,
+          "rate": 0.0125,
+          "requiresReviewCount": 0,
+          "successCount": 1
+        }
+      },
+      "failureBreakdown": {
+        "finalUserVisibleFailureCounts": {
+          "protectedLiteralCorruption": 1,
+          "wrongLanguage": 6
+        },
+        "rawModelFailureCounts": {
+          "moneyCorruption": 1,
+          "timeCorruption": 1,
+          "wrongLanguage": 8
+        }
+      },
+      "guarantees": {
+        "languageSafety": {
+          "finalVisibleFailures": 6,
+          "guardInterceptions": 2,
+          "rawWrongLanguage": 8
+        },
+        "oneContentUnitPreflightNoChange": 0,
+        "protectedLiterals": {
+          "finalVisibleFailures": 0,
+          "guardInterceptions": 2,
+          "rawFailures": 2
+        },
+        "selectionGuards": {
+          "duplicateContextGuardHits": 0,
+          "finalVisibleSelectionFailures": 0,
+          "rawUnsafeProposalsCaught": 0
+        },
+        "strictUnresolvedGuard": {
+          "catches": 0,
+          "interceptions": 0
+        }
+      },
+      "languageMetrics": {
+        "enDriftCases": 0,
+        "esToEnDriftCases": 0,
+        "falseRejections": 0,
+        "generationContractViolations": 0,
+        "generationLanguageCorrectRate": 0.9,
+        "languageSafetyRejections": 4,
+        "mixedLanguageFailures": 0,
+        "ptToEnDriftCases": 2,
+        "resolverMistakes": 1,
+        "rootCauseCounts": {
+          "evaluatorDisagreement": 39,
+          "other": 38,
+          "resolverFailure": 1,
+          "validatorCatch": 2
+        },
+        "userVisibleLanguageSafeRate": 0.925,
+        "validatorCatches": 2,
+        "validatorMisses": 0
+      },
+      "latencyP50": 786.4030599594116,
+      "latencyP95": 958.7150812149048,
+      "modelProposalFailureCount": 2,
+      "modelProposalFailureRate": 0.025,
+      "noChangeRate": 0.15,
+      "objectivePassRate": 0.925,
+      "overAbstentionRate": 0,
+      "protectedLiteralMetrics": {
+        "coveredRuns": 54,
+        "guardRejectionCount": 2,
+        "proposalFailureWithSafetySuccessCount": 2,
+        "rawProposalCorruptionCount": 2,
+        "rejectionsByClass": {
+          "money": 1,
+          "time": 1
+        },
+        "userVisibleProtectedLiteralCorruptionCount": 0
+      },
+      "provenance": null,
+      "runs": 80,
+      "stabilityDecomposition": {},
+      "usefulChangedRate": 0.9264705882352942,
+      "userVisibleHarmfulEditCount": 64,
+      "userVisibleHarmfulEditRate": 0.8
+    },
+    "semantic-time": {
+      "changedRate": 0.5625,
+      "criticalFailureCount": 1,
+      "decomposedLanguageMetrics": {
+        "finalUserVisibleLanguageSafe": {
+          "failureCount": 0,
+          "rate": 1,
+          "requiresReviewCount": 0,
+          "successCount": 16
+        },
+        "inputLanguageResolution": {
+          "failureCount": 0,
+          "rate": 1,
+          "requiresReviewCount": 0,
+          "successCount": 16
+        },
+        "languageValidatorOutcome": {
+          "failureCount": 2,
+          "rate": 0.875,
+          "requiresReviewCount": 0,
+          "successCount": 14
+        },
+        "rawGenerationLanguageCorrect": {
+          "failureCount": 2,
+          "rate": 0.875,
+          "requiresReviewCount": 0,
+          "successCount": 14
+        },
+        "technicalTermPreservation": {
+          "failureCount": 16,
+          "rate": 0,
+          "requiresReviewCount": 0,
+          "successCount": 0
+        }
+      },
+      "failureBreakdown": {
+        "finalUserVisibleFailureCounts": {},
+        "rawModelFailureCounts": {
+          "timeCorruption": 1,
+          "wrongLanguage": 2
+        }
+      },
+      "guarantees": {
+        "languageSafety": {
+          "finalVisibleFailures": 0,
+          "guardInterceptions": 2,
+          "rawWrongLanguage": 2
+        },
+        "oneContentUnitPreflightNoChange": 0,
+        "protectedLiterals": {
+          "finalVisibleFailures": 0,
+          "guardInterceptions": 1,
+          "rawFailures": 1
+        },
+        "selectionGuards": {
+          "duplicateContextGuardHits": 0,
+          "finalVisibleSelectionFailures": 0,
+          "rawUnsafeProposalsCaught": 0
+        },
+        "strictUnresolvedGuard": {
+          "catches": 0,
+          "interceptions": 0
+        }
+      },
+      "languageMetrics": {
+        "enDriftCases": 0,
+        "esToEnDriftCases": 0,
+        "falseRejections": 0,
+        "generationContractViolations": 0,
+        "generationLanguageCorrectRate": 0.875,
+        "languageSafetyRejections": 3,
+        "mixedLanguageFailures": 0,
+        "ptToEnDriftCases": 1,
+        "resolverMistakes": 0,
+        "rootCauseCounts": {
+          "other": 14,
+          "validatorCatch": 2
+        },
+        "userVisibleLanguageSafeRate": 1,
+        "validatorCatches": 2,
+        "validatorMisses": 0
+      },
+      "latencyP50": 835.3499174118042,
+      "latencyP95": 966.7540788650513,
+      "modelProposalFailureCount": 2,
+      "modelProposalFailureRate": 0.125,
+      "noChangeRate": 0.4375,
+      "objectivePassRate": 0.9375,
+      "overAbstentionRate": 0,
+      "protectedLiteralMetrics": {
+        "coveredRuns": 16,
+        "guardRejectionCount": 1,
+        "proposalFailureWithSafetySuccessCount": 1,
+        "rawProposalCorruptionCount": 1,
+        "rejectionsByClass": {
+          "time": 1
+        },
+        "userVisibleProtectedLiteralCorruptionCount": 0
+      },
+      "provenance": null,
+      "runs": 16,
+      "stabilityDecomposition": {},
+      "usefulChangedRate": 1,
+      "userVisibleHarmfulEditCount": 9,
+      "userVisibleHarmfulEditRate": 0.5625
+    }
+  },
+  "combinedPrimaryGuarantees": {
+    "languageSafety": {
+      "finalVisibleFailures": 15,
+      "guardInterceptions": 10,
+      "rawWrongLanguage": 25
+    },
+    "oneContentUnitPreflightNoChange": 0,
+    "protectedLiterals": {
+      "finalVisibleFailures": 0,
+      "guardInterceptions": 12,
+      "rawFailures": 12
+    },
+    "selectionGuards": {
+      "duplicateContextGuardHits": 0,
+      "finalVisibleSelectionFailures": 2,
+      "rawUnsafeProposalsCaught": 2
+    },
+    "strictUnresolvedGuard": {
+      "catches": 5,
+      "interceptions": 5
+    }
+  },
+  "comparisons": {
+    "dev": {
+      "changedRate": {
+        "baselineV2": null,
+        "delta": null,
+        "final": 0.694300518134715
+      },
+      "criticalFailureCount": {
+        "baselineV2": 84,
+        "delta": -44,
+        "final": 40
+      },
+      "latencyP50": {
+        "baselineV2": 707.118034362793,
+        "delta": 70.79696655273438,
+        "final": 777.9150009155273
+      },
+      "latencyP95": {
+        "baselineV2": 1077.2650241851807,
+        "delta": 126.39796733856201,
+        "final": 1203.6629915237427
+      },
+      "modelProposalFailureRate": {
+        "baselineV2": null,
+        "delta": null,
+        "final": 0.015544041450777202
+      },
+      "noChangeRate": {
+        "baselineV2": null,
+        "delta": null,
+        "final": 0.3005181347150259
+      },
+      "objectivePassRate": {
+        "baselineV2": 0.43005181347150256,
+        "delta": 0.23316062176165808,
+        "final": 0.6632124352331606
+      },
+      "userVisibleHarmfulEditRate": {
+        "baselineV2": null,
+        "delta": null,
+        "final": 0.43005181347150256
+      }
+    },
+    "holdout": {
+      "changedRate": {
+        "baselineV2": null,
+        "delta": null,
+        "final": 0.8055555555555556
+      },
+      "criticalFailureCount": {
+        "baselineV2": 29,
+        "delta": -16,
+        "final": 13
+      },
+      "latencyP50": {
+        "baselineV2": 710.82603931427,
+        "delta": 9.652018547058105,
+        "final": 720.4780578613281
+      },
+      "latencyP95": {
+        "baselineV2": 1116.8969869613647,
+        "delta": -62.84606456756592,
+        "final": 1054.0509223937988
+      },
+      "modelProposalFailureRate": {
+        "baselineV2": null,
+        "delta": null,
+        "final": 0
+      },
+      "noChangeRate": {
+        "baselineV2": null,
+        "delta": null,
+        "final": 0.16666666666666666
+      },
+      "objectivePassRate": {
+        "baselineV2": 0.3611111111111111,
+        "delta": 0.18055555555555552,
+        "final": 0.5416666666666666
+      },
+      "userVisibleHarmfulEditRate": {
+        "baselineV2": null,
+        "delta": null,
+        "final": 0.4305555555555556
+      }
+    },
+    "validation": {
+      "changedRate": {
+        "baselineV2": null,
+        "delta": null,
+        "final": 0.7543859649122807
+      },
+      "criticalFailureCount": {
+        "baselineV2": 25,
+        "delta": -10,
+        "final": 15
+      },
+      "latencyP50": {
+        "baselineV2": 736.1059188842773,
+        "delta": 19.54507827758789,
+        "final": 755.6509971618652
+      },
+      "latencyP95": {
+        "baselineV2": 927.3999929428101,
+        "delta": 186.5459680557251,
+        "final": 1113.9459609985352
+      },
+      "modelProposalFailureRate": {
+        "baselineV2": null,
+        "delta": null,
+        "final": 0.017543859649122806
+      },
+      "noChangeRate": {
+        "baselineV2": null,
+        "delta": null,
+        "final": 0.22807017543859648
+      },
+      "objectivePassRate": {
+        "baselineV2": 0.43859649122807015,
+        "delta": 0.10526315789473689,
+        "final": 0.543859649122807
+      },
+      "userVisibleHarmfulEditRate": {
+        "baselineV2": null,
+        "delta": null,
+        "final": 0.43859649122807015
+      }
+    }
+  },
+  "experiment": "M12B-008-integrated-reliability",
+  "frontierPriority": {
+    "formerProductFailures": 42,
+    "missingResults": 0,
+    "nowSafeOrNoChange": 19,
+    "remainingLabelCounts": {
+      "excessiveExpansion": 5,
+      "inventedInformation": 3,
+      "meaningChanged": 13,
+      "other": 3,
+      "protectedTokenMutation": 2,
+      "selectionLeak": 1,
+      "styleVoiceDamage": 4,
+      "unnecessaryEdit": 13,
+      "wrongLanguage": 18
+    },
+    "stillFailureExamples": [
+      {
+        "caseID": "incomplete-005",
+        "labels": [
+          "unnecessaryEdit"
+        ]
+      },
+      {
+        "caseID": "telegraphic-en-002",
+        "labels": [
+          "inventedInformation",
+          "excessiveExpansion"
+        ]
+      },
+      {
+        "caseID": "injection-005",
+        "labels": [
+          "unnecessaryEdit"
+        ]
+      },
+      {
+        "caseID": "mixed-pt-en-006",
+        "labels": [
+          "meaningChanged"
+        ]
+      },
+      {
+        "caseID": "es-003",
+        "labels": [
+          "wrongLanguage"
+        ]
+      },
+      {
+        "caseID": "es-009",
+        "labels": [
+          "meaningChanged"
+        ]
+      },
+      {
+        "caseID": "variant-es-003",
+        "labels": [
+          "other"
+        ]
+      },
+      {
+        "caseID": "variant-es-007",
+        "labels": [
+          "meaningChanged",
+          "other"
+        ]
+      },
+      {
+        "caseID": "variant-es-008",
+        "labels": [
+          "meaningChanged",
+          "styleVoiceDamage"
+        ]
+      },
+      {
+        "caseID": "variant-pt-002",
+        "labels": [
+          "wrongLanguage",
+          "meaningChanged"
+        ]
+      }
+    ],
+    "stillProductFailures": 23
+  },
+  "generatedAt": "2026-09-22T14:27:52Z",
+  "productionGitSha": "b109a877094fb447ac23debf50a4ab118ac5979a",
+  "releaseDecision": "A",
+  "releaseRationale": "Integrated gate shows net safety improvement vs baseline-v2 with closed M12B guarantees and no new repeatable blocker class.",
+  "splits": {
+    "dev": {
+      "baselineV2": {
+        "changedRate": null,
+        "criticalFailureCount": 84,
+        "decomposedLanguageMetrics": null,
+        "failureBreakdown": {
+          "finalUserVisibleFailureCounts": {
+            "excessiveExpansion": 9,
+            "inventedInformation": 5,
+            "protectedLiteralCorruption": 34,
+            "unnecessaryEdit": 27,
+            "wrongLanguage": 33
+          },
+          "rawModelFailureCounts": {}
+        },
+        "guarantees": {
+          "languageSafety": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawWrongLanguage": 0
+          },
+          "oneContentUnitPreflightNoChange": 0,
+          "protectedLiterals": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawFailures": 0
+          },
+          "selectionGuards": {
+            "duplicateContextGuardHits": 0,
+            "finalVisibleSelectionFailures": 1,
+            "rawUnsafeProposalsCaught": 0
+          },
+          "strictUnresolvedGuard": {
+            "catches": 0,
+            "interceptions": 0
+          }
+        },
+        "languageMetrics": null,
+        "latencyP50": 707.118034362793,
+        "latencyP95": 1077.2650241851807,
+        "modelProposalFailureCount": null,
+        "modelProposalFailureRate": null,
+        "noChangeRate": null,
+        "objectivePassRate": 0.43005181347150256,
+        "overAbstentionRate": null,
+        "protectedLiteralMetrics": {},
+        "provenance": null,
+        "runs": 193,
+        "stabilityDecomposition": {},
+        "usefulChangedRate": null,
+        "userVisibleHarmfulEditCount": null,
+        "userVisibleHarmfulEditRate": null
+      },
+      "final": {
+        "changedRate": 0.694300518134715,
+        "criticalFailureCount": 40,
+        "decomposedLanguageMetrics": {
+          "finalUserVisibleLanguageSafe": {
+            "failureCount": 7,
+            "rate": 0.9597701149425287,
+            "requiresReviewCount": 0,
+            "successCount": 167
+          },
+          "inputLanguageResolution": {
+            "failureCount": 59,
+            "rate": 0.6529411764705882,
+            "requiresReviewCount": 4,
+            "successCount": 111
+          },
+          "languageValidatorOutcome": {
+            "failureCount": 4,
+            "rate": 0.9770114942528736,
+            "requiresReviewCount": 0,
+            "successCount": 170
+          },
+          "rawGenerationLanguageCorrect": {
+            "failureCount": 16,
+            "rate": 0.9080459770114943,
+            "requiresReviewCount": 0,
+            "successCount": 158
+          },
+          "technicalTermPreservation": {
+            "failureCount": 145,
+            "rate": 0.16666666666666666,
+            "requiresReviewCount": 0,
+            "successCount": 29
+          }
+        },
+        "failureBreakdown": {
+          "finalUserVisibleFailureCounts": {
+            "excessiveExpansion": 5,
+            "protectedLiteralCorruption": 25,
+            "unnecessaryEdit": 5,
+            "wrongLanguage": 4
+          },
+          "rawModelFailureCounts": {
+            "moneyCorruption": 1,
+            "outsideSelectionRewrite": 1,
+            "protectedLiteralCorruption": 4,
+            "timeCorruption": 2,
+            "wrongLanguage": 16
+          }
+        },
+        "guarantees": {
+          "languageSafety": {
+            "finalVisibleFailures": 7,
+            "guardInterceptions": 9,
+            "rawWrongLanguage": 16
+          },
+          "oneContentUnitPreflightNoChange": 0,
+          "protectedLiterals": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 7,
+            "rawFailures": 7
+          },
+          "selectionGuards": {
+            "duplicateContextGuardHits": 0,
+            "finalVisibleSelectionFailures": 1,
+            "rawUnsafeProposalsCaught": 1
+          },
+          "strictUnresolvedGuard": {
+            "catches": 5,
+            "interceptions": 5
+          }
+        },
+        "languageMetrics": {
+          "enDriftCases": 0,
+          "esToEnDriftCases": 0,
+          "falseRejections": 0,
+          "generationContractViolations": 0,
+          "generationLanguageCorrectRate": 0.9080459770114943,
+          "languageSafetyRejections": 16,
+          "mixedLanguageFailures": 0,
+          "ptToEnDriftCases": 4,
+          "resolverMistakes": 6,
+          "rootCauseCounts": {
+            "evaluatorDisagreement": 94,
+            "lowConfidenceUnclassifiable": 4,
+            "other": 68,
+            "resolverFailure": 6,
+            "validatorCatch": 2
+          },
+          "userVisibleLanguageSafeRate": 0.9597701149425287,
+          "validatorCatches": 2,
+          "validatorMisses": 0
+        },
+        "latencyP50": 777.9150009155273,
+        "latencyP95": 1203.6629915237427,
+        "modelProposalFailureCount": 3,
+        "modelProposalFailureRate": 0.015544041450777202,
+        "noChangeRate": 0.3005181347150259,
+        "objectivePassRate": 0.6632124352331606,
+        "overAbstentionRate": 0.2727272727272727,
+        "protectedLiteralMetrics": {
+          "coveredRuns": 46,
+          "guardRejectionCount": 7,
+          "proposalFailureWithSafetySuccessCount": 7,
+          "rawProposalCorruptionCount": 7,
+          "rejectionsByClass": {
+            "email": 1,
+            "identifier": 2,
+            "money": 1,
+            "time": 2,
+            "url": 1
+          },
+          "userVisibleProtectedLiteralCorruptionCount": 0
+        },
+        "provenance": "m12b-007g-reuse-2026-09-22T14:23:58Z",
+        "runs": 193,
+        "stabilityDecomposition": {},
+        "usefulChangedRate": 0.5447761194029851,
+        "userVisibleHarmfulEditCount": 83,
+        "userVisibleHarmfulEditRate": 0.43005181347150256
+      },
+      "m12b001": {
+        "changedRate": null,
+        "criticalFailureCount": 65,
+        "decomposedLanguageMetrics": null,
+        "failureBreakdown": {
+          "finalUserVisibleFailureCounts": {
+            "excessiveExpansion": 12,
+            "inventedInformation": 4,
+            "protectedLiteralCorruption": 34,
+            "unnecessaryEdit": 23,
+            "wrongLanguage": 20
+          },
+          "rawModelFailureCounts": {}
+        },
+        "guarantees": {
+          "languageSafety": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawWrongLanguage": 0
+          },
+          "oneContentUnitPreflightNoChange": 0,
+          "protectedLiterals": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawFailures": 0
+          },
+          "selectionGuards": {
+            "duplicateContextGuardHits": 0,
+            "finalVisibleSelectionFailures": 1,
+            "rawUnsafeProposalsCaught": 0
+          },
+          "strictUnresolvedGuard": {
+            "catches": 0,
+            "interceptions": 0
+          }
+        },
+        "languageMetrics": null,
+        "latencyP50": 757.7500343322754,
+        "latencyP95": 1212.662935256958,
+        "modelProposalFailureCount": null,
+        "modelProposalFailureRate": null,
+        "noChangeRate": null,
+        "objectivePassRate": 0.533678756476684,
+        "overAbstentionRate": null,
+        "protectedLiteralMetrics": {},
+        "provenance": null,
+        "runs": 193,
+        "stabilityDecomposition": {},
+        "usefulChangedRate": null,
+        "userVisibleHarmfulEditCount": null,
+        "userVisibleHarmfulEditRate": null
+      }
+    },
+    "holdout": {
+      "baselineV2": {
+        "changedRate": null,
+        "criticalFailureCount": 29,
+        "decomposedLanguageMetrics": null,
+        "failureBreakdown": {
+          "finalUserVisibleFailureCounts": {
+            "excessiveExpansion": 3,
+            "protectedLiteralCorruption": 16,
+            "unnecessaryEdit": 7,
+            "wrongLanguage": 14
+          },
+          "rawModelFailureCounts": {}
+        },
+        "guarantees": {
+          "languageSafety": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawWrongLanguage": 0
+          },
+          "oneContentUnitPreflightNoChange": 0,
+          "protectedLiterals": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawFailures": 0
+          },
+          "selectionGuards": {
+            "duplicateContextGuardHits": 0,
+            "finalVisibleSelectionFailures": 0,
+            "rawUnsafeProposalsCaught": 0
+          },
+          "strictUnresolvedGuard": {
+            "catches": 0,
+            "interceptions": 0
+          }
+        },
+        "languageMetrics": null,
+        "latencyP50": 710.82603931427,
+        "latencyP95": 1116.8969869613647,
+        "modelProposalFailureCount": null,
+        "modelProposalFailureRate": null,
+        "noChangeRate": null,
+        "objectivePassRate": 0.3611111111111111,
+        "overAbstentionRate": null,
+        "protectedLiteralMetrics": {},
+        "provenance": null,
+        "runs": 72,
+        "stabilityDecomposition": {},
+        "usefulChangedRate": null,
+        "userVisibleHarmfulEditCount": null,
+        "userVisibleHarmfulEditRate": null
+      },
+      "final": {
+        "changedRate": 0.8055555555555556,
+        "criticalFailureCount": 13,
+        "decomposedLanguageMetrics": {
+          "finalUserVisibleLanguageSafe": {
+            "failureCount": 3,
+            "rate": 0.9558823529411765,
+            "requiresReviewCount": 0,
+            "successCount": 65
+          },
+          "inputLanguageResolution": {
+            "failureCount": 22,
+            "rate": 0.6716417910447762,
+            "requiresReviewCount": 1,
+            "successCount": 45
+          },
+          "languageValidatorOutcome": {
+            "failureCount": 0,
+            "rate": 1,
+            "requiresReviewCount": 0,
+            "successCount": 68
+          },
+          "rawGenerationLanguageCorrect": {
+            "failureCount": 3,
+            "rate": 0.9558823529411765,
+            "requiresReviewCount": 0,
+            "successCount": 65
+          },
+          "technicalTermPreservation": {
+            "failureCount": 60,
+            "rate": 0.11764705882352941,
+            "requiresReviewCount": 0,
+            "successCount": 8
+          }
+        },
+        "failureBreakdown": {
+          "finalUserVisibleFailureCounts": {
+            "protectedLiteralCorruption": 7,
+            "unnecessaryEdit": 2,
+            "wrongLanguage": 2
+          },
+          "rawModelFailureCounts": {
+            "protectedLiteralCorruption": 2,
+            "wrongLanguage": 3
+          }
+        },
+        "guarantees": {
+          "languageSafety": {
+            "finalVisibleFailures": 3,
+            "guardInterceptions": 0,
+            "rawWrongLanguage": 3
+          },
+          "oneContentUnitPreflightNoChange": 0,
+          "protectedLiterals": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 2,
+            "rawFailures": 2
+          },
+          "selectionGuards": {
+            "duplicateContextGuardHits": 0,
+            "finalVisibleSelectionFailures": 0,
+            "rawUnsafeProposalsCaught": 0
+          },
+          "strictUnresolvedGuard": {
+            "catches": 0,
+            "interceptions": 0
+          }
+        },
+        "languageMetrics": {
+          "enDriftCases": 0,
+          "esToEnDriftCases": 0,
+          "falseRejections": 0,
+          "generationContractViolations": 0,
+          "generationLanguageCorrectRate": 0.9558823529411765,
+          "languageSafetyRejections": 2,
+          "mixedLanguageFailures": 0,
+          "ptToEnDriftCases": 1,
+          "resolverMistakes": 4,
+          "rootCauseCounts": {
+            "evaluatorDisagreement": 30,
+            "lowConfidenceUnclassifiable": 1,
+            "other": 33,
+            "resolverFailure": 4
+          },
+          "userVisibleLanguageSafeRate": 0.9558823529411765,
+          "validatorCatches": 0,
+          "validatorMisses": 0
+        },
+        "latencyP50": 720.4780578613281,
+        "latencyP95": 1054.0509223937988,
+        "modelProposalFailureCount": 0,
+        "modelProposalFailureRate": 0,
+        "noChangeRate": 0.16666666666666666,
+        "objectivePassRate": 0.5416666666666666,
+        "overAbstentionRate": 0.18181818181818182,
+        "protectedLiteralMetrics": {
+          "coveredRuns": 21,
+          "guardRejectionCount": 2,
+          "proposalFailureWithSafetySuccessCount": 2,
+          "rawProposalCorruptionCount": 2,
+          "rejectionsByClass": {
+            "identifier": 2
+          },
+          "userVisibleProtectedLiteralCorruptionCount": 0
+        },
+        "provenance": "holdoutRun=once\nstartedAt=2026-09-22T14:23:58Z\nfinishedAt=2026-09-22T14:25:00Z\ngitSha=b109a877094fb447ac23debf50a4ab118ac5979a\ncorpus=Evals/Refine/corpus.v1.jsonl\nsplits=Evals/Refine/splits.v1.json\nnote=First post-M12B integrated holdout; not used for tuning in this task.",
+        "runs": 72,
+        "stabilityDecomposition": {},
+        "usefulChangedRate": 0.46551724137931033,
+        "userVisibleHarmfulEditCount": 31,
+        "userVisibleHarmfulEditRate": 0.4305555555555556
+      },
+      "m12b001": {}
+    },
+    "regression": {
+      "baselineV2": {
+        "changedRate": null,
+        "criticalFailureCount": 4,
+        "decomposedLanguageMetrics": null,
+        "failureBreakdown": {
+          "finalUserVisibleFailureCounts": {
+            "protectedLiteralCorruption": 2,
+            "unnecessaryEdit": 3,
+            "wrongLanguage": 3
+          },
+          "rawModelFailureCounts": {}
+        },
+        "guarantees": {
+          "languageSafety": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawWrongLanguage": 0
+          },
+          "oneContentUnitPreflightNoChange": 0,
+          "protectedLiterals": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawFailures": 0
+          },
+          "selectionGuards": {
+            "duplicateContextGuardHits": 0,
+            "finalVisibleSelectionFailures": 0,
+            "rawUnsafeProposalsCaught": 0
+          },
+          "strictUnresolvedGuard": {
+            "catches": 0,
+            "interceptions": 0
+          }
+        },
+        "languageMetrics": null,
+        "latencyP50": 737.9699945449829,
+        "latencyP95": 771.1930274963379,
+        "modelProposalFailureCount": null,
+        "modelProposalFailureRate": null,
+        "noChangeRate": null,
+        "objectivePassRate": 0.3333333333333333,
+        "overAbstentionRate": null,
+        "protectedLiteralMetrics": {},
+        "provenance": null,
+        "runs": 6,
+        "stabilityDecomposition": {},
+        "usefulChangedRate": null,
+        "userVisibleHarmfulEditCount": null,
+        "userVisibleHarmfulEditRate": null
+      },
+      "final": {
+        "changedRate": 0.8333333333333334,
+        "criticalFailureCount": 2,
+        "decomposedLanguageMetrics": {
+          "finalUserVisibleLanguageSafe": {
+            "failureCount": 0,
+            "rate": 1,
+            "requiresReviewCount": 0,
+            "successCount": 5
+          },
+          "inputLanguageResolution": {
+            "failureCount": 1,
+            "rate": 0.8,
+            "requiresReviewCount": 0,
+            "successCount": 4
+          },
+          "languageValidatorOutcome": {
+            "failureCount": 0,
+            "rate": 1,
+            "requiresReviewCount": 0,
+            "successCount": 5
+          },
+          "rawGenerationLanguageCorrect": {
+            "failureCount": 0,
+            "rate": 1,
+            "requiresReviewCount": 0,
+            "successCount": 5
+          },
+          "technicalTermPreservation": {
+            "failureCount": 5,
+            "rate": 0,
+            "requiresReviewCount": 0,
+            "successCount": 0
+          }
+        },
+        "failureBreakdown": {
+          "finalUserVisibleFailureCounts": {
+            "unnecessaryEdit": 1
+          },
+          "rawModelFailureCounts": {}
+        },
+        "guarantees": {
+          "languageSafety": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawWrongLanguage": 0
+          },
+          "oneContentUnitPreflightNoChange": 0,
+          "protectedLiterals": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawFailures": 0
+          },
+          "selectionGuards": {
+            "duplicateContextGuardHits": 0,
+            "finalVisibleSelectionFailures": 0,
+            "rawUnsafeProposalsCaught": 0
+          },
+          "strictUnresolvedGuard": {
+            "catches": 0,
+            "interceptions": 0
+          }
+        },
+        "languageMetrics": {
+          "enDriftCases": 0,
+          "esToEnDriftCases": 0,
+          "falseRejections": 0,
+          "generationContractViolations": 0,
+          "generationLanguageCorrectRate": 1,
+          "languageSafetyRejections": 0,
+          "mixedLanguageFailures": 0,
+          "ptToEnDriftCases": 0,
+          "resolverMistakes": 0,
+          "rootCauseCounts": {
+            "evaluatorDisagreement": 2,
+            "other": 3
+          },
+          "userVisibleLanguageSafeRate": 1,
+          "validatorCatches": 0,
+          "validatorMisses": 0
+        },
+        "latencyP50": 772.0059156417847,
+        "latencyP95": 852.6760339736938,
+        "modelProposalFailureCount": 0,
+        "modelProposalFailureRate": 0,
+        "noChangeRate": 0.16666666666666666,
+        "objectivePassRate": 0.5,
+        "overAbstentionRate": 0,
+        "protectedLiteralMetrics": {
+          "coveredRuns": 0,
+          "guardRejectionCount": 0,
+          "proposalFailureWithSafetySuccessCount": 0,
+          "rawProposalCorruptionCount": 0,
+          "rejectionsByClass": {},
+          "userVisibleProtectedLiteralCorruptionCount": 0
+        },
+        "provenance": "m12b-007g-reuse-2026-09-22T14:23:58Z",
+        "runs": 6,
+        "stabilityDecomposition": {},
+        "usefulChangedRate": 0.4,
+        "userVisibleHarmfulEditCount": 3,
+        "userVisibleHarmfulEditRate": 0.5
+      },
+      "m12b001": {
+        "changedRate": null,
+        "criticalFailureCount": 3,
+        "decomposedLanguageMetrics": null,
+        "failureBreakdown": {
+          "finalUserVisibleFailureCounts": {
+            "protectedLiteralCorruption": 1,
+            "unnecessaryEdit": 2,
+            "wrongLanguage": 1
+          },
+          "rawModelFailureCounts": {}
+        },
+        "guarantees": {
+          "languageSafety": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawWrongLanguage": 0
+          },
+          "oneContentUnitPreflightNoChange": 0,
+          "protectedLiterals": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawFailures": 0
+          },
+          "selectionGuards": {
+            "duplicateContextGuardHits": 0,
+            "finalVisibleSelectionFailures": 0,
+            "rawUnsafeProposalsCaught": 0
+          },
+          "strictUnresolvedGuard": {
+            "catches": 0,
+            "interceptions": 0
+          }
+        },
+        "languageMetrics": null,
+        "latencyP50": 754.5850276947021,
+        "latencyP95": 778.6810398101807,
+        "modelProposalFailureCount": null,
+        "modelProposalFailureRate": null,
+        "noChangeRate": null,
+        "objectivePassRate": 0.5,
+        "overAbstentionRate": null,
+        "protectedLiteralMetrics": {},
+        "provenance": null,
+        "runs": 6,
+        "stabilityDecomposition": {},
+        "usefulChangedRate": null,
+        "userVisibleHarmfulEditCount": null,
+        "userVisibleHarmfulEditRate": null
+      }
+    },
+    "validation": {
+      "baselineV2": {
+        "changedRate": null,
+        "criticalFailureCount": 25,
+        "decomposedLanguageMetrics": null,
+        "failureBreakdown": {
+          "finalUserVisibleFailureCounts": {
+            "excessiveExpansion": 5,
+            "inventedInformation": 1,
+            "protectedLiteralCorruption": 15,
+            "unnecessaryEdit": 7,
+            "wrongLanguage": 9
+          },
+          "rawModelFailureCounts": {}
+        },
+        "guarantees": {
+          "languageSafety": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawWrongLanguage": 0
+          },
+          "oneContentUnitPreflightNoChange": 0,
+          "protectedLiterals": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawFailures": 0
+          },
+          "selectionGuards": {
+            "duplicateContextGuardHits": 0,
+            "finalVisibleSelectionFailures": 0,
+            "rawUnsafeProposalsCaught": 0
+          },
+          "strictUnresolvedGuard": {
+            "catches": 0,
+            "interceptions": 0
+          }
+        },
+        "languageMetrics": null,
+        "latencyP50": 736.1059188842773,
+        "latencyP95": 927.3999929428101,
+        "modelProposalFailureCount": null,
+        "modelProposalFailureRate": null,
+        "noChangeRate": null,
+        "objectivePassRate": 0.43859649122807015,
+        "overAbstentionRate": null,
+        "protectedLiteralMetrics": {},
+        "provenance": null,
+        "runs": 57,
+        "stabilityDecomposition": {},
+        "usefulChangedRate": null,
+        "userVisibleHarmfulEditCount": null,
+        "userVisibleHarmfulEditRate": null
+      },
+      "final": {
+        "changedRate": 0.7543859649122807,
+        "criticalFailureCount": 15,
+        "decomposedLanguageMetrics": {
+          "finalUserVisibleLanguageSafe": {
+            "failureCount": 5,
+            "rate": 0.9,
+            "requiresReviewCount": 0,
+            "successCount": 45
+          },
+          "inputLanguageResolution": {
+            "failureCount": 17,
+            "rate": 0.66,
+            "requiresReviewCount": 0,
+            "successCount": 33
+          },
+          "languageValidatorOutcome": {
+            "failureCount": 1,
+            "rate": 0.98,
+            "requiresReviewCount": 0,
+            "successCount": 49
+          },
+          "rawGenerationLanguageCorrect": {
+            "failureCount": 6,
+            "rate": 0.88,
+            "requiresReviewCount": 0,
+            "successCount": 44
+          },
+          "technicalTermPreservation": {
+            "failureCount": 38,
+            "rate": 0.24,
+            "requiresReviewCount": 0,
+            "successCount": 12
+          }
+        },
+        "failureBreakdown": {
+          "finalUserVisibleFailureCounts": {
+            "excessiveExpansion": 1,
+            "protectedLiteralCorruption": 9,
+            "unnecessaryEdit": 2,
+            "wrongLanguage": 4
+          },
+          "rawModelFailureCounts": {
+            "moneyCorruption": 1,
+            "outsideSelectionRewrite": 1,
+            "protectedLiteralCorruption": 2,
+            "wrongLanguage": 6
+          }
+        },
+        "guarantees": {
+          "languageSafety": {
+            "finalVisibleFailures": 5,
+            "guardInterceptions": 1,
+            "rawWrongLanguage": 6
+          },
+          "oneContentUnitPreflightNoChange": 0,
+          "protectedLiterals": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 3,
+            "rawFailures": 3
+          },
+          "selectionGuards": {
+            "duplicateContextGuardHits": 0,
+            "finalVisibleSelectionFailures": 1,
+            "rawUnsafeProposalsCaught": 1
+          },
+          "strictUnresolvedGuard": {
+            "catches": 0,
+            "interceptions": 0
+          }
+        },
+        "languageMetrics": {
+          "enDriftCases": 0,
+          "esToEnDriftCases": 0,
+          "falseRejections": 0,
+          "generationContractViolations": 0,
+          "generationLanguageCorrectRate": 0.88,
+          "languageSafetyRejections": 4,
+          "mixedLanguageFailures": 0,
+          "ptToEnDriftCases": 2,
+          "resolverMistakes": 2,
+          "rootCauseCounts": {
+            "evaluatorDisagreement": 28,
+            "other": 19,
+            "resolverFailure": 2,
+            "validatorCatch": 1
+          },
+          "userVisibleLanguageSafeRate": 0.9,
+          "validatorCatches": 1,
+          "validatorMisses": 0
+        },
+        "latencyP50": 755.6509971618652,
+        "latencyP95": 1113.9459609985352,
+        "modelProposalFailureCount": 1,
+        "modelProposalFailureRate": 0.017543859649122806,
+        "noChangeRate": 0.22807017543859648,
+        "objectivePassRate": 0.543859649122807,
+        "overAbstentionRate": 0.14285714285714285,
+        "protectedLiteralMetrics": {
+          "coveredRuns": 12,
+          "guardRejectionCount": 3,
+          "proposalFailureWithSafetySuccessCount": 3,
+          "rawProposalCorruptionCount": 3,
+          "rejectionsByClass": {
+            "identifier": 2,
+            "money": 1
+          },
+          "userVisibleProtectedLiteralCorruptionCount": 0
+        },
+        "provenance": "m12b-007g-reuse-2026-09-22T14:23:58Z",
+        "runs": 57,
+        "stabilityDecomposition": {},
+        "usefulChangedRate": 0.4418604651162791,
+        "userVisibleHarmfulEditCount": 25,
+        "userVisibleHarmfulEditRate": 0.43859649122807015
+      },
+      "m12b001": {
+        "changedRate": null,
+        "criticalFailureCount": 20,
+        "decomposedLanguageMetrics": null,
+        "failureBreakdown": {
+          "finalUserVisibleFailureCounts": {
+            "protectedLiteralCorruption": 13,
+            "unnecessaryEdit": 3,
+            "wrongLanguage": 4
+          },
+          "rawModelFailureCounts": {}
+        },
+        "guarantees": {
+          "languageSafety": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawWrongLanguage": 0
+          },
+          "oneContentUnitPreflightNoChange": 0,
+          "protectedLiterals": {
+            "finalVisibleFailures": 0,
+            "guardInterceptions": 0,
+            "rawFailures": 0
+          },
+          "selectionGuards": {
+            "duplicateContextGuardHits": 0,
+            "finalVisibleSelectionFailures": 0,
+            "rawUnsafeProposalsCaught": 0
+          },
+          "strictUnresolvedGuard": {
+            "catches": 0,
+            "interceptions": 0
+          }
+        },
+        "languageMetrics": null,
+        "latencyP50": 761.5270614624023,
+        "latencyP95": 983.2760095596313,
+        "modelProposalFailureCount": null,
+        "modelProposalFailureRate": null,
+        "noChangeRate": null,
+        "objectivePassRate": 0.5263157894736842,
+        "overAbstentionRate": null,
+        "protectedLiteralMetrics": {},
+        "provenance": null,
+        "runs": 57,
+        "stabilityDecomposition": {},
+        "usefulChangedRate": null,
+        "userVisibleHarmfulEditCount": null,
+        "userVisibleHarmfulEditRate": null
+      }
+    }
+  },
+  "stability": {
+    "baselineV2": {
+      "changedRate": null,
+      "criticalFailureCount": 169,
+      "decomposedLanguageMetrics": null,
+      "failureBreakdown": {
+        "finalUserVisibleFailureCounts": {
+          "excessiveExpansion": 7,
+          "inventedInformation": 6,
+          "protectedLiteralCorruption": 7,
+          "unnecessaryEdit": 19,
+          "wrongLanguage": 6
+        },
+        "rawModelFailureCounts": {}
+      },
+      "guarantees": {
+        "languageSafety": {
+          "finalVisibleFailures": 0,
+          "guardInterceptions": 0,
+          "rawWrongLanguage": 0
+        },
+        "oneContentUnitPreflightNoChange": 0,
+        "protectedLiterals": {
+          "finalVisibleFailures": 0,
+          "guardInterceptions": 0,
+          "rawFailures": 0
+        },
+        "selectionGuards": {
+          "duplicateContextGuardHits": 0,
+          "finalVisibleSelectionFailures": 1,
+          "rawUnsafeProposalsCaught": 0
+        },
+        "strictUnresolvedGuard": {
+          "catches": 0,
+          "interceptions": 0
+        }
+      },
+      "languageMetrics": null,
+      "latencyP50": 712.494969367981,
+      "latencyP95": 1047.7910041809082,
+      "modelProposalFailureCount": null,
+      "modelProposalFailureRate": null,
+      "noChangeRate": null,
+      "objectivePassRate": 0.380327868852459,
+      "overAbstentionRate": null,
+      "protectedLiteralMetrics": {},
+      "provenance": null,
+      "runs": 61,
+      "stabilityDecomposition": {},
+      "usefulChangedRate": null,
+      "userVisibleHarmfulEditCount": null,
+      "userVisibleHarmfulEditRate": null
+    },
+    "final": {
+      "changedRate": 0.5639344262295082,
+      "criticalFailureCount": 71,
+      "decomposedLanguageMetrics": {
+        "finalUserVisibleLanguageSafe": {
+          "failureCount": 0,
+          "rate": 1,
+          "requiresReviewCount": 0,
+          "successCount": 43
+        },
+        "inputLanguageResolution": {
+          "failureCount": 10,
+          "rate": 0.7435897435897436,
+          "requiresReviewCount": 4,
+          "successCount": 29
+        },
+        "languageValidatorOutcome": {
+          "failureCount": 2,
+          "rate": 0.9534883720930233,
+          "requiresReviewCount": 0,
+          "successCount": 41
+        },
+        "rawGenerationLanguageCorrect": {
+          "failureCount": 2,
+          "rate": 0.9534883720930233,
+          "requiresReviewCount": 0,
+          "successCount": 41
+        },
+        "technicalTermPreservation": {
+          "failureCount": 40,
+          "rate": 0.06976744186046512,
+          "requiresReviewCount": 0,
+          "successCount": 3
+        }
+      },
+      "failureBreakdown": {
+        "finalUserVisibleFailureCounts": {
+          "excessiveExpansion": 1,
+          "protectedLiteralCorruption": 2,
+          "unnecessaryEdit": 3
+        },
+        "rawModelFailureCounts": {
+          "outsideSelectionRewrite": 1,
+          "wrongLanguage": 2
+        }
+      },
+      "guarantees": {
+        "languageSafety": {
+          "finalVisibleFailures": 0,
+          "guardInterceptions": 3,
+          "rawWrongLanguage": 2
+        },
+        "oneContentUnitPreflightNoChange": 0,
+        "protectedLiterals": {
+          "finalVisibleFailures": 0,
+          "guardInterceptions": 0,
+          "rawFailures": 0
+        },
+        "selectionGuards": {
+          "duplicateContextGuardHits": 0,
+          "finalVisibleSelectionFailures": 1,
+          "rawUnsafeProposalsCaught": 1
+        },
+        "strictUnresolvedGuard": {
+          "catches": 1,
+          "interceptions": 1
+        }
+      },
+      "languageMetrics": {
+        "enDriftCases": 0,
+        "esToEnDriftCases": 0,
+        "falseRejections": 0,
+        "generationContractViolations": 0,
+        "generationLanguageCorrectRate": 0.9534883720930233,
+        "languageSafetyRejections": 3,
+        "mixedLanguageFailures": 0,
+        "ptToEnDriftCases": 1,
+        "resolverMistakes": 2,
+        "rootCauseCounts": {
+          "evaluatorDisagreement": 24,
+          "other": 16,
+          "resolverFailure": 2,
+          "validatorCatch": 1
+        },
+        "userVisibleLanguageSafeRate": 1,
+        "validatorCatches": 1,
+        "validatorMisses": 0
+      },
+      "latencyP50": 746.2359666824341,
+      "latencyP95": 991.8630123138428,
+      "modelProposalFailureCount": 1,
+      "modelProposalFailureRate": 0.01639344262295082,
+      "noChangeRate": 0.4360655737704918,
+      "objectivePassRate": 0.6885245901639344,
+      "overAbstentionRate": 0,
+      "protectedLiteralMetrics": {
+        "coveredRuns": 70,
+        "guardRejectionCount": 7,
+        "proposalFailureWithSafetySuccessCount": 7,
+        "rawProposalCorruptionCount": 7,
+        "rejectionsByClass": {
+          "email": 1,
+          "identifier": 4,
+          "money": 1,
+          "quotedLiteral": 1
+        },
+        "userVisibleProtectedLiteralCorruptionCount": 0
+      },
+      "provenance": "m12b-007g-reuse-2026-09-22T14:23:58Z",
+      "runs": 61,
+      "stabilityDecomposition": {
+        "actionInstability": {
+          "casesWithMultipleRuns": 61,
+          "unstableCaseIDs": [
+            "already-good-001",
+            "already-good-002",
+            "code-005",
+            "es-001",
+            "es-003",
+            "incomplete-003",
+            "incomplete-005",
+            "incomplete-006",
+            "incomplete-008",
+            "injection-002",
+            "message-draft-001",
+            "message-draft-003",
+            "message-draft-004",
+            "protected-002",
+            "protected-003",
+            "question-003",
+            "selection-extra-005",
+            "selection-extra-006",
+            "selection-extra-007",
+            "short-pt-001"
+          ],
+          "unstableCases": 20
+        },
+        "exactOutputInstability": {
+          "casesWithMultipleRuns": 61,
+          "unstableCaseIDs": [
+            "already-good-003",
+            "code-005",
+            "es-001",
+            "es-003",
+            "incomplete-001",
+            "incomplete-003",
+            "incomplete-005",
+            "incomplete-006",
+            "incomplete-008",
+            "injection-002",
+            "injection-003",
+            "injection-004",
+            "injection-005",
+            "leakage-003",
+            "message-draft-001",
+            "message-draft-002",
+            "message-draft-003",
+            "message-draft-004",
+            "mixed-pt-en-004",
+            "mixed-pt-en-006",
+            "protected-003",
+            "question-003",
+            "selection-ambiguous-005",
+            "selection-en-typo-003",
+            "selection-extra-002",
+            "selection-extra-005",
+            "selection-extra-007",
+            "selection-pt-fragment-002",
+            "selection-pt-greeting-001",
+            "selection-pt-tiny-008",
+            "selection-pt-unicode-006",
+            "short-pt-001"
+          ],
+          "unstableCases": 32
+        },
+        "languageOutputInstability": {
+          "casesWithMultipleRuns": 61,
+          "unstableCaseIDs": [
+            "injection-003",
+            "protected-002",
+            "selection-extra-001",
+            "selection-pt-unicode-006"
+          ],
+          "unstableCases": 4
+        },
+        "languageResolutionInstability": {
+          "casesWithMultipleRuns": 61,
+          "unstableCaseIDs": [],
+          "unstableCases": 0
+        },
+        "noChangeChangedFlapping": {
+          "casesWithMultipleRuns": 61,
+          "unstableCaseIDs": [
+            "already-good-001",
+            "already-good-002",
+            "code-005",
+            "es-001",
+            "es-003",
+            "incomplete-003",
+            "incomplete-005",
+            "incomplete-006",
+            "incomplete-008",
+            "injection-002",
+            "message-draft-001",
+            "message-draft-003",
+            "message-draft-004",
+            "protected-002",
+            "protected-003",
+            "question-003",
+            "selection-extra-005",
+            "selection-extra-006",
+            "selection-extra-007",
+            "short-pt-001"
+          ],
+          "unstableCases": 20
+        },
+        "passFailInstability": {
+          "casesWithMultipleRuns": 61,
+          "unstableCaseIDs": [
+            "already-good-001",
+            "already-good-002",
+            "code-005",
+            "es-003",
+            "incomplete-003",
+            "incomplete-006",
+            "injection-002",
+            "injection-003",
+            "injection-004",
+            "injection-005",
+            "protected-002",
+            "protected-003",
+            "selection-extra-001",
+            "selection-extra-005",
+            "selection-extra-006",
+            "selection-extra-007",
+            "short-pt-001"
+          ],
+          "unstableCases": 17
+        }
+      },
+      "usefulChangedRate": 0.5116279069767442,
+      "userVisibleHarmfulEditCount": 23,
+      "userVisibleHarmfulEditRate": 0.3770491803278688
+    }
+  },
+  "topFailureClusters": [
+    {
+      "blocksBeta": false,
+      "clearGeneralFix": false,
+      "cluster": "protectedLiteralCorruption",
+      "count": 33,
+      "repeatable": true,
+      "representativeCaseIDs": [
+        "es-003",
+        "es-009",
+        "legacy-selection-en-fragment-001",
+        "legacy-selection-unicode-pt-001",
+        "legacy-telegraphic-work-note-pt-001",
+        "legacy-uncertainty-pt-001",
+        "long-pt-001",
+        "medium-pt-001"
+      ],
+      "severity": "medium"
+    },
+    {
+      "blocksBeta": false,
+      "clearGeneralFix": false,
+      "cluster": "wrongLanguage",
+      "count": 10,
+      "repeatable": true,
+      "representativeCaseIDs": [
+        "es-002",
+        "meeting-dump-003",
+        "numbers-003",
+        "short-pt-004",
+        "telegraphic-pt-009",
+        "variant-pt-014",
+        "variant-pt-015",
+        "variant-pt-022"
+      ],
+      "severity": "critical"
+    },
+    {
+      "blocksBeta": false,
+      "clearGeneralFix": false,
+      "cluster": "unnecessaryEdit",
+      "count": 9,
+      "repeatable": false,
+      "representativeCaseIDs": [
+        "es-004",
+        "legacy-ambiguous-fragment-pt-001",
+        "legacy-casual-slang-pt-001",
+        "legacy-selection-ambiguous-nochange-001",
+        "medium-en-006",
+        "medium-pt-005",
+        "medium-pt-011",
+        "selection-ambiguous-005"
+      ],
+      "severity": "medium"
+    },
+    {
+      "blocksBeta": false,
+      "clearGeneralFix": false,
+      "cluster": "excessiveExpansion",
+      "count": 5,
+      "repeatable": false,
+      "representativeCaseIDs": [
+        "short-pt-002",
+        "telegraphic-en-002",
+        "telegraphic-en-008",
+        "variant-en-052",
+        "variant-pt-018"
+      ],
+      "severity": "medium"
+    }
+  ]
+}

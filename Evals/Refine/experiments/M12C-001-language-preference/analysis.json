@@ -1,0 +1,135 @@
+{
+  "baseline": "refine-v2",
+  "blockers": [],
+  "decision": "ACCEPT",
+  "fixedLocaleByTarget": {
+    "en-US": {
+      "caseIDs": [
+        "fixed-en-us-001",
+        "m12c-fixed-en-en-001",
+        "m12c-fixed-en-es-001",
+        "m12c-fixed-protected-code-001",
+        "m12c-fixed-protected-email-001",
+        "m12c-fixed-protected-time-001",
+        "m12c-fixed-selection-context-001"
+      ],
+      "wrongTargetLanguageCount": 0
+    },
+    "es-ES": {
+      "caseIDs": [
+        "fixed-es-es-001",
+        "m12c-fixed-es-en-001",
+        "m12c-fixed-es-es-001",
+        "m12c-fixed-es-pt-001",
+        "m12c-fixed-protected-handle-001",
+        "m12c-fixed-protected-percent-001"
+      ],
+      "wrongTargetLanguageCount": 0
+    },
+    "pt-BR": {
+      "caseIDs": [
+        "fixed-pt-br-001",
+        "m12c-fixed-protected-id-001",
+        "m12c-fixed-protected-money-001",
+        "m12c-fixed-protected-url-001",
+        "m12c-fixed-pt-es-001",
+        "m12c-fixed-pt-pt-001",
+        "m12c-fixed-selection-001"
+      ],
+      "wrongTargetLanguageCount": 0
+    }
+  },
+  "fixedLocaleCohort": {
+    "changedRate": 0.6,
+    "criticalFailureCount": 0,
+    "noChangeRate": 0.4,
+    "p50": 864.415,
+    "p95": 1257.517,
+    "protectedLiteralFailureCount": 0,
+    "runs": 20,
+    "selectionFailureCount": 0,
+    "wrongTargetLanguageCount": 0,
+    "wrongTargetLanguageRate": 0.0
+  },
+  "generatedAt": "2026-09-22T14:49:50.266917+00:00",
+  "languagePreference": {
+    "changedRate": 0.68,
+    "criticalFailureCount": 0,
+    "noChangeRate": 0.32,
+    "p50": 859.243,
+    "p95": 1257.517,
+    "protectedLiteralFailureCount": 0,
+    "runs": 25,
+    "selectionFailureCount": 0,
+    "wrongTargetLanguageCount": 0,
+    "wrongTargetLanguageRate": 0.0
+  },
+  "matchNoteCohort": {
+    "changedRate": 1.0,
+    "criticalFailureCount": 0,
+    "noChangeRate": 0.0,
+    "p50": 833.6639,
+    "p95": 1145.98,
+    "protectedLiteralFailureCount": 0,
+    "runs": 5,
+    "selectionFailureCount": 0,
+    "wrongTargetLanguageCount": 0,
+    "wrongTargetLanguageRate": 0.0
+  },
+  "matchNoteRegression": {
+    "dev": {
+      "criticalFailureCount": {
+        "current": null,
+        "delta": null,
+        "refineV2": null
+      },
+      "objectivePassRate": {
+        "current": 0.6424870466321243,
+        "delta": -0.0207,
+        "refineV2": 0.6632124352331606
+      },
+      "split": "dev",
+      "userVisibleHarmfulEditRate": {
+        "current": null,
+        "delta": null,
+        "refineV2": null
+      }
+    },
+    "regression": {
+      "criticalFailureCount": {
+        "current": null,
+        "delta": null,
+        "refineV2": null
+      },
+      "objectivePassRate": {
+        "current": 0.5,
+        "delta": 0.0,
+        "refineV2": 0.5
+      },
+      "split": "regression",
+      "userVisibleHarmfulEditRate": {
+        "current": null,
+        "delta": null,
+        "refineV2": null
+      }
+    },
+    "validation": {
+      "criticalFailureCount": {
+        "current": null,
+        "delta": null,
+        "refineV2": null
+      },
+      "objectivePassRate": {
+        "current": 0.5789473684210527,
+        "delta": 0.0351,
+        "refineV2": 0.543859649122807
+      },
+      "split": "validation",
+      "userVisibleHarmfulEditRate": {
+        "current": null,
+        "delta": null,
+        "refineV2": null
+      }
+    }
+  }
+}

@@ -1,0 +1,1034 @@
+{
+  "candidate": {
+    "byCohort": {
+      "clearEN": {
+        "cases": 73,
+        "correctTarget": 43,
+        "correctUnresolved": 24,
+        "incorrectConfident": 0,
+        "incorrectMixed": 0,
+        "incorrectTarget": 1,
+        "lowConfidence": 5,
+        "other": 0
+      },
+      "clearES": {
+        "cases": 12,
+        "correctTarget": 11,
+        "correctUnresolved": 0,
+        "incorrectConfident": 1,
+        "incorrectMixed": 0,
+        "incorrectTarget": 0,
+        "lowConfidence": 0,
+        "other": 0
+      },
+      "clearPT": {
+        "cases": 86,
+        "correctTarget": 49,
+        "correctUnresolved": 19,
+        "incorrectConfident": 9,
+        "incorrectMixed": 0,
+        "incorrectTarget": 4,
+        "lowConfidence": 5,
+        "other": 0
+      },
+      "frontierWrongLanguage": {
+        "cases": 18,
+        "correctTarget": 11,
+        "correctUnresolved": 2,
+        "incorrectConfident": 5,
+        "incorrectMixed": 0,
+        "incorrectTarget": 0,
+        "lowConfidence": 0,
+        "other": 0
+      },
+      "mixedTechnical": {
+        "cases": 14,
+        "correctTarget": 4,
+        "correctUnresolved": 3,
+        "incorrectConfident": 3,
+        "incorrectMixed": 2,
+        "incorrectTarget": 2,
+        "lowConfidence": 0,
+        "other": 0
+      },
+      "selection": {
+        "cases": 17,
+        "correctTarget": 4,
+        "correctUnresolved": 2,
+        "incorrectConfident": 11,
+        "incorrectMixed": 0,
+        "incorrectTarget": 0,
+        "lowConfidence": 0,
+        "other": 0
+      },
+      "selectionExtra007": {
+        "cases": 1,
+        "correctTarget": 0,
+        "correctUnresolved": 1,
+        "incorrectConfident": 0,
+        "incorrectMixed": 0,
+        "incorrectTarget": 0,
+        "lowConfidence": 0,
+        "other": 0
+      },
+      "tinyAmbiguous": {
+        "cases": 24,
+        "correctTarget": 0,
+        "correctUnresolved": 22,
+        "incorrectConfident": 2,
+        "incorrectMixed": 0,
+        "incorrectTarget": 0,
+        "lowConfidence": 0,
+        "other": 0
+      }
+    },
+    "byMixedSubcohort": {
+      "mixedESTechnical": {
+        "cases": 0,
+        "correctTarget": 0,
+        "correctUnresolved": 0,
+        "incorrectConfident": 0,
+        "incorrectMixed": 0,
+        "incorrectTarget": 0,
+        "lowConfidence": 0,
+        "other": 0
+      },
+      "mixedOther": {
+        "cases": 9,
+        "correctTarget": 0,
+        "correctUnresolved": 3,
+        "incorrectConfident": 3,
+        "incorrectMixed": 1,
+        "incorrectTarget": 2,
+        "lowConfidence": 0,
+        "other": 0
+      },
+      "mixedPTTechnical": {
+        "cases": 5,
+        "correctTarget": 4,
+        "correctUnresolved": 0,
+        "incorrectConfident": 0,
+        "incorrectMixed": 1,
+        "incorrectTarget": 0,
+        "lowConfidence": 0,
+        "other": 0
+      }
+    },
+    "byTokenBucket": {
+      "1-3": {
+        "cases": 98,
+        "correctTarget": 0,
+        "correctUnresolved": 70,
+        "incorrectConfident": 28,
+        "incorrectMixed": 0,
+        "incorrectTarget": 0,
+        "lowConfidence": 0,
+        "other": 0
+      },
+      "4-8": {
+        "cases": 100,
+        "correctTarget": 84,
+        "correctUnresolved": 3,
+        "incorrectConfident": 1,
+        "incorrectMixed": 0,
+        "incorrectTarget": 6,
+        "lowConfidence": 6,
+        "other": 0
+      },
+      "9+": {
+        "cases": 47,
+        "correctTarget": 38,
+        "correctUnresolved": 0,
+        "incorrectConfident": 2,
+        "incorrectMixed": 2,
+        "incorrectTarget": 1,
+        "lowConfidence": 4,
+        "other": 0
+      }
+    },
+    "counts": {
+      "correct_target": 122,
+      "correct_unresolved": 73,
+      "incorrect_confident": 31,
+      "incorrect_mixed": 2,
+      "incorrect_target": 7,
+      "low_confidence": 10
+    },
+    "metrics": {
+      "correctTarget": 122,
+      "correctUnresolved": 73,
+      "falseEnglishResolution": 6,
+      "falsePortugueseResolution": 1,
+      "falseSpanishResolution": 0,
+      "incorrectConfident": 31,
+      "incorrectMixed": 2,
+      "incorrectTarget": 7,
+      "lowConfidenceUnresolved": 10
+    },
+    "summary": {
+      "ambiguousAccuracy": 0.7143,
+      "ambiguousCases": 98,
+      "ambiguousCorrect": 70,
+      "cases": 245,
+      "clearLanguageAccuracy": 0.8872,
+      "clearLanguageCases": 133,
+      "clearLanguageCorrect": 118,
+      "lowConfidenceRate": 0.3388,
+      "mixedLanguageAccuracy": 0.5,
+      "mixedLanguageCases": 14,
+      "mixedLanguageCorrect": 7,
+      "overallAccuracy": 0.7959,
+      "overallCorrect": 195
+    }
+  },
+  "candidateFailureClusters": [
+    {
+      "caseIDs": [
+        "legacy-selection-pt-misspelling-001",
+        "selection-pt-fragment-002",
+        "selection-pt-tiny-008",
+        "short-pt-001",
+        "short-pt-002",
+        "short-pt-006",
+        "variant-pt-002",
+        "variant-pt-003",
+        "variant-pt-004",
+        "variant-pt-005",
+        "variant-pt-006",
+        "variant-pt-007",
+        "variant-pt-008"
+      ],
+      "cluster": "incorrect_confident:pt:marker_clear_margin",
+      "count": 13
+    },
+    {
+      "caseIDs": [
+        "acronym-001",
+        "acronym-002",
+        "acronym-004",
+        "acronym-005",
+        "long-pt-002",
+        "long-pt-003",
+        "long-pt-004",
+        "long-pt-005",
+        "medium-en-009",
+        "medium-pt-013"
+      ],
+      "cluster": "low_confidence:ambiguous:unresolved_insufficient_evidence",
+      "count": 10
+    },
+    {
+      "caseIDs": [
+        "incomplete-002",
+        "legacy-ambiguous-fragment-pt-001",
+        "selection-extra-001",
+        "selection-extra-002",
+        "selection-extra-006",
+        "short-pt-007",
+        "short-pt-015",
+        "tiny-pt-001",
+        "tiny-pt-007"
+      ],
+      "cluster": "incorrect_confident:pt:marker_single_language",
+      "count": 9
+    },
+    {
+      "caseIDs": [
+        "mixed-tech-001",
+        "variant-pt-022",
+        "variant-pt-023",
+        "variant-pt-024"
+      ],
+      "cluster": "incorrect_target:en:marker_single_language",
+      "count": 4
+    },
+    {
+      "caseIDs": [
+        "mixed-tech-004",
+        "mixed-tech-008",
+        "selection-extra-008"
+      ],
+      "cluster": "incorrect_confident:en:natural_language_tie_break",
+      "count": 3
+    },
+    {
+      "caseIDs": [
+        "legacy-selection-ambiguous-nochange-001",
+        "selection-ambiguous-005"
+      ],
+      "cluster": "incorrect_confident:en:marker_clear_margin",
+      "count": 2
+    },
+    {
+      "caseIDs": [
+        "legacy-technical-mixed-001",
+        "selection-leak-test-007"
+      ],
+      "cluster": "incorrect_confident:en:marker_single_language",
+      "count": 2
+    },
+    {
+      "caseIDs": [
+        "legacy-mixed-language-001",
+        "mixed-pt-en-001"
+      ],
+      "cluster": "incorrect_mixed:mixed:marker_true_tie",
+      "count": 2
+    },
+    {
+      "caseIDs": [
+        "meeting-dump-003",
+        "protected-003"
+      ],
+      "cluster": "incorrect_target:en:natural_language_tie_break",
+      "count": 2
+    },
+    {
+      "caseIDs": [
+        "incomplete-005"
+      ],
+      "cluster": "incorrect_confident:es:marker_single_language",
+      "count": 1
+    },
+    {
+      "caseIDs": [
+        "selection-extra-005"
+      ],
+      "cluster": "incorrect_confident:pt:natural_language_tie_break",
+      "count": 1
+    },
+    {
+      "caseIDs": [
+        "protected-002"
+      ],
+      "cluster": "incorrect_target:pt:marker_single_language",
+      "count": 1
+    }
+  ],
+  "caseCount": 245,
+  "decision": "ACCEPT FOR EXPERIMENT",
+  "decisionRationale": "Candidate materially improves resolver target accuracy (+38.8 pp overall), fixes 14/18 frontier wrong-language cases, and reduces confident wrong targets on tiny/technical inputs with only 4 benchmark regressions (mostly acceptable loss of accidental system-locale guesses).",
+  "delta": {
+    "ambiguousAccuracy": 0.3367,
+    "clearLanguageAccuracy": 0.4361,
+    "lowConfidenceRate": 0.1143,
+    "mixedLanguageAccuracy": 0.2857,
+    "overallAccuracy": 0.3877
+  },
+  "experiment": "M12B-007A-language-resolver",
+  "frontier": {
+    "cases": 18,
+    "fixes": 14,
+    "partial": 0,
+    "priorIncorrectOrNoncommittal": 17,
+    "regressions": 0,
+    "rows": [
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "pt",
+        "caseID": "already-good-001",
+        "change": "fix",
+        "expectedLanguage": "pt",
+        "input": "Enviar o relatório assinado amanhã.",
+        "productionConfidence": "high",
+        "productionStatus": "incorrect",
+        "productionTarget": "mixed"
+      },
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "pt",
+        "caseID": "already-good-006",
+        "change": "fix",
+        "expectedLanguage": "pt",
+        "input": "Deploy da v2.1.0 agendado para sexta-feira.",
+        "productionConfidence": "high",
+        "productionStatus": "incorrect",
+        "productionTarget": "mixed"
+      },
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "es",
+        "caseID": "es-003",
+        "change": "fix",
+        "expectedLanguage": "es",
+        "input": "tal vez el retry se duplica",
+        "productionConfidence": "high",
+        "productionStatus": "incorrect",
+        "productionTarget": "mixed"
+      },
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "pt",
+        "caseID": "factual-001",
+        "change": "same",
+        "expectedLanguage": "pt",
+        "input": "Invoice R$ 2.450,00 due 2026-10-01 https://pay.acme.com/inv/991",
+        "productionConfidence": "high",
+        "productionStatus": "correct",
+        "productionTarget": "pt"
+      },
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "pt",
+        "caseID": "factual-003",
+        "change": "fix",
+        "expectedLanguage": "pt",
+        "input": "Desconto 15% até 31/12 link https://loja.example/black-friday",
+        "productionConfidence": "high",
+        "productionStatus": "incorrect",
+        "productionTarget": "es"
+      },
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "pt",
+        "caseID": "medium-pt-001",
+        "change": "fix",
+        "expectedLanguage": "pt",
+        "input": "acho q retry ta duplicando na fila",
+        "productionConfidence": "high",
+        "productionStatus": "incorrect",
+        "productionTarget": "mixed"
+      },
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "pt",
+        "caseID": "medium-pt-010",
+        "change": "fix",
+        "expectedLanguage": "pt",
+        "input": "ajustar copy do onboarding depois do deploy",
+        "productionConfidence": "high",
+        "productionStatus": "incorrect",
+        "productionTarget": "mixed"
+      },
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "pt",
+        "caseID": "messy-003",
+        "change": "fix",
+        "expectedLanguage": "pt",
+        "input": "ideia refine conservador reversível preview accept esc undo nunca destruir original",
+        "productionConfidence": "high",
+        "productionStatus": "incorrect",
+        "productionTarget": "mixed"
+      },
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "es",
+        "caseID": "question-003",
+        "change": "fix",
+        "expectedLanguage": "es",
+        "input": "¿puede que el retry se ejecute antes del tick?",
+        "productionConfidence": "high",
+        "productionStatus": "incorrect",
+        "productionTarget": "mixed"
+      },
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "pt",
+        "caseID": "short-pt-006",
+        "change": "fix",
+        "expectedLanguage": "pt",
+        "input": "mandar msg",
+        "productionConfidence": "high",
+        "productionStatus": "incorrect",
+        "productionTarget": "mixed"
+      },
+      {
+        "candidateConfidence": "insufficient",
+        "candidateStatus": "unresolved",
+        "candidateTarget": "ambiguous",
+        "caseID": "short-pt-014",
+        "change": "unresolved",
+        "expectedLanguage": "pt",
+        "input": "pingar Vitor",
+        "productionConfidence": "insufficient",
+        "productionStatus": "unresolved",
+        "productionTarget": "en"
+      },
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "pt",
+        "caseID": "variant-pt-002",
+        "change": "same",
+        "expectedLanguage": "pt",
+        "input": "ver export depois",
+        "productionConfidence": "high",
+        "productionStatus": "correct",
+        "productionTarget": "pt"
+      },
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "pt",
+        "caseID": "variant-pt-004",
+        "change": "fix",
+        "expectedLanguage": "pt",
+        "input": "ver fila depois",
+        "productionConfidence": "high",
+        "productionStatus": "incorrect",
+        "productionTarget": "mixed"
+      },
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "pt",
+        "caseID": "variant-pt-005",
+        "change": "fix",
+        "expectedLanguage": "pt",
+        "input": "talvez retry amanhã",
+        "productionConfidence": "high",
+        "productionStatus": "incorrect",
+        "productionTarget": "mixed"
+      },
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "pt",
+        "caseID": "variant-pt-008",
+        "change": "fix",
+        "expectedLanguage": "pt",
+        "input": "talvez fila amanhã",
+        "productionConfidence": "high",
+        "productionStatus": "incorrect",
+        "productionTarget": "mixed"
+      },
+      {
+        "candidateConfidence": "insufficient",
+        "candidateStatus": "unresolved",
+        "candidateTarget": "ambiguous",
+        "caseID": "variant-pt-016",
+        "change": "unresolved",
+        "expectedLanguage": "pt",
+        "input": "bug no fila?",
+        "productionConfidence": "high",
+        "productionStatus": "incorrect",
+        "productionTarget": "es"
+      },
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "pt",
+        "caseID": "variant-pt-021",
+        "change": "fix",
+        "expectedLanguage": "pt",
+        "input": "preciso revisar antes do deploy",
+        "productionConfidence": "high",
+        "productionStatus": "incorrect",
+        "productionTarget": "mixed"
+      },
+      {
+        "candidateConfidence": "high",
+        "candidateStatus": "correct",
+        "candidateTarget": "pt",
+        "caseID": "variant-pt-028",
+        "change": "fix",
+        "expectedLanguage": "pt",
+        "input": "ideia: melhorar fila no refine",
+        "productionConfidence": "high",
+        "productionStatus": "incorrect",
+        "productionTarget": "mixed"
+      }
+    ],
+    "sameIncorrect": 2,
+    "unresolved": 2
+  },
+  "generatedAt": "2026-09-22T02:17:26Z",
+  "production": {
+    "byCohort": {
+      "clearEN": {
+        "cases": 73,
+        "correctTarget": 26,
+        "correctUnresolved": 8,
+        "incorrectConfident": 16,
+        "incorrectMixed": 4,
+        "incorrectTarget": 8,
+        "lowConfidence": 11,
+        "other": 0
+      },
+      "clearES": {
+        "cases": 12,
+        "correctTarget": 10,
+        "correctUnresolved": 0,
+        "incorrectConfident": 1,
+        "incorrectMixed": 1,
+        "incorrectTarget": 0,
+        "lowConfidence": 0,
+        "other": 0
+      },
+      "clearPT": {
+        "cases": 86,
+        "correctTarget": 19,
+        "correctUnresolved": 11,
+        "incorrectConfident": 17,
+        "incorrectMixed": 26,
+        "incorrectTarget": 7,
+        "lowConfidence": 6,
+        "other": 0
+      },
+      "frontierWrongLanguage": {
+        "cases": 18,
+        "correctTarget": 1,
+        "correctUnresolved": 1,
+        "incorrectConfident": 6,
+        "incorrectMixed": 9,
+        "incorrectTarget": 1,
+        "lowConfidence": 0,
+        "other": 0
+      },
+      "mixedTechnical": {
+        "cases": 14,
+        "correctTarget": 2,
+        "correctUnresolved": 1,
+        "incorrectConfident": 2,
+        "incorrectMixed": 4,
+        "incorrectTarget": 4,
+        "lowConfidence": 1,
+        "other": 0
+      },
+      "selection": {
+        "cases": 17,
+        "correctTarget": 4,
+        "correctUnresolved": 1,
+        "incorrectConfident": 12,
+        "incorrectMixed": 0,
+        "incorrectTarget": 0,
+        "lowConfidence": 0,
+        "other": 0
+      },
+      "selectionExtra007": {
+        "cases": 1,
+        "correctTarget": 0,
+        "correctUnresolved": 1,
+        "incorrectConfident": 0,
+        "incorrectMixed": 0,
+        "incorrectTarget": 0,
+        "lowConfidence": 0,
+        "other": 0
+      },
+      "tinyAmbiguous": {
+        "cases": 24,
+        "correctTarget": 0,
+        "correctUnresolved": 15,
+        "incorrectConfident": 9,
+        "incorrectMixed": 0,
+        "incorrectTarget": 0,
+        "lowConfidence": 0,
+        "other": 0
+      }
+    },
+    "byMixedSubcohort": {
+      "mixedESTechnical": {
+        "cases": 0,
+        "correctTarget": 0,
+        "correctUnresolved": 0,
+        "incorrectConfident": 0,
+        "incorrectMixed": 0,
+        "incorrectTarget": 0,
+        "lowConfidence": 0,
+        "other": 0
+      },
+      "mixedOther": {
+        "cases": 9,
+        "correctTarget": 0,
+        "correctUnresolved": 1,
+        "incorrectConfident": 2,
+        "incorrectMixed": 2,
+        "incorrectTarget": 3,
+        "lowConfidence": 1,
+        "other": 0
+      },
+      "mixedPTTechnical": {
+        "cases": 5,
+        "correctTarget": 2,
+        "correctUnresolved": 0,
+        "incorrectConfident": 0,
+        "incorrectMixed": 2,
+        "incorrectTarget": 1,
+        "lowConfidence": 0,
+        "other": 0
+      }
+    },
+    "byTokenBucket": {
+      "1-3": {
+        "cases": 98,
+        "correctTarget": 0,
+        "correctUnresolved": 37,
+        "incorrectConfident": 61,
+        "incorrectMixed": 0,
+        "incorrectTarget": 0,
+        "lowConfidence": 0,
+        "other": 0
+      },
+      "4-8": {
+        "cases": 100,
+        "correctTarget": 41,
+        "correctUnresolved": 1,
+        "incorrectConfident": 1,
+        "incorrectMixed": 25,
+        "incorrectTarget": 18,
+        "lowConfidence": 14,
+        "other": 0
+      },
+      "9+": {
+        "cases": 47,
+        "correctTarget": 21,
+        "correctUnresolved": 0,
+        "incorrectConfident": 1,
+        "incorrectMixed": 19,
+        "incorrectTarget": 2,
+        "lowConfidence": 4,
+        "other": 0
+      }
+    },
+    "counts": {
+      "correct_target": 62,
+      "correct_unresolved": 38,
+      "incorrect_confident": 63,
+      "incorrect_mixed": 44,
+      "incorrect_target": 20,
+      "low_confidence": 7,
+      "low_confidence_correct_fallback": 11
+    },
+    "metrics": {
+      "correctTarget": 62,
+      "correctUnresolved": 38,
+      "falseEnglishResolution": 15,
+      "falsePortugueseResolution": 2,
+      "falseSpanishResolution": 16,
+      "incorrectConfident": 63,
+      "incorrectMixed": 44,
+      "incorrectTarget": 20,
+      "lowConfidenceUnresolved": 18
+    },
+    "summary": {
+      "ambiguousAccuracy": 0.3776,
+      "ambiguousCases": 98,
+      "ambiguousCorrect": 37,
+      "cases": 245,
+      "clearLanguageAccuracy": 0.4511,
+      "clearLanguageCases": 133,
+      "clearLanguageCorrect": 60,
+      "lowConfidenceRate": 0.2245,
+      "mixedLanguageAccuracy": 0.2143,
+      "mixedLanguageCases": 14,
+      "mixedLanguageCorrect": 3,
+      "overallAccuracy": 0.4082,
+      "overallCorrect": 100
+    }
+  },
+  "productionFailureClusters": [
+    {
+      "caseIDs": [
+        "already-good-001",
+        "already-good-006",
+        "es-003",
+        "es-010",
+        "idea-pt-001",
+        "incomplete-006",
+        "leakage-001",
+        "leakage-003",
+        "legacy-message-pt-001",
+        "legacy-mixed-language-001",
+        "legacy-uncertainty-pt-001",
+        "long-pt-002",
+        "long-pt-003",
+        "long-pt-004",
+        "long-pt-005",
+        "medium-pt-001",
+        "medium-pt-002",
+        "medium-pt-005",
+        "medium-pt-006",
+        "medium-pt-007",
+        "medium-pt-010",
+        "medium-pt-013",
+        "meeting-dump-001",
+        "meeting-dump-003",
+        "message-draft-004",
+        "message-draft-005",
+        "message-pt-001",
+        "messy-003",
+        "messy-004",
+        "mixed-pt-en-001",
+        "mixed-pt-en-006",
+        "names-001",
+        "protected-003",
+        "protected-005",
+        "question-003",
+        "uncertainty-pt-001",
+        "variant-en-044",
+        "variant-en-064",
+        "variant-pt-009",
+        "variant-pt-021",
+        "variant-pt-025",
+        "variant-pt-027",
+        "variant-pt-028",
+        "variant-pt-029"
+      ],
+      "cluster": "incorrect_mixed:mixed:mixed_input",
+      "count": 44
+    },
+    {
+      "caseIDs": [
+        "incomplete-001",
+        "incomplete-003",
+        "incomplete-008",
+        "short-en-002",
+        "short-en-004",
+        "short-en-005",
+        "short-pt-005",
+        "telegraphic-en-005",
+        "telegraphic-en-006",
+        "telegraphic-pt-005",
+        "telegraphic-pt-006",
+        "tiny-en-001",
+        "tiny-en-002",
+        "tiny-en-005",
+        "tiny-en-006",
+        "tiny-pt-002",
+        "tiny-pt-006",
+        "tiny-pt-013",
+        "variant-en-037",
+        "variant-en-038",
+        "variant-en-045",
+        "variant-pt-013"
+      ],
+      "cluster": "incorrect_confident:en:detected_from_note",
+      "count": 22
+    },
+    {
+      "caseIDs": [
+        "incomplete-005",
+        "legacy-selection-ambiguous-nochange-001",
+        "legacy-selection-pt-ola-tudobem-001",
+        "selection-ambiguous-005",
+        "selection-extra-001",
+        "selection-extra-002",
+        "selection-extra-008",
+        "selection-leak-test-007",
+        "selection-pt-greeting-001",
+        "short-pt-001",
+        "short-pt-006",
+        "telegraphic-pt-001",
+        "variant-en-033",
+        "variant-en-034",
+        "variant-en-035",
+        "variant-en-036",
+        "variant-en-040",
+        "variant-pt-004",
+        "variant-pt-005",
+        "variant-pt-008"
+      ],
+      "cluster": "incorrect_confident:mixed:mixed_input",
+      "count": 20
+    },
+    {
+      "caseIDs": [
+        "acronym-001",
+        "already-good-010",
+        "factual-003",
+        "medium-en-009",
+        "message-draft-001",
+        "mixed-tech-002",
+        "mixed-tech-005",
+        "names-004",
+        "numbers-002",
+        "numbers-005",
+        "variant-en-052",
+        "variant-en-060"
+      ],
+      "cluster": "incorrect_target:es:detected_from_note",
+      "count": 12
+    },
+    {
+      "caseIDs": [
+        "incomplete-002",
+        "legacy-ambiguous-fragment-pt-001",
+        "short-pt-002",
+        "short-pt-007",
+        "short-pt-015",
+        "tiny-pt-001",
+        "tiny-pt-007",
+        "variant-pt-002",
+        "variant-pt-003",
+        "variant-pt-006",
+        "variant-pt-007"
+      ],
+      "cluster": "incorrect_confident:pt:detected_from_note",
+      "count": 11
+    },
+    {
+      "caseIDs": [
+        "mixed-tech-004",
+        "mixed-tech-008",
+        "short-en-009",
+        "telegraphic-pt-009",
+        "variant-en-048",
+        "variant-pt-016"
+      ],
+      "cluster": "incorrect_confident:es:detected_from_note",
+      "count": 6
+    },
+    {
+      "caseIDs": [
+        "mixed-pt-en-002",
+        "mixed-tech-001",
+        "variant-pt-017",
+        "variant-pt-022",
+        "variant-pt-023",
+        "variant-pt-024"
+      ],
+      "cluster": "incorrect_target:en:detected_from_note",
+      "count": 6
+    },
+    {
+      "caseIDs": [
+        "emoji-003",
+        "legacy-casual-intentional-pt-001",
+        "legacy-casual-slang-pt-001",
+        "medium-pt-011",
+        "names-005",
+        "variant-pt-018"
+      ],
+      "cluster": "low_confidence:en:system_locale_fallback_ambiguous_input",
+      "count": 6
+    },
+    {
+      "caseIDs": [
+        "legacy-selection-pt-misspelling-001",
+        "selection-extra-006",
+        "selection-pt-fragment-002",
+        "selection-pt-tiny-008"
+      ],
+      "cluster": "incorrect_confident:pt:detected_from_note_and_context",
+      "count": 4
+    },
+    {
+      "caseIDs": [
+        "numbers-004",
+        "protected-002"
+      ],
+      "cluster": "incorrect_target:pt:detected_from_note",
+      "count": 2
+    },
+    {
+      "caseIDs": [
+        "legacy-technical-mixed-001"
+      ],
+      "cluster": "low_confidence:mixed:mixed_input",
+      "count": 1
+    }
+  ],
+  "regressions": [
+    {
+      "candidate": {
+        "confidence": "insufficient",
+        "enforcesPostValidation": false,
+        "label": "ambiguous",
+        "localeIdentifier": "und",
+        "resolverReason": "unresolved_insufficient_evidence",
+        "usedSystemFallback": false
+      },
+      "candidateClass": "low_confidence",
+      "caseID": "acronym-002",
+      "cohort": "clearEN",
+      "expectedLanguage": "en",
+      "input": "SSO SAML OIDC JWT refresh token expiry",
+      "production": {
+        "confidence": "insufficient",
+        "enforcesPostValidation": false,
+        "label": "english",
+        "localeIdentifier": "en-US",
+        "resolverReason": "system_locale_fallback_ambiguous_input",
+        "usedSystemFallback": true
+      },
+      "productionClass": "low_confidence_correct_fallback"
+    },
+    {
+      "candidate": {
+        "confidence": "insufficient",
+        "enforcesPostValidation": false,
+        "label": "ambiguous",
+        "localeIdentifier": "und",
+        "resolverReason": "unresolved_insufficient_evidence",
+        "usedSystemFallback": false
+      },
+      "candidateClass": "low_confidence",
+      "caseID": "acronym-004",
+      "cohort": "clearEN",
+      "expectedLanguage": "en",
+      "input": "PRD MVP V1 beta NPS feedback",
+      "production": {
+        "confidence": "insufficient",
+        "enforcesPostValidation": false,
+        "label": "english",
+        "localeIdentifier": "en-US",
+        "resolverReason": "system_locale_fallback_ambiguous_input",
+        "usedSystemFallback": true
+      },
+      "productionClass": "low_confidence_correct_fallback"
+    },
+    {
+      "candidate": {
+        "confidence": "insufficient",
+        "enforcesPostValidation": false,
+        "label": "ambiguous",
+        "localeIdentifier": "und",
+        "resolverReason": "unresolved_insufficient_evidence",
+        "usedSystemFallback": false
+      },
+      "candidateClass": "low_confidence",
+      "caseID": "acronym-005",
+      "cohort": "clearEN",
+      "expectedLanguage": "en",
+      "input": "SQL FTS5 GRDB SQLite migration v4",
+      "production": {
+        "confidence": "insufficient",
+        "enforcesPostValidation": false,
+        "label": "english",
+        "localeIdentifier": "en-US",
+        "resolverReason": "system_locale_fallback_ambiguous_input",
+        "usedSystemFallback": true
+      },
+      "productionClass": "low_confidence_correct_fallback"
+    },
+    {
+      "candidate": {
+        "confidence": "high",
+        "enforcesPostValidation": true,
+        "label": "portuguese",
+        "localeIdentifier": "pt-BR",
+        "resolverReason": "natural_language_tie_break",
+        "usedSystemFallback": false
+      },
+      "candidateClass": "incorrect_confident",
+      "caseID": "selection-extra-005",
+      "cohort": "selection",
+      "expectedLanguage": "pt",
+      "input": "R$ 99,90",
+      "production": {
+        "confidence": "insufficient",
+        "enforcesPostValidation": false,
+        "label": "english",
+        "localeIdentifier": "en-US",
+        "resolverReason": "system_locale_fallback_ambiguous_input",
+        "usedSystemFallback": true
+      },
+      "productionClass": "correct_unresolved"
+    }
+  ],
+  "selectionExtra007": {
+    "candidate": "ambiguous/insufficient",
+    "production": "en/insufficient"
+  }
+}
