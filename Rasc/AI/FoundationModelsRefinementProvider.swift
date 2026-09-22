@@ -82,15 +82,23 @@ private extension FoundationModelsRefinementProvider {
 
         try Task.checkCancellation()
 
+        let resolvedLanguage = RefineLanguageResolver.resolve(request: request)
+        #if DEBUG
+        let legacyResolvedLanguage = RefineLanguageResolverV1.resolve(request: request)
+        #endif
+
         // LanguageModelSession is intentionally scoped to this one operation.
         let session = LanguageModelSession(
             model: model,
-            instructions: RefinementPrompt.instructions(for: request.scope)
+            instructions: RefinementPrompt.instructions(
+                for: request.scope,
+                resolvedLanguage: resolvedLanguage
+            )
         )
 
         do {
             let prompt = try RefinementPrompt.contentPrompt(for: request)
-            let result: RefinementResult
+            var result: RefinementResult
             switch request.scope {
             case .wholeNote:
                 let response = try await session.respond(
@@ -105,8 +113,104 @@ private extension FoundationModelsRefinementProvider {
                 )
                 result = try response.content.refinementResult(inputText: request.inputText)
             }
+
+            let rawResult = result
+            let validation = RefineLanguageValidator.validate(
+                input: request.inputText,
+                output: rawResult.text,
+                resolved: resolvedLanguage
+            )
+            let validatorRejected = rawResult.decision == .changed && validation.violates
+
+            if validatorRejected {
+                result = RefinementResult(decision: .noChange, kind: .alreadyGood, text: request.inputText)
+            }
+
+            let unresolvedGuard = RefineUnresolvedLanguageGuard.evaluate(
+                input: request.inputText,
+                output: rawResult.text,
+                rawDecision: rawResult.decision,
+                resolved: resolvedLanguage
+            )
+            let unresolvedGuardRejected = !validatorRejected
+                && rawResult.decision == .changed
+                && unresolvedGuard.shouldReject
+
+            if unresolvedGuardRejected {
+                result = RefinementResult(decision: .noChange, kind: .alreadyGood, text: request.inputText)
+            }
+
+            let trace = RefinementLanguageTrace(
+                resolvedLabel: resolvedLanguage.label.rawValue,
+                resolvedLocale: resolvedLanguage.localeIdentifier,
+                resolverConfidence: resolvedLanguage.confidence == .high ? "high" : "insufficient",
+                resolverReason: resolvedLanguage.resolverReason,
+                rawDecision: rawResult.decision,
+                rawText: rawResult.text,
+                validatorEvaluated: resolvedLanguage.enforcesPostValidation,
+                validatorRejected: validatorRejected,
+                decisionReason: Self.decisionReason(
+                    raw: rawResult,
+                    final: result,
+                    validatorRejected: validatorRejected,
+                    unresolvedGuardRejected: unresolvedGuardRejected,
+                    resolved: resolvedLanguage
+                ),
+                legacyResolvedLabel: {
+                    #if DEBUG
+                    legacyResolvedLanguage.label.rawValue
+                    #else
+                    nil
+                    #endif
+                }(),
+                legacyResolvedLocale: {
+                    #if DEBUG
+                    legacyResolvedLanguage.localeIdentifier
+                    #else
+                    nil
+                    #endif
+                }(),
+                legacyResolverConfidence: {
+                    #if DEBUG
+                    legacyResolvedLanguage.confidence == .high ? "high" : "insufficient"
+                    #else
+                    nil
+                    #endif
+                }(),
+                legacyResolverReason: {
+                    #if DEBUG
+                    legacyResolvedLanguage.resolverReason
+                    #else
+                    nil
+                    #endif
+                }(),
+                legacyUsedSystemFallback: {
+                    #if DEBUG
+                    legacyResolvedLanguage.usedSystemFallback
+                    #else
+                    nil
+                    #endif
+                }(),
+                markerAssessmentLabel: validation.markerAssessment?.rawValue,
+                independentAssessmentLabel: validation.independentAssessment?.label.rawValue,
+                independentAssessmentConfidence: validation.independentAssessment?.confidence.rawValue,
+                validatorDecisionReason: validation.reason.rawValue,
+                unresolvedGuardEvaluated: RefineUnresolvedLanguageGuard.isStrictUnresolvedEligible(resolvedLanguage),
+                unresolvedGuardRejected: unresolvedGuardRejected,
+                sourceEvidenceLabel: unresolvedGuard.sourceEvidence?.label.rawValue,
+                sourceEvidenceStrong: unresolvedGuard.sourceEvidence?.isStrong,
+                unresolvedGuardDecisionReason: unresolvedGuard.reason.rawValue,
+                unresolvedGuardOutputAssessmentLabel: unresolvedGuard.outputAssessment?.label.rawValue,
+                unresolvedGuardOutputAssessmentConfidence: unresolvedGuard.outputAssessment?.confidence.rawValue
+            )
+
             try Task.checkCancellation()
-            return result
+            return RefinementResult(
+                decision: result.decision,
+                kind: result.kind,
+                text: result.text,
+                languageTrace: trace
+            )
         } catch is CancellationError {
             throw CancellationError()
         // Xcode 26.2's Foundation Models module exposes GenerationError as the
@@ -115,6 +219,28 @@ private extension FoundationModelsRefinementProvider {
         } catch let error as LanguageModelSession.GenerationError {
             throw Self.refinementError(for: error)
         }
+    }
+
+    static func decisionReason(
+        raw: RefinementResult,
+        final: RefinementResult,
+        validatorRejected: Bool,
+        unresolvedGuardRejected: Bool,
+        resolved: ResolvedRefineLanguage
+    ) -> String {
+        if validatorRejected {
+            return "language_contract_violation_rejected_to_noChange"
+        }
+        if unresolvedGuardRejected {
+            return "unresolved_language_guard_rejected_to_noChange"
+        }
+        if raw.decision == .noChange {
+            return "model_returned_noChange"
+        }
+        if !resolved.enforcesPostValidation {
+            return "changed_validation_skipped_insufficient_resolver_confidence"
+        }
+        return "changed_passed_language_validation"
     }
 
     static func refinementError(
