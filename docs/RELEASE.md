@@ -215,6 +215,25 @@ These steps cannot be completed without your Apple Developer account:
 
 Local Debug builds from Xcode continue to work with ad hoc signing and do not require notarization.
 
+## Artifact retention (M14 policy)
+
+Starting with **0.1.0-beta.2**, retain every shipped or private-release artifact needed for future upgrade testing:
+
+| Retain | Location (example) |
+|---|---|
+| Versioned DMG | `build/rc/Rasc-<version>.dmg` |
+| SHA256 sidecar | `build/rc/Rasc-<version>.dmg.sha256` |
+| Release manifest | `build/rc/release-manifest.json` |
+| Freeze record | `build/rc/FROZEN-RC.json` |
+| Maintainer acceptance | `Evals/AppReliability/M14/` |
+
+**Rules:**
+
+1. Do not delete the immediately previous release artifact when shipping a new RC.
+2. Future RC gates must include an **upgrade test** from the previous retained build + representative user database when available.
+3. beta.1 → beta.2 upgrade was **not testable** (beta.1 artifact not retained). Not a blocker for beta.2 acceptance.
+4. Store artifacts outside git if needed; record paths and SHA256 in the release manifest.
+
 ## Incrementing versions
 
 - User-visible version: update `MARKETING_VERSION` (for example `0.1.0`, `0.1.1`).
