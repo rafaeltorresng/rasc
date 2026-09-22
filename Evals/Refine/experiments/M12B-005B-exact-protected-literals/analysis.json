@@ -1,0 +1,530 @@
+{
+  "schemaVersion": 1,
+  "experiment": "M12B-005B-exact-protected-literals",
+  "decision": "ACCEPT",
+  "holdoutUsed": false,
+  "productionFoundation": [
+    "M12B-001",
+    "M12B-004C"
+  ],
+  "promptVersion": "refine-v2-language",
+  "generationOptionsChanged": false,
+  "protectedClasses": [
+    "url",
+    "email",
+    "handle",
+    "identifier",
+    "codeLike",
+    "quotedLiteral",
+    "opaqueID",
+    "integer"
+  ],
+  "excludedClasses": [
+    "date",
+    "time",
+    "money",
+    "percentage",
+    "decimal",
+    "formattedNumber"
+  ],
+  "datasets": {
+    "corpusV1Sha256": "422154c7256fe1e58b08025baf75ee1bb4f30b3bcb418acbccfba5bb61ab7d0b",
+    "splitsV1Sha256": "c934a983258fb858636eb6e035c993fc42cf82db2ebd898a9a7810446a5d897f",
+    "regressionSha256": "18f398a8d40696445c5eb59674fefb2489d6e53b86eefee90ef8a8065d569481"
+  },
+  "before": {
+    "runs": 256,
+    "objectivePass": 152,
+    "criticalFailureCases": 82,
+    "changed": 197,
+    "noChange": 57,
+    "otherOrError": 2,
+    "changedOutputHarmCount": 59,
+    "harnessUserVisibleHarmCount": 144,
+    "objectivePassRate": 0.59375,
+    "changedOutputHarmRate": 0.23046875,
+    "harnessUserVisibleHarmRate": 0.5625,
+    "latencyP50Ms": 720.7590341567993,
+    "latencyP95Ms": 1121.5761423110962
+  },
+  "after": {
+    "runs": 256,
+    "objectivePass": 151,
+    "criticalFailureCases": 77,
+    "changed": 191,
+    "noChange": 63,
+    "otherOrError": 2,
+    "changedOutputHarmCount": 59,
+    "harnessUserVisibleHarmCount": 136,
+    "objectivePassRate": 0.58984375,
+    "changedOutputHarmRate": 0.23046875,
+    "harnessUserVisibleHarmRate": 0.53125,
+    "latencyP50Ms": 747.9939460754395,
+    "latencyP95Ms": 1135.5434417724607
+  },
+  "bySplit": {
+    "dev": {
+      "before": {
+        "runs": 193,
+        "objectivePass": 116,
+        "objectivePassRate": 0.6010362694300518,
+        "criticalFailureCases": 61,
+        "changed": 147,
+        "noChange": 45,
+        "otherOrError": 1,
+        "changedOutputHarmCount": 44,
+        "changedOutputHarmRate": 0.22797927461139897,
+        "harnessUserVisibleHarmCount": 107,
+        "harnessUserVisibleHarmRate": 0.5544041450777202,
+        "latencyP50Ms": 722.8900194168091,
+        "latencyP95Ms": 1116.541028022766,
+        "protectedLiteralMetrics": null
+      },
+      "after": {
+        "runs": 193,
+        "objectivePass": 115,
+        "objectivePassRate": 0.5958549222797928,
+        "criticalFailureCases": 57,
+        "changed": 143,
+        "noChange": 48,
+        "otherOrError": 2,
+        "changedOutputHarmCount": 45,
+        "changedOutputHarmRate": 0.23316062176165803,
+        "harnessUserVisibleHarmCount": 105,
+        "harnessUserVisibleHarmRate": 0.5440414507772021,
+        "latencyP50Ms": 747.9939460754395,
+        "latencyP95Ms": 1101.6180515289307,
+        "protectedLiteralMetrics": {
+          "coveredRuns": 32,
+          "guardRejectionCount": 4,
+          "proposalFailureWithSafetySuccessCount": 4,
+          "rawProposalCorruptionCount": 4,
+          "rejectionsByClass": {
+            "identifier": 3,
+            "url": 1
+          },
+          "userVisibleProtectedLiteralCorruptionCount": 0
+        }
+      }
+    },
+    "validation": {
+      "before": {
+        "runs": 57,
+        "objectivePass": 33,
+        "objectivePassRate": 0.5789473684210527,
+        "criticalFailureCases": 18,
+        "changed": 45,
+        "noChange": 11,
+        "otherOrError": 1,
+        "changedOutputHarmCount": 13,
+        "changedOutputHarmRate": 0.22807017543859648,
+        "harnessUserVisibleHarmCount": 32,
+        "harnessUserVisibleHarmRate": 0.5614035087719298,
+        "latencyP50Ms": 705.0909996032715,
+        "latencyP95Ms": 1054.8479557037354,
+        "protectedLiteralMetrics": null
+      },
+      "after": {
+        "runs": 57,
+        "objectivePass": 31,
+        "objectivePassRate": 0.543859649122807,
+        "criticalFailureCases": 19,
+        "changed": 44,
+        "noChange": 13,
+        "otherOrError": 0,
+        "changedOutputHarmCount": 14,
+        "changedOutputHarmRate": 0.24561403508771928,
+        "harnessUserVisibleHarmCount": 27,
+        "harnessUserVisibleHarmRate": 0.47368421052631576,
+        "latencyP50Ms": 758.6660385131836,
+        "latencyP95Ms": 1256.8109035491943,
+        "protectedLiteralMetrics": {
+          "coveredRuns": 11,
+          "guardRejectionCount": 0,
+          "proposalFailureWithSafetySuccessCount": 0,
+          "rawProposalCorruptionCount": 0,
+          "rejectionsByClass": {},
+          "userVisibleProtectedLiteralCorruptionCount": 0
+        }
+      }
+    },
+    "regression": {
+      "before": {
+        "runs": 6,
+        "objectivePass": 3,
+        "objectivePassRate": 0.5,
+        "criticalFailureCases": 3,
+        "changed": 5,
+        "noChange": 1,
+        "otherOrError": 0,
+        "changedOutputHarmCount": 2,
+        "changedOutputHarmRate": 0.3333333333333333,
+        "harnessUserVisibleHarmCount": 5,
+        "harnessUserVisibleHarmRate": 0.8333333333333334,
+        "latencyP50Ms": 752.689003944397,
+        "latencyP95Ms": 1515.7390832901,
+        "protectedLiteralMetrics": null
+      },
+      "after": {
+        "runs": 6,
+        "objectivePass": 5,
+        "objectivePassRate": 0.8333333333333334,
+        "criticalFailureCases": 1,
+        "changed": 4,
+        "noChange": 2,
+        "otherOrError": 0,
+        "changedOutputHarmCount": 0,
+        "changedOutputHarmRate": 0,
+        "harnessUserVisibleHarmCount": 4,
+        "harnessUserVisibleHarmRate": 0.6666666666666666,
+        "latencyP50Ms": 714.8730754852295,
+        "latencyP95Ms": 1291.3999557495117,
+        "protectedLiteralMetrics": {
+          "coveredRuns": 0,
+          "guardRejectionCount": 0,
+          "proposalFailureWithSafetySuccessCount": 0,
+          "rawProposalCorruptionCount": 0,
+          "rejectionsByClass": {},
+          "userVisibleProtectedLiteralCorruptionCount": 0
+        }
+      }
+    }
+  },
+  "protectedLiteralMetrics": {
+    "coveredRuns": 43,
+    "rawProposalCorruptions": 4,
+    "guardRejections": 4,
+    "userVisibleProtectedLiteralCorruptionCount": 0,
+    "harmPrevented": 4,
+    "usefulRefinementsLost": 0,
+    "falsePositiveRejections": 0,
+    "perClass": {
+      "url": {
+        "m12b005aCoveredCases": 8,
+        "singleRunRejections": 1,
+        "stabilityRejections": 0,
+        "finalVisibleCorruptions": 0
+      },
+      "email": {
+        "m12b005aCoveredCases": 1,
+        "singleRunRejections": 0,
+        "stabilityRejections": 0,
+        "finalVisibleCorruptions": 0
+      },
+      "handle": {
+        "m12b005aCoveredCases": 3,
+        "singleRunRejections": 0,
+        "stabilityRejections": 0,
+        "finalVisibleCorruptions": 0
+      },
+      "identifier": {
+        "m12b005aCoveredCases": 34,
+        "singleRunRejections": 3,
+        "stabilityRejections": 4,
+        "finalVisibleCorruptions": 0
+      },
+      "codeLike": {
+        "m12b005aCoveredCases": 4,
+        "singleRunRejections": 0,
+        "stabilityRejections": 0,
+        "finalVisibleCorruptions": 0
+      },
+      "quotedLiteral": {
+        "m12b005aCoveredCases": 3,
+        "singleRunRejections": 0,
+        "stabilityRejections": 1,
+        "finalVisibleCorruptions": 0
+      },
+      "opaqueID": {
+        "m12b005aCoveredCases": 6,
+        "singleRunRejections": 0,
+        "stabilityRejections": 0,
+        "finalVisibleCorruptions": 0
+      },
+      "integer": {
+        "m12b005aCoveredCases": 13,
+        "singleRunRejections": 0,
+        "stabilityRejections": 1,
+        "finalVisibleCorruptions": 0
+      }
+    }
+  },
+  "rejections": [
+    {
+      "split": "dev",
+      "caseID": "factual-001",
+      "runIndex": 0,
+      "scope": "wholeNote",
+      "literalClass": "url",
+      "violationReason": "protectedLiteralDropped",
+      "input": "Invoice R$ 2.450,00 due 2026-10-01 https://pay.acme.com/inv/991",
+      "rawProposal": "Invoice R$ 2.450,00 due 2026-10-01",
+      "finalAction": "noChange",
+      "finalOutput": "Invoice R$ 2.450,00 due 2026-10-01 https://pay.acme.com/inv/991",
+      "effect": "harmPrevented"
+    },
+    {
+      "split": "dev",
+      "caseID": "long-pt-002",
+      "runIndex": 0,
+      "scope": "wholeNote",
+      "literalClass": "identifier",
+      "violationReason": "protectedLiteralDropped",
+      "input": "nota longa #2: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49",
+      "rawProposal": "Retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49",
+      "finalAction": "noChange",
+      "finalOutput": "nota longa #2: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49",
+      "effect": "harmPrevented"
+    },
+    {
+      "split": "dev",
+      "caseID": "numbers-005",
+      "runIndex": 0,
+      "scope": "wholeNote",
+      "literalClass": "identifier",
+      "violationReason": "protectedLiteralMutated",
+      "input": "latência p50 45ms p95 180ms p99 420ms",
+      "rawProposal": "Latencia P50 45ms P95 180ms P99 420ms",
+      "finalAction": "noChange",
+      "finalOutput": "latência p50 45ms p95 180ms p99 420ms",
+      "effect": "harmPrevented"
+    },
+    {
+      "split": "dev",
+      "caseID": "selection-extra-001",
+      "runIndex": 0,
+      "scope": "selection",
+      "literalClass": "identifier",
+      "violationReason": "protectedLiteralDropped",
+      "input": "next_retry_at",
+      "rawProposal": "next retry at",
+      "finalAction": "noChange",
+      "finalOutput": "next_retry_at",
+      "effect": "harmPrevented"
+    }
+  ],
+  "knownM12B005ACases": [
+    {
+      "caseID": "code-005",
+      "scope": "wholeNote",
+      "class": "integer + identifier",
+      "effect": "harmPrevented",
+      "inScope": true,
+      "currentRawProposal": "fatal error: unexpectedly found nil while unwrapping an Optional value\n0   Rasc  0x0000000104ab2c10",
+      "currentFinalAction": "changed",
+      "currentGuardRejected": false,
+      "currentLiteralClass": null,
+      "exactArchivedProposalCoveredByDeterministicTest": true,
+      "note": "The current stochastic proposal was safe/preserved when no rejection occurred; the exact archived unsafe proposal is covered by a deterministic regression test."
+    },
+    {
+      "caseID": "medium-en-008",
+      "scope": "wholeNote",
+      "class": "identifier",
+      "effect": "harmPrevented",
+      "inScope": true,
+      "currentRawProposal": "investigate next_retry_at in worker",
+      "currentFinalAction": "changed",
+      "currentGuardRejected": false,
+      "currentLiteralClass": null,
+      "exactArchivedProposalCoveredByDeterministicTest": true,
+      "note": "The current stochastic proposal was safe/preserved when no rejection occurred; the exact archived unsafe proposal is covered by a deterministic regression test."
+    },
+    {
+      "caseID": "mixed-pt-en-006",
+      "scope": "wholeNote",
+      "class": "integer",
+      "effect": "harmPrevented",
+      "inScope": true,
+      "currentRawProposal": "The endpoint /api/v2/export is returning a 500 error.",
+      "currentFinalAction": "changed",
+      "currentGuardRejected": false,
+      "currentLiteralClass": null,
+      "exactArchivedProposalCoveredByDeterministicTest": true,
+      "note": "The current stochastic proposal was safe/preserved when no rejection occurred; the exact archived unsafe proposal is covered by a deterministic regression test."
+    },
+    {
+      "caseID": "selection-extra-001",
+      "scope": "selection",
+      "class": "identifier",
+      "effect": "harmPrevented",
+      "inScope": true,
+      "currentRawProposal": "next retry at",
+      "currentFinalAction": "noChange",
+      "currentGuardRejected": true,
+      "currentLiteralClass": "identifier",
+      "exactArchivedProposalCoveredByDeterministicTest": true,
+      "note": "The current stochastic proposal was safe/preserved when no rejection occurred; the exact archived unsafe proposal is covered by a deterministic regression test."
+    },
+    {
+      "caseID": "telegraphic-pt-009",
+      "scope": "wholeNote",
+      "class": "identifier",
+      "effect": "neutralSafetyRejection",
+      "inScope": true,
+      "currentRawProposal": "metrics p95 latency",
+      "currentFinalAction": "noChange",
+      "currentGuardRejected": false,
+      "currentLiteralClass": null,
+      "exactArchivedProposalCoveredByDeterministicTest": true,
+      "note": "The current stochastic proposal was safe/preserved when no rejection occurred; the exact archived unsafe proposal is covered by a deterministic regression test."
+    },
+    {
+      "caseID": "selection-extra-005",
+      "scope": "selection",
+      "class": "money",
+      "effect": "outOfScope",
+      "inScope": false,
+      "currentRawProposal": "R$ 99,90",
+      "currentFinalAction": "changed",
+      "currentGuardRejected": false,
+      "currentLiteralClass": null,
+      "exactArchivedProposalCoveredByDeterministicTest": false,
+      "note": "Money is explicitly excluded from M12B-005B; the current run again exposes an out-of-scope mutation."
+    }
+  ],
+  "stability": {
+    "runs": 305,
+    "coveredRuns": 50,
+    "rawProposalCorruptions": 6,
+    "guardRejections": 6,
+    "userVisibleProtectedLiteralCorruptions": 0,
+    "rawProtectedMutationInstabilityCases": [
+      "mixed-pt-en-004",
+      "mixed-pt-en-006",
+      "protected-003",
+      "selection-extra-001"
+    ],
+    "finalProtectedSafetyInstabilityCases": [],
+    "actionInstabilityBefore": 11,
+    "actionInstabilityAfter": 20,
+    "passFailInstabilityBefore": 22,
+    "passFailInstabilityAfter": 21,
+    "rejections": [
+      {
+        "split": "stability",
+        "caseID": "mixed-pt-en-004",
+        "runIndex": 4,
+        "scope": "wholeNote",
+        "literalClass": "identifier",
+        "violationReason": "protectedLiteralDropped",
+        "input": "falar com PM sobre rollout do feature flag enableRefineV2",
+        "rawProposal": "Fale com o PM sobre o lançamento do recurso de marcação de refinamento.",
+        "finalAction": "noChange",
+        "finalOutput": "falar com PM sobre rollout do feature flag enableRefineV2",
+        "effect": "harmPrevented"
+      },
+      {
+        "split": "stability",
+        "caseID": "mixed-pt-en-006",
+        "runIndex": 4,
+        "scope": "wholeNote",
+        "literalClass": "integer",
+        "violationReason": "protectedLiteralDropped",
+        "input": "talvez o endpoint /api/v2/export tá retornando 500",
+        "rawProposal": "/api/v2/export",
+        "finalAction": "noChange",
+        "finalOutput": "talvez o endpoint /api/v2/export tá retornando 500",
+        "effect": "harmPrevented"
+      },
+      {
+        "split": "stability",
+        "caseID": "protected-003",
+        "runIndex": 0,
+        "scope": "wholeNote",
+        "literalClass": "quotedLiteral",
+        "violationReason": "protectedLiteralDropped",
+        "input": "handle @rafatorres issue GH-2041 camelCase snake_case `retryCount`",
+        "rawProposal": "handle @rafatorres issue GH-2041 camelCase snake_case retryCount",
+        "finalAction": "noChange",
+        "finalOutput": "handle @rafatorres issue GH-2041 camelCase snake_case `retryCount`",
+        "effect": "harmPrevented"
+      },
+      {
+        "split": "stability",
+        "caseID": "selection-extra-001",
+        "runIndex": 2,
+        "scope": "selection",
+        "literalClass": "identifier",
+        "violationReason": "protectedLiteralMutated",
+        "input": "next_retry_at",
+        "rawProposal": "next_retry_at_time",
+        "finalAction": "noChange",
+        "finalOutput": "next_retry_at",
+        "effect": "harmPrevented"
+      },
+      {
+        "split": "stability",
+        "caseID": "selection-extra-001",
+        "runIndex": 3,
+        "scope": "selection",
+        "literalClass": "identifier",
+        "violationReason": "protectedLiteralMutated",
+        "input": "next_retry_at",
+        "rawProposal": "next_retry_at_",
+        "finalAction": "noChange",
+        "finalOutput": "next_retry_at",
+        "effect": "harmPrevented"
+      },
+      {
+        "split": "stability",
+        "caseID": "selection-extra-001",
+        "runIndex": 4,
+        "scope": "selection",
+        "literalClass": "identifier",
+        "violationReason": "protectedLiteralDropped",
+        "input": "next_retry_at",
+        "rawProposal": "next retry at",
+        "finalAction": "noChange",
+        "finalOutput": "next_retry_at",
+        "effect": "harmPrevented"
+      }
+    ]
+  },
+  "selection": {
+    "singleRunRejections": 1,
+    "stabilityRejections": 3,
+    "stabilityUniqueCases": 1,
+    "outsideSelectionLiteralsRequired": 0,
+    "scopeBoundaryTestsPassed": true
+  },
+  "wholeNote": {
+    "singleRunRejections": 3,
+    "stabilityRejections": 3,
+    "stabilityUniqueCases": 3
+  },
+  "nonCoveredFailuresObserved": [
+    {
+      "caseID": "selection-extra-005",
+      "class": "money",
+      "input": "R$ 99,90",
+      "split": "stability",
+      "runs": [
+        {
+          "runIndex": 2,
+          "output": "$ 99.90",
+          "status": "currencyMarkerMutated"
+        },
+        {
+          "runIndex": 3,
+          "output": "99.90",
+          "status": "currencyMarkerDropped"
+        }
+      ],
+      "status": "outOfScopeUserVisibleMutationInTwoOfFiveStabilityRuns"
+    }
+  ],
+  "rDollar": "Standalone R$ remains intercepted by M12B-004C preflight. Multi-unit money is intentionally not protected here.",
+  "providerCallsPerRejectedProposal": 1,
+  "regenerationCallsPerRejectedProposal": 0,
+  "verification": {
+    "completeTestSuite": {
+      "result": "passed",
+      "tests": 203,
+      "failures": 0
+    },
+    "debugBuild": "passed",
+    "pythonAnalysisCompile": "passed"
+  },
+  "recommendation": "M12B-005C targeted semantic-literal equivalence challenge for money, time, percentage, date, and formatted numbers; evaluation-only first."
+}

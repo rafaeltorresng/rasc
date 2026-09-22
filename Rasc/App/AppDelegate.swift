@@ -15,6 +15,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
     private var menuBarController: MenuBarController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        #if DEBUG
+        if RefineReviewCommandLine.runIfRequested() { return }
+        if RefineEvalLanguageResolverCommandLine.runIfRequested() { return }
+        if RefineEvalCommandLine.runIfRequested() { return }
+        #endif
+
         GlobalShortcutMigration.migrateFromPreviousDefaultIfNeeded()
         SettingsWindowPresentation.installIfNeeded()
         SettingsWindowPresentation.onSettingsWindowWillPresent = { [weak self] in
@@ -70,6 +76,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
 
     func refine() {
         bootstrap.panelIfReady()?.startRefinement()
+    }
+
+    func keepActiveNote() {
+        Task { @MainActor in
+            await bootstrap.awaitPanel()?.keepActiveNote()
+        }
+    }
+
+    func unkeepActiveNote() {
+        Task { @MainActor in
+            await bootstrap.awaitPanel()?.unkeepActiveNote()
+        }
+    }
+
+    func copyActiveNote() {
+        Task { @MainActor in
+            await bootstrap.awaitPanel()?.copyActiveNote()
+        }
+    }
+
+    func shareActiveNote() {
+        bootstrap.panelIfReady()?.shareActiveNote()
+    }
+
+    func discardActiveNote() {
+        Task { @MainActor in
+            await bootstrap.awaitPanel()?.discardActiveNote()
+        }
     }
 
     func openSettings() {

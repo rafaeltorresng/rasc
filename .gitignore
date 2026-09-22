@@ -68,3 +68,21 @@ dist/
 *.xcarchive
 *.dmg
 Config/Local.xcconfig
+
+# Refine reliability lab outputs (M12A)
+Evals/Refine/reports/
+Evals/**/run.log
+.derivedData/
+
+# Python
+Scripts/__pycache__/
+*.py[cod]
+
+# Xcode coverage
+*.profraw
+
+# RC local verification outputs (artifacts stay under build/, gitignored)
+build/rc/*.log
+build/rc/m14-*
+build/rc/manual-checklist*
+build/rc/DerivedData/

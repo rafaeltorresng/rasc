@@ -12,7 +12,8 @@ struct NoteRepositoryTests {
             content: "\n  Queue retry issue  \n\nCheck next_retry_at after deploy.\n",
             createdAt: .distantPast,
             updatedAt: .distantPast,
-            deletedAt: nil
+            deletedAt: nil,
+            keptAt: nil
         )
 
         #expect(note.displayTitle == "Queue retry issue")
@@ -26,7 +27,8 @@ struct NoteRepositoryTests {
             content: "Queue retry issue\nQueue retry issue after deploy.",
             createdAt: .distantPast,
             updatedAt: .distantPast,
-            deletedAt: nil
+            deletedAt: nil,
+            keptAt: nil
         )
 
         #expect(note.displayRetrievalSnippet == "after deploy.")
@@ -45,7 +47,7 @@ struct NoteRepositoryTests {
         let columns = try await DatabaseQueue(path: databaseURL.path).read { database in
             try database.columns(in: Note.databaseTableName).map(\.name)
         }
-        #expect(columns == ["id", "content", "created_at", "updated_at", "deleted_at"])
+        #expect(columns == ["id", "content", "created_at", "updated_at", "deleted_at", "kept_at"])
     }
 
     @Test
@@ -233,7 +235,7 @@ struct NoteRepositoryTests {
         let columns = try await database.read { database in
             try database.columns(in: Note.databaseTableName).map(\.name)
         }
-        #expect(columns == ["id", "content", "created_at", "updated_at", "deleted_at"])
+        #expect(columns == ["id", "content", "created_at", "updated_at", "deleted_at", "kept_at"])
     }
 
     @Test
@@ -479,6 +481,95 @@ struct NoteRepositoryTests {
 
         #expect(try await repository.fetch(id: note.id)?.content == "Already useful.")
         #expect(try await repository.refinementRevisions(for: note.id).isEmpty)
+    }
+
+    @Test
+    func keepAndUnkeepPersistKeptAtWithoutChangingContent() async throws {
+        let repository = try makeRepository()
+        let note = try await repository.createScratch(content: "finish this thought")
+
+        let kept = try await repository.keep(id: note.id)
+        #expect(kept.content == "finish this thought")
+        #expect(kept.keptAt != nil)
+        #expect(kept.isKept)
+
+        let fetched = try #require(try await repository.fetch(id: note.id))
+        #expect(fetched.isKept)
+
+        let searchResults = try await repository.search("finish", limit: 10)
+        #expect(searchResults.contains(where: { $0.id == note.id && $0.isKept }))
+
+        let unkept = try await repository.unkeep(id: note.id)
+        #expect(unkept.content == "finish this thought")
+        #expect(unkept.keptAt == nil)
+        #expect(try await repository.fetch(id: note.id)?.isKept == false)
+    }
+
+    @Test
+    func migratesM3ADatabaseToKeptAtWithoutLosingNotes() async throws {
+        let databaseURL = makeDatabaseURL()
+        defer { removeDatabase(at: databaseURL) }
+        let database = try DatabaseQueue(path: databaseURL.path)
+        var partialMigrator = DatabaseMigrator()
+        partialMigrator.registerMigration("v1_create_notes") { database in
+            try database.create(table: Note.databaseTableName) { table in
+                table.column("id", .text).primaryKey()
+                table.column("content", .text).notNull()
+                table.column("createdAt", .datetime).notNull()
+                table.column("updatedAt", .datetime).notNull()
+            }
+        }
+        partialMigrator.registerMigration("v2_m1_notes_schema") { database in
+            try database.alter(table: Note.databaseTableName) { table in
+                table.rename(column: "createdAt", to: "created_at")
+                table.rename(column: "updatedAt", to: "updated_at")
+                table.add(column: "deleted_at", .datetime)
+            }
+        }
+        partialMigrator.registerMigration("v3_m2_create_notes_fts") { database in
+            try database.create(virtualTable: "notes_fts", using: FTS5()) { table in
+                table.synchronize(withTable: Note.databaseTableName)
+                table.tokenizer = .unicode61(diacritics: .remove)
+                table.prefixes = [2, 3, 4]
+                table.column("content")
+            }
+        }
+        partialMigrator.registerMigration("v4_m3a_create_refinement_revisions") { database in
+            try database.create(table: "refinement_revisions") { table in
+                table.column("id", .text).primaryKey()
+                table.column("note_id", .text).notNull().indexed().references(Note.databaseTableName)
+                table.column("before_content", .text).notNull()
+                table.column("after_content", .text).notNull()
+                table.column("provider", .text).notNull()
+                table.column("model_identifier", .text).notNull()
+                table.column("prompt_version", .text).notNull()
+                table.column("created_at", .datetime).notNull()
+            }
+        }
+        try partialMigrator.migrate(database)
+
+        let noteID = UUID()
+        let timestamp = Date(timeIntervalSince1970: 1_700_000_200)
+        try await database.write { database in
+            try database.execute(
+                sql: """
+                INSERT INTO notes (id, content, created_at, updated_at)
+                VALUES (?, ?, ?, ?)
+                """,
+                arguments: [noteID, "legacy beta note", timestamp, timestamp]
+            )
+        }
+
+        let repository = try NoteRepository(databaseURL: databaseURL)
+        let note = try #require(try await repository.fetch(id: noteID))
+        #expect(note.content == "legacy beta note")
+        #expect(note.keptAt == nil)
+        #expect(note.isKept == false)
+
+        let columns = try await database.read { database in
+            try database.columns(in: Note.databaseTableName).map(\.name)
+        }
+        #expect(columns.contains("kept_at"))
     }
 
     private func makeRepository() throws -> NoteRepository {

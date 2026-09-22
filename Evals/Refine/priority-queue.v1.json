@@ -1,0 +1,275 @@
+{
+  "caseIDs" : [
+    "acronym-001",
+    "already-good-001",
+    "already-good-002",
+    "already-good-006",
+    "es-003",
+    "es-009",
+    "factual-001",
+    "factual-003",
+    "incomplete-005",
+    "injection-002",
+    "injection-005",
+    "legacy-planning-abbreviated-pt-001",
+    "medium-pt-001",
+    "medium-pt-010",
+    "meeting-dump-004",
+    "messy-003",
+    "mixed-pt-en-001",
+    "mixed-pt-en-002",
+    "mixed-pt-en-004",
+    "mixed-pt-en-006",
+    "protected-003",
+    "question-003",
+    "regression-already-good-rewritten-004",
+    "regression-over-expansion-005",
+    "regression-pt-ambiguous-fragment-002",
+    "regression-pt-tiny-expanded-001",
+    "regression-pt-to-en-drift-003",
+    "regression-selection-leak-006",
+    "selection-extra-002",
+    "selection-extra-006",
+    "short-en-003",
+    "short-pt-001",
+    "short-pt-006",
+    "short-pt-014",
+    "telegraphic-en-002",
+    "tiny-en-001",
+    "tiny-en-002",
+    "tiny-en-003",
+    "tiny-en-004",
+    "tiny-en-005",
+    "tiny-pt-001",
+    "tiny-pt-008",
+    "variant-en-044",
+    "variant-en-061",
+    "variant-es-003",
+    "variant-es-004",
+    "variant-es-007",
+    "variant-es-008",
+    "variant-pt-002",
+    "variant-pt-004",
+    "variant-pt-005",
+    "variant-pt-008",
+    "variant-pt-012",
+    "variant-pt-016",
+    "variant-pt-021",
+    "variant-pt-028"
+  ],
+  "excludesHoldout" : true,
+  "generatedAt" : "2026-09-21T01:14:03Z",
+  "overlapStats" : {
+    "multiSourceCases" : 20,
+    "sourceCounts" : {
+      "evaluator_disagreement" : 11,
+      "m12b001_dev_language_drift" : 21,
+      "m12b001_dev_regression" : 18,
+      "permanent_regression" : 6,
+      "review_queue_tiny_mixed" : 13,
+      "validator_false_negative" : 9
+    },
+    "totalUniqueCases" : 56
+  },
+  "reviewQueue75Status" : {
+    "agentGeneratedMaintainerUnapproved" : true,
+    "approved" : 0,
+    "corrected" : 0,
+    "deferred" : 0,
+    "totalCases" : 75,
+    "unreviewed" : 75
+  },
+  "sourcesByCaseID" : {
+    "acronym-001" : [
+      "m12b001_dev_regression"
+    ],
+    "already-good-001" : [
+      "m12b001_dev_language_drift",
+      "validator_false_negative"
+    ],
+    "already-good-002" : [
+      "m12b001_dev_regression"
+    ],
+    "already-good-006" : [
+      "evaluator_disagreement",
+      "m12b001_dev_language_drift",
+      "m12b001_dev_regression"
+    ],
+    "es-003" : [
+      "m12b001_dev_language_drift",
+      "validator_false_negative"
+    ],
+    "es-009" : [
+      "evaluator_disagreement",
+      "m12b001_dev_language_drift"
+    ],
+    "factual-001" : [
+      "m12b001_dev_regression"
+    ],
+    "factual-003" : [
+      "evaluator_disagreement",
+      "m12b001_dev_language_drift"
+    ],
+    "incomplete-005" : [
+      "m12b001_dev_regression"
+    ],
+    "injection-002" : [
+      "m12b001_dev_regression"
+    ],
+    "injection-005" : [
+      "m12b001_dev_regression"
+    ],
+    "legacy-planning-abbreviated-pt-001" : [
+      "m12b001_dev_regression"
+    ],
+    "medium-pt-001" : [
+      "m12b001_dev_language_drift",
+      "validator_false_negative"
+    ],
+    "medium-pt-010" : [
+      "m12b001_dev_language_drift",
+      "validator_false_negative"
+    ],
+    "meeting-dump-004" : [
+      "m12b001_dev_regression"
+    ],
+    "messy-003" : [
+      "m12b001_dev_language_drift",
+      "validator_false_negative"
+    ],
+    "mixed-pt-en-001" : [
+      "review_queue_tiny_mixed"
+    ],
+    "mixed-pt-en-002" : [
+      "review_queue_tiny_mixed"
+    ],
+    "mixed-pt-en-004" : [
+      "review_queue_tiny_mixed"
+    ],
+    "mixed-pt-en-006" : [
+      "review_queue_tiny_mixed"
+    ],
+    "protected-003" : [
+      "review_queue_tiny_mixed"
+    ],
+    "question-003" : [
+      "m12b001_dev_language_drift",
+      "validator_false_negative"
+    ],
+    "regression-already-good-rewritten-004" : [
+      "permanent_regression"
+    ],
+    "regression-over-expansion-005" : [
+      "permanent_regression"
+    ],
+    "regression-pt-ambiguous-fragment-002" : [
+      "permanent_regression"
+    ],
+    "regression-pt-tiny-expanded-001" : [
+      "permanent_regression"
+    ],
+    "regression-pt-to-en-drift-003" : [
+      "permanent_regression"
+    ],
+    "regression-selection-leak-006" : [
+      "permanent_regression"
+    ],
+    "selection-extra-002" : [
+      "m12b001_dev_language_drift"
+    ],
+    "selection-extra-006" : [
+      "review_queue_tiny_mixed"
+    ],
+    "short-en-003" : [
+      "m12b001_dev_regression"
+    ],
+    "short-pt-001" : [
+      "review_queue_tiny_mixed"
+    ],
+    "short-pt-006" : [
+      "m12b001_dev_regression"
+    ],
+    "short-pt-014" : [
+      "m12b001_dev_regression"
+    ],
+    "telegraphic-en-002" : [
+      "m12b001_dev_regression"
+    ],
+    "tiny-en-001" : [
+      "review_queue_tiny_mixed"
+    ],
+    "tiny-en-002" : [
+      "review_queue_tiny_mixed"
+    ],
+    "tiny-en-003" : [
+      "review_queue_tiny_mixed"
+    ],
+    "tiny-en-004" : [
+      "review_queue_tiny_mixed"
+    ],
+    "tiny-en-005" : [
+      "review_queue_tiny_mixed"
+    ],
+    "tiny-pt-001" : [
+      "review_queue_tiny_mixed"
+    ],
+    "tiny-pt-008" : [
+      "m12b001_dev_regression"
+    ],
+    "variant-en-044" : [
+      "m12b001_dev_regression"
+    ],
+    "variant-en-061" : [
+      "m12b001_dev_regression"
+    ],
+    "variant-es-003" : [
+      "evaluator_disagreement",
+      "m12b001_dev_language_drift"
+    ],
+    "variant-es-004" : [
+      "evaluator_disagreement",
+      "m12b001_dev_language_drift"
+    ],
+    "variant-es-007" : [
+      "evaluator_disagreement",
+      "m12b001_dev_language_drift"
+    ],
+    "variant-es-008" : [
+      "evaluator_disagreement",
+      "m12b001_dev_language_drift"
+    ],
+    "variant-pt-002" : [
+      "evaluator_disagreement",
+      "m12b001_dev_language_drift",
+      "m12b001_dev_regression"
+    ],
+    "variant-pt-004" : [
+      "m12b001_dev_language_drift",
+      "validator_false_negative"
+    ],
+    "variant-pt-005" : [
+      "m12b001_dev_language_drift",
+      "validator_false_negative"
+    ],
+    "variant-pt-008" : [
+      "m12b001_dev_language_drift",
+      "validator_false_negative"
+    ],
+    "variant-pt-012" : [
+      "evaluator_disagreement",
+      "m12b001_dev_language_drift"
+    ],
+    "variant-pt-016" : [
+      "m12b001_dev_regression"
+    ],
+    "variant-pt-021" : [
+      "evaluator_disagreement",
+      "m12b001_dev_language_drift"
+    ],
+    "variant-pt-028" : [
+      "evaluator_disagreement",
+      "m12b001_dev_language_drift"
+    ]
+  },
+  "version" : 1
+}

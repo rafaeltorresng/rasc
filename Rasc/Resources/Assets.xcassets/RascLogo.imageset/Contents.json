@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "rasc-light.png",
+      "filename" : "rasc-dark.png",
       "idiom" : "universal",
       "scale" : "1x",
       "appearances" : [
@@ -12,7 +12,7 @@
       ]
     },
     {
-      "filename" : "rasc-dark.png",
+      "filename" : "rasc-light.png",
       "idiom" : "universal",
       "scale" : "1x",
       "appearances" : [

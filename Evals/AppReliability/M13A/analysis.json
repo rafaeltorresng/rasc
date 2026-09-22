@@ -1,0 +1,55 @@
+{
+  "audit": "M13A",
+  "generatedAt": "2026-09-22T16:30:00Z",
+  "releaseGate": "A",
+  "releaseGateLabel": "APP RELIABILITY READY",
+  "m12c002Closeout": {
+    "status": "reverted",
+    "acceptedPersonalization": "M12C-001-language-preference",
+    "productionPromptVersion": "refine-v2-language-preference",
+    "rejectedExperiment": "M12C-002-global-refine-preference"
+  },
+  "automatedCoverage": {
+    "lifecycle": "AppReliabilityLifecycleTests",
+    "scale": "AppReliabilityScaleTests",
+    "autosave": "ScratchpadSessionTests",
+    "refineStale": "RefinementSessionTests",
+    "migrations": "NoteRepositoryTests",
+    "fts": "NoteRepositoryTests",
+    "settingsLanguage": "RefineLanguagePreferenceTests",
+    "windowFrames": "WindowFrameStoreTests, PanelControllerTests",
+    "privacyFeedback": "BetaFeedbackTests"
+  },
+  "issueCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 3,
+    "P3": 2
+  },
+  "migrationAudit": {
+    "migrations": [
+      "v1_create_notes",
+      "v2_m1_notes_schema",
+      "v3_m2_create_notes_fts",
+      "v4_m3a_create_refinement_revisions"
+    ],
+    "automated": true,
+    "freshInstall": "pass",
+    "upgradePath": "pass"
+  },
+  "releaseBuildAudit": {
+    "lsuiElement": true,
+    "appSandboxRelease": true,
+    "hardenedRuntime": true,
+    "evalCorporaInBundle": false,
+    "thirdPartyNotices": true,
+    "signingNote": "Release archive may fail without configured development team; compile/package structure verified via build-for-testing"
+  },
+  "privacyAudit": {
+    "notesLocal": true,
+    "refinePreferenceRemoved": true,
+    "refineLanguageLocal": true,
+    "feedbackIncludesNoteContent": false,
+    "evalCLIInRelease": false
+  }
+}

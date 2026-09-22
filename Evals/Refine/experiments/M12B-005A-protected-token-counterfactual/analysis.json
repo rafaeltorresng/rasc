@@ -1,0 +1,5191 @@
+{
+  "schemaVersion": 1,
+  "experiment": "M12B-005A-protected-token-counterfactual",
+  "evaluationOnly": true,
+  "productionBehaviorModified": false,
+  "holdoutUsed": false,
+  "source": "Recorded accepted M12B-004C dev, validation, and permanent-regression outputs; no generation was run.",
+  "classesAnalyzed": [
+    "url",
+    "email",
+    "handle",
+    "money",
+    "date",
+    "time",
+    "number",
+    "percentage",
+    "identifier",
+    "codeLike",
+    "quotedLiteral",
+    "opaqueID"
+  ],
+  "preservationPolicy": {
+    "url": "exact",
+    "email": "exact",
+    "handle": "exact",
+    "money": "semantic",
+    "date": "semantic",
+    "time": "semantic",
+    "number": "semantic",
+    "percentage": "semantic",
+    "identifier": "exact",
+    "codeLike": "exact",
+    "quotedLiteral": "exact",
+    "opaqueID": "exact"
+  },
+  "coverage": {
+    "uniqueCases": 62,
+    "runs": 62,
+    "byDataset": {
+      "dev": 50,
+      "validation": 12,
+      "regression": 0
+    },
+    "frontierCoveredCases": 14
+  },
+  "currentAccepted": {
+    "runs": 254,
+    "changed": 197,
+    "noChange": 57,
+    "objectivePass": 152,
+    "userVisibleHarmfulEdits": 61,
+    "criticalFailures": 82,
+    "usefulRefinements": 17,
+    "protectedTokenCorruptions": 7,
+    "objectivePassRate": 0.5984251968503937,
+    "userVisibleHarmfulEditRate": 0.24015748031496062
+  },
+  "counterfactualGuard": {
+    "runs": 254,
+    "changed": 191,
+    "noChange": 63,
+    "objectivePass": 156,
+    "userVisibleHarmfulEdits": 55,
+    "criticalFailures": 78,
+    "usefulRefinements": 17,
+    "protectedTokenCorruptions": 0,
+    "counterfactualRejections": 6,
+    "objectivePassRate": 0.6141732283464567,
+    "userVisibleHarmfulEditRate": 0.21653543307086615
+  },
+  "coveredCohort": {
+    "currentAccepted": {
+      "runs": 62,
+      "changed": 54,
+      "noChange": 8,
+      "objectivePass": 34,
+      "objectivePassRate": 0.5483870967741935,
+      "userVisibleHarmfulEdits": 11,
+      "userVisibleHarmfulEditRate": 0.1774193548387097,
+      "protectedTokenCorruptions": 7,
+      "criticalFailures": 15
+    },
+    "counterfactualGuard": {
+      "runs": 62,
+      "changed": 48,
+      "noChange": 14,
+      "objectivePass": 38,
+      "objectivePassRate": 0.6129032258064516,
+      "userVisibleHarmfulEdits": 5,
+      "userVisibleHarmfulEditRate": 0.08064516129032258,
+      "protectedTokenCorruptions": 0,
+      "criticalFailures": 11,
+      "counterfactualRejections": 6
+    }
+  },
+  "deltas": {
+    "changed": -6,
+    "noChange": 6,
+    "objectivePass": 4,
+    "userVisibleHarmfulEdits": -6,
+    "protectedTokenCorruptions": -7,
+    "criticalFailures": -4
+  },
+  "effectCounts": {
+    "A": 5,
+    "B": 1
+  },
+  "harmPrevented": 5,
+  "usefulRefinementsLost": 0,
+  "falsePositiveExtractorCases": 0,
+  "policyTooStrictCases": 0,
+  "perTokenClass": {
+    "url": {
+      "casesContainingClass": 8,
+      "runsContainingClass": 8,
+      "changedProposals": 6,
+      "tokenOccurrences": 8,
+      "preserved": 8,
+      "safelyNormalized": 0,
+      "mutated": 0,
+      "dropped": 0,
+      "counterfactualRejections": 0,
+      "harmPrevented": 0,
+      "usefulRefinementsLost": 0,
+      "falsePositiveDetections": 0,
+      "policyTooStrict": 0
+    },
+    "email": {
+      "casesContainingClass": 1,
+      "runsContainingClass": 1,
+      "changedProposals": 1,
+      "tokenOccurrences": 1,
+      "preserved": 1,
+      "safelyNormalized": 0,
+      "mutated": 0,
+      "dropped": 0,
+      "counterfactualRejections": 0,
+      "harmPrevented": 0,
+      "usefulRefinementsLost": 0,
+      "falsePositiveDetections": 0,
+      "policyTooStrict": 0
+    },
+    "handle": {
+      "casesContainingClass": 3,
+      "runsContainingClass": 3,
+      "changedProposals": 1,
+      "tokenOccurrences": 3,
+      "preserved": 3,
+      "safelyNormalized": 0,
+      "mutated": 0,
+      "dropped": 0,
+      "counterfactualRejections": 0,
+      "harmPrevented": 0,
+      "usefulRefinementsLost": 0,
+      "falsePositiveDetections": 0,
+      "policyTooStrict": 0
+    },
+    "money": {
+      "casesContainingClass": 9,
+      "runsContainingClass": 9,
+      "changedProposals": 6,
+      "tokenOccurrences": 9,
+      "preserved": 8,
+      "safelyNormalized": 0,
+      "mutated": 1,
+      "dropped": 0,
+      "counterfactualRejections": 1,
+      "harmPrevented": 1,
+      "usefulRefinementsLost": 0,
+      "falsePositiveDetections": 0,
+      "policyTooStrict": 0
+    },
+    "date": {
+      "casesContainingClass": 3,
+      "runsContainingClass": 3,
+      "changedProposals": 2,
+      "tokenOccurrences": 3,
+      "preserved": 3,
+      "safelyNormalized": 0,
+      "mutated": 0,
+      "dropped": 0,
+      "counterfactualRejections": 0,
+      "harmPrevented": 0,
+      "usefulRefinementsLost": 0,
+      "falsePositiveDetections": 0,
+      "policyTooStrict": 0
+    },
+    "time": {
+      "casesContainingClass": 10,
+      "runsContainingClass": 10,
+      "changedProposals": 7,
+      "tokenOccurrences": 10,
+      "preserved": 8,
+      "safelyNormalized": 2,
+      "mutated": 0,
+      "dropped": 0,
+      "counterfactualRejections": 0,
+      "harmPrevented": 0,
+      "usefulRefinementsLost": 0,
+      "falsePositiveDetections": 0,
+      "policyTooStrict": 0
+    },
+    "number": {
+      "casesContainingClass": 13,
+      "runsContainingClass": 13,
+      "changedProposals": 13,
+      "tokenOccurrences": 28,
+      "preserved": 26,
+      "safelyNormalized": 0,
+      "mutated": 0,
+      "dropped": 2,
+      "counterfactualRejections": 2,
+      "harmPrevented": 2,
+      "usefulRefinementsLost": 0,
+      "falsePositiveDetections": 0,
+      "policyTooStrict": 0
+    },
+    "percentage": {
+      "casesContainingClass": 4,
+      "runsContainingClass": 4,
+      "changedProposals": 4,
+      "tokenOccurrences": 4,
+      "preserved": 4,
+      "safelyNormalized": 0,
+      "mutated": 0,
+      "dropped": 0,
+      "counterfactualRejections": 0,
+      "harmPrevented": 0,
+      "usefulRefinementsLost": 0,
+      "falsePositiveDetections": 0,
+      "policyTooStrict": 0
+    },
+    "identifier": {
+      "casesContainingClass": 34,
+      "runsContainingClass": 34,
+      "changedProposals": 33,
+      "tokenOccurrences": 50,
+      "preserved": 46,
+      "safelyNormalized": 0,
+      "mutated": 1,
+      "dropped": 3,
+      "counterfactualRejections": 4,
+      "harmPrevented": 3,
+      "usefulRefinementsLost": 0,
+      "falsePositiveDetections": 0,
+      "policyTooStrict": 0
+    },
+    "codeLike": {
+      "casesContainingClass": 4,
+      "runsContainingClass": 4,
+      "changedProposals": 4,
+      "tokenOccurrences": 5,
+      "preserved": 5,
+      "safelyNormalized": 0,
+      "mutated": 0,
+      "dropped": 0,
+      "counterfactualRejections": 0,
+      "harmPrevented": 0,
+      "usefulRefinementsLost": 0,
+      "falsePositiveDetections": 0,
+      "policyTooStrict": 0
+    },
+    "quotedLiteral": {
+      "casesContainingClass": 3,
+      "runsContainingClass": 3,
+      "changedProposals": 3,
+      "tokenOccurrences": 3,
+      "preserved": 3,
+      "safelyNormalized": 0,
+      "mutated": 0,
+      "dropped": 0,
+      "counterfactualRejections": 0,
+      "harmPrevented": 0,
+      "usefulRefinementsLost": 0,
+      "falsePositiveDetections": 0,
+      "policyTooStrict": 0
+    },
+    "opaqueID": {
+      "casesContainingClass": 6,
+      "runsContainingClass": 6,
+      "changedProposals": 6,
+      "tokenOccurrences": 6,
+      "preserved": 6,
+      "safelyNormalized": 0,
+      "mutated": 0,
+      "dropped": 0,
+      "counterfactualRejections": 0,
+      "harmPrevented": 0,
+      "usefulRefinementsLost": 0,
+      "falsePositiveDetections": 0,
+      "policyTooStrict": 0
+    }
+  },
+  "byScope": {
+    "wholeNote": {
+      "coveredCases": 59,
+      "current": {
+        "runs": 59,
+        "changed": 51,
+        "noChange": 8,
+        "objectivePass": 34,
+        "objectivePassRate": 0.576271186440678,
+        "userVisibleHarmfulEdits": 9,
+        "userVisibleHarmfulEditRate": 0.15254237288135594,
+        "protectedTokenCorruptions": 5,
+        "criticalFailures": 13
+      },
+      "counterfactual": {
+        "runs": 59,
+        "changed": 47,
+        "noChange": 12,
+        "objectivePass": 36,
+        "objectivePassRate": 0.6101694915254238,
+        "userVisibleHarmfulEdits": 5,
+        "userVisibleHarmfulEditRate": 0.0847457627118644,
+        "protectedTokenCorruptions": 0,
+        "criticalFailures": 11,
+        "counterfactualRejections": 4
+      }
+    },
+    "selection": {
+      "coveredCases": 3,
+      "current": {
+        "runs": 3,
+        "changed": 3,
+        "noChange": 0,
+        "objectivePass": 0,
+        "objectivePassRate": 0.0,
+        "userVisibleHarmfulEdits": 2,
+        "userVisibleHarmfulEditRate": 0.6666666666666666,
+        "protectedTokenCorruptions": 2,
+        "criticalFailures": 2
+      },
+      "counterfactual": {
+        "runs": 3,
+        "changed": 1,
+        "noChange": 2,
+        "objectivePass": 2,
+        "objectivePassRate": 0.6666666666666666,
+        "userVisibleHarmfulEdits": 0,
+        "userVisibleHarmfulEditRate": 0.0,
+        "protectedTokenCorruptions": 0,
+        "criticalFailures": 0,
+        "counterfactualRejections": 2
+      }
+    }
+  },
+  "languageInteraction": {
+    "languageRelatedInterceptedCases": 1,
+    "languageRelatedCaseIDs": [
+      "selection-extra-001"
+    ],
+    "nonLanguageInterceptedCases": 5,
+    "claim": "The simulated guard rejects literal-corrupting outputs; it does not improve or replace language resolution."
+  },
+  "addedProtectedLikeLiterals": {
+    "changedCases": 1,
+    "factualLiteralIndicatorCases": 1,
+    "caseIDs": [
+      "regression-over-expansion-005"
+    ],
+    "details": [
+      {
+        "caseID": "regression-over-expansion-005",
+        "dataset": "regression",
+        "input": "ver logs",
+        "output": "Para ver os logs, execute o comando `ls -l` no terminal.",
+        "added": [
+          {
+            "value": "`ls -l`",
+            "class": "quotedLiteral"
+          }
+        ],
+        "existingFailureKinds": [
+          "expansionExceeded",
+          "forbiddenContentIntroduced"
+        ],
+        "likelyInventedInformation": true
+      }
+    ],
+    "note": "These are indicators, not automatic invented-information findings; list numbering and structural labels can be benign."
+  },
+  "benchmarkEvaluatorDisagreement": {
+    "actualPassDespiteNewViolationCaseIDs": [
+      "mixed-pt-en-006",
+      "telegraphic-pt-009"
+    ]
+  },
+  "frontierSecondary": {
+    "coveredCases": 14,
+    "interceptedCases": 1,
+    "interceptedCaseIDs": [
+      "mixed-pt-en-006"
+    ],
+    "supportingProductFailureCases": [
+      "mixed-pt-en-006"
+    ],
+    "isHumanGroundTruth": false
+  },
+  "selectionIsolation": {
+    "coveredCases": 3,
+    "existingContextLeakOrScopeFailureCases": [],
+    "note": "Only selected input spans were token-compared; the counterfactual does not change selection behavior."
+  },
+  "stability": {
+    "coveredCases": 14,
+    "coveredRuns": 70,
+    "tokenMutationInstabilityCases": [
+      "mixed-pt-en-004",
+      "protected-002",
+      "selection-extra-005"
+    ],
+    "tokenMutationInstabilityCount": 3,
+    "actualActionInstabilityCases": [
+      "already-good-002",
+      "already-good-004",
+      "mixed-pt-en-006"
+    ],
+    "counterfactualActionInstabilityCases": [
+      "already-good-002",
+      "already-good-004",
+      "mixed-pt-en-004",
+      "mixed-pt-en-006",
+      "protected-002",
+      "selection-extra-005"
+    ],
+    "counterfactualEliminatesUnsafeFinalTokenState": true,
+    "counterfactualDoesNotGuaranteeActionDeterminism": true
+  },
+  "rDollar": {
+    "caseID": "tiny-pt-008",
+    "class": "money",
+    "currentAcceptedBehavior": "M12B-004C preflight returns noChange and preserves R$.",
+    "priorM12B001Observation": "R$ → $",
+    "strictPreservationCatchesPriorMutation": true,
+    "noChangeIsSafer": true,
+    "futureBenchmarkCorrection": "Consider mustPreserveTokens: [\"R$\"] after maintainer review; frozen corpus was not modified."
+  },
+  "recommendation": {
+    "choice": "B",
+    "label": "Implement protection only for a narrower subset of token classes",
+    "exactClasses": [
+      "url",
+      "email",
+      "handle",
+      "identifier",
+      "codeLike",
+      "quotedLiteral",
+      "opaqueID"
+    ],
+    "semanticClasses": [
+      "money",
+      "time",
+      "percentage"
+    ],
+    "exactIntegerDeletionProtection": true,
+    "deferClasses": [
+      "date",
+      "formattedOrDecimalNumberMutation"
+    ],
+    "reason": "High-confidence structural and factual literals support a simple reject-to-noChange guard. Exact standalone-integer deletion is also supported; locale-sensitive date and formatted/decimal-number rewriting needs positive controls."
+  },
+  "cases": [
+    {
+      "caseID": "acronym-001",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "API SLA 99.9% OKR Q3 KPI dashboard",
+      "actualAction": "changed",
+      "actualOutput": "API SLA 99.9% OKR Q3 KPI dashboard",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection"
+      ],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustPreserveTokens": [
+          "API",
+          "SLA",
+          "99.9%",
+          "OKR",
+          "Q3",
+          "KPI",
+          "dashboard"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [
+        "API",
+        "SLA",
+        "99.9%",
+        "OKR",
+        "Q3",
+        "KPI",
+        "dashboard"
+      ],
+      "frontierJudgment": {
+        "schemaVersion": 1,
+        "reviewOrder": 44,
+        "productJudgment": "productFailure",
+        "productFailureLabels": [
+          "unnecessaryEdit"
+        ],
+        "productConfidence": "high",
+        "productRationale": "The already-useful technical note is returned verbatim under a changed action.",
+        "reviewer": "frontier-model-judge",
+        "caseID": "acronym-001",
+        "benchmarkJudgment": "needsConstraintEdit",
+        "benchmarkConfidence": "medium",
+        "benchmarkRationale": "A technical acronym cluster may already be useful; the benchmark should prefer and permit noChange.",
+        "proposedConstraintCorrection": {
+          "preferredAction": "noChange",
+          "allowedActions": [
+            "noChange",
+            "cleanup",
+            "structure"
+          ],
+          "semanticNotes": "Technical acronym/keyphrase cluster may appropriately remain unchanged."
+        }
+      },
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "99.9%",
+            "class": "percentage"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "99.9%",
+            "class": "percentage",
+            "status": "preserved",
+            "outputValue": "99.9%"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "API SLA 99.9% OKR Q3 KPI dashboard",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "already-good-002",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "Reunião com Ana às 15h para alinhar o beta.",
+      "actualAction": "changed",
+      "actualOutput": "Reunião com Ana às 15h para alinhar o beta.",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection",
+        "unexpectedChange"
+      ],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "preferredAction": "noChange",
+        "allowedActions": [
+          "noChange"
+        ],
+        "expectedLanguage": "pt",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.1,
+        "expectsNoChange": true
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": {
+        "schemaVersion": 1,
+        "reviewOrder": 5,
+        "productJudgment": "productFailure",
+        "productFailureLabels": [
+          "unnecessaryEdit"
+        ],
+        "productConfidence": "high",
+        "productRationale": "The output is identical to an already-useful sentence while the action is reported as changed.",
+        "reviewer": "frontier-model-judge",
+        "caseID": "already-good-002",
+        "benchmarkJudgment": "benchmarkCorrect",
+        "benchmarkConfidence": "high",
+        "benchmarkRationale": "The already-good Portuguese sentence correctly requires noChange.",
+        "proposedConstraintCorrection": null
+      },
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "15h",
+            "class": "time"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "15h",
+            "class": "time",
+            "status": "preserved",
+            "outputValue": "15h"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Reunião com Ana às 15h para alinhar o beta.",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "already-good-004",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "Meeting with Ana at 3pm to align on beta.",
+      "actualAction": "noChange",
+      "actualOutput": "Meeting with Ana at 3pm to align on beta.",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "preferredAction": "noChange",
+        "allowedActions": [
+          "noChange"
+        ],
+        "expectedLanguage": "en",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.1,
+        "expectsNoChange": true
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "3pm",
+            "class": "time"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "3pm",
+            "class": "time",
+            "status": "preserved",
+            "outputValue": "3pm"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "noChange",
+      "counterfactualOutput": "Meeting with Ana at 3pm to align on beta.",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "already-good-006",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "Deploy da v2.1.0 agendado para sexta-feira.",
+      "actualAction": "changed",
+      "actualOutput": "Deploy v2.1.0 scheduled for Friday.",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "languageDrift",
+        "protectedTokenMutation",
+        "unexpectedChange"
+      ],
+      "actualCriticalFailure": true,
+      "actualUserVisibleHarmfulEdit": true,
+      "benchmarkExpected": {
+        "preferredAction": "noChange",
+        "allowedActions": [
+          "noChange"
+        ],
+        "expectedLanguage": "pt",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.1,
+        "expectsNoChange": true
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": {
+        "schemaVersion": 1,
+        "reviewOrder": 6,
+        "productJudgment": "productFailure",
+        "productFailureLabels": [
+          "wrongLanguage"
+        ],
+        "productConfidence": "high",
+        "productRationale": "The Portuguese note was translated to English without authorization.",
+        "reviewer": "frontier-model-judge",
+        "caseID": "already-good-006",
+        "benchmarkJudgment": "benchmarkCorrect",
+        "benchmarkConfidence": "high",
+        "benchmarkRationale": "The already-good Portuguese sentence correctly requires noChange and its language expectation is clear.",
+        "proposedConstraintCorrection": null
+      },
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "v2.1.0",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "v2.1.0",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "v2.1.0"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Deploy v2.1.0 scheduled for Friday.",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "already-good-007",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "Deploy v2.1.0 scheduled for Friday.",
+      "actualAction": "changed",
+      "actualOutput": "Deploy v2.1.0 scheduled for Friday.",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection",
+        "unexpectedChange"
+      ],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "preferredAction": "noChange",
+        "allowedActions": [
+          "noChange"
+        ],
+        "expectedLanguage": "en",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.1,
+        "expectsNoChange": true
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "v2.1.0",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "v2.1.0",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "v2.1.0"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Deploy v2.1.0 scheduled for Friday.",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "already-good-008",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "Bug #4421: login falha com SSO corporativo.",
+      "actualAction": "changed",
+      "actualOutput": "Bug #4421: login falha com SSO corporativo.",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection",
+        "unexpectedChange"
+      ],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "preferredAction": "noChange",
+        "allowedActions": [
+          "noChange"
+        ],
+        "expectedLanguage": "pt",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.1,
+        "expectsNoChange": true
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "#4421",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "#4421",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "#4421"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Bug #4421: login falha com SSO corporativo.",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "already-good-009",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "Bug #4421: login fails with corporate SSO.",
+      "actualAction": "changed",
+      "actualOutput": "Bug #4421: login fails with corporate SSO.",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection",
+        "unexpectedChange"
+      ],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "preferredAction": "noChange",
+        "allowedActions": [
+          "noChange"
+        ],
+        "expectedLanguage": "en",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.1,
+        "expectsNoChange": true
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "#4421",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "#4421",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "#4421"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Bug #4421: login fails with corporate SSO.",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "code-005",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "critical",
+      "input": "fatal error: unexpectedly found nil while unwrapping an Optional value\n0   Rasc  0x0000000104ab2c10",
+      "actualAction": "changed",
+      "actualOutput": "Fatal error: unexpectedly found nil while unwrapping an Optional value",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "protectedTokenMutation"
+      ],
+      "actualCriticalFailure": true,
+      "actualUserVisibleHarmfulEdit": true,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustPreserveTokens": [
+          "Optional",
+          "Rasc",
+          "0x0000000104ab2c10"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.5
+      },
+      "benchmarkMustPreserve": [
+        "Optional",
+        "Rasc",
+        "0x0000000104ab2c10"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "0",
+            "class": "number"
+          },
+          {
+            "value": "0x0000000104ab2c10",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "0",
+            "class": "number",
+            "status": "dropped",
+            "outputValue": ""
+          },
+          {
+            "value": "0x0000000104ab2c10",
+            "class": "identifier",
+            "status": "dropped",
+            "outputValue": ""
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [
+        {
+          "value": "0",
+          "class": "number",
+          "status": "dropped",
+          "outputValue": ""
+        },
+        {
+          "value": "0x0000000104ab2c10",
+          "class": "identifier",
+          "status": "dropped",
+          "outputValue": ""
+        }
+      ],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": true,
+      "counterfactualAction": "noChange",
+      "counterfactualOutput": "fatal error: unexpectedly found nil while unwrapping an Optional value\n0   Rasc  0x0000000104ab2c10",
+      "counterfactualObjectivePass": true,
+      "effectClassification": "A",
+      "effectReason": "Existing evaluator or independent frontier review also identifies literal corruption.",
+      "actualBehavior": "dropped"
+    },
+    {
+      "caseID": "es-005",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "reunión 15h alinear beta con equipo",
+      "actualAction": "changed",
+      "actualOutput": "Reunion a las 3:00 PM alinear beta con el equipo",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "es",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.5
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "15h",
+            "class": "time"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "15h",
+            "class": "time",
+            "status": "safelyNormalized",
+            "outputValue": "3:00 PM"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Reunion a las 3:00 PM alinear beta con el equipo",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "safely normalized"
+    },
+    {
+      "caseID": "factual-001",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "Invoice R$ 2.450,00 due 2026-10-01 https://pay.acme.com/inv/991",
+      "actualAction": "noChange",
+      "actualOutput": "Invoice R$ 2.450,00 due 2026-10-01 https://pay.acme.com/inv/991",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.8
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": {
+        "schemaVersion": 1,
+        "reviewOrder": 45,
+        "productJudgment": "productFailure",
+        "productFailureLabels": [
+          "wrongLanguage",
+          "meaningChanged",
+          "excessiveExpansion",
+          "protectedTokenMutation"
+        ],
+        "productConfidence": "high",
+        "productRationale": "An English-framed invoice note is translated and expanded into Portuguese, the future due date is described as already overdue, and the protected date representation is rewritten.",
+        "reviewer": "frontier-model-judge",
+        "caseID": "factual-001",
+        "benchmarkJudgment": "benchmarkExpectationWrong",
+        "benchmarkConfidence": "high",
+        "benchmarkRationale": "The grammatical frame is English despite the BRL amount; the benchmark also omits explicit preservation of critical factual tokens.",
+        "proposedConstraintCorrection": {
+          "expectedLanguage": "en",
+          "mustPreserveTokens": [
+            "R$ 2.450,00",
+            "2026-10-01",
+            "https://pay.acme.com/inv/991"
+          ],
+          "semanticNotes": "Preserve the future due date and do not reinterpret it as already overdue."
+        }
+      },
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "R$ 2.450,00",
+            "class": "money"
+          },
+          {
+            "value": "2026-10-01",
+            "class": "date"
+          },
+          {
+            "value": "https://pay.acme.com/inv/991",
+            "class": "url"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "R$ 2.450,00",
+            "class": "money",
+            "status": "preserved",
+            "outputValue": "R$ 2.450,00"
+          },
+          {
+            "value": "2026-10-01",
+            "class": "date",
+            "status": "preserved",
+            "outputValue": "2026-10-01"
+          },
+          {
+            "value": "https://pay.acme.com/inv/991",
+            "class": "url",
+            "status": "preserved",
+            "outputValue": "https://pay.acme.com/inv/991"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "noChange",
+      "counterfactualOutput": "Invoice R$ 2.450,00 due 2026-10-01 https://pay.acme.com/inv/991",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "factual-002",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "Budget $12,500 for Q4 meeting 2026-11-15 at 14:00 UTC",
+      "actualAction": "changed",
+      "actualOutput": "Budget $12,500 for Q4 meeting 2026-11-15 at 14:00 UTC",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection"
+      ],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.8
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "$12,500",
+            "class": "money"
+          },
+          {
+            "value": "2026-11-15",
+            "class": "date"
+          },
+          {
+            "value": "14:00",
+            "class": "time"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "$12,500",
+            "class": "money",
+            "status": "preserved",
+            "outputValue": "$12,500"
+          },
+          {
+            "value": "2026-11-15",
+            "class": "date",
+            "status": "preserved",
+            "outputValue": "2026-11-15"
+          },
+          {
+            "value": "14:00",
+            "class": "time",
+            "status": "preserved",
+            "outputValue": "14:00"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Budget $12,500 for Q4 meeting 2026-11-15 at 14:00 UTC",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "factual-003",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "Desconto 15% até 31/12 link https://loja.example/black-friday",
+      "actualAction": "changed",
+      "actualOutput": "Descuento 15% hasta 31/12 link https://loja.example/black-friday",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "languageDrift"
+      ],
+      "actualCriticalFailure": true,
+      "actualUserVisibleHarmfulEdit": true,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.8
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": {
+        "schemaVersion": 1,
+        "reviewOrder": 46,
+        "productJudgment": "productFailure",
+        "productFailureLabels": [
+          "wrongLanguage"
+        ],
+        "productConfidence": "high",
+        "productRationale": "The Portuguese discount note is translated to Spanish without authorization.",
+        "reviewer": "frontier-model-judge",
+        "caseID": "factual-003",
+        "benchmarkJudgment": "benchmarkCorrect",
+        "benchmarkConfidence": "high",
+        "benchmarkRationale": "The input is clearly Portuguese and the benchmark correctly rejects the Spanish translation; factual-token checks provide additional protection.",
+        "proposedConstraintCorrection": null
+      },
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "15%",
+            "class": "percentage"
+          },
+          {
+            "value": "31/12",
+            "class": "date"
+          },
+          {
+            "value": "https://loja.example/black-friday",
+            "class": "url"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "15%",
+            "class": "percentage",
+            "status": "preserved",
+            "outputValue": "15%"
+          },
+          {
+            "value": "31/12",
+            "class": "date",
+            "status": "preserved",
+            "outputValue": "31/12"
+          },
+          {
+            "value": "https://loja.example/black-friday",
+            "class": "url",
+            "status": "preserved",
+            "outputValue": "https://loja.example/black-friday"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Descuento 15% hasta 31/12 link https://loja.example/black-friday",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "legacy-meeting-en-001",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "sync notes: keep beta small, Mira will check onboarding copy, maybe launch October 8",
+      "actualAction": "changed",
+      "actualOutput": "Sync notes: Keep beta small, Mira will check onboarding copy, maybe launch October 8",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustPreserveTokens": [
+          "Mira",
+          "maybe",
+          "October 8"
+        ],
+        "mustNotIntroduceInformation": true
+      },
+      "benchmarkMustPreserve": [
+        "Mira",
+        "maybe",
+        "October 8"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "8",
+            "class": "number"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "8",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "8"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Sync notes: Keep beta small, Mira will check onboarding copy, maybe launch October 8",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "legacy-message-en-001",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "hey Sam I might have fixed build #1842 can you check macOS 14.6 when you get a minute",
+      "actualAction": "changed",
+      "actualOutput": "Hey Sam, I might have fixed build #1842. Can you check macOS 14.6 when you get a minute?",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustPreserveTokens": [
+          "Sam",
+          "might",
+          "#1842",
+          "macOS 14.6"
+        ],
+        "mustNotIntroduceInformation": true
+      },
+      "benchmarkMustPreserve": [
+        "Sam",
+        "might",
+        "#1842",
+        "macOS 14.6"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "#1842",
+            "class": "identifier"
+          },
+          {
+            "value": "macOS",
+            "class": "identifier"
+          },
+          {
+            "value": "14.6",
+            "class": "number"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "#1842",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "#1842"
+          },
+          {
+            "value": "macOS",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "macOS"
+          },
+          {
+            "value": "14.6",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "14.6"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Hey Sam, I might have fixed build #1842. Can you check macOS 14.6 when you get a minute?",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "legacy-planning-abbreviated-pt-001",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "trocar nums narrativos por algo como de x itens/conteudos, y% das narrativas sao pos/neg",
+      "actualAction": "changed",
+      "actualOutput": "Trocar numerais narrativos por algo como de x itens/conteudos, y% das narrativas sao pos/neg",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustPreserveTokens": [
+          "x",
+          "y%",
+          "narrativas",
+          "pos/neg"
+        ],
+        "mustNotIntroduceInformation": true
+      },
+      "benchmarkMustPreserve": [
+        "x",
+        "y%",
+        "narrativas",
+        "pos/neg"
+      ],
+      "frontierJudgment": {
+        "schemaVersion": 1,
+        "reviewOrder": 18,
+        "productJudgment": "outputAcceptable",
+        "productFailureLabels": [],
+        "productConfidence": "medium",
+        "productRationale": "The output conservatively expands abbreviations and improves readability while preserving the note's intended meaning.",
+        "reviewer": "frontier-model-judge",
+        "caseID": "legacy-planning-abbreviated-pt-001",
+        "benchmarkJudgment": "needsConstraintEdit",
+        "benchmarkConfidence": "high",
+        "benchmarkRationale": "The benchmark incorrectly freezes an abbreviation that can be conservatively expanded without changing meaning.",
+        "proposedConstraintCorrection": {
+          "mustPreserveTokens": [
+            "x",
+            "y%",
+            "narrativas"
+          ],
+          "semanticNotes": "Preserve placeholders and meaning; expanding 'nums' and 'pos/neg' into their direct Portuguese forms is allowed."
+        }
+      },
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "itens/conteudos",
+            "class": "codeLike"
+          },
+          {
+            "value": "pos/neg",
+            "class": "codeLike"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "itens/conteudos",
+            "class": "codeLike",
+            "status": "preserved",
+            "outputValue": "itens/conteudos"
+          },
+          {
+            "value": "pos/neg",
+            "class": "codeLike",
+            "status": "preserved",
+            "outputValue": "pos/neg"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Trocar numerais narrativos por algo como de x itens/conteudos, y% das narrativas sao pos/neg",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "legacy-technical-mixed-001",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "next_retry_at pode estar menor que scheduled_at after combineWithPacingSlot no whatsapp_queue tick",
+      "actualAction": "changed",
+      "actualOutput": "next_retry_at deve ser maior que scheduled_at depois de combineWithPacingSlot no whatsapp_queue tick",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "mixed",
+        "mustPreserveTokens": [
+          "next_retry_at",
+          "scheduled_at",
+          "combineWithPacingSlot",
+          "whatsapp_queue"
+        ],
+        "mustNotIntroduceInformation": true
+      },
+      "benchmarkMustPreserve": [
+        "next_retry_at",
+        "scheduled_at",
+        "combineWithPacingSlot",
+        "whatsapp_queue"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "next_retry_at",
+            "class": "identifier"
+          },
+          {
+            "value": "scheduled_at",
+            "class": "identifier"
+          },
+          {
+            "value": "combineWithPacingSlot",
+            "class": "identifier"
+          },
+          {
+            "value": "whatsapp_queue",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "next_retry_at",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "next_retry_at"
+          },
+          {
+            "value": "scheduled_at",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "scheduled_at"
+          },
+          {
+            "value": "combineWithPacingSlot",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "combineWithPacingSlot"
+          },
+          {
+            "value": "whatsapp_queue",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "whatsapp_queue"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "next_retry_at deve ser maior que scheduled_at depois de combineWithPacingSlot no whatsapp_queue tick",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "long-en-001",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "standup dump: Sam checking build 2041 on macOS 15.6, retry may fire before queue tick, Mira owns onboarding copy, maybe launch beta Oct 8, ticket GH-991 still open, see https://status.example.com — no final decision on pricing yet.",
+      "actualAction": "changed",
+      "actualOutput": "Sam is checking build 2041 on macOS 15.6. Mira owns onboarding copy. Maybe launch beta Oct 8. Ticket GH-991 is still open. See https://status.example.com. No final decision on pricing yet.",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustPreserveTokens": [
+          "Sam",
+          "maybe",
+          "GH-991",
+          "https://status.example.com",
+          "2041"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.8
+      },
+      "benchmarkMustPreserve": [
+        "Sam",
+        "maybe",
+        "GH-991",
+        "https://status.example.com",
+        "2041"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "2041",
+            "class": "number"
+          },
+          {
+            "value": "macOS",
+            "class": "identifier"
+          },
+          {
+            "value": "15.6",
+            "class": "number"
+          },
+          {
+            "value": "8",
+            "class": "number"
+          },
+          {
+            "value": "GH-991",
+            "class": "opaqueID"
+          },
+          {
+            "value": "https://status.example.com",
+            "class": "url"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "2041",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "2041"
+          },
+          {
+            "value": "macOS",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "macOS"
+          },
+          {
+            "value": "15.6",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "15.6"
+          },
+          {
+            "value": "8",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "8"
+          },
+          {
+            "value": "GH-991",
+            "class": "opaqueID",
+            "status": "preserved",
+            "outputValue": "GH-991"
+          },
+          {
+            "value": "https://status.example.com",
+            "class": "url",
+            "status": "preserved",
+            "outputValue": "https://status.example.com"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Sam is checking build 2041 on macOS 15.6. Mira owns onboarding copy. Maybe launch beta Oct 8. Ticket GH-991 is still open. See https://status.example.com. No final decision on pricing yet.",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "long-pt-002",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "nota longa #2: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49",
+      "actualAction": "changed",
+      "actualOutput": "nota longa #2: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustPreserveTokens": [
+          "talvez",
+          "QUEUED",
+          "FAILED",
+          "https://example.com/status"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.5
+      },
+      "benchmarkMustPreserve": [
+        "talvez",
+        "QUEUED",
+        "FAILED",
+        "https://example.com/status"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "#2",
+            "class": "identifier"
+          },
+          {
+            "value": "https://example.com/status",
+            "class": "url"
+          },
+          {
+            "value": "R$ 49",
+            "class": "money"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "#2",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "#2"
+          },
+          {
+            "value": "https://example.com/status",
+            "class": "url",
+            "status": "preserved",
+            "outputValue": "https://example.com/status"
+          },
+          {
+            "value": "R$ 49",
+            "class": "money",
+            "status": "preserved",
+            "outputValue": "R$ 49"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "nota longa #2: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "long-pt-004",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "nota longa #4: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49",
+      "actualAction": "noChange",
+      "actualOutput": "nota longa #4: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustPreserveTokens": [
+          "talvez",
+          "QUEUED",
+          "FAILED",
+          "https://example.com/status"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.5
+      },
+      "benchmarkMustPreserve": [
+        "talvez",
+        "QUEUED",
+        "FAILED",
+        "https://example.com/status"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "#4",
+            "class": "identifier"
+          },
+          {
+            "value": "https://example.com/status",
+            "class": "url"
+          },
+          {
+            "value": "R$ 49",
+            "class": "money"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "#4",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "#4"
+          },
+          {
+            "value": "https://example.com/status",
+            "class": "url",
+            "status": "preserved",
+            "outputValue": "https://example.com/status"
+          },
+          {
+            "value": "R$ 49",
+            "class": "money",
+            "status": "preserved",
+            "outputValue": "R$ 49"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "noChange",
+      "counterfactualOutput": "nota longa #4: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "long-pt-005",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "nota longa #5: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49",
+      "actualAction": "changed",
+      "actualOutput": "nota longa #5: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustPreserveTokens": [
+          "talvez",
+          "QUEUED",
+          "FAILED",
+          "https://example.com/status"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.5
+      },
+      "benchmarkMustPreserve": [
+        "talvez",
+        "QUEUED",
+        "FAILED",
+        "https://example.com/status"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "#5",
+            "class": "identifier"
+          },
+          {
+            "value": "https://example.com/status",
+            "class": "url"
+          },
+          {
+            "value": "R$ 49",
+            "class": "money"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "#5",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "#5"
+          },
+          {
+            "value": "https://example.com/status",
+            "class": "url",
+            "status": "preserved",
+            "outputValue": "https://example.com/status"
+          },
+          {
+            "value": "R$ 49",
+            "class": "money",
+            "status": "preserved",
+            "outputValue": "R$ 49"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "nota longa #5: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "medium-pt-003",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "reunião 14h alinhar beta com time",
+      "actualAction": "changed",
+      "actualOutput": "Reunião 14h - Alinhamento com o time Beta",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.5
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "14h",
+            "class": "time"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "14h",
+            "class": "time",
+            "status": "preserved",
+            "outputValue": "14h"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Reunião 14h - Alinhamento com o time Beta",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "medium-pt-015",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "subir versão 2.1.0 hoje à tarde",
+      "actualAction": "changed",
+      "actualOutput": "Subir versão 2.1.0 hoje à tarde",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.5
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "2.1",
+            "class": "number"
+          },
+          {
+            "value": "0",
+            "class": "number"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "2.1",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "2.1"
+          },
+          {
+            "value": "0",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "0"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Subir versão 2.1.0 hoje à tarde",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "meeting-dump-004",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "1) dup retry 2) check QUEUED/FAILED logs 3) talk to infra 4) deploy Friday?",
+      "actualAction": "changed",
+      "actualOutput": "1) dup retry 2) check QUEUED/FAILED logs 3) talk to infra 4) deploy Friday?",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection"
+      ],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustPreserveTokens": [
+          "talvez",
+          "maybe",
+          "QUEUED",
+          "FAILED",
+          "Mirella",
+          "Mira",
+          "Vitor",
+          "Sam"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [
+        "talvez",
+        "maybe",
+        "QUEUED",
+        "FAILED",
+        "Mirella",
+        "Mira",
+        "Vitor",
+        "Sam"
+      ],
+      "frontierJudgment": {
+        "schemaVersion": 1,
+        "reviewOrder": 0,
+        "productJudgment": "productFailure",
+        "productFailureLabels": [
+          "unnecessaryEdit"
+        ],
+        "productConfidence": "high",
+        "productRationale": "The final text is identical to the input, so the changed action provides no useful transformation.",
+        "reviewer": "frontier-model-judge",
+        "caseID": "meeting-dump-004",
+        "benchmarkJudgment": "needsConstraintEdit",
+        "benchmarkConfidence": "medium",
+        "benchmarkRationale": "The constraints should permit conservative noChange when a safe structural improvement is not produced.",
+        "proposedConstraintCorrection": {
+          "allowedActions": [
+            "noChange",
+            "cleanup",
+            "structure"
+          ]
+        }
+      },
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "1",
+            "class": "number"
+          },
+          {
+            "value": "2",
+            "class": "number"
+          },
+          {
+            "value": "QUEUED/FAILED",
+            "class": "codeLike"
+          },
+          {
+            "value": "3",
+            "class": "number"
+          },
+          {
+            "value": "4",
+            "class": "number"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "1",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "1"
+          },
+          {
+            "value": "2",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "2"
+          },
+          {
+            "value": "QUEUED/FAILED",
+            "class": "codeLike",
+            "status": "preserved",
+            "outputValue": "QUEUED/FAILED"
+          },
+          {
+            "value": "3",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "3"
+          },
+          {
+            "value": "4",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "4"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "1) dup retry 2) check QUEUED/FAILED logs 3) talk to infra 4) deploy Friday?",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "mixed-pt-en-004",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "falar com PM sobre rollout do feature flag enableRefineV2",
+      "actualAction": "changed",
+      "actualOutput": "Falar com PM sobre rollout do feature flag enableRefineV2",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "mixed",
+        "mustPreserveTokens": [
+          "enableRefineV2"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.5
+      },
+      "benchmarkMustPreserve": [
+        "enableRefineV2"
+      ],
+      "frontierJudgment": {
+        "schemaVersion": 1,
+        "reviewOrder": 16,
+        "productJudgment": "productFailure",
+        "productFailureLabels": [
+          "meaningChanged",
+          "styleVoiceDamage"
+        ],
+        "productConfidence": "medium",
+        "productRationale": "The rewrite formalizes an intentional technical note and weakens the precise concepts of rollout and feature flag through awkward translation.",
+        "reviewer": "frontier-model-judge",
+        "caseID": "mixed-pt-en-004",
+        "benchmarkJudgment": "benchmarkExpectationWrong",
+        "benchmarkConfidence": "high",
+        "benchmarkRationale": "Portuguese syntax with embedded English technical terms is PT-dominant, not an authorization to translate or localize those terms.",
+        "proposedConstraintCorrection": {
+          "expectedLanguage": "pt",
+          "mustPreserveTokens": [
+            "rollout",
+            "feature flag",
+            "enableRefineV2"
+          ],
+          "semanticNotes": "Keep the Portuguese frame and preserve established English technical terminology."
+        }
+      },
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "enableRefineV2",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "enableRefineV2",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "enableRefineV2"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Falar com PM sobre rollout do feature flag enableRefineV2",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "mixed-pt-en-006",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "talvez o endpoint /api/v2/export tá retornando 500",
+      "actualAction": "changed",
+      "actualOutput": "/api/v2/export",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": true,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "mixed",
+        "mustPreserveTokens": [
+          "/api/v2/export"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.5
+      },
+      "benchmarkMustPreserve": [
+        "/api/v2/export"
+      ],
+      "frontierJudgment": {
+        "schemaVersion": 1,
+        "reviewOrder": 17,
+        "productJudgment": "productFailure",
+        "productFailureLabels": [
+          "meaningChanged"
+        ],
+        "productConfidence": "high",
+        "productRationale": "The output discards the uncertainty, HTTP 500 behavior, and surrounding statement, leaving only the endpoint.",
+        "reviewer": "frontier-model-judge",
+        "caseID": "mixed-pt-en-006",
+        "benchmarkJudgment": "benchmarkExpectationWrong",
+        "benchmarkConfidence": "high",
+        "benchmarkRationale": "The sentence is clearly Portuguese; the endpoint is a protected technical token, not evidence that the note's language is mixed.",
+        "proposedConstraintCorrection": {
+          "expectedLanguage": "pt",
+          "mustPreserveTokens": [
+            "/api/v2/export"
+          ]
+        }
+      },
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "/api/v2/export",
+            "class": "codeLike"
+          },
+          {
+            "value": "500",
+            "class": "number"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "/api/v2/export",
+            "class": "codeLike",
+            "status": "preserved",
+            "outputValue": "/api/v2/export"
+          },
+          {
+            "value": "500",
+            "class": "number",
+            "status": "dropped",
+            "outputValue": ""
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [
+        {
+          "value": "500",
+          "class": "number",
+          "status": "dropped",
+          "outputValue": ""
+        }
+      ],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": true,
+      "counterfactualAction": "noChange",
+      "counterfactualOutput": "talvez o endpoint /api/v2/export tá retornando 500",
+      "counterfactualObjectivePass": true,
+      "effectClassification": "A",
+      "effectReason": "Independent frontier review identifies a meaning/information failure that the literal-preservation rejection prevents.",
+      "actualBehavior": "evaluator/benchmark disagreement"
+    },
+    {
+      "caseID": "mixed-pt-en-009",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "ideia: usar SQLite FTS5 pra search local sem embeddings",
+      "actualAction": "changed",
+      "actualOutput": "Usar SQLite FTS5 para buscar local sem embeddings",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "mixed",
+        "mustPreserveTokens": [
+          "FTS5"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.5
+      },
+      "benchmarkMustPreserve": [
+        "FTS5"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "SQLite",
+            "class": "identifier"
+          },
+          {
+            "value": "FTS5",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "SQLite",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "SQLite"
+          },
+          {
+            "value": "FTS5",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "FTS5"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Usar SQLite FTS5 para buscar local sem embeddings",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "mixed-tech-001",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "rollback deploy v2.1.0 se error rate > 1%",
+      "actualAction": "changed",
+      "actualOutput": "Rollback deploy v2.1.0 if error rate exceeds 1%",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "mixed",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "v2.1.0",
+            "class": "identifier"
+          },
+          {
+            "value": "1%",
+            "class": "percentage"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "v2.1.0",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "v2.1.0"
+          },
+          {
+            "value": "1%",
+            "class": "percentage",
+            "status": "preserved",
+            "outputValue": "1%"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Rollback deploy v2.1.0 if error rate exceeds 1%",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "mixed-tech-004",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "metric alert: p95 refine latency > 3s",
+      "actualAction": "changed",
+      "actualOutput": "Metric alert: p95 refine latency > 3s",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "mixed",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "p95",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "p95",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "p95"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Metric alert: p95 refine latency > 3s",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "mixed-tech-005",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "crash SIGSEGV em FoundationModelsRefinementProvider",
+      "actualAction": "changed",
+      "actualOutput": "Error SIGSEGV ocurrido en FoundationModelsRefinementProvider",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "mixed",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "FoundationModelsRefinementProvider",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "FoundationModelsRefinementProvider",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "FoundationModelsRefinementProvider"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Error SIGSEGV ocurrido en FoundationModelsRefinementProvider",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "mixed-tech-006",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "git bisect between abc123..def456",
+      "actualAction": "changed",
+      "actualOutput": "git bisect between abc123..def456",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection"
+      ],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "mixed",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "abc123",
+            "class": "identifier"
+          },
+          {
+            "value": "def456",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "abc123",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "abc123"
+          },
+          {
+            "value": "def456",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "def456"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "git bisect between abc123..def456",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "mixed-tech-008",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "incident INC-4421 customer reports data loss — unlikely local-first",
+      "actualAction": "changed",
+      "actualOutput": "Incidente INC-4421: Informe de clientes sobre pérdida de datos - poco probable local-first",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "mixed",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "INC-4421",
+            "class": "opaqueID"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "INC-4421",
+            "class": "opaqueID",
+            "status": "preserved",
+            "outputValue": "INC-4421"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Incidente INC-4421: Informe de clientes sobre pérdida de datos - poco probable local-first",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "numbers-004",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "version 3.14.159 build 2041 commit abc123def",
+      "actualAction": "changed",
+      "actualOutput": "Version 3.14.159 build 2041 commit abc123def",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustPreserveTokens": [
+          "1.234",
+          "12,5%",
+          "12.5%",
+          "2041",
+          "abc123def",
+          "45ms",
+          "180ms",
+          "420ms"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.8
+      },
+      "benchmarkMustPreserve": [
+        "1.234",
+        "12,5%",
+        "12.5%",
+        "2041",
+        "abc123def",
+        "45ms",
+        "180ms",
+        "420ms"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "3.14",
+            "class": "number"
+          },
+          {
+            "value": "159",
+            "class": "number"
+          },
+          {
+            "value": "2041",
+            "class": "number"
+          },
+          {
+            "value": "abc123def",
+            "class": "opaqueID"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "3.14",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "3.14"
+          },
+          {
+            "value": "159",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "159"
+          },
+          {
+            "value": "2041",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "2041"
+          },
+          {
+            "value": "abc123def",
+            "class": "opaqueID",
+            "status": "preserved",
+            "outputValue": "abc123def"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Version 3.14.159 build 2041 commit abc123def",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "numbers-005",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "latência p50 45ms p95 180ms p99 420ms",
+      "actualAction": "changed",
+      "actualOutput": "Latencia p50: 45ms\nLatencia p95: 180ms\nLatencia p99: 420ms",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "languageDrift"
+      ],
+      "actualCriticalFailure": true,
+      "actualUserVisibleHarmfulEdit": true,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustPreserveTokens": [
+          "1.234",
+          "12,5%",
+          "12.5%",
+          "2041",
+          "abc123def",
+          "45ms",
+          "180ms",
+          "420ms"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.8
+      },
+      "benchmarkMustPreserve": [
+        "1.234",
+        "12,5%",
+        "12.5%",
+        "2041",
+        "abc123def",
+        "45ms",
+        "180ms",
+        "420ms"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "p50",
+            "class": "identifier"
+          },
+          {
+            "value": "45ms",
+            "class": "identifier"
+          },
+          {
+            "value": "p95",
+            "class": "identifier"
+          },
+          {
+            "value": "180ms",
+            "class": "identifier"
+          },
+          {
+            "value": "p99",
+            "class": "identifier"
+          },
+          {
+            "value": "420ms",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "p50",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "p50"
+          },
+          {
+            "value": "45ms",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "45ms"
+          },
+          {
+            "value": "p95",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "p95"
+          },
+          {
+            "value": "180ms",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "180ms"
+          },
+          {
+            "value": "p99",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "p99"
+          },
+          {
+            "value": "420ms",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "420ms"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Latencia p50: 45ms\nLatencia p95: 180ms\nLatencia p99: 420ms",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "protected-002",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "critical",
+      "input": "Email sam@corp.io docs https://docs.example.com/v2/id 8f3a2c1b-4e5d-6a7b-8c9d-0e1f2a3b4c5d $42.50",
+      "actualAction": "changed",
+      "actualOutput": "Email sam@corp.io docs https://docs.example.com/v2/id 8f3a2c1b-4e5d-6a7b-8c9d-0e1f2a3b4c5d $42.50",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection"
+      ],
+      "actualCriticalFailure": true,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustPreserveTokens": [
+          "sam@corp.io",
+          "https://docs.example.com/v2",
+          "8f3a2c1b-4e5d-6a7b-8c9d-0e1f2a3b4c5d",
+          "$42.50"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [
+        "sam@corp.io",
+        "https://docs.example.com/v2",
+        "8f3a2c1b-4e5d-6a7b-8c9d-0e1f2a3b4c5d",
+        "$42.50"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "sam@corp.io",
+            "class": "email"
+          },
+          {
+            "value": "https://docs.example.com/v2/id",
+            "class": "url"
+          },
+          {
+            "value": "8f3a2c1b-4e5d-6a7b-8c9d-0e1f2a3b4c5d",
+            "class": "opaqueID"
+          },
+          {
+            "value": "$42.50",
+            "class": "money"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "sam@corp.io",
+            "class": "email",
+            "status": "preserved",
+            "outputValue": "sam@corp.io"
+          },
+          {
+            "value": "https://docs.example.com/v2/id",
+            "class": "url",
+            "status": "preserved",
+            "outputValue": "https://docs.example.com/v2/id"
+          },
+          {
+            "value": "8f3a2c1b-4e5d-6a7b-8c9d-0e1f2a3b4c5d",
+            "class": "opaqueID",
+            "status": "preserved",
+            "outputValue": "8f3a2c1b-4e5d-6a7b-8c9d-0e1f2a3b4c5d"
+          },
+          {
+            "value": "$42.50",
+            "class": "money",
+            "status": "preserved",
+            "outputValue": "$42.50"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Email sam@corp.io docs https://docs.example.com/v2/id 8f3a2c1b-4e5d-6a7b-8c9d-0e1f2a3b4c5d $42.50",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "protected-003",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "critical",
+      "input": "handle @rafatorres issue GH-2041 camelCase snake_case `retryCount`",
+      "actualAction": "changed",
+      "actualOutput": "handle @rafatorres issue GH-2041 camelCase snake_case `retryCount`",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection"
+      ],
+      "actualCriticalFailure": true,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "mixed",
+        "mustPreserveTokens": [
+          "@rafatorres",
+          "GH-2041",
+          "camelCase",
+          "snake_case",
+          "`retryCount`"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [
+        "@rafatorres",
+        "GH-2041",
+        "camelCase",
+        "snake_case",
+        "`retryCount`"
+      ],
+      "frontierJudgment": {
+        "schemaVersion": 1,
+        "reviewOrder": 3,
+        "productJudgment": "productFailure",
+        "productFailureLabels": [
+          "unnecessaryEdit"
+        ],
+        "productConfidence": "high",
+        "productRationale": "Capitalizing the first word alone does not materially improve this already-useful technical note.",
+        "reviewer": "frontier-model-judge",
+        "caseID": "protected-003",
+        "benchmarkJudgment": "benchmarkExpectationWrong",
+        "benchmarkConfidence": "high",
+        "benchmarkRationale": "The note is English with protected technical tokens, not genuinely mixed-language prose.",
+        "proposedConstraintCorrection": {
+          "expectedLanguage": "en"
+        }
+      },
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "@rafatorres",
+            "class": "handle"
+          },
+          {
+            "value": "GH-2041",
+            "class": "opaqueID"
+          },
+          {
+            "value": "camelCase",
+            "class": "identifier"
+          },
+          {
+            "value": "snake_case",
+            "class": "identifier"
+          },
+          {
+            "value": "`retryCount`",
+            "class": "quotedLiteral"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "@rafatorres",
+            "class": "handle",
+            "status": "preserved",
+            "outputValue": "@rafatorres"
+          },
+          {
+            "value": "GH-2041",
+            "class": "opaqueID",
+            "status": "preserved",
+            "outputValue": "GH-2041"
+          },
+          {
+            "value": "camelCase",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "camelCase"
+          },
+          {
+            "value": "snake_case",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "snake_case"
+          },
+          {
+            "value": "`retryCount`",
+            "class": "quotedLiteral",
+            "status": "preserved",
+            "outputValue": "`retryCount`"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "handle @rafatorres issue GH-2041 camelCase snake_case `retryCount`",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "protected-004",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "critical",
+      "input": "Quoted literal \"do not rewrite\" and identifier next_retry_at in worker",
+      "actualAction": "changed",
+      "actualOutput": "Quoted literal \"do not rewrite\" and identifier next_retry_at in worker",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection"
+      ],
+      "actualCriticalFailure": true,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustPreserveTokens": [
+          "\"do not rewrite\"",
+          "next_retry_at"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [
+        "\"do not rewrite\"",
+        "next_retry_at"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "\"do not rewrite\"",
+            "class": "quotedLiteral"
+          },
+          {
+            "value": "next_retry_at",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "\"do not rewrite\"",
+            "class": "quotedLiteral",
+            "status": "preserved",
+            "outputValue": "\"do not rewrite\""
+          },
+          {
+            "value": "next_retry_at",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "next_retry_at"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Quoted literal \"do not rewrite\" and identifier next_retry_at in worker",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "protected-005",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "critical",
+      "input": "Stack: NullPointerException at com.app.QueueWorker.tick linha 142",
+      "actualAction": "changed",
+      "actualOutput": "Stack: NullPointerException at com.app.QueueWorker.tick linha 142",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection"
+      ],
+      "actualCriticalFailure": true,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustPreserveTokens": [
+          "NullPointerException",
+          "QueueWorker.tick",
+          "142"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [
+        "NullPointerException",
+        "QueueWorker.tick",
+        "142"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "NullPointerException",
+            "class": "identifier"
+          },
+          {
+            "value": "QueueWorker",
+            "class": "identifier"
+          },
+          {
+            "value": "142",
+            "class": "number"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "NullPointerException",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "NullPointerException"
+          },
+          {
+            "value": "QueueWorker",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "QueueWorker"
+          },
+          {
+            "value": "142",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "142"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Stack: NullPointerException at com.app.QueueWorker.tick linha 142",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "selection-extra-001",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "selection",
+      "severity": "high",
+      "input": "next_retry_at",
+      "actualAction": "changed",
+      "actualOutput": "next retry at",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "languageDrift",
+        "protectedTokenMutation",
+        "unexpectedChange"
+      ],
+      "actualCriticalFailure": true,
+      "actualUserVisibleHarmfulEdit": true,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup"
+        ],
+        "expectedLanguage": "pt",
+        "mustPreserveTokens": [
+          "next_retry_at"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0,
+        "expectsNoChange": true
+      },
+      "benchmarkMustPreserve": [
+        "next_retry_at"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "next_retry_at",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "next_retry_at",
+            "class": "identifier",
+            "status": "dropped",
+            "outputValue": ""
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [
+        {
+          "value": "next_retry_at",
+          "class": "identifier",
+          "status": "dropped",
+          "outputValue": ""
+        }
+      ],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": true,
+      "counterfactualIntercepted": true,
+      "counterfactualAction": "noChange",
+      "counterfactualOutput": "next_retry_at",
+      "counterfactualObjectivePass": true,
+      "effectClassification": "A",
+      "effectReason": "Existing evaluator or independent frontier review also identifies literal corruption.",
+      "actualBehavior": "dropped"
+    },
+    {
+      "caseID": "selection-extra-005",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "selection",
+      "severity": "high",
+      "input": "R$ 99,90",
+      "actualAction": "changed",
+      "actualOutput": "R$ 100,00",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "protectedTokenMutation",
+        "unexpectedChange"
+      ],
+      "actualCriticalFailure": true,
+      "actualUserVisibleHarmfulEdit": true,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup"
+        ],
+        "expectedLanguage": "pt",
+        "mustPreserveTokens": [
+          "R$ 99,90"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0,
+        "expectsNoChange": true
+      },
+      "benchmarkMustPreserve": [
+        "R$ 99,90"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "R$ 99,90",
+            "class": "money"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "R$ 99,90",
+            "class": "money",
+            "status": "mutated",
+            "outputValue": "R$ 100,00"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [
+        {
+          "value": "R$ 99,90",
+          "class": "money",
+          "status": "mutated",
+          "outputValue": "R$ 100,00"
+        }
+      ],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": true,
+      "counterfactualAction": "noChange",
+      "counterfactualOutput": "R$ 99,90",
+      "counterfactualObjectivePass": true,
+      "effectClassification": "A",
+      "effectReason": "Existing evaluator or independent frontier review also identifies literal corruption.",
+      "actualBehavior": "mutated"
+    },
+    {
+      "caseID": "selection-extra-006",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "selection",
+      "severity": "high",
+      "input": "PR #2041",
+      "actualAction": "changed",
+      "actualOutput": "PR #2041",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection"
+      ],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup"
+        ],
+        "expectedLanguage": "mixed",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": {
+        "schemaVersion": 1,
+        "reviewOrder": 10,
+        "productJudgment": "productFailure",
+        "productFailureLabels": [
+          "unnecessaryEdit"
+        ],
+        "productConfidence": "high",
+        "productRationale": "The selected PR identifier is returned unchanged under a changed action, with no useful improvement.",
+        "reviewer": "frontier-model-judge",
+        "caseID": "selection-extra-006",
+        "benchmarkJudgment": "benchmarkCorrect",
+        "benchmarkConfidence": "medium",
+        "benchmarkRationale": "The selected identifier is language-neutral within Portuguese context, and the benchmark appropriately permits noChange without requiring a rewrite.",
+        "proposedConstraintCorrection": null
+      },
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "#2041",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "#2041",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "#2041"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "PR #2041",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "telegraphic-en-005",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "PR #88 review",
+      "actualAction": "changed",
+      "actualOutput": "PR #88 review",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection"
+      ],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.2
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "#88",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "#88",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "#88"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "PR #88 review",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "telegraphic-en-006",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "standup 10am",
+      "actualAction": "noChange",
+      "actualOutput": "standup 10am",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.2
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "10am",
+            "class": "time"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "10am",
+            "class": "time",
+            "status": "preserved",
+            "outputValue": "10am"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "noChange",
+      "counterfactualOutput": "standup 10am",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "telegraphic-pt-005",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "PR #88 review",
+      "actualAction": "changed",
+      "actualOutput": "PR #88 review",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "languageDrift",
+        "productionGuardRejection"
+      ],
+      "actualCriticalFailure": true,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.2
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "#88",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "#88",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "#88"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "PR #88 review",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "telegraphic-pt-006",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "standup 10h",
+      "actualAction": "changed",
+      "actualOutput": "Standup 10h",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.2
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "10h",
+            "class": "time"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "10h",
+            "class": "time",
+            "status": "preserved",
+            "outputValue": "10h"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Standup 10h",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "telegraphic-pt-009",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "metrics p95 latency",
+      "actualAction": "changed",
+      "actualOutput": "Latencia P95",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": true,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.2
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "p95",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "p95",
+            "class": "identifier",
+            "status": "mutated",
+            "outputValue": "P95"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [
+        {
+          "value": "p95",
+          "class": "identifier",
+          "status": "mutated",
+          "outputValue": "P95"
+        }
+      ],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": true,
+      "counterfactualAction": "noChange",
+      "counterfactualOutput": "metrics p95 latency",
+      "counterfactualObjectivePass": true,
+      "effectClassification": "B",
+      "effectReason": "The mutation is avoidable and noChange is benchmark-permitted, but available evidence does not establish concrete harm.",
+      "actualBehavior": "evaluator/benchmark disagreement"
+    },
+    {
+      "caseID": "tiny-pt-008",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "critical",
+      "input": "R$",
+      "actualAction": "noChange",
+      "actualOutput": "R$",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "preferredAction": "noChange",
+        "allowedActions": [
+          "noChange",
+          "cleanup"
+        ],
+        "expectedLanguage": "pt",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.3,
+        "expectsNoChange": true,
+        "semanticNotes": "Single-word or fragment input must not expand with invented context."
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": {
+        "schemaVersion": 1,
+        "reviewOrder": 53,
+        "productJudgment": "productFailure",
+        "productFailureLabels": [
+          "protectedTokenMutation",
+          "meaningChanged"
+        ],
+        "productConfidence": "high",
+        "productRationale": "The Brazilian-real token is changed to a generic dollar sign, altering the currency meaning.",
+        "reviewer": "frontier-model-judge",
+        "caseID": "tiny-pt-008",
+        "benchmarkJudgment": "benchmarkExpectationWrong",
+        "benchmarkConfidence": "high",
+        "benchmarkRationale": "A currency symbol does not establish prose language, and the symbol itself must be explicitly protected.",
+        "proposedConstraintCorrection": {
+          "expectedLanguage": null,
+          "preferredAction": "noChange",
+          "mustPreserveTokens": [
+            "R$"
+          ],
+          "semanticNotes": "Clear the expected-language assertion and preserve the BRL currency symbol exactly."
+        }
+      },
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "R$",
+            "class": "money"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "R$",
+            "class": "money",
+            "status": "preserved",
+            "outputValue": "R$"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "noChange",
+      "counterfactualOutput": "R$",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "tiny-pt-009",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "critical",
+      "input": "@ana",
+      "actualAction": "noChange",
+      "actualOutput": "@ana",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "preferredAction": "noChange",
+        "allowedActions": [
+          "noChange",
+          "cleanup"
+        ],
+        "expectedLanguage": "pt",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.3,
+        "expectsNoChange": true,
+        "semanticNotes": "Single-word or fragment input must not expand with invented context."
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "@ana",
+            "class": "handle"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "@ana",
+            "class": "handle",
+            "status": "preserved",
+            "outputValue": "@ana"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "noChange",
+      "counterfactualOutput": "@ana",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "variant-en-061",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "meeting 2pm about retry",
+      "actualAction": "noChange",
+      "actualOutput": "meeting 2pm about retry",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustPreserveTokens": [
+          "retry"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.2
+      },
+      "benchmarkMustPreserve": [
+        "retry"
+      ],
+      "frontierJudgment": {
+        "schemaVersion": 1,
+        "reviewOrder": 23,
+        "productJudgment": "outputAcceptable",
+        "productFailureLabels": [],
+        "productConfidence": "high",
+        "productRationale": "The output adds only functional grammar and preserves the meeting time and retry topic.",
+        "reviewer": "frontier-model-judge",
+        "caseID": "variant-en-061",
+        "benchmarkJudgment": "benchmarkCorrect",
+        "benchmarkConfidence": "high",
+        "benchmarkRationale": "The English expectation, retry preservation, and proportional expansion limit correctly describe safe cleanup.",
+        "proposedConstraintCorrection": null
+      },
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "2pm",
+            "class": "time"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "2pm",
+            "class": "time",
+            "status": "preserved",
+            "outputValue": "2pm"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "noChange",
+      "counterfactualOutput": "meeting 2pm about retry",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "variant-en-064",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "meeting 10am about fila",
+      "actualAction": "changed",
+      "actualOutput": "Meeting at 10am about the queue",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustPreserveTokens": [
+          "fila"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.2
+      },
+      "benchmarkMustPreserve": [
+        "fila"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "10am",
+            "class": "time"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "10am",
+            "class": "time",
+            "status": "preserved",
+            "outputValue": "10am"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Meeting at 10am about the queue",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "variant-pt-029",
+      "runIndex": 0,
+      "dataset": "dev",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "reunião 14h sobre retry",
+      "actualAction": "changed",
+      "actualOutput": "Meeting scheduled for 2:00 PM to discuss retry strategies",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "expansionExceeded",
+        "languageDrift"
+      ],
+      "actualCriticalFailure": true,
+      "actualUserVisibleHarmfulEdit": true,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustPreserveTokens": [
+          "retry"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.2
+      },
+      "benchmarkMustPreserve": [
+        "retry"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "14h",
+            "class": "time"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "14h",
+            "class": "time",
+            "status": "safelyNormalized",
+            "outputValue": "2:00 PM"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Meeting scheduled for 2:00 PM to discuss retry strategies",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "safely normalized"
+    },
+    {
+      "caseID": "acronym-005",
+      "runIndex": 0,
+      "dataset": "validation",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "SQL FTS5 GRDB SQLite migration v4",
+      "actualAction": "changed",
+      "actualOutput": "SQL FTS5 GRDB SQLite migration v4",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection"
+      ],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustPreserveTokens": [
+          "SQL",
+          "FTS5",
+          "GRDB",
+          "SQLite",
+          "migration",
+          "v4"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [
+        "SQL",
+        "FTS5",
+        "GRDB",
+        "SQLite",
+        "migration",
+        "v4"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "FTS5",
+            "class": "identifier"
+          },
+          {
+            "value": "SQLite",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "FTS5",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "FTS5"
+          },
+          {
+            "value": "SQLite",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "SQLite"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "SQL FTS5 GRDB SQLite migration v4",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "code-003",
+      "runIndex": 0,
+      "dataset": "validation",
+      "scope": "wholeNote",
+      "severity": "critical",
+      "input": "TypeError: Cannot read property 'map' of undefined\n    at render (App.tsx:88:12)",
+      "actualAction": "changed",
+      "actualOutput": "TypeError: Cannot read property 'map' of undefined\n    at render (App.tsx:88:12)",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection"
+      ],
+      "actualCriticalFailure": true,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustPreserveTokens": [
+          "TypeError",
+          "App.tsx:88:12",
+          "map"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.5
+      },
+      "benchmarkMustPreserve": [
+        "TypeError",
+        "App.tsx:88:12",
+        "map"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "TypeError",
+            "class": "identifier"
+          },
+          {
+            "value": "'map'",
+            "class": "quotedLiteral"
+          },
+          {
+            "value": "88",
+            "class": "number"
+          },
+          {
+            "value": "12",
+            "class": "number"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "TypeError",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "TypeError"
+          },
+          {
+            "value": "'map'",
+            "class": "quotedLiteral",
+            "status": "preserved",
+            "outputValue": "'map'"
+          },
+          {
+            "value": "88",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "88"
+          },
+          {
+            "value": "12",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "12"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "TypeError: Cannot read property 'map' of undefined\n    at render (App.tsx:88:12)",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "long-pt-003",
+      "runIndex": 0,
+      "dataset": "validation",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "nota longa #3: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49",
+      "actualAction": "changed",
+      "actualOutput": "nota longa #3: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustPreserveTokens": [
+          "talvez",
+          "QUEUED",
+          "FAILED",
+          "https://example.com/status"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.5
+      },
+      "benchmarkMustPreserve": [
+        "talvez",
+        "QUEUED",
+        "FAILED",
+        "https://example.com/status"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "#3",
+            "class": "identifier"
+          },
+          {
+            "value": "https://example.com/status",
+            "class": "url"
+          },
+          {
+            "value": "R$ 49",
+            "class": "money"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "#3",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "#3"
+          },
+          {
+            "value": "https://example.com/status",
+            "class": "url",
+            "status": "preserved",
+            "outputValue": "https://example.com/status"
+          },
+          {
+            "value": "R$ 49",
+            "class": "money",
+            "status": "preserved",
+            "outputValue": "R$ 49"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "nota longa #3: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https://example.com/status R$ 49",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "medium-en-008",
+      "runIndex": 0,
+      "dataset": "validation",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "investigate next_retry_at in worker",
+      "actualAction": "changed",
+      "actualOutput": "Investigate when to retry the next task in the worker",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "protectedTokenMutation"
+      ],
+      "actualCriticalFailure": true,
+      "actualUserVisibleHarmfulEdit": true,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.5
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "next_retry_at",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "next_retry_at",
+            "class": "identifier",
+            "status": "dropped",
+            "outputValue": ""
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [
+        {
+          "value": "next_retry_at",
+          "class": "identifier",
+          "status": "dropped",
+          "outputValue": ""
+        }
+      ],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": true,
+      "counterfactualAction": "noChange",
+      "counterfactualOutput": "investigate next_retry_at in worker",
+      "counterfactualObjectivePass": true,
+      "effectClassification": "A",
+      "effectReason": "Existing evaluator or independent frontier review also identifies literal corruption.",
+      "actualBehavior": "dropped"
+    },
+    {
+      "caseID": "meeting-dump-003",
+      "runIndex": 0,
+      "dataset": "validation",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "1) retry dup 2) logs QUEUED/FAILED 3) falar c/ infra 4) deploy sexta?",
+      "actualAction": "changed",
+      "actualOutput": "1) retry dup 2) logs QUEUED/FAILED 3) falar c/ infra 4) deploy sexta?",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection"
+      ],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustPreserveTokens": [
+          "talvez",
+          "maybe",
+          "QUEUED",
+          "FAILED",
+          "Mirella",
+          "Mira",
+          "Vitor",
+          "Sam"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [
+        "talvez",
+        "maybe",
+        "QUEUED",
+        "FAILED",
+        "Mirella",
+        "Mira",
+        "Vitor",
+        "Sam"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "1",
+            "class": "number"
+          },
+          {
+            "value": "2",
+            "class": "number"
+          },
+          {
+            "value": "QUEUED/FAILED",
+            "class": "codeLike"
+          },
+          {
+            "value": "3",
+            "class": "number"
+          },
+          {
+            "value": "4",
+            "class": "number"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "1",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "1"
+          },
+          {
+            "value": "2",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "2"
+          },
+          {
+            "value": "QUEUED/FAILED",
+            "class": "codeLike",
+            "status": "preserved",
+            "outputValue": "QUEUED/FAILED"
+          },
+          {
+            "value": "3",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "3"
+          },
+          {
+            "value": "4",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "4"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "1) retry dup 2) logs QUEUED/FAILED 3) falar c/ infra 4) deploy sexta?",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "mixed-pt-en-002",
+      "runIndex": 0,
+      "dataset": "validation",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "next_retry_at pode estar menor que scheduled_at no whatsapp_queue",
+      "actualAction": "changed",
+      "actualOutput": "next_retry_at should be greater than scheduled_at no whatsapp_queue",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "noChange",
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "mixed",
+        "mustPreserveTokens": [
+          "next_retry_at",
+          "scheduled_at",
+          "whatsapp_queue"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.5
+      },
+      "benchmarkMustPreserve": [
+        "next_retry_at",
+        "scheduled_at",
+        "whatsapp_queue"
+      ],
+      "frontierJudgment": {
+        "schemaVersion": 1,
+        "reviewOrder": 15,
+        "productJudgment": "defer",
+        "productFailureLabels": [],
+        "productConfidence": "low",
+        "productRationale": "No Refine output is available for blind product judgment.",
+        "reviewer": "frontier-model-judge",
+        "caseID": "mixed-pt-en-002",
+        "benchmarkJudgment": "deferBenchmarkReview",
+        "benchmarkConfidence": "low",
+        "benchmarkRationale": "The case input and Refine result are unavailable in the review payload, so the expectation cannot be independently validated.",
+        "proposedConstraintCorrection": null
+      },
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "next_retry_at",
+            "class": "identifier"
+          },
+          {
+            "value": "scheduled_at",
+            "class": "identifier"
+          },
+          {
+            "value": "whatsapp_queue",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "next_retry_at",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "next_retry_at"
+          },
+          {
+            "value": "scheduled_at",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "scheduled_at"
+          },
+          {
+            "value": "whatsapp_queue",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "whatsapp_queue"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "next_retry_at should be greater than scheduled_at no whatsapp_queue",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "mixed-tech-002",
+      "runIndex": 0,
+      "dataset": "validation",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "feature flag enableRefineV2=false em staging",
+      "actualAction": "changed",
+      "actualOutput": "Feature flag enableRefineV2=false em staging",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "mixed",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "enableRefineV2",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "enableRefineV2",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "enableRefineV2"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Feature flag enableRefineV2=false em staging",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "names-004",
+      "runIndex": 0,
+      "dataset": "validation",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "Apple Intelligence on macOS Tahoe",
+      "actualAction": "changed",
+      "actualOutput": "Apple Intelligence on macOS Tahoe",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "productionGuardRejection"
+      ],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustPreserveTokens": [
+          "João",
+          "Mirella",
+          "André",
+          "John",
+          "Mira",
+          "São Paulo",
+          "Curitiba",
+          "GOL",
+          "LA1234",
+          "GRDB",
+          "SQLite",
+          "Rasc"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [
+        "João",
+        "Mirella",
+        "André",
+        "John",
+        "Mira",
+        "São Paulo",
+        "Curitiba",
+        "GOL",
+        "LA1234",
+        "GRDB",
+        "SQLite",
+        "Rasc"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "macOS",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "macOS",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "macOS"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Apple Intelligence on macOS Tahoe",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "names-005",
+      "runIndex": 0,
+      "dataset": "validation",
+      "scope": "wholeNote",
+      "severity": "medium",
+      "input": "usar GRDB + SQLite no Rasc",
+      "actualAction": "changed",
+      "actualOutput": "Use GRDB + SQLite in Rasc",
+      "actualObjectivePass": false,
+      "actualObjectiveFailureKinds": [
+        "protectedTokenMutation"
+      ],
+      "actualCriticalFailure": true,
+      "actualUserVisibleHarmfulEdit": true,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustPreserveTokens": [
+          "João",
+          "Mirella",
+          "André",
+          "John",
+          "Mira",
+          "São Paulo",
+          "Curitiba",
+          "GOL",
+          "LA1234",
+          "GRDB",
+          "SQLite",
+          "Rasc"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 2.0
+      },
+      "benchmarkMustPreserve": [
+        "João",
+        "Mirella",
+        "André",
+        "John",
+        "Mira",
+        "São Paulo",
+        "Curitiba",
+        "GOL",
+        "LA1234",
+        "GRDB",
+        "SQLite",
+        "Rasc"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "SQLite",
+            "class": "identifier"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "SQLite",
+            "class": "identifier",
+            "status": "preserved",
+            "outputValue": "SQLite"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Use GRDB + SQLite in Rasc",
+      "counterfactualObjectivePass": false,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "numbers-002",
+      "runIndex": 0,
+      "dataset": "validation",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "sales 1,234 units +12.5% vs last month target 2,000",
+      "actualAction": "changed",
+      "actualOutput": "Ventas 1,234 unidades +12.5% frente al objetivo mensual anterior de 2,000 unidades",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "en",
+        "mustPreserveTokens": [
+          "1.234",
+          "12,5%",
+          "12.5%",
+          "2041",
+          "abc123def",
+          "45ms",
+          "180ms",
+          "420ms"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.8
+      },
+      "benchmarkMustPreserve": [
+        "1.234",
+        "12,5%",
+        "12.5%",
+        "2041",
+        "abc123def",
+        "45ms",
+        "180ms",
+        "420ms"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "1,234",
+            "class": "number"
+          },
+          {
+            "value": "12.5%",
+            "class": "percentage"
+          },
+          {
+            "value": "2,000",
+            "class": "number"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "1,234",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "1,234"
+          },
+          {
+            "value": "12.5%",
+            "class": "percentage",
+            "status": "preserved",
+            "outputValue": "12.5%"
+          },
+          {
+            "value": "2,000",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "2,000"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Ventas 1,234 unidades +12.5% frente al objetivo mensual anterior de 2,000 unidades",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "numbers-003",
+      "runIndex": 0,
+      "dataset": "validation",
+      "scope": "wholeNote",
+      "severity": "high",
+      "input": "versão 3.14.159 build 2041 commit abc123def",
+      "actualAction": "changed",
+      "actualOutput": "Versão 3.14.159 build 2041 commit abc123def",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "allowedActions": [
+          "cleanup",
+          "structure"
+        ],
+        "expectedLanguage": "pt",
+        "mustPreserveTokens": [
+          "1.234",
+          "12,5%",
+          "12.5%",
+          "2041",
+          "abc123def",
+          "45ms",
+          "180ms",
+          "420ms"
+        ],
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.8
+      },
+      "benchmarkMustPreserve": [
+        "1.234",
+        "12,5%",
+        "12.5%",
+        "2041",
+        "abc123def",
+        "45ms",
+        "180ms",
+        "420ms"
+      ],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "3.14",
+            "class": "number"
+          },
+          {
+            "value": "159",
+            "class": "number"
+          },
+          {
+            "value": "2041",
+            "class": "number"
+          },
+          {
+            "value": "abc123def",
+            "class": "opaqueID"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "3.14",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "3.14"
+          },
+          {
+            "value": "159",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "159"
+          },
+          {
+            "value": "2041",
+            "class": "number",
+            "status": "preserved",
+            "outputValue": "2041"
+          },
+          {
+            "value": "abc123def",
+            "class": "opaqueID",
+            "status": "preserved",
+            "outputValue": "abc123def"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "changed",
+      "counterfactualOutput": "Versão 3.14.159 build 2041 commit abc123def",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    },
+    {
+      "caseID": "tiny-en-007",
+      "runIndex": 0,
+      "dataset": "validation",
+      "scope": "wholeNote",
+      "severity": "critical",
+      "input": "@sam",
+      "actualAction": "noChange",
+      "actualOutput": "@sam",
+      "actualObjectivePass": true,
+      "actualObjectiveFailureKinds": [],
+      "actualCriticalFailure": false,
+      "actualUserVisibleHarmfulEdit": false,
+      "benchmarkExpected": {
+        "preferredAction": "noChange",
+        "allowedActions": [
+          "noChange",
+          "cleanup"
+        ],
+        "expectedLanguage": "en",
+        "mustNotIntroduceInformation": true,
+        "maxExpansionRatio": 1.3,
+        "expectsNoChange": true
+      },
+      "benchmarkMustPreserve": [],
+      "frontierJudgment": null,
+      "tokenComparison": {
+        "inputTokens": [
+          {
+            "value": "@sam",
+            "class": "handle"
+          }
+        ],
+        "statuses": [
+          {
+            "value": "@sam",
+            "class": "handle",
+            "status": "preserved",
+            "outputValue": "@sam"
+          }
+        ],
+        "added": []
+      },
+      "unsafeInputTokens": [],
+      "addedProtectedLikeTokens": [],
+      "languageRelatedMutation": false,
+      "counterfactualIntercepted": false,
+      "counterfactualAction": "noChange",
+      "counterfactualOutput": "@sam",
+      "counterfactualObjectivePass": true,
+      "effectClassification": null,
+      "effectReason": "No high-confidence preservation violation; guard would not reject.",
+      "actualBehavior": "preserved"
+    }
+  ]
+}

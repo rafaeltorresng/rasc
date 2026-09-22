@@ -55,6 +55,12 @@ enum AppDatabase {
             }
         }
 
+        migrator.registerMigration("v5_m16_notes_kept_at") { database in
+            try database.alter(table: Note.databaseTableName) { table in
+                table.add(column: "kept_at", .datetime)
+            }
+        }
+
         return migrator
     }
 }

@@ -10,8 +10,8 @@ Sparkle and automatic updates are intentionally out of scope for this milestone.
 | --- | --- |
 | Product name | Rasc |
 | Bundle identifier | `com.rafaeltorres.rasc` |
-| Marketing version | `0.1.0-beta.1` (private beta); use semver for public releases |
-| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`2` for beta.1) |
+| Marketing version | `0.1.0-beta.2` (current canonical private beta); use semver for public releases |
+| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`3` for beta.2) |
 | Deployment target | macOS 14.0 |
 | Hardened Runtime | Enabled for Debug and Release |
 | App Sandbox | Enabled |
@@ -214,6 +214,36 @@ These steps cannot be completed without your Apple Developer account:
 - Stapling the notarization ticket
 
 Local Debug builds from Xcode continue to work with ad hoc signing and do not require notarization.
+
+## Artifact retention (M14 policy)
+
+Starting with **0.1.0-beta.2**, retain every shipped or private-release artifact needed for future upgrade testing:
+
+| Retain | Location (example) |
+|---|---|
+| Versioned DMG | `build/rc/Rasc-<version>.dmg` |
+| SHA256 sidecar | `build/rc/Rasc-<version>.dmg.sha256` |
+| Release manifest | `build/rc/release-manifest.json` |
+| Freeze record | `build/rc/FROZEN-RC.json` |
+| Maintainer acceptance | `Evals/AppReliability/M14/` |
+
+**Rules:**
+
+1. Do not delete the immediately previous release artifact when shipping a new RC.
+2. Future RC gates must include an **upgrade test** from the previous retained build + representative user database when available.
+3. beta.1 → beta.2 upgrade was **not testable** (beta.1 artifact not retained). Not a blocker for beta.2 acceptance.
+4. Store artifacts outside git if needed; record paths and SHA256 in the release manifest.
+
+### RC build commands (private beta, ad-hoc)
+
+```bash
+./Scripts/release/build-rc.sh
+./Scripts/release/verify-private-beta.sh build/rc/Rasc-<version>.dmg
+./Scripts/release/verify-rc-bundle.sh build/rc/export/Rasc.app
+./Scripts/release/generate-rc-manifest.sh build/rc/Rasc-<version>.dmg
+```
+
+Output directory: `build/rc/`.
 
 ## Incrementing versions
 

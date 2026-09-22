@@ -37,9 +37,16 @@ struct RefineStatusDescription: Equatable, Sendable {
     }
 }
 
+private enum RefineLanguagePickerValue: Hashable {
+    case matchNote
+    case fixedLocale(String)
+}
+
 struct SettingsView: View {
     private let refinementProvider: any RefinementProvider
     private let loginItemController: LoginItemController
+    private let languageSettings: RefineLanguageSettingsStore
+    private let supportedLocales: any RefineSupportedLocaleDiscovering
 
     @Environment(\.colorScheme) private var colorScheme
     @State private var launchAtLogin = false
@@ -49,13 +56,25 @@ struct SettingsView: View {
         headline: "Checking…",
         detail: "Checking Refine availability."
     )
+    @State private var selectedLanguage: RefineLanguagePickerValue = .matchNote
+    @State private var supportedFixedLocales: [RefineFixedLocaleOption] = []
+    @State private var languageResolution = RefineLanguagePreferenceResolution(
+        stored: .matchNote,
+        effectivePolicy: .matchNote,
+        isUsingFallback: false,
+        unsupportedSavedLocaleIdentifier: nil
+    )
 
     init(
         refinementProvider: any RefinementProvider = FoundationModelsRefinementProvider(),
-        loginItemController: LoginItemController = LoginItemController()
+        loginItemController: LoginItemController = LoginItemController(),
+        languageSettings: RefineLanguageSettingsStore = RefineLanguageSettingsStore(),
+        supportedLocales: any RefineSupportedLocaleDiscovering = RefineSupportedLocales()
     ) {
         self.refinementProvider = refinementProvider
         self.loginItemController = loginItemController
+        self.languageSettings = languageSettings
+        self.supportedLocales = supportedLocales
     }
 
     var body: some View {
@@ -99,6 +118,28 @@ struct SettingsView: View {
                         .multilineTextAlignment(.trailing)
                 }
                 .accessibilityElement(children: .combine)
+
+                Picker("Language", selection: $selectedLanguage) {
+                    Text("Match note language").tag(RefineLanguagePickerValue.matchNote)
+                    ForEach(supportedFixedLocales) { option in
+                        Text(option.displayName).tag(RefineLanguagePickerValue.fixedLocale(option.localeIdentifier))
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: selectedLanguage) { _, value in
+                    persistLanguageSelection(value)
+                }
+
+                Text(languageHelpText)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                if languageResolution.isUsingFallback,
+                   let unsupported = languageResolution.unsupportedSavedLocaleIdentifier {
+                    Text("Saved language \(unsupported) is unavailable on this Mac. Refine is using Match note language until you choose another option.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
             .listRowBackground(settingsSectionBackground)
 
@@ -121,10 +162,21 @@ struct SettingsView: View {
         .registersSettingsOpenAction()
         .task {
             refreshLaunchAtLoginState()
+            refreshLanguageSettings()
             await refreshRefineStatus()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             refreshLaunchAtLoginState()
+            refreshLanguageSettings()
+        }
+    }
+
+    private var languageHelpText: String {
+        switch selectedLanguage {
+        case .matchNote:
+            "Match note language keeps each note in its original language."
+        case .fixedLocale:
+            "Refine outputs in the selected language. Protected identifiers, URLs, and technical literals stay unchanged."
         }
     }
 
@@ -149,6 +201,31 @@ struct SettingsView: View {
     private func refreshLaunchAtLoginState() {
         loginItemState = loginItemController.state()
         launchAtLogin = loginItemState.isEnabled
+    }
+
+    private func refreshLanguageSettings() {
+        supportedFixedLocales = supportedLocales.supportedFixedLocaleOptions()
+        languageResolution = languageSettings.resolveEffectivePreference()
+        selectedLanguage = pickerValue(for: languageResolution.stored)
+    }
+
+    private func persistLanguageSelection(_ value: RefineLanguagePickerValue) {
+        switch value {
+        case .matchNote:
+            languageSettings.save(.matchNote)
+        case let .fixedLocale(identifier):
+            languageSettings.save(.fixedLocale(identifier: identifier))
+        }
+        languageResolution = languageSettings.resolveEffectivePreference()
+    }
+
+    private func pickerValue(for stored: RefineLanguageSettingsStore.StoredPreference) -> RefineLanguagePickerValue {
+        switch stored {
+        case .matchNote:
+            .matchNote
+        case let .fixedLocale(identifier):
+            .fixedLocale(identifier)
+        }
     }
 
     private func refreshRefineStatus() async {

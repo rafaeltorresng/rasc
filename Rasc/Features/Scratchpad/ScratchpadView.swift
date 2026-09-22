@@ -29,6 +29,10 @@ final class ScratchpadSession {
         case message
     }
 
+    enum ThoughtCompletionOutcome: Equatable {
+        case keptShouldHide
+        case none
+    }
 
     var text = "" {
         didSet {
@@ -72,11 +76,17 @@ final class ScratchpadSession {
     private(set) var focusRequest = 0
     private(set) var searchFocusRequest = 0
     private(set) var settingsPresentationRequest = 0
-    private(set) var filteredCommands: [PaletteCommand] = PaletteCommand.allCases
+    private(set) var filteredCommands: [PaletteCommand] = PaletteCommand.availableCommands(
+        isKept: false,
+        hasPersistableContent: false,
+        canPerformCompletion: true
+    )
     private(set) var selectedCommandIndex = 0
     private(set) var commandPaletteKeyFocusRequest = 0
     private(set) var saveErrorMessage: String?
     private(set) var searchErrorMessage: String?
+    private(set) var activeNoteKeptAt: Date?
+    private(set) var transientFeedback: String?
     private(set) var activeRefinementRequest: RefinementRequest?
     private(set) var refinementPreview: RefinementPreview?
     private(set) var message: RefinementMessage?
@@ -86,12 +96,14 @@ final class ScratchpadSession {
     private let repository: NoteRepository
     private let refinementProvider: (any RefinementProvider)?
     private let activeNoteStore: ActiveNoteStore
+    private let languageSettings: RefineLanguageSettingsStore
     private var noteID: UUID?
     private var autosaveTask: Task<Void, Never>?
     private var searchTask: Task<Void, Never>?
     private var refinementTask: Task<Void, Never>?
     private var acceptanceTask: Task<Void, Error>?
     private var messageTask: Task<Void, Never>?
+    private var feedbackTask: Task<Void, Never>?
     private var activeRefinementID: UUID?
     private var isApplyingAcceptedRefinement = false
 
@@ -105,11 +117,13 @@ final class ScratchpadSession {
     init(
         repository: NoteRepository,
         refinementProvider: (any RefinementProvider)? = nil,
-        userDefaults: UserDefaults = .standard
+        userDefaults: UserDefaults = .standard,
+        languageSettings: RefineLanguageSettingsStore? = nil
     ) {
         self.repository = repository
         self.refinementProvider = refinementProvider
         activeNoteStore = ActiveNoteStore(userDefaults: userDefaults)
+        self.languageSettings = languageSettings ?? RefineLanguageSettingsStore(userDefaults: userDefaults)
     }
 
     func requestEditorFocus() {
@@ -132,6 +146,17 @@ final class ScratchpadSession {
         saveErrorMessage = "Couldn't load local notes."
     }
 
+    var hasPersistableContent: Bool {
+        !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    var isActiveNoteKept: Bool {
+        activeNoteKeptAt != nil
+    }
+
+    var canPerformThoughtCompletion: Bool {
+        acceptanceTask == nil && (surface == .editor || surface == .message)
+    }
 
     func restore() async throws {
         try await acceptanceTask?.value
@@ -145,10 +170,12 @@ final class ScratchpadSession {
             if let note = try await repository.fetchMostRecent() {
                 noteID = note.id
                 text = note.content
+                activeNoteKeptAt = note.keptAt
                 activeNoteStore.noteID = note.id
             } else {
                 noteID = nil
                 text = ""
+                activeNoteKeptAt = nil
                 activeNoteStore.noteID = nil
             }
             return
@@ -158,6 +185,7 @@ final class ScratchpadSession {
             activeNoteStore.noteID = nil
             noteID = nil
             text = ""
+            activeNoteKeptAt = nil
             return
         }
 
@@ -165,13 +193,52 @@ final class ScratchpadSession {
             activeNoteStore.noteID = nil
             noteID = nil
             text = ""
+            activeNoteKeptAt = nil
             return
         }
 
         noteID = note.id
         text = note.content
+        activeNoteKeptAt = note.keptAt
     }
 
+    func keepActiveNote() async throws -> ThoughtCompletionOutcome {
+        guard canPerformThoughtCompletion, !isActiveNoteKept else { return .none }
+        try await prepareForThoughtCompletionAction()
+        guard hasPersistableContent, let noteID else { return .none }
+
+        _ = try await repository.keep(id: noteID)
+        clearActiveScratchSession()
+        showTransientFeedback("Kept")
+        return .keptShouldHide
+    }
+
+    func unkeepActiveNote() async throws {
+        guard canPerformThoughtCompletion, isActiveNoteKept, let noteID else { return }
+        try await prepareForThoughtCompletionAction()
+
+        let note = try await repository.unkeep(id: noteID)
+        activeNoteKeptAt = note.keptAt
+        showTransientFeedback("Unkept")
+    }
+
+    func copyActiveNoteText() async throws -> String? {
+        guard canPerformThoughtCompletion else { return nil }
+        try await prepareForThoughtCompletionAction()
+        guard hasPersistableContent else { return nil }
+        return text
+    }
+
+    func discardActiveNote() async throws {
+        guard canPerformThoughtCompletion else { return }
+        try await prepareForThoughtCompletionAction()
+
+        if let noteID {
+            try await repository.delete(id: noteID)
+        }
+        clearActiveScratchSession()
+        showTransientFeedback("Discarded")
+    }
 
     func scheduleAutosave() {
         let previousAutosave = autosaveTask
@@ -625,7 +692,7 @@ final class ScratchpadSession {
                 return
             }
 
-            let languagePolicy = RefineLanguagePolicy.productionDefault
+            let languagePolicy = languageSettings.resolveEffectivePreference().effectivePolicy
             let request = RefinementRequest(
                 requestID: draft.requestID,
                 snapshot: NoteSnapshot(
@@ -834,16 +901,50 @@ final class ScratchpadSession {
         searchErrorMessage = nil
     }
 
-    private func refreshPaletteCommands() {
-        filteredCommands = PaletteCommand.allCases
-    }
-
     private func resetCommandPaletteState() {
         surface = .editor
         refreshPaletteCommands()
         selectedCommandIndex = 0
     }
 
+    private func refreshPaletteCommands() {
+        filteredCommands = paletteCommandsForCurrentState()
+    }
+
+    private func paletteCommandsForCurrentState() -> [PaletteCommand] {
+        PaletteCommand.availableCommands(
+            isKept: isActiveNoteKept,
+            hasPersistableContent: hasPersistableContent,
+            canPerformCompletion: canPerformThoughtCompletion
+        )
+    }
+
+    private func prepareForThoughtCompletionAction() async throws {
+        try await acceptanceTask?.value
+        cancelRefinement()
+        clearMessage(returnToEditor: true)
+        try await flush()
+    }
+
+    private func clearActiveScratchSession() {
+        noteID = nil
+        activeNoteKeptAt = nil
+        activeNoteStore.noteID = nil
+        text = ""
+        editorSelection = nil
+        editorHasMultipleSelections = false
+        surface = .editor
+    }
+
+    private func showTransientFeedback(_ message: String) {
+        feedbackTask?.cancel()
+        transientFeedback = message
+        feedbackTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(1))
+            guard !Task.isCancelled, self?.transientFeedback == message else { return }
+            self?.transientFeedback = nil
+        }
+    }
 
     private func dismissTransientSurfaces(except retained: Surface?) {
         if retained != .search {
@@ -885,6 +986,8 @@ struct ScratchpadView: View {
     let onEscape: () -> Void
     let onPaletteCommand: (PaletteCommand) -> Void
     let onOpenHome: () -> Void
+    let onKeep: () -> Void
+    let onUnkeep: () -> Void
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -920,8 +1023,34 @@ struct ScratchpadView: View {
                     .padding(12)
             }
         }
+        .overlay(alignment: .bottomTrailing) {
+            if session.surface == .editor, session.canPerformThoughtCompletion {
+                thoughtCompletionAffordance
+            }
+        }
     }
 
+    @ViewBuilder
+    private var thoughtCompletionAffordance: some View {
+        HStack(spacing: 10) {
+            if session.isActiveNoteKept {
+                Button("Unkeep", action: onUnkeep)
+                    .buttonStyle(.plain)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel("Unkeep")
+            } else if session.hasPersistableContent {
+                Button("Keep", action: onKeep)
+                    .buttonStyle(.plain)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(RascSurfacePalette.actionAccent(for: colorScheme))
+                    .accessibilityLabel("Keep")
+                    .keyboardShortcut("k", modifiers: [.command, .shift])
+            }
+        }
+        .padding(.horizontal, RascSurfaceLayout.horizontalInset)
+        .padding(.bottom, 12)
+    }
 
     private var showsOverlayOrb: Bool {
         switch session.surface {
