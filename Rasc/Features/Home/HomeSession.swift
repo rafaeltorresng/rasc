@@ -13,7 +13,7 @@ final class HomeSession {
         }
     }
 
-    private(set) var temporalGroups: [HomeTemporalGroup] = []
+    private(set) var browseGroups: [HomeBrowseGroup] = []
     private(set) var searchResults: [Note] = []
     private(set) var selectedNoteID: UUID?
     private(set) var isLoading = false
@@ -43,11 +43,11 @@ final class HomeSession {
     }
 
     var hasNotes: Bool {
-        !temporalGroups.isEmpty || !searchResults.isEmpty
+        !browseGroups.isEmpty || !searchResults.isEmpty
     }
 
     var showsEmptyHome: Bool {
-        !isSearching && temporalGroups.isEmpty && loadErrorMessage == nil && !isLoading
+        !isSearching && browseGroups.isEmpty && loadErrorMessage == nil && !isLoading
     }
 
     var showsNoSearchResults: Bool {
@@ -55,7 +55,7 @@ final class HomeSession {
     }
 
     var displayedNotes: [Note] {
-        isSearching ? searchResults : temporalGroups.flatMap(\.notes)
+        isSearching ? searchResults : browseGroups.flatMap(\.notes)
     }
 
     func reloadImmediately() async {
@@ -103,7 +103,10 @@ final class HomeSession {
     }
 
     func formattedTimestamp(for note: Note) -> String {
-        HomeNoteTimestampFormatter.format(note.updatedAt, calendar: calendar, now: now)
+        if note.isKept, let keptAt = note.keptAt {
+            return HomeNoteTimestampFormatter.format(keptAt, calendar: calendar, now: now)
+        }
+        return HomeNoteTimestampFormatter.format(note.updatedAt, calendar: calendar, now: now)
     }
 
     private var normalizedSearchQuery: String {
@@ -121,7 +124,7 @@ final class HomeSession {
             if query.isEmpty {
                 let notes = try await repository.fetchAllNonDeleted()
                 guard !Task.isCancelled, normalizedSearchQuery == query else { return }
-                temporalGroups = HomeTemporalGrouping.groups(
+                browseGroups = HomeLifecycleGrouping.browseGroups(
                     from: notes,
                     calendar: calendar,
                     now: now
@@ -131,7 +134,7 @@ final class HomeSession {
                 let results = try await repository.search(query, limit: Self.searchResultLimit)
                 guard !Task.isCancelled, normalizedSearchQuery == query else { return }
                 searchResults = results
-                temporalGroups = []
+                browseGroups = []
             }
 
             reconcileSelection()
@@ -140,7 +143,7 @@ final class HomeSession {
             return
         } catch {
             guard !Task.isCancelled else { return }
-            temporalGroups = []
+            browseGroups = []
             searchResults = []
             selectedNoteID = nil
             loadErrorMessage = "Couldn't load notes."
