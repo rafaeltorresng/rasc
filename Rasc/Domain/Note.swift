@@ -43,6 +43,22 @@ struct Note: Codable, Equatable, FetchableRecord, PersistableRecord, Sendable {
         return Self.truncate(detail, to: 120)
     }
 
+    /// Home browse excerpt: body beyond the title line when enough content exists.
+    var displayHomeExcerpt: String? {
+        if let snippet = displaySnippet, !snippet.isEmpty {
+            return snippet
+        }
+
+        let body = content.trimmingCharacters(in: .whitespacesAndNewlines)
+        let title = displayTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard body.count > title.count + 10 else { return nil }
+
+        let remainder = body.dropFirst(title.count)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard remainder.count >= 8 else { return nil }
+        return Self.truncate(remainder, to: 120)
+    }
+
     /// Snippet for retrieval UI; omits text already shown in the title when possible.
     var displayRetrievalSnippet: String? {
         guard let snippet = displaySnippet else { return nil }
