@@ -5,6 +5,8 @@ enum RascOrbState: Equatable {
     case note
     case searching
     case refining
+    case connecting
+    case breathing
 
     static func resolve(isRefining: Bool, isSearching: Bool = false) -> Self {
         if isRefining {
@@ -24,6 +26,10 @@ enum RascOrbState: Equatable {
             .searching
         case .refining:
             .shaping
+        case .connecting:
+            .connecting
+        case .breathing:
+            .breathing
         }
     }
 
@@ -35,6 +41,10 @@ enum RascOrbState: Equatable {
             0.68
         case .refining:
             1
+        case .connecting:
+            0.58
+        case .breathing:
+            0.48
         }
     }
 
@@ -46,6 +56,10 @@ enum RascOrbState: Equatable {
             0.88
         case .refining:
             0.9
+        case .connecting:
+            0.88
+        case .breathing:
+            0.88
         }
     }
 
