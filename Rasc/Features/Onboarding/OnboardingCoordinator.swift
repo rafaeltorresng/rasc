@@ -117,6 +117,9 @@ final class OnboardingCoordinator {
     func finish() {
         store.markCompleted()
         tearDown(preservePracticeNote: true)
+        Task { @MainActor [weak self] in
+            await self?.bootstrap?.openHome()
+        }
     }
 
     func enableLaunchAtLogin() {
@@ -200,7 +203,7 @@ final class OnboardingCoordinator {
             captureSubstep = .waitingForShortcut
             store.persistProgress(step: .capturePractice, captureSubstep: .waitingForShortcut)
             isYieldingForShortcut = true
-            presentWindow(on: practiceScreen)
+            presentWindow()
         }
     }
 
@@ -283,8 +286,8 @@ final class OnboardingCoordinator {
         }
     }
 
-    private func presentWindow(on screen: NSScreen? = nil) {
-        windowController.show(coordinator: self, on: screen ?? practiceScreen)
+    private func presentWindow() {
+        windowController.show(coordinator: self)
         if isWaitingForShortcut {
             isYieldingForShortcut = true
             windowController.resignKey()
@@ -296,7 +299,7 @@ final class OnboardingCoordinator {
         captureSubstep = .waitingForShortcut
         store.persistProgress(step: .completion)
         refreshLoginItemState()
-        presentWindow(on: practiceScreen)
+        presentWindow()
     }
 
     private func canAdvanceToCompletionAfterHide() -> Bool {

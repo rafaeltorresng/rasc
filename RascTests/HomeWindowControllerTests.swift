@@ -56,6 +56,61 @@ struct HomeWindowControllerTests {
     }
 
     @Test
+    func toggleHomeOpensAndClosesHome() async throws {
+        let bootstrap = AppBootstrap()
+        bootstrap.start()
+
+        while bootstrap.panelIfReady() == nil {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+
+        #expect(!bootstrap.homeIsVisible)
+        await bootstrap.toggleHome()
+        #expect(bootstrap.homeIsVisible)
+        await bootstrap.toggleHome()
+        #expect(!bootstrap.homeIsVisible)
+    }
+
+    @Test
+    func openingHomeTwiceKeepsItOpen() async throws {
+        let bootstrap = AppBootstrap()
+        bootstrap.start()
+
+        while bootstrap.panelIfReady() == nil {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+
+        await bootstrap.openHome()
+        #expect(bootstrap.homeIsVisible)
+        await bootstrap.openHome()
+        #expect(bootstrap.homeIsVisible)
+    }
+
+    @Test
+    func finishingOnboardingOpensHome() async throws {
+        let suiteName = "RascTests.OnboardingFinish.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let bootstrap = AppBootstrap()
+        bootstrap.start()
+        let coordinator = OnboardingCoordinator(
+            store: OnboardingStore(userDefaults: defaults),
+            activeNoteStore: ActiveNoteStore(userDefaults: defaults),
+            windowFrameStore: WindowFrameStore(userDefaults: defaults)
+        )
+        await coordinator.prepare(bootstrap: bootstrap, forceReset: true)
+
+        coordinator.finish()
+        for _ in 0..<100 where !bootstrap.homeIsVisible {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+
+        #expect(bootstrap.homeIsVisible)
+        await bootstrap.toggleHome()
+    }
+
+    @Test
     func closingHomeDoesNotTerminateApplication() {
         let delegate = AppDelegate()
         #expect(delegate.applicationShouldTerminateAfterLastWindowClosed(NSApp) == false)

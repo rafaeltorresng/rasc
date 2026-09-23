@@ -69,12 +69,18 @@ struct OnboardingBehaviorTests {
     }
 
     @Test
-    func adaptiveAccentKeepsProminentButtonLabelsReadable() throws {
-        let darkAccent = RascSurfacePalette.accentNSColor(for: .dark)
-        let lightAccent = RascSurfacePalette.accentNSColor(for: .light)
+    func actionAccentFillKeepsProminentButtonLabelsReadable() throws {
+        let darkAccent = RascSurfacePalette.actionAccentFillNSColor(for: .dark)
+        let lightAccent = RascSurfacePalette.actionAccentFillNSColor(for: .light)
 
         #expect(try contrastRatio(darkAccent, .white) >= 4.5)
         #expect(try contrastRatio(lightAccent, .white) >= 4.5)
+    }
+
+    @Test
+    func accentAliasesActionAccent() {
+        #expect(RascSurfacePalette.accentNSColor(for: .light) == RascSurfacePalette.actionAccentNSColor(for: .light))
+        #expect(RascSurfacePalette.accentNSColor(for: .dark) == RascSurfacePalette.actionAccentNSColor(for: .dark))
     }
 
     private func makeFixture() throws -> ScratchpadTestFixture {

@@ -1,6 +1,20 @@
 import KeyboardShortcuts
 import SwiftUI
 
+private enum OnboardingLayout {
+    static let welcomeMaxWidth: CGFloat = 400
+    static let welcomeOrbScale: CGFloat = 1.2
+    static let welcomeOrbGlowDiameter: CGFloat = 96
+    static let welcomeOrbGlowBlur: CGFloat = 22
+    static let lockupSpacing: CGFloat = 3
+    static let identityClusterSpacing: CGFloat = 12
+    static let headlineToSupportSpacing: CGFloat = 8
+    static let identityToActionsSpacing: CGFloat = 30
+    static let actionClusterSpacing: CGFloat = 10
+    static let ctaMinWidth: CGFloat = 168
+    static let progressStepCount = 3
+}
+
 struct OnboardingView: View {
     @Bindable var coordinator: OnboardingCoordinator
 
@@ -36,9 +50,25 @@ struct OnboardingView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .transition(RascMotion.stageTransition(reduceMotion: reduceMotion))
             .id(coordinator.presentedStep)
+
+            if showsOnboardingSkip {
+                onboardingSkipControl
+                    .padding(.top, 12)
+                    .padding(.trailing, 14)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+            }
+
+            if let progress = onboardingProgress {
+                onboardingProgressIndicator(progress)
+                    .padding(.top, 14)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            }
         }
-        .frame(width: 720, height: 520)
-        .tint(RascSurfacePalette.accent(for: colorScheme))
+        .frame(
+            width: RascWindowMetrics.onboarding.width,
+            height: RascWindowMetrics.onboarding.height
+        )
+        .tint(RascSurfacePalette.actionAccent(for: colorScheme))
         .animation(RascMotion.surface(reduceMotion: reduceMotion), value: coordinator.presentedStep)
         .onAppear {
             focusCurrentStep()
@@ -51,56 +81,158 @@ struct OnboardingView: View {
         }
     }
 
+    private var showsOnboardingSkip: Bool {
+        switch coordinator.presentedStep {
+        case .welcome, .completion, .finished:
+            false
+        case .shortcut, .capturePractice, .refinePractice:
+            true
+        }
+    }
+
+    private var onboardingProgress: (current: Int, total: Int)? {
+        switch coordinator.presentedStep {
+        case .shortcut:
+            (1, OnboardingLayout.progressStepCount)
+        case .capturePractice, .refinePractice:
+            (2, OnboardingLayout.progressStepCount)
+        case .completion:
+            (3, OnboardingLayout.progressStepCount)
+        case .welcome, .finished:
+            nil
+        }
+    }
+
+    private var onboardingSecondaryText: Color {
+        colorScheme == .dark
+            ? Color.secondary.opacity(0.94)
+            : Color.primary.opacity(0.58)
+    }
+
+    private var onboardingProductLoopText: Color {
+        colorScheme == .dark
+            ? Color.secondary.opacity(0.98)
+            : Color.primary.opacity(0.64)
+    }
+
     private var welcomeContent: some View {
         VStack(spacing: 0) {
-            Spacer(minLength: 0)
+            Spacer(minLength: 16)
 
-            RascLogo(size: 64)
-                .padding(.bottom, 36)
+            VStack(spacing: OnboardingLayout.identityToActionsSpacing) {
+                VStack(spacing: OnboardingLayout.identityClusterSpacing) {
+                    welcomeIdentityLockup
+
+                    VStack(spacing: OnboardingLayout.headlineToSupportSpacing) {
+                        Text("A scratchpad for unfinished thoughts.")
+                            .font(.system(size: 22, weight: .medium))
+                            .tracking(-0.35)
+                            .foregroundStyle(.primary.opacity(0.94))
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        welcomeProductLoopCopy
+                    }
+                }
+
+                VStack(spacing: OnboardingLayout.actionClusterSpacing) {
+                    Button("Get started") {
+                        coordinator.continueFromWelcome()
+                    }
+                    .buttonStyle(OnboardingProminentButtonStyle(fullWidth: false))
+                    .frame(minWidth: OnboardingLayout.ctaMinWidth)
+                    .keyboardShortcut(.defaultAction)
+                    .focused($welcomeFocused)
+                    .accessibilityLabel("Get started")
+
+                    welcomeTrustFooter
+                }
+            }
+
+            Spacer(minLength: 16)
+        }
+        .frame(maxWidth: OnboardingLayout.welcomeMaxWidth)
+        .accessibilityElement(children: .contain)
+    }
+
+    private var welcomeIdentityLockup: some View {
+        VStack(spacing: OnboardingLayout.lockupSpacing) {
+            ZStack {
+                Circle()
+                    .fill(
+                        RascSurfacePalette.violet(for: colorScheme)
+                            .opacity(colorScheme == .dark ? 0.1 : 0.06)
+                    )
+                    .frame(
+                        width: OnboardingLayout.welcomeOrbGlowDiameter,
+                        height: OnboardingLayout.welcomeOrbGlowDiameter
+                    )
+                    .blur(radius: OnboardingLayout.welcomeOrbGlowBlur)
+
+                RascOrb(state: .connecting, size: .hero, decorative: true)
+                    .scaleEffect(OnboardingLayout.welcomeOrbScale)
+            }
 
             Text("Rasc")
-                .font(.system(size: 34, weight: .regular))
-                .tracking(-0.3)
-                .padding(.bottom, 16)
-
-            VStack(spacing: 10) {
-                Text("A scratchpad for unfinished thoughts.")
-                    .font(.title3)
-                    .fontWeight(.regular)
-                    .multilineTextAlignment(.center)
-
-                Text("Capture without thinking.\nRefine without prompting.")
-                    .font(.body)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-            }
-            .padding(.bottom, 36)
-
-            VStack(spacing: 12) {
-                Button("Get started") {
-                    coordinator.continueFromWelcome()
-                }
-                .buttonStyle(.borderedProminent)
-                .keyboardShortcut(.defaultAction)
-                .focused($welcomeFocused)
-                .accessibilityLabel("Get started")
-
-                Button("Skip setup") {
-                    coordinator.skipSetup()
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(.secondary)
-                .accessibilityLabel("Skip setup")
-            }
-
-            Text("No account · On-device")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
-                .padding(.top, 28)
-
-            Spacer(minLength: 0)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(.primary.opacity(0.9))
         }
-        .frame(maxWidth: 400)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Rasc")
+    }
+
+    private var welcomeProductLoopCopy: some View {
+        VStack(spacing: 3) {
+            Text("Capture without thinking.")
+            Text("Refine without prompting.")
+            Text("Keep what matters.")
+        }
+        .font(.system(size: 14))
+        .foregroundStyle(onboardingProductLoopText)
+        .multilineTextAlignment(.center)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(
+            "Capture without thinking. Refine without prompting. Keep what matters."
+        )
+    }
+
+    private var welcomeTrustFooter: some View {
+        HStack(spacing: 8) {
+            Text("No account required")
+            Text("·")
+            Text("On-device")
+        }
+        .font(.system(size: 11.5, weight: .medium))
+        .foregroundStyle(onboardingSecondaryText)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("No account required. On-device.")
+    }
+
+    private var onboardingSkipControl: some View {
+        Button("Skip") {
+            coordinator.skipSetup()
+        }
+        .buttonStyle(.plain)
+        .font(.system(size: 12, weight: .medium))
+        .foregroundStyle(onboardingSecondaryText)
+        .accessibilityLabel("Skip setup")
+        .help("Skip setup")
+    }
+
+    private func onboardingProgressIndicator(_ progress: (current: Int, total: Int)) -> some View {
+        HStack(spacing: 6) {
+            ForEach(1...progress.total, id: \.self) { step in
+                Circle()
+                    .fill(
+                        step <= progress.current
+                            ? RascSurfacePalette.homeSectionLabel(for: colorScheme)
+                            : RascSurfacePalette.homeSectionLabel(for: colorScheme).opacity(0.26)
+                    )
+                    .frame(width: 5, height: 5)
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Step \(progress.current) of \(progress.total)")
     }
 
     private var shortcutContent: some View {
@@ -142,23 +274,16 @@ struct OnboardingView: View {
             Button("Continue") {
                 coordinator.continueFromShortcut()
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(OnboardingProminentButtonStyle(fullWidth: false))
+            .frame(minWidth: OnboardingLayout.ctaMinWidth)
             .disabled(!GlobalShortcutFormatting.hasValidToggleShortcut())
             .keyboardShortcut(.defaultAction)
             .accessibilityLabel("Continue")
 
             Text("You can change this anytime in Settings.")
                 .font(.caption)
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(onboardingSecondaryText)
                 .padding(.top, 16)
-
-            Button("Skip setup") {
-                coordinator.skipSetup()
-            }
-            .buttonStyle(.plain)
-            .foregroundStyle(.secondary)
-            .padding(.top, 8)
-            .accessibilityLabel("Skip setup")
 
             Spacer(minLength: 0)
         }
@@ -215,6 +340,18 @@ struct OnboardingView: View {
             )
             .padding(.bottom, 32)
 
+            HStack(spacing: 8) {
+                Text("Open Rasc Home with")
+                    .font(.caption)
+                    .foregroundStyle(onboardingSecondaryText)
+
+                ShortcutKeycapView(
+                    label: PaletteCommand.openHome.shortcutLabel,
+                    style: .compact
+                )
+            }
+            .padding(.bottom, 20)
+
             VStack(spacing: 12) {
                 Text("Keep Rasc ready after login")
                     .font(.subheadline.weight(.medium))
@@ -254,7 +391,8 @@ struct OnboardingView: View {
             Button("Finish") {
                 coordinator.finish()
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(OnboardingProminentButtonStyle(fullWidth: false))
+            .frame(minWidth: OnboardingLayout.ctaMinWidth)
             .keyboardShortcut(.defaultAction)
             .focused($completionFocused)
             .accessibilityLabel("Finish onboarding")
@@ -278,7 +416,47 @@ private struct OnboardingBackground: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        RascSurfacePalette.canvas(for: colorScheme)
-            .ignoresSafeArea()
+        ZStack {
+            RascSurfacePalette.canvas(for: colorScheme)
+
+            RadialGradient(
+                colors: [
+                    RascSurfacePalette.violet(for: colorScheme)
+                        .opacity(colorScheme == .dark ? 0.07 : 0.04),
+                    .clear,
+                ],
+                center: .center,
+                startRadius: 24,
+                endRadius: 320
+            )
+        }
+        .ignoresSafeArea()
+    }
+}
+
+private struct OnboardingProminentButtonStyle: ButtonStyle {
+    var fullWidth = true
+
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundStyle(.white)
+            .frame(maxWidth: fullWidth ? .infinity : nil)
+            .padding(.horizontal, fullWidth ? 0 : 24)
+            .padding(.vertical, 9)
+            .background {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(RascSurfacePalette.actionAccentFill(for: colorScheme))
+                    .opacity(isEnabled ? 1 : 0.45)
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .strokeBorder(Color.white.opacity(colorScheme == .dark ? 0.08 : 0.18), lineWidth: 1)
+            }
+            .opacity(configuration.isPressed ? 0.9 : 1)
+            .scaleEffect(configuration.isPressed ? 0.985 : 1)
     }
 }

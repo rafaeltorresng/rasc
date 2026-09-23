@@ -6,6 +6,11 @@ enum RascSurfaceLayout {
     static let orbSize: CGFloat = 20
     static let orbToAccessoryGap: CGFloat = 9
     static let scratchpadContentGap: CGFloat = 14
+    static let scratchpadEmptySupportingGap: CGFloat = 8
+    /// Structural separation between chrome and body — spacing only, no rule line.
+    static let scratchpadChromeToBodyGap: CGFloat = 8
+    static let scratchpadChromeBottomPadding: CGFloat = 10
+    static let scratchpadEditorContentTopPadding: CGFloat = 12
     static let transientHeaderBodyGap: CGFloat = 8
     static let bottomInset: CGFloat = 12
     static let textContainerHorizontalInset: CGFloat = 5
@@ -22,8 +27,13 @@ enum RascSurfaceLayout {
         horizontalInset + textContainerHorizontalInset
     }
 
+    /// Top inset for editor text below the scratchpad chrome row.
     static var scratchpadEditorTopPadding: CGFloat {
-        topInset + orbSize + scratchpadContentGap
+        scratchpadEditorContentTopPadding
+    }
+
+    static var scratchpadChromeHeight: CGFloat {
+        topInset + orbSize + scratchpadChromeBottomPadding
     }
 
     /// Authoritative top-leading orb anchor shared across Scratchpad, Search, and Command Palette.

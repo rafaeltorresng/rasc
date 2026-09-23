@@ -26,6 +26,11 @@ struct PaletteCommandTests {
     }
 
     @Test
+    func openHomeShowsToggleShortcut() {
+        #expect(PaletteCommand.openHome.shortcutLabel == "⌘⌥\\")
+    }
+
+    @Test
     func keptNoteShowsUnkeepInsteadOfKeep() {
         let commands = PaletteCommand.availableCommands(
             isKept: true,

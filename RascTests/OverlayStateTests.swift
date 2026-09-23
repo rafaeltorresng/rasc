@@ -12,13 +12,35 @@ struct OverlayStateTests {
         #expect(RascSurfaceLayout.orbSize == 20)
         #expect(RascSurfaceLayout.scratchpadContentGap >= 14)
         #expect(RascSurfaceLayout.scratchpadContentGap <= 18)
+        #expect(RascSurfaceLayout.scratchpadEmptySupportingGap >= 6)
+        #expect(RascSurfaceLayout.scratchpadEmptySupportingGap <= 12)
+        #expect(RascSurfaceMetrics.scratchpadPlaceholderFontSize == 15)
+        #expect(RascSurfaceMetrics.scratchpadPlaceholderFontSize < RascSurfaceMetrics.noteFontSize)
+        #expect(RascSurfaceLayout.scratchpadChromeToBodyGap >= 6)
+        #expect(RascSurfaceLayout.scratchpadChromeToBodyGap <= 12)
+        #expect(
+            RascSurfaceMetrics.scratchpadChromeToBodyGap
+                == RascSurfaceLayout.scratchpadChromeToBodyGap
+        )
+        #expect(
+            RascSurfaceMetrics.scratchpadEmptySupportingGap
+                == RascSurfaceLayout.scratchpadEmptySupportingGap
+        )
         #expect(
             RascSurfaceMetrics.editorTopPadding
+                == RascSurfaceLayout.scratchpadEditorContentTopPadding
+        )
+        #expect(
+            RascSurfaceMetrics.scratchpadChromeHeight
                 == RascSurfaceLayout.topInset
                     + RascSurfaceLayout.orbSize
-                    + RascSurfaceLayout.scratchpadContentGap
+                    + RascSurfaceLayout.scratchpadChromeBottomPadding
         )
         #expect(RascSurfaceMetrics.placeholderLeadingInset == RascSurfaceLayout.noteTextLeadingInset)
+        #expect(
+            RascSurfaceMetrics.placeholderTopInset
+                == RascSurfaceLayout.scratchpadEditorContentTopPadding
+        )
         #expect(RascSurfaceLayout.orbLeading == 20)
         #expect(RascSurfaceLayout.orbTop == 2)
         #expect(RascSurfaceLayout.orbSize == 20)
@@ -41,9 +63,15 @@ struct OverlayStateTests {
         #expect(RascOrbState.searching.speed == 0.68)
         #expect(RascOrbState.refining.thinkingOrbState.rawValue == "shaping")
         #expect(RascOrbState.refining.speed == 1)
+        #expect(RascOrbState.connecting.thinkingOrbState.rawValue == "connecting")
+        #expect(RascOrbState.connecting.speed == 0.58)
+        #expect(RascOrbState.breathing.thinkingOrbState.rawValue == "breathing")
+        #expect(RascOrbState.breathing.speed == 0.48)
         #expect(!RascOrbState.note.isPaused)
         #expect(!RascOrbState.searching.isPaused)
         #expect(!RascOrbState.refining.isPaused)
+        #expect(!RascOrbState.connecting.isPaused)
+        #expect(!RascOrbState.breathing.isPaused)
     }
 
     @Test

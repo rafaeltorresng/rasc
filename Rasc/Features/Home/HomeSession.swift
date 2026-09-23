@@ -38,8 +38,8 @@ final class HomeSession {
         !normalizedSearchQuery.isEmpty
     }
 
-    var orbState: RascOrbState {
-        isSearching ? .searching : .note
+    var emptyStateOrbState: RascOrbState {
+        .connecting
     }
 
     var hasNotes: Bool {
@@ -100,6 +100,27 @@ final class HomeSession {
     func selectedNote() -> Note? {
         guard let selectedNoteID else { return nil }
         return displayedNotes.first { $0.id == selectedNoteID }
+    }
+
+    func discardNote(id: UUID) async throws {
+        try await repository.delete(id: id)
+        await reloadImmediately()
+    }
+
+    func duplicateNote(id: UUID) async throws -> Note {
+        guard let source = try await repository.fetch(id: id) else {
+            throw NoteRepository.PersistenceError.staleContent
+        }
+
+        let duplicate = try await repository.createScratch(content: source.content)
+        selectedNoteID = duplicate.id
+        await reloadImmediately()
+        return duplicate
+    }
+
+    func unkeepNote(id: UUID) async throws {
+        _ = try await repository.unkeep(id: id)
+        await reloadImmediately()
     }
 
     func formattedTimestamp(for note: Note) -> String {

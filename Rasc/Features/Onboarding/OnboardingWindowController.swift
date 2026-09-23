@@ -4,20 +4,17 @@ import SwiftUI
 @MainActor
 final class OnboardingWindowController {
     private var window: NSWindow?
-    private var preferredScreen: NSScreen?
 
-    func show(
-        coordinator: OnboardingCoordinator,
-        on preferredScreen: NSScreen? = nil
-    ) {
-        self.preferredScreen = preferredScreen ?? activeScreen()
-
+    func show(coordinator: OnboardingCoordinator) {
         let contentView = OnboardingView(coordinator: coordinator)
         let hostingController = NSHostingController(rootView: contentView)
 
         let window = self.window ?? makeWindow()
         window.contentViewController = hostingController
-        center(window, on: self.preferredScreen)
+        RascWindowPlacement.placeOnboarding(
+            window: window,
+            excludingProcessID: NSRunningApplication.current.processIdentifier
+        )
 
         NSApp.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(nil)
@@ -39,7 +36,7 @@ final class OnboardingWindowController {
 
     private func makeWindow() -> NSWindow {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 720, height: 520),
+            contentRect: NSRect(origin: .zero, size: RascWindowMetrics.onboarding),
             styleMask: [.titled, .closable, .fullSizeContentView],
             backing: .buffered,
             defer: false
@@ -49,29 +46,9 @@ final class OnboardingWindowController {
         window.titlebarAppearsTransparent = true
         window.isReleasedWhenClosed = false
         window.isMovableByWindowBackground = true
+        window.minSize = RascWindowMetrics.onboarding
+        window.maxSize = RascWindowMetrics.onboarding
         window.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
         return window
-    }
-
-    private func center(_ window: NSWindow, on screen: NSScreen?) {
-        let targetScreen = screen ?? NSScreen.main ?? NSScreen.screens.first
-        guard let visibleFrame = targetScreen?.visibleFrame else { return }
-
-        let origin = WindowFramePlacement.centeredOrigin(
-            for: window.frame.size,
-            in: visibleFrame
-        )
-        window.setFrameOrigin(origin)
-    }
-
-    private func activeScreen() -> NSScreen? {
-        if let frontmost = NSWorkspace.shared.frontmostApplication,
-           frontmost.processIdentifier != NSRunningApplication.current.processIdentifier,
-           let window = NSApp.windows.first(where: { $0.isVisible && $0.isKeyWindow }) {
-            return window.screen
-        }
-
-        return NSScreen.screens.first { $0.frame.contains(NSEvent.mouseLocation) }
-            ?? NSScreen.main
     }
 }

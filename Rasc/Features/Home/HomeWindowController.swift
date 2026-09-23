@@ -3,9 +3,6 @@ import SwiftUI
 
 @MainActor
 final class HomeWindowController: NSObject, NSWindowDelegate {
-    static let defaultSize = NSSize(width: 1_000, height: 680)
-    static let minimumSize = NSSize(width: 760, height: 520)
-
     private var window: NSWindow?
     private var session: HomeSession?
     private let windowFrameStore: WindowFrameStore
@@ -24,7 +21,9 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
     func show(
         repository: NoteRepository,
         onOpenNote: @escaping (UUID) -> Void,
-        onNewScratch: @escaping () -> Void
+        onNewScratch: @escaping () -> Void,
+        onNoteDiscarded: @escaping (UUID) -> Void = { _ in },
+        onNoteUnkept: @escaping (UUID) -> Void = { _ in }
     ) {
         let session = session ?? HomeSession(repository: repository)
         self.session = session
@@ -32,7 +31,9 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
         let contentView = HomeView(
             session: session,
             onOpenNote: onOpenNote,
-            onNewScratch: onNewScratch
+            onNewScratch: onNewScratch,
+            onNoteDiscarded: onNoteDiscarded,
+            onNoteUnkept: onNoteUnkept
         )
 
         let hostingController = NSHostingController(rootView: contentView)
@@ -81,7 +82,7 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
 
     private func makeWindow() -> NSWindow {
         let window = NSWindow(
-            contentRect: NSRect(origin: .zero, size: Self.defaultSize),
+            contentRect: NSRect(origin: .zero, size: RascWindowMetrics.homeDefault),
             styleMask: [.titled, .closable, .resizable, .miniaturizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
@@ -92,36 +93,27 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
         window.titlebarAppearsTransparent = true
         window.isReleasedWhenClosed = false
         window.isMovableByWindowBackground = true
-        window.minSize = Self.minimumSize
+        window.minSize = RascWindowMetrics.homeMinimum
         window.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
         window.backgroundColor = RascSurfacePalette.panelBackground
         return window
     }
 
     private func positionWindowIfNeeded(_ window: NSWindow) {
-        if windowFrameStore.hasSavedFrame {
-            windowFrameStore.restore(into: window, on: targetPresentationScreen())
-            return
-        }
-
-        window.setContentSize(Self.defaultSize)
-        windowFrameStore.restore(into: window, on: targetPresentationScreen())
+        RascWindowPlacement.placeHome(
+            window: window,
+            store: windowFrameStore,
+            excludingProcessID: NSRunningApplication.current.processIdentifier
+        )
     }
 
     private func revalidateWindowFrame(reason: String) {
         guard let window, window.isVisible else { return }
-        windowFrameStore.ensureVisible(
-            window,
-            on: targetPresentationScreen(),
+        RascWindowPlacement.ensureHomeVisible(
+            window: window,
+            store: windowFrameStore,
+            excludingProcessID: NSRunningApplication.current.processIdentifier,
             reason: reason
-        )
-    }
-
-    private func targetPresentationScreen() -> NSScreen? {
-        WindowFramePlacement.preferredScreen(
-            frontmostWindowFrame: nil,
-            mouseLocation: NSEvent.mouseLocation,
-            screens: NSScreen.screens
         )
     }
 

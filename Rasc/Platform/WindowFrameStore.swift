@@ -45,6 +45,46 @@ enum WindowFramePlacement {
             y: visibleFrame.midY - windowSize.height / 2
         )
     }
+
+    static func frontmostOnScreenWindowFrame(excludingProcessID: pid_t) -> NSRect? {
+        guard let windowList = CGWindowListCopyWindowInfo(
+            [.optionOnScreenOnly, .excludeDesktopElements],
+            kCGNullWindowID
+        ) as? [[String: Any]] else {
+            return nil
+        }
+
+        for window in windowList {
+            guard let ownerPID = window[kCGWindowOwnerPID as String] as? pid_t,
+                  ownerPID != excludingProcessID,
+                  let layer = window[kCGWindowLayer as String] as? Int,
+                  layer == 0,
+                  let bounds = window[kCGWindowBounds as String] as? [String: CGFloat]
+            else {
+                continue
+            }
+
+            return NSRect(
+                x: bounds["X"] ?? 0,
+                y: bounds["Y"] ?? 0,
+                width: bounds["Width"] ?? 0,
+                height: bounds["Height"] ?? 0
+            )
+        }
+
+        return nil
+    }
+
+    static func targetPresentationScreen(
+        excludingProcessID: pid_t,
+        screens: [NSScreen] = NSScreen.screens
+    ) -> NSScreen? {
+        preferredScreen(
+            frontmostWindowFrame: frontmostOnScreenWindowFrame(excludingProcessID: excludingProcessID),
+            mouseLocation: NSEvent.mouseLocation,
+            screens: screens
+        )
+    }
 }
 
 @MainActor
@@ -78,16 +118,14 @@ struct WindowFrameStore {
     func restore(
         into window: NSWindow,
         on preferredScreen: NSScreen?,
+        initialPlacement: RascWindowInitialPlacement = .geometricCenter,
         screens: [NSScreen] = NSScreen.screens
     ) {
         guard !screens.isEmpty else { return }
 
         if let stored = storedFrame,
-           let screen = WindowFramePlacement.screenContaining(frame: stored, in: screens) {
+           WindowFramePlacement.screenContaining(frame: stored, in: screens) != nil {
             window.setFrame(stored, display: false)
-            if window.screen != screen {
-                window.setFrameOrigin(stored.origin)
-            }
             return
         }
 
@@ -98,12 +136,13 @@ struct WindowFrameStore {
                 screens: screens
             )
             ?? screens[0]
-        center(window, on: targetScreen)
+        placeInitially(window, on: targetScreen, initialPlacement: initialPlacement)
     }
 
     func ensureVisible(
         _ window: NSWindow,
         on preferredScreen: NSScreen?,
+        initialPlacement: RascWindowInitialPlacement = .geometricCenter,
         screens: [NSScreen] = NSScreen.screens,
         reason: String
     ) {
@@ -114,7 +153,12 @@ struct WindowFrameStore {
         }
 
         AppDiagnostics.panelRepositioned(reason: reason)
-        restore(into: window, on: preferredScreen, screens: screens)
+        restore(
+            into: window,
+            on: preferredScreen,
+            initialPlacement: initialPlacement,
+            screens: screens
+        )
     }
 
     func save(_ window: NSWindow) {
@@ -133,12 +177,13 @@ struct WindowFrameStore {
         return rect
     }
 
-    private func center(_ window: NSWindow, on screen: NSScreen) {
+    private func placeInitially(
+        _ window: NSWindow,
+        on screen: NSScreen,
+        initialPlacement: RascWindowInitialPlacement
+    ) {
         window.setFrameOrigin(
-            WindowFramePlacement.centeredOrigin(
-                for: window.frame.size,
-                in: screen.visibleFrame
-            )
+            initialPlacement.origin(for: window.frame.size, in: screen.visibleFrame)
         )
     }
 }

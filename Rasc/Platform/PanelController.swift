@@ -35,7 +35,7 @@ final class PanelController: NSObject, NSWindowDelegate {
         )
         self.windowFrameStore = windowFrameStore
         panel = ScratchpadPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 520, height: 340),
+            contentRect: NSRect(origin: .zero, size: RascWindowMetrics.scratchpadDefault),
             styleMask: [.titled, .resizable, .fullSizeContentView, .nonactivatingPanel],
             backing: .buffered,
             defer: false
@@ -200,6 +200,14 @@ final class PanelController: NSObject, NSWindowDelegate {
         }
     }
 
+    func abandonActiveNoteIfMatching(id: UUID) async {
+        await session.abandonActiveNoteIfMatching(id: id)
+    }
+
+    func refreshActiveNoteIfMatching(id: UUID) async {
+        await session.refreshActiveNoteIfMatching(id: id)
+    }
+
     func openNote(id: UUID) async {
         do {
             if !panel.isVisible {
@@ -322,59 +330,25 @@ final class PanelController: NSObject, NSWindowDelegate {
             panel.standardWindowButton(buttonType)?.isHidden = true
         }
         panel.standardWindowButton(.zoomButton)?.isEnabled = false
-        panel.minSize = NSSize(width: 360, height: 220)
-        panel.maxSize = NSSize(width: 800, height: 700)
+        panel.minSize = RascWindowMetrics.scratchpadMinimum
+        panel.maxSize = RascWindowMetrics.scratchpadMaximum
     }
 
     private func positionPanelIfNeeded() {
-        windowFrameStore.restore(into: panel, on: targetPresentationScreen())
+        RascWindowPlacement.placeScratchpad(
+            window: panel,
+            store: windowFrameStore,
+            excludingProcessID: NSRunningApplication.current.processIdentifier
+        )
     }
 
     private func revalidatePanelFrame(reason: String) {
-        windowFrameStore.ensureVisible(
-            panel,
-            on: targetPresentationScreen(),
+        RascWindowPlacement.ensureScratchpadVisible(
+            window: panel,
+            store: windowFrameStore,
+            excludingProcessID: NSRunningApplication.current.processIdentifier,
             reason: reason
         )
-    }
-
-    private func targetPresentationScreen() -> NSScreen? {
-        WindowFramePlacement.preferredScreen(
-            frontmostWindowFrame: Self.frontmostWindowFrame(
-                excludingPID: NSRunningApplication.current.processIdentifier
-            ),
-            mouseLocation: NSEvent.mouseLocation,
-            screens: NSScreen.screens
-        )
-    }
-
-    private static func frontmostWindowFrame(excludingPID: pid_t) -> NSRect? {
-        guard let windowList = CGWindowListCopyWindowInfo(
-            [.optionOnScreenOnly, .excludeDesktopElements],
-            kCGNullWindowID
-        ) as? [[String: Any]] else {
-            return nil
-        }
-
-        for window in windowList {
-            guard let ownerPID = window[kCGWindowOwnerPID as String] as? pid_t,
-                  ownerPID != excludingPID,
-                  let layer = window[kCGWindowLayer as String] as? Int,
-                  layer == 0,
-                  let bounds = window[kCGWindowBounds as String] as? [String: CGFloat]
-            else {
-                continue
-            }
-
-            return NSRect(
-                x: bounds["X"] ?? 0,
-                y: bounds["Y"] ?? 0,
-                width: bounds["Width"] ?? 0,
-                height: bounds["Height"] ?? 0
-            )
-        }
-
-        return nil
     }
 
     private func observeDisplayChanges() {

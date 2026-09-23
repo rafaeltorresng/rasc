@@ -46,9 +46,11 @@ struct SettingsView: View {
     private let refinementProvider: any RefinementProvider
     private let loginItemController: LoginItemController
     private let languageSettings: RefineLanguageSettingsStore
+    private let themeSettings: AppThemeSettingsStore
     private let supportedLocales: any RefineSupportedLocaleDiscovering
 
     @Environment(\.colorScheme) private var colorScheme
+    @State private var selectedTheme: AppTheme = .system
     @State private var launchAtLogin = false
     @State private var loginItemState = LoginItemState.disabled
     @State private var launchAtLoginError: String?
@@ -69,17 +71,30 @@ struct SettingsView: View {
         refinementProvider: any RefinementProvider = FoundationModelsRefinementProvider(),
         loginItemController: LoginItemController = LoginItemController(),
         languageSettings: RefineLanguageSettingsStore = RefineLanguageSettingsStore(),
+        themeSettings: AppThemeSettingsStore = AppThemeSettingsStore(),
         supportedLocales: any RefineSupportedLocaleDiscovering = RefineSupportedLocales()
     ) {
         self.refinementProvider = refinementProvider
         self.loginItemController = loginItemController
         self.languageSettings = languageSettings
+        self.themeSettings = themeSettings
         self.supportedLocales = supportedLocales
     }
 
     var body: some View {
         Form {
             Section("General") {
+                Picker("Theme", selection: $selectedTheme) {
+                    ForEach(AppTheme.allCases) { theme in
+                        Text(theme.displayName).tag(theme)
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: selectedTheme) { _, theme in
+                    themeSettings.save(theme)
+                    AppThemeApplicator.apply(theme)
+                }
+
                 KeyboardShortcuts.Recorder(
                     "Global shortcut:",
                     name: .toggleScratchpad
@@ -161,11 +176,13 @@ struct SettingsView: View {
         .rascWindowSurface()
         .registersSettingsOpenAction()
         .task {
+            selectedTheme = themeSettings.load()
             refreshLaunchAtLoginState()
             refreshLanguageSettings()
             await refreshRefineStatus()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            selectedTheme = themeSettings.load()
             refreshLaunchAtLoginState()
             refreshLanguageSettings()
         }

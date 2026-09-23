@@ -78,8 +78,26 @@ final class AppBootstrap {
                 Task { @MainActor in
                     await panel.startNewScratch()
                 }
+            },
+            onNoteDiscarded: { noteID in
+                Task { @MainActor in
+                    await panel.abandonActiveNoteIfMatching(id: noteID)
+                }
+            },
+            onNoteUnkept: { noteID in
+                Task { @MainActor in
+                    await panel.refreshActiveNoteIfMatching(id: noteID)
+                }
             }
         )
+    }
+
+    func toggleHome() async {
+        if homeIsVisible {
+            homeWindowController?.close()
+            return
+        }
+        await openHome()
     }
 
     func openSettings() async {

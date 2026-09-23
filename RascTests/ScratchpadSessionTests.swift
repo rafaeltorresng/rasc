@@ -356,6 +356,32 @@ struct ScratchpadSessionTests {
         #expect(fixture.userDefaults.string(forKey: "activeNoteID") == active.id.uuidString)
     }
 
+    @Test
+    func abandonActiveNoteIfMatchingClearsOnlyTheMatchingScratchSession() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let note = try await fixture.repository.createScratch(content: "active note")
+        let other = try await fixture.repository.createScratch(content: "other note")
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+
+        try await session.openNote(id: note.id)
+        session.text = "edited active note"
+        session.scheduleAutosave()
+
+        await session.abandonActiveNoteIfMatching(id: other.id)
+
+        #expect(session.text == "edited active note")
+        #expect(fixture.userDefaults.string(forKey: "activeNoteID") == note.id.uuidString)
+
+        await session.abandonActiveNoteIfMatching(id: note.id)
+
+        #expect(session.text == "")
+        #expect(fixture.userDefaults.string(forKey: "activeNoteID") == nil)
+    }
+
     private func makeFixture() throws -> Fixture {
         let databaseURL = FileManager.default.temporaryDirectory
             .appending(path: UUID().uuidString)

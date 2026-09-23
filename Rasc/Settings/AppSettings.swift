@@ -1,6 +1,70 @@
 import AppKit
 import SwiftUI
 
+enum AppTheme: String, CaseIterable, Identifiable, Sendable {
+    case system
+    case rascDark
+    case rascLight
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .system:
+            "System"
+        case .rascDark:
+            "Rasc Dark"
+        case .rascLight:
+            "Rasc Light"
+        }
+    }
+
+    var nsAppearance: NSAppearance? {
+        switch self {
+        case .system:
+            nil
+        case .rascDark:
+            NSAppearance(named: .darkAqua)
+        case .rascLight:
+            NSAppearance(named: .aqua)
+        }
+    }
+}
+
+struct AppThemeSettingsStore {
+    static let preferenceKey = "appTheme"
+
+    private let userDefaults: UserDefaults
+
+    init(userDefaults: UserDefaults = .standard) {
+        self.userDefaults = userDefaults
+    }
+
+    func load() -> AppTheme {
+        guard let raw = userDefaults.string(forKey: Self.preferenceKey),
+              let theme = AppTheme(rawValue: raw)
+        else {
+            return .system
+        }
+        return theme
+    }
+
+    func save(_ theme: AppTheme) {
+        userDefaults.set(theme.rawValue, forKey: Self.preferenceKey)
+    }
+}
+
+@MainActor
+enum AppThemeApplicator {
+    static func apply(_ theme: AppTheme) {
+        NSApp.appearance = theme.nsAppearance
+    }
+
+    static func applyStoredTheme(using store: AppThemeSettingsStore = AppThemeSettingsStore()) {
+        apply(store.load())
+    }
+}
+
 @MainActor
 final class SettingsOpenActionRegistrar {
     static let shared = SettingsOpenActionRegistrar()
@@ -43,7 +107,9 @@ struct RascSettingsLink<Label: View>: View {
     @ViewBuilder let label: () -> Label
 
     var body: some View {
-        SettingsLink {
+        Button {
+            SettingsWindowPresentation.present()
+        } label: {
             label()
         }
     }

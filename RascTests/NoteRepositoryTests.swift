@@ -74,6 +74,20 @@ struct NoteRepositoryTests {
         #expect(try await repository.fetch(id: created.id)?.content == "revised thought")
     }
 
+    @Test
+    func updateWithUnchangedContentPreservesUpdatedAt() async throws {
+        let repository = try makeRepository()
+        let created = try await repository.createScratch(content: "stable note")
+        let originalUpdatedAt = try #require(try await repository.fetch(id: created.id)?.updatedAt)
+
+        try await Task.sleep(for: .milliseconds(10))
+        try await repository.update(id: created.id, content: "stable note")
+
+        let fetched = try await repository.fetch(id: created.id)
+        #expect(fetched?.content == "stable note")
+        #expect(fetched?.updatedAt == originalUpdatedAt)
+    }
+
     @Test(arguments: ["", "  \n\t "])
     func rejectsContentWithoutMeaningfulCharacters(content: String) async throws {
         let repository = try makeRepository()
