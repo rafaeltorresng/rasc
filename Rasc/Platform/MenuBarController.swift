@@ -2,7 +2,7 @@ import AppKit
 
 @MainActor
 protocol MenuBarControllerDelegate: AnyObject {
-    func menuBarOpenRasc()
+    func menuBarOpenHome()
     func menuBarNewScratch()
     func menuBarOpenSearch()
     func menuBarOpenSettings()
@@ -41,7 +41,8 @@ final class MenuBarController {
         menu.addItem(makeItem(
             title: "Open Home",
             action: #selector(openRasc),
-            keyEquivalent: ""
+            keyEquivalent: "\\",
+            modifierMask: [.command, .option]
         ))
         menu.addItem(makeItem(
             title: "New Scratch",
@@ -99,7 +100,7 @@ final class MenuBarController {
     }
 
     @objc private func openRasc() {
-        delegate?.menuBarOpenRasc()
+        delegate?.menuBarOpenHome()
     }
 
     @objc private func newScratch() {
