@@ -11,11 +11,14 @@ enum RascSurfaceMetrics {
     static let anchorBandHeight: CGFloat = RascSurfaceLayout.topInset + RascSurfaceLayout.orbSize
     static let searchFieldHeight = RascSurfaceLayout.searchFieldHeight
     static let searchFieldCornerRadius = RascSurfaceLayout.searchFieldCornerRadius
-    static let editorTopPadding = RascSurfaceLayout.scratchpadEditorTopPadding
+    static let editorTopPadding = RascSurfaceLayout.scratchpadEditorContentTopPadding
     static let editorBottomPadding = RascSurfaceLayout.bottomInset
     static let textContainerHorizontalInset = RascSurfaceLayout.textContainerHorizontalInset
     static let placeholderLeadingInset = RascSurfaceLayout.noteTextLeadingInset
-    static let placeholderTopInset = RascSurfaceLayout.scratchpadEditorTopPadding
+    static let placeholderTopInset = RascSurfaceLayout.scratchpadEditorContentTopPadding
+    static let scratchpadChromeToBodyGap = RascSurfaceLayout.scratchpadChromeToBodyGap
+    static let scratchpadEmptySupportingGap = RascSurfaceLayout.scratchpadEmptySupportingGap
+    static let scratchpadChromeHeight = RascSurfaceLayout.scratchpadChromeHeight
     static let commandRowSpacing = RascSurfaceLayout.listRowSpacing
     static let commandRowVerticalPadding = RascSurfaceLayout.listRowVerticalPadding
     static let commandRowCornerRadius = RascSurfaceLayout.listRowCornerRadius
@@ -38,6 +41,8 @@ enum RascSurfaceMetrics {
         return headerHeight + rowsHeight + RascSurfaceLayout.bottomInset
     }
     static let noteFontSize: CGFloat = 16
+    /// Empty-state placeholder: slightly below editor size so it reads as entry, not headline.
+    static let scratchpadPlaceholderFontSize: CGFloat = 15
     static let noteLineSpacing: CGFloat = 4.5
 
     static let previewCornerRadius: CGFloat = 14
@@ -81,11 +86,24 @@ enum RascSurfacePalette {
     }
 
     static func accent(for colorScheme: ColorScheme) -> Color {
-        Color(nsColor: accentNSColor(for: colorScheme))
+        actionAccent(for: colorScheme)
     }
 
     static func accentNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark ? darkControlAccent : lightControlAccent
+        actionAccentNSColor(for: colorScheme)
+    }
+
+    static func actionAccentNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark ? darkActionAccent : lightActionAccent
+    }
+
+    /// Filled primary CTAs with white labels — darker than `actionAccent` for contrast.
+    static func actionAccentFill(for colorScheme: ColorScheme) -> Color {
+        Color(nsColor: actionAccentFillNSColor(for: colorScheme))
+    }
+
+    static func actionAccentFillNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark ? darkActionAccentFill : lightActionAccentFill
     }
 
     static func violet(for colorScheme: ColorScheme) -> Color {
@@ -93,19 +111,112 @@ enum RascSurfacePalette {
     }
 
     static func actionAccent(for colorScheme: ColorScheme) -> Color {
-        Color(nsColor: colorScheme == .dark ? darkActionAccent : lightActionAccent)
+        Color(nsColor: actionAccentNSColor(for: colorScheme))
     }
 
     static func selectionFill(for colorScheme: ColorScheme) -> Color {
         violet(for: colorScheme).opacity(colorScheme == .dark ? 0.18 : 0.13)
     }
 
+    /// Home card keyboard selection: border-forward, not a full violet plate.
+    static func homeCardSelectionFill(for colorScheme: ColorScheme) -> Color {
+        violet(for: colorScheme).opacity(colorScheme == .dark ? 0.05 : 0.035)
+    }
+
     static func selectionStroke(for colorScheme: ColorScheme) -> Color {
         violet(for: colorScheme).opacity(colorScheme == .dark ? 0.42 : 0.34)
     }
 
+    static func homeCardSelectionStroke(for colorScheme: ColorScheme) -> Color {
+        violet(for: colorScheme).opacity(colorScheme == .dark ? 0.48 : 0.38)
+    }
+
     static func focusedFieldBorder(for colorScheme: ColorScheme) -> Color {
         violet(for: colorScheme).opacity(colorScheme == .dark ? 0.52 : 0.44)
+    }
+
+    static func homeCardFill(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark
+            ? Color(nsColor: darkHomeCard)
+            : .white
+    }
+
+    static func homeCardBorder(
+        for colorScheme: ColorScheme,
+        isHovered: Bool,
+        isSelected: Bool,
+        increasedContrast: Bool
+    ) -> Color {
+        if isSelected {
+            return homeCardSelectionStroke(for: colorScheme)
+        }
+
+        let opacities = homeCardBorderOpacities(for: colorScheme, increasedContrast: increasedContrast)
+        return border(for: colorScheme)
+            .opacity(isHovered ? opacities.hover : opacities.base)
+    }
+
+    static func homeCardVioletUndertone(
+        for colorScheme: ColorScheme,
+        isHovered: Bool,
+        isSelected: Bool
+    ) -> Color {
+        guard colorScheme == .dark, !isSelected else {
+            return .clear
+        }
+        return violet(for: colorScheme)
+            .opacity(isHovered ? 0.11 : 0.075)
+    }
+
+    static func homeCardShadowOpacity(
+        for colorScheme: ColorScheme,
+        isHovered: Bool,
+        isSelected: Bool
+    ) -> Double {
+        if isSelected {
+            return colorScheme == .dark ? 0.16 : 0.09
+        }
+        if isHovered {
+            return colorScheme == .dark ? 0.18 : 0.11
+        }
+        return colorScheme == .dark ? 0.14 : 0.10
+    }
+
+    static func homeCardShadowRadius(
+        for colorScheme: ColorScheme,
+        isHovered: Bool,
+        isSelected: Bool
+    ) -> CGFloat {
+        if isSelected || isHovered {
+            return colorScheme == .dark ? 10 : 9
+        }
+        return colorScheme == .dark ? 8 : 6
+    }
+
+    private static func homeCardBorderOpacities(
+        for colorScheme: ColorScheme,
+        increasedContrast: Bool
+    ) -> (base: Double, hover: Double) {
+        switch colorScheme {
+        case .dark:
+            increasedContrast ? (0.68, 0.82) : (0.52, 0.66)
+        case .light:
+            increasedContrast ? (0.78, 0.90) : (0.58, 0.72)
+        @unknown default:
+            (0.55, 0.70)
+        }
+    }
+
+    static func homeSupportingText(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark
+            ? Color.secondary.opacity(0.9)
+            : Color.primary.opacity(0.54)
+    }
+
+    static func homeSectionLabel(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark
+            ? Color.secondary
+            : Color.primary.opacity(0.58)
     }
 
     private static let warmBackground = NSColor(
@@ -133,6 +244,14 @@ enum RascSurfacePalette {
         srgbRed: 0.110,
         green: 0.098,
         blue: 0.133,
+        alpha: 1
+    )
+
+    /// Home cards in dark mode: lifted graphite with a restrained violet undertone.
+    private static let darkHomeCard = NSColor(
+        srgbRed: 0.128,
+        green: 0.114,
+        blue: 0.152,
         alpha: 1
     )
 
@@ -164,20 +283,6 @@ enum RascSurfacePalette {
         alpha: 1
     )
 
-    private static let lightControlAccent = NSColor(
-        srgbRed: 0.690,
-        green: 0.247,
-        blue: 0.035,
-        alpha: 1
-    )
-
-    private static let darkControlAccent = NSColor(
-        srgbRed: 0.690,
-        green: 0.247,
-        blue: 0.035,
-        alpha: 1
-    )
-
     private static let lightActionAccent = NSColor(
         srgbRed: 0.835,
         green: 0.318,
@@ -189,6 +294,20 @@ enum RascSurfacePalette {
         srgbRed: 0.965,
         green: 0.482,
         blue: 0.208,
+        alpha: 1
+    )
+
+    private static let lightActionAccentFill = NSColor(
+        srgbRed: 0.780,
+        green: 0.290,
+        blue: 0.080,
+        alpha: 1
+    )
+
+    private static let darkActionAccentFill = NSColor(
+        srgbRed: 0.690,
+        green: 0.247,
+        blue: 0.035,
         alpha: 1
     )
 }
