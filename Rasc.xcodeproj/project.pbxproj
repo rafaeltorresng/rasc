@@ -34,6 +34,8 @@
 		01000000000000000000001A /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000019 /* MenuBarController.swift */; };
 		01000000000000000000001B /* LoginItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001A /* LoginItemController.swift */; };
 		01000000000000000000001C /* WindowFrameStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001B /* WindowFrameStore.swift */; };
+		010000000000000000000081 /* RascWindowMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000081 /* RascWindowMetrics.swift */; };
+		010000000000000000000082 /* RascWindowPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000082 /* RascWindowPlacement.swift */; };
 		01000000000000000000001D /* PaletteCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001C /* PaletteCommand.swift */; };
 		01000000000000000000001E /* CommandPaletteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001D /* CommandPaletteView.swift */; };
 		01000000000000000000001F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001E /* SettingsView.swift */; };
@@ -100,6 +102,7 @@
 		010000000000000000000078 /* RefineLanguageSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000075 /* RefineLanguageSettingsStore.swift */; };
 		010000000000000000000079 /* RefineSupportedLocales.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000076 /* RefineSupportedLocales.swift */; };
 		01000000000000000000007A /* RefineLanguagePreferenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000077 /* RefineLanguagePreferenceTests.swift */; };
+		010000000000000000000080 /* AppThemeSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000080 /* AppThemeSettingsTests.swift */; };
 		01000000000000000000007B /* AppReliabilityLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000078 /* AppReliabilityLifecycleTests.swift */; };
 		01000000000000000000007C /* AppReliabilityScaleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000079 /* AppReliabilityScaleTests.swift */; };
 		01000000000000000000007D /* HomeLifecycleGrouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007D /* HomeLifecycleGrouping.swift */; };
@@ -162,6 +165,8 @@
 		020000000000000000000019 /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/MenuBarController.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000001A /* LoginItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/LoginItemController.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000001B /* WindowFrameStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/WindowFrameStore.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000081 /* RascWindowMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/RascWindowMetrics.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000082 /* RascWindowPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/RascWindowPlacement.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000001C /* PaletteCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Commands/PaletteCommand.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000001D /* CommandPaletteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Commands/CommandPaletteView.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000001E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Settings/SettingsView.swift; sourceTree = SOURCE_ROOT; };
@@ -229,6 +234,7 @@
 		020000000000000000000075 /* RefineLanguageSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Settings/RefineLanguageSettingsStore.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000076 /* RefineSupportedLocales.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineSupportedLocales.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000077 /* RefineLanguagePreferenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefineLanguagePreferenceTests.swift; sourceTree = "<group>"; };
+		020000000000000000000080 /* AppThemeSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppThemeSettingsTests.swift; sourceTree = "<group>"; };
 		020000000000000000000078 /* AppReliabilityLifecycleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReliabilityLifecycleTests.swift; sourceTree = "<group>"; };
 		020000000000000000000079 /* AppReliabilityScaleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReliabilityScaleTests.swift; sourceTree = "<group>"; };
 		02000000000000000000007D /* HomeLifecycleGrouping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Home/HomeLifecycleGrouping.swift; sourceTree = SOURCE_ROOT; };
@@ -297,6 +303,8 @@
 				020000000000000000000019 /* MenuBarController.swift */,
 				02000000000000000000001A /* LoginItemController.swift */,
 				02000000000000000000001B /* WindowFrameStore.swift */,
+				020000000000000000000081 /* RascWindowMetrics.swift */,
+				020000000000000000000082 /* RascWindowPlacement.swift */,
 				02000000000000000000001C /* PaletteCommand.swift */,
 				02000000000000000000001D /* CommandPaletteView.swift */,
 				02000000000000000000001E /* SettingsView.swift */,
@@ -405,6 +413,7 @@
 				020000000000000000000058 /* RefineReliabilityTests.swift */,
 				02000000000000000000005D /* RefineLanguageContractTests.swift */,
 				020000000000000000000077 /* RefineLanguagePreferenceTests.swift */,
+				020000000000000000000080 /* AppThemeSettingsTests.swift */,
 				020000000000000000000078 /* AppReliabilityLifecycleTests.swift */,
 				020000000000000000000079 /* AppReliabilityScaleTests.swift */,
 				02000000000000000000007F /* ThoughtCompletionTests.swift */,
@@ -540,6 +549,8 @@
 				01000000000000000000001A /* MenuBarController.swift in Sources */,
 				01000000000000000000001B /* LoginItemController.swift in Sources */,
 				01000000000000000000001C /* WindowFrameStore.swift in Sources */,
+				010000000000000000000081 /* RascWindowMetrics.swift in Sources */,
+				010000000000000000000082 /* RascWindowPlacement.swift in Sources */,
 				01000000000000000000001D /* PaletteCommand.swift in Sources */,
 				01000000000000000000001E /* CommandPaletteView.swift in Sources */,
 				01000000000000000000001F /* SettingsView.swift in Sources */,
@@ -645,6 +656,7 @@
 				010000000000000000000058 /* RefineReliabilityTests.swift in Sources */,
 				01000000000000000000005D /* RefineLanguageContractTests.swift in Sources */,
 				01000000000000000000007A /* RefineLanguagePreferenceTests.swift in Sources */,
+				010000000000000000000080 /* AppThemeSettingsTests.swift in Sources */,
 				01000000000000000000007B /* AppReliabilityLifecycleTests.swift in Sources */,
 				01000000000000000000007C /* AppReliabilityScaleTests.swift in Sources */,
 				01000000000000000000007F /* ThoughtCompletionTests.swift in Sources */,
