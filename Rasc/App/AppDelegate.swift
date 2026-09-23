@@ -6,6 +6,10 @@ extension KeyboardShortcuts.Name {
         "toggleScratchpad",
         initial: .init(.backslash, modifiers: [.option])
     )
+    static let toggleHome = Self(
+        "toggleHome",
+        initial: .init(.backslash, modifiers: [.command, .option])
+    )
 }
 
 @MainActor
@@ -22,6 +26,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
         #endif
 
         GlobalShortcutMigration.migrateFromPreviousDefaultIfNeeded()
+        AppThemeApplicator.applyStoredTheme()
         SettingsWindowPresentation.installIfNeeded()
         SettingsWindowPresentation.onSettingsWindowWillPresent = { [weak self] in
             await self?.bootstrap.prepareForSettingsPresentation()
@@ -48,6 +53,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
                 }
                 guard let panel = await self.bootstrap.awaitPanel() else { return }
                 await panel.toggle()
+            }
+        }
+
+        KeyboardShortcuts.onKeyUp(for: .toggleHome) { [weak self] in
+            Task { @MainActor in
+                await self?.bootstrap.toggleHome()
             }
         }
     }
@@ -135,7 +146,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
         }
     }
 
-    func menuBarOpenRasc() {
+    func toggleHome() {
+        Task { @MainActor in
+            await bootstrap.toggleHome()
+        }
+    }
+
+    func menuBarOpenHome() {
         openHome()
     }
 
