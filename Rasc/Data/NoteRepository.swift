@@ -77,6 +77,18 @@ actor NoteRepository {
         }
 
         _ = try database.write { database in
+            guard let existing = try Note
+                .filter(Note.Columns.id == id)
+                .filter(Note.Columns.deletedAt == nil)
+                .fetchOne(database)
+            else {
+                return
+            }
+
+            guard existing.content != content else {
+                return
+            }
+
             try Note
                 .filter(Note.Columns.id == id)
                 .filter(Note.Columns.deletedAt == nil)
