@@ -240,6 +240,24 @@ final class ScratchpadSession {
         showTransientFeedback("Discarded")
     }
 
+    func abandonActiveNoteIfMatching(id: UUID) async {
+        guard noteID == id else { return }
+
+        try? await acceptanceTask?.value
+        autosaveTask?.cancel()
+        await autosaveTask?.value
+        autosaveTask = nil
+        cancelRefinement()
+        clearMessage(returnToEditor: false)
+        clearActiveScratchSession()
+    }
+
+    func refreshActiveNoteIfMatching(id: UUID) async {
+        guard noteID == id else { return }
+        guard let note = try? await repository.fetch(id: id) else { return }
+        activeNoteKeptAt = note.keptAt
+    }
+
     func scheduleAutosave() {
         let previousAutosave = autosaveTask
         previousAutosave?.cancel()
@@ -990,23 +1008,19 @@ struct ScratchpadView: View {
     let onUnkeep: () -> Void
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
+        VStack(spacing: 0) {
+            if showsScratchpadChrome {
+                scratchpadChrome
+            }
+
             surfaceBodyContent
+                .padding(.top, showsScratchpadChrome ? RascSurfaceLayout.scratchpadChromeToBodyGap : 0)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .id(session.surface)
                 .transition(RascMotion.bodyContentTransition(reduceMotion: reduceMotion))
-
-            if showsOverlayOrb {
-                orbAnchor
-            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .animation(RascMotion.bodyContentAnimation(reduceMotion: reduceMotion), value: session.surface)
-        .overlay(alignment: .topTrailing) {
-            if showsHomeAffordance {
-                homeAffordance
-            }
-        }
         .scratchpadCanvas()
         .registersSettingsOpenAction()
         .presentsSettings(on: session.settingsPresentationRequest)
@@ -1023,36 +1037,9 @@ struct ScratchpadView: View {
                     .padding(12)
             }
         }
-        .overlay(alignment: .bottomTrailing) {
-            if session.surface == .editor, session.canPerformThoughtCompletion {
-                thoughtCompletionAffordance
-            }
-        }
     }
 
-    @ViewBuilder
-    private var thoughtCompletionAffordance: some View {
-        HStack(spacing: 10) {
-            if session.isActiveNoteKept {
-                Button("Unkeep", action: onUnkeep)
-                    .buttonStyle(.plain)
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(.secondary)
-                    .accessibilityLabel("Unkeep")
-            } else if session.hasPersistableContent {
-                Button("Keep", action: onKeep)
-                    .buttonStyle(.plain)
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(RascSurfacePalette.actionAccent(for: colorScheme))
-                    .accessibilityLabel("Keep")
-                    .keyboardShortcut("k", modifiers: [.command, .shift])
-            }
-        }
-        .padding(.horizontal, RascSurfaceLayout.horizontalInset)
-        .padding(.bottom, 12)
-    }
-
-    private var showsOverlayOrb: Bool {
+    private var showsScratchpadChrome: Bool {
         switch session.surface {
         case .editor, .refining, .refinementPreview, .message:
             true
@@ -1070,22 +1057,13 @@ struct ScratchpadView: View {
         }
     }
 
-    private var homeAffordance: some View {
-        Button(action: onOpenHome) {
-            Image(systemName: "house")
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(.secondary.opacity(0.72))
-                .frame(width: 28, height: 28)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .help("Open Home")
-        .accessibilityLabel("Open Rasc Home")
-        .padding(.trailing, RascSurfaceLayout.horizontalInset)
-        .padding(.top, RascSurfaceLayout.topInset)
+    private var showsRefineAction: Bool {
+        session.surface == .editor
+            && session.hasPersistableContent
+            && session.canPerformThoughtCompletion
     }
 
-    private var orbAnchor: some View {
+    private var scratchpadChrome: some View {
         HStack(alignment: .center, spacing: RascSurfaceLayout.orbToAccessoryGap) {
             RascOrb(state: resolvedOrbState, size: .inline, decorative: true)
                 .frame(width: RascSurfaceLayout.orbSize, height: RascSurfaceLayout.orbSize)
@@ -1093,15 +1071,65 @@ struct ScratchpadView: View {
             if let statusText {
                 Text(statusText)
                     .font(.caption.weight(.medium))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(RascSurfacePalette.homeSupportingText(for: colorScheme))
                     .lineLimit(1)
             }
+
+            Spacer(minLength: 8)
+
+            scratchpadTrailingActions
         }
-        .padding(.leading, RascSurfaceLayout.horizontalInset)
+        .padding(.horizontal, RascSurfaceLayout.horizontalInset)
         .padding(.top, RascSurfaceLayout.topInset)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(statusText ?? "")
-        .accessibilityHidden(statusText == nil)
+        .padding(.bottom, RascSurfaceLayout.scratchpadChromeBottomPadding)
+        .accessibilityElement(children: .contain)
+    }
+
+    @ViewBuilder
+    private var scratchpadTrailingActions: some View {
+        HStack(spacing: 2) {
+            if showsRefineAction {
+                ScratchpadChromeButton(
+                    title: "Refine",
+                    shortcut: "⌘J",
+                    action: { session.startRefinement() }
+                )
+                .keyboardShortcut("j", modifiers: .command)
+                .accessibilityLabel("Refine")
+                .help("Refine note")
+                .transition(.opacity)
+            }
+
+            if session.surface == .editor, session.canPerformThoughtCompletion {
+                if session.isActiveNoteKept {
+                    ScratchpadChromeButton(title: "Unkeep", action: onUnkeep)
+                        .accessibilityLabel("Unkeep")
+                } else if session.hasPersistableContent {
+                    ScratchpadChromeButton(
+                        title: "Keep",
+                        shortcut: "⇧⌘K",
+                        action: onKeep
+                    )
+                    .keyboardShortcut("k", modifiers: [.command, .shift])
+                    .accessibilityLabel("Keep")
+                    .help("Keep note")
+                }
+            }
+
+            if showsHomeAffordance {
+                scratchpadHomeButton
+            }
+        }
+        .animation(RascMotion.micro(reduceMotion: reduceMotion), value: showsRefineAction)
+    }
+
+    private var scratchpadHomeButton: some View {
+        ScratchpadChromeIconButton(
+            systemName: "house",
+            action: onOpenHome
+        )
+        .help("Open Home (⌘⌥\\)")
+        .accessibilityLabel("Open Rasc Home")
     }
 
     @ViewBuilder
@@ -1121,7 +1149,7 @@ struct ScratchpadView: View {
     }
 
     private var resolvedOrbState: RascOrbState {
-        session.surface == .refining ? .refining : .note
+        session.surface == .refining ? .refining : .breathing
     }
 
     @ViewBuilder
@@ -1153,7 +1181,7 @@ struct ScratchpadView: View {
             }
 
             if session.surface == .editor, session.text.isEmpty {
-                ScratchpadPlaceholder()
+                ScratchpadEmptyState()
                     .transition(.opacity)
             }
         }
@@ -1339,25 +1367,96 @@ private struct SelectableScratchEditor: View {
     }
 }
 
-private struct ScratchpadPlaceholder: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Write something unfinished…")
-                .font(.system(
-                    size: RascSurfaceMetrics.noteFontSize,
-                    weight: .regular,
-                    design: .monospaced
-                ))
-                .foregroundStyle(.tertiary)
+private struct ScratchpadEmptyState: View {
+    @Environment(\.colorScheme) private var colorScheme
 
-            Text("A thought, task, message, idea — anything.")
-                .font(.caption)
-                .foregroundStyle(.tertiary.opacity(0.78))
+    var body: some View {
+        VStack(alignment: .leading, spacing: RascSurfaceMetrics.scratchpadEmptySupportingGap) {
+            Text("Write something unfinished…")
+                .font(.system(size: RascSurfaceMetrics.scratchpadPlaceholderFontSize, weight: .regular))
+                .foregroundStyle(scratchpadPlaceholderText)
+
+            Text("Thoughts, tasks, messages, ideas. Anything goes.")
+                .font(.system(size: 13.5, weight: .regular))
+                .foregroundStyle(scratchpadSupportingText)
         }
         .padding(.leading, RascSurfaceMetrics.placeholderLeadingInset)
         .padding(.top, RascSurfaceMetrics.placeholderTopInset)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+    }
+
+    private var scratchpadPlaceholderText: Color {
+        colorScheme == .dark
+            ? Color.secondary.opacity(0.76)
+            : Color.primary.opacity(0.38)
+    }
+
+    private var scratchpadSupportingText: Color {
+        RascSurfacePalette.homeSupportingText(for: colorScheme)
+            .opacity(colorScheme == .dark ? 0.86 : 0.88)
+    }
+}
+
+private struct ScratchpadChromeIconButton: View {
+    let systemName: String
+    let action: () -> Void
+
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var isHovered = false
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(.tertiary)
+                .frame(width: 26, height: 26)
+                .background {
+                    if isHovered {
+                        RoundedRectangle(cornerRadius: 7, style: .continuous)
+                            .fill(RascSurfacePalette.subtleFill(for: colorScheme))
+                    }
+                }
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovered = $0 }
+    }
+}
+
+private struct ScratchpadChromeButton: View {
+    let title: String
+    var shortcut: String?
+    let action: () -> Void
+
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var isHovered = false
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 5) {
+                if let shortcut {
+                    Text(shortcut)
+                        .font(.system(size: 10, weight: .medium, design: .monospaced))
+                        .foregroundStyle(.tertiary)
+                }
+
+                Text(title)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 5)
+            .background {
+                if isHovered {
+                    RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        .fill(RascSurfacePalette.subtleFill(for: colorScheme))
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovered = $0 }
     }
 }
 
