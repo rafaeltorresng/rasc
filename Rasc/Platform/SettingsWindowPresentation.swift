@@ -55,9 +55,12 @@ enum SettingsWindowPresentation {
         }
     }
 
-    static func configureIfNeeded(_ window: NSWindow) {
+    static func configureIfNeeded(_ window: NSWindow, reposition: Bool = false) {
         guard isSettingsWindow(window) else { return }
-        applyPresentationPolicy(to: window)
+        window.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
+        if reposition {
+            positionOnPresentationScreen(window)
+        }
     }
 
     private static func configureVisibleSettingsWindowsWithRetry(attempt: Int = 0) {
@@ -85,7 +88,28 @@ enum SettingsWindowPresentation {
     }
 
     private static func applyPresentationPolicy(to window: NSWindow) {
-        window.collectionBehavior.formUnion([.moveToActiveSpace, .fullScreenAuxiliary])
+        configureIfNeeded(window, reposition: true)
+    }
+
+    private static func positionOnPresentationScreen(_ window: NSWindow) {
+        let screens = NSScreen.screens
+        guard !screens.isEmpty else { return }
+        if WindowFramePlacement.screenContaining(frame: window.frame, in: screens) != nil {
+            return
+        }
+
+        guard let screen = WindowFramePlacement.targetPresentationScreen(
+            excludingProcessID: NSRunningApplication.current.processIdentifier
+        ) else {
+            return
+        }
+
+        window.setFrameOrigin(
+            WindowFramePlacement.centeredOrigin(
+                for: window.frame.size,
+                in: screen.visibleFrame
+            )
+        )
     }
 
     private static func isSettingsWindow(_ window: NSWindow) -> Bool {
