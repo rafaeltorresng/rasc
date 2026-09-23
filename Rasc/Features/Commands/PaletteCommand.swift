@@ -56,7 +56,7 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
         case .findNote:
             "⌘P"
         case .openHome:
-            ""
+            "⌘⌥\\"
         case .refine:
             "⌘J"
         case .settings:

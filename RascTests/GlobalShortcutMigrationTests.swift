@@ -1,3 +1,4 @@
+import KeyboardShortcuts
 import Testing
 @testable import Rasc
 
@@ -12,5 +13,13 @@ struct GlobalShortcutMigrationTests {
     func previousDefaultWasOptionSpace() {
         #expect(GlobalShortcutMigration.previousDefault.key == .space)
         #expect(GlobalShortcutMigration.previousDefault.modifiers == [.option])
+    }
+
+    @Test
+    @MainActor
+    func homeToggleDefaultUsesCommandOptionBackslash() {
+        let shortcut = KeyboardShortcuts.getShortcut(for: .toggleHome)
+        #expect(shortcut?.key == .backslash)
+        #expect(shortcut?.modifiers == [.command, .option])
     }
 }
