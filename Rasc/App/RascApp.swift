@@ -17,6 +17,10 @@ struct RascApp: App {
             }
 
             CommandGroup(after: .newItem) {
+                Button("Open Home") {
+                    appDelegate.openHome()
+                }
+
                 Button("Find Note") {
                     appDelegate.openSearch()
                 }
