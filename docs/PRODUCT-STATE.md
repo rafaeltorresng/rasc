@@ -1,5 +1,8 @@
 # Rasc product state
 
+> Historical specification/milestone reference. For current behavior, launch direction and superseded decisions, start with [CURRENT-PRODUCT](CURRENT-PRODUCT.md) and the [documentation index](README.md).
+
+
 **As of:** 2026-09-22  
 **Release:** 0.1.0-beta.3 (build 4) — M16 thought completion  
 **Audit:** M15A (product), M16 (lifecycle)

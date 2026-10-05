@@ -1,5 +1,8 @@
 # Rasc Home Specification
 
+> Historical specification/milestone reference. For current behavior, launch direction and superseded decisions, start with [CURRENT-PRODUCT](CURRENT-PRODUCT.md) and the [documentation index](README.md).
+
+
 ## 1. Purpose
 
 Rasc Home is the persistent visual surface of Rasc.
