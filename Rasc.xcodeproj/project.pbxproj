@@ -126,6 +126,8 @@
 		01000000000000000000006B /* RefineEvalLanguageResolverCandidate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006B /* RefineEvalLanguageResolverCandidate.swift */; };
 		01000000000000000000006C /* RefineEvalLanguageResolverBenchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006C /* RefineEvalLanguageResolverBenchmark.swift */; };
 		01000000000000000000006D /* RefineEvalLanguageResolverCommandLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006D /* RefineEvalLanguageResolverCommandLine.swift */; };
+		A10000000000000000000001 /* ScratchpadSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* ScratchpadSession.swift */; };
+		A10000000000000000000003 /* DiscardUndoRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* DiscardUndoRegistration.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -182,7 +184,7 @@
 		020000000000000000000028 /* AppBootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/AppBootstrap.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000029 /* WindowFrameStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrameStoreTests.swift; sourceTree = "<group>"; };
 		02000000000000000000002A /* Rasc.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Rasc/Rasc.entitlements; sourceTree = SOURCE_ROOT; };
-		020000000000000000000059 /* Rasc.debug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Rasc/Rasc.debug.entitlements; sourceTree = SOURCE_ROOT; };
+		A20000000000000000000002 /* Rasc.debug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Rasc/Rasc.debug.entitlements; sourceTree = SOURCE_ROOT; };
 		02000000000000000000002B /* OnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Onboarding/OnboardingStep.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000002C /* OnboardingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Onboarding/OnboardingStore.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000002D /* OnboardingEligibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Onboarding/OnboardingEligibility.swift; sourceTree = SOURCE_ROOT; };
@@ -258,6 +260,8 @@
 		02000000000000000000006B /* RefineEvalLanguageResolverCandidate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Eval/RefineReliability/RefineEvalLanguageResolverCandidate.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000006C /* RefineEvalLanguageResolverBenchmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Eval/RefineReliability/RefineEvalLanguageResolverBenchmark.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000006D /* RefineEvalLanguageResolverCommandLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Eval/RefineReliability/RefineEvalLanguageResolverCommandLine.swift; sourceTree = SOURCE_ROOT; };
+		A20000000000000000000001 /* ScratchpadSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Scratchpad/ScratchpadSession.swift; sourceTree = SOURCE_ROOT; };
+		A20000000000000000000003 /* DiscardUndoRegistration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/DiscardUndoRegistration.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -295,11 +299,13 @@
 			isa = PBXGroup;
 			children = (
 				02000000000000000000002A /* Rasc.entitlements */,
-				020000000000000000000059 /* Rasc.debug.entitlements */,
+				A20000000000000000000002 /* Rasc.debug.entitlements */,
 				020000000000000000000001 /* RascApp.swift */,
 				020000000000000000000005 /* AppDelegate.swift */,
 				020000000000000000000006 /* PanelController.swift */,
 				020000000000000000000007 /* ScratchpadView.swift */,
+				A20000000000000000000001 /* ScratchpadSession.swift */,
+                A20000000000000000000003 /* DiscardUndoRegistration.swift */,
 				020000000000000000000019 /* MenuBarController.swift */,
 				02000000000000000000001A /* LoginItemController.swift */,
 				02000000000000000000001B /* WindowFrameStore.swift */,
@@ -546,6 +552,8 @@
 				010000000000000000000004 /* AppDelegate.swift in Sources */,
 				010000000000000000000005 /* PanelController.swift in Sources */,
 				010000000000000000000006 /* ScratchpadView.swift in Sources */,
+				A10000000000000000000001 /* ScratchpadSession.swift in Sources */,
+                A10000000000000000000003 /* DiscardUndoRegistration.swift in Sources */,
 				01000000000000000000001A /* MenuBarController.swift in Sources */,
 				01000000000000000000001B /* LoginItemController.swift in Sources */,
 				01000000000000000000001C /* WindowFrameStore.swift in Sources */,
@@ -793,7 +801,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Rasc/Info.plist;
@@ -801,7 +809,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0-beta.3;
+				MARKETING_VERSION = 0.1.0-beta.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rafaeltorres.rasc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -818,7 +826,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Rasc/Info.plist;
@@ -826,7 +834,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0-beta.3;
+				MARKETING_VERSION = 0.1.0-beta.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rafaeltorres.rasc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
