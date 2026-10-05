@@ -14,6 +14,7 @@ struct AppReliabilityScaleTests {
     }
 
     @Test(arguments: [10, 100, 1_000])
+    @MainActor
     func scaleBenchmarksMeetLocalThresholds(noteCount: Int) async throws {
         let fixture = try makeFixture()
         defer { fixture.remove() }
@@ -35,11 +36,18 @@ struct AppReliabilityScaleTests {
         let searchMs = milliseconds(since: searchStart)
 
         let notes = try await repository.fetchAllNonDeleted()
+        let suiteName = "RascScale.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let session = ScratchpadSession(repository: repository, userDefaults: defaults)
+        #expect(notes.count >= 2)
+        _ = try await session.openNote(id: notes[0].id)
         let switchStart = CFAbsoluteTimeGetCurrent()
-        if notes.count == 2 {
-            _ = try await repository.fetch(id: notes[1].id)
-        }
+        let opened = try await session.openNote(id: notes[1].id)
         let noteSwitchMs = milliseconds(since: switchStart)
+
+        #expect(opened)
+        #expect(session.text == notes[1].content)
 
         let autosaveStart = CFAbsoluteTimeGetCurrent()
         if let target = notes.first {
@@ -62,7 +70,8 @@ struct AppReliabilityScaleTests {
         #expect(seedMs < Double(noteCount) * 5 + 500)
         #expect(recentNoteLoadMs < 100)
         #expect(searchMs < max(250, Double(noteCount) * 0.5))
-        #expect(noteSwitchMs < 50)
+        // Session-level switch includes flush and active-note bookkeeping, not just fetch.
+        #expect(noteSwitchMs < 100)
         #expect(autosaveMs < 100)
     }
 
