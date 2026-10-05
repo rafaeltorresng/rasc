@@ -1,6 +1,13 @@
 import Foundation
 import GRDB
 
+/// A receipt identifies one deletion, so a stale Undo cannot restore a later discard.
+struct NoteDiscardReceipt: Equatable, Sendable {
+    let id = UUID()
+    let noteID: UUID
+    let deletedAt: Date
+}
+
 actor NoteRepository {
     enum PersistenceError: Error {
         case emptyContent
@@ -9,6 +16,7 @@ actor NoteRepository {
     }
 
     private let database: DatabaseQueue
+    private var discardReceipts: [UUID: NoteDiscardReceipt] = [:]
 
     nonisolated static var defaultDatabaseURL: URL {
         get throws {
@@ -209,15 +217,36 @@ actor NoteRepository {
         }
     }
 
-    func delete(id: UUID) throws {
-        _ = try database.write { database in
-            try Note
+    @discardableResult
+    func delete(id: UUID) throws -> NoteDiscardReceipt? {
+        let receipt: NoteDiscardReceipt? = try database.write { database in
+            let deletedAt = Date()
+            let count = try Note
                 .filter(Note.Columns.id == id)
                 .filter(Note.Columns.deletedAt == nil)
                 .updateAll(database, [
-                    Note.Columns.deletedAt.set(to: Date()),
+                    Note.Columns.deletedAt.set(to: deletedAt),
                 ])
+            return count == 1 ? NoteDiscardReceipt(noteID: id, deletedAt: deletedAt) : nil
         }
+        if let receipt { discardReceipts[id] = receipt }
+        return receipt
+    }
+
+    func restoreDiscard(_ receipt: NoteDiscardReceipt) throws -> Note {
+        guard discardReceipts[receipt.noteID] == receipt else { throw PersistenceError.staleContent }
+        let note = try database.write { database in
+            let count = try Note
+                .filter(Note.Columns.id == receipt.noteID)
+                .filter(Note.Columns.deletedAt == receipt.deletedAt)
+                .updateAll(database, [Note.Columns.deletedAt.set(to: nil)])
+            guard count == 1, let note = try Note.fetchOne(database, key: receipt.noteID) else {
+                throw PersistenceError.staleContent
+            }
+            return note
+        }
+        discardReceipts[receipt.noteID] = nil
+        return note
     }
 
     func keep(id: UUID) throws -> Note {
