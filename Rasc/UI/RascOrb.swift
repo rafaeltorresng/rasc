@@ -6,7 +6,7 @@ enum RascOrbState: Equatable {
     case searching
     case refining
     case connecting
-    case breathing
+    case composing
 
     static func resolve(isRefining: Bool, isSearching: Bool = false) -> Self {
         if isRefining {
@@ -28,8 +28,8 @@ enum RascOrbState: Equatable {
             .shaping
         case .connecting:
             .connecting
-        case .breathing:
-            .breathing
+        case .composing:
+            .composing
         }
     }
 
@@ -43,24 +43,13 @@ enum RascOrbState: Equatable {
             1
         case .connecting:
             0.58
-        case .breathing:
+        case .composing:
             0.48
         }
     }
 
     var opacity: Double {
-        switch self {
-        case .note:
-            0.88
-        case .searching:
-            0.88
-        case .refining:
-            0.9
-        case .connecting:
-            0.88
-        case .breathing:
-            0.88
-        }
+        0.96
     }
 
     var isPaused: Bool {
@@ -71,6 +60,18 @@ enum RascOrbState: Equatable {
 enum RascOrbSize {
     case hero
     case inline
+}
+
+// Shared with the landing's Orb: violet-led diagonal tint, restrained orange
+// at the lower trailing edge. Fixed sRGB keeps the identity across appearances.
+private enum RascOrbPalette {
+    static let violet = Color(.sRGB, red: 117 / 255, green: 100 / 255, blue: 216 / 255, opacity: 1)
+    static let orange = Color(.sRGB, red: 199 / 255, green: 74 / 255, blue: 20 / 255, opacity: 1)
+    static let gradient = Gradient(stops: [
+        .init(color: violet, location: 0),
+        .init(color: violet, location: 0.58),
+        .init(color: orange, location: 1),
+    ])
 }
 
 struct RascOrb: View {
@@ -86,7 +87,8 @@ struct RascOrb: View {
             size: thinkingOrbSize,
             theme: .auto,
             speed: state.speed,
-            paused: state.isPaused
+            paused: state.isPaused,
+            gradient: RascOrbPalette.gradient
         )
         .frame(width: pointSize, height: pointSize)
         .opacity(state.opacity)

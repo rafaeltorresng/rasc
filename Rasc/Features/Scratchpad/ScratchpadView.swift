@@ -1149,7 +1149,7 @@ struct ScratchpadView: View {
     }
 
     private var resolvedOrbState: RascOrbState {
-        session.surface == .refining ? .refining : .breathing
+        session.surface == .refining ? .refining : .composing
     }
 
     @ViewBuilder

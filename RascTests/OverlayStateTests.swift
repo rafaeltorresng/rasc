@@ -65,13 +65,13 @@ struct OverlayStateTests {
         #expect(RascOrbState.refining.speed == 1)
         #expect(RascOrbState.connecting.thinkingOrbState.rawValue == "connecting")
         #expect(RascOrbState.connecting.speed == 0.58)
-        #expect(RascOrbState.breathing.thinkingOrbState.rawValue == "breathing")
-        #expect(RascOrbState.breathing.speed == 0.48)
+        #expect(RascOrbState.composing.thinkingOrbState.rawValue == "composing")
+        #expect(RascOrbState.composing.speed == 0.48)
         #expect(!RascOrbState.note.isPaused)
         #expect(!RascOrbState.searching.isPaused)
         #expect(!RascOrbState.refining.isPaused)
         #expect(!RascOrbState.connecting.isPaused)
-        #expect(!RascOrbState.breathing.isPaused)
+        #expect(!RascOrbState.composing.isPaused)
     }
 
     @Test
