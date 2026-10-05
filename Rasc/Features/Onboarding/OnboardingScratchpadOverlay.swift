@@ -26,14 +26,15 @@ struct OnboardingScratchpadOverlay: View {
     @State private var emptyHintTask: Task<Void, Never>?
 
     var body: some View {
-        VStack {
-            Spacer()
-            VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 8) {
                 if let unavailable = guidance.unavailablePresentation {
                     unavailableView(unavailable)
                         .transition(.opacity)
                 } else if guidance.showEscapeHint {
-                    hintRow(symbol: "Esc", text: "Hide Rasc")
+                    HStack(spacing: 18) {
+                        hintRow(symbol: "⇧⌘K", text: "Keep and return to work")
+                        hintRow(symbol: "Esc", text: "Hide and continue later")
+                    }
                         .transition(hintTransition)
                 } else if guidance.showRefineHint {
                     hintRow(symbol: "⌘J", text: "Refine")
@@ -45,8 +46,7 @@ struct OnboardingScratchpadOverlay: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)
-            .padding(.bottom, 12)
-        }
+            .padding(.vertical, 10)
         .allowsHitTesting(guidance.unavailablePresentation != nil)
         .animation(RascMotion.surface(reduceMotion: reduceMotion), value: guidance)
         .onAppear {
@@ -100,12 +100,12 @@ struct OnboardingScratchpadOverlay: View {
                         actions.openRefineSystemSettings()
                     }
                     .buttonStyle(.plain)
-                    .font(.caption.monospaced())
+                    .font(.caption.weight(.medium))
                     Button("Not now") {
                         actions.dismissRefineUnavailable()
                     }
                     .buttonStyle(.plain)
-                    .font(.caption.monospaced())
+                    .font(.caption.weight(.medium))
                 }
             case .modelPreparing:
                 Text("Refine is getting ready on your Mac.")
@@ -117,22 +117,21 @@ struct OnboardingScratchpadOverlay: View {
                     actions.dismissRefineUnavailable()
                 }
                 .buttonStyle(.plain)
-                .font(.caption.monospaced())
+                .font(.caption.weight(.medium))
             case .unsupported:
                 Text("Refine isn't available on this Mac.")
                     .font(.caption.weight(.semibold))
-                Text("Capture, search, and history still work normally.")
+                Text("Refine needs macOS 26 and Apple Intelligence. Capture and Keep still work.")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                 Button("Continue") {
                     actions.dismissRefineUnavailable()
                 }
                 .buttonStyle(.plain)
-                .font(.caption.monospaced())
+                .font(.caption.weight(.medium))
             }
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(unavailableAccessibilityLabel(presentation))
+        .accessibilityElement(children: .contain)
     }
 
     private func hintRow(symbol: String, text: String) -> some View {
@@ -170,16 +169,4 @@ struct OnboardingScratchpadOverlay: View {
         }
     }
 
-    private func unavailableAccessibilityLabel(
-        _ presentation: OnboardingRefineUnavailablePresentation
-    ) -> String {
-        switch presentation {
-        case .appleIntelligenceDisabled:
-            "Refine needs Apple Intelligence. Rasc still works without it."
-        case .modelPreparing:
-            "Refine is getting ready on your Mac."
-        case .unsupported:
-            "Refine isn't available on this Mac."
-        }
-    }
 }
