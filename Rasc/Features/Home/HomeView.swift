@@ -103,7 +103,7 @@ struct HomeView: View {
     private var actionZone: some View {
         HStack(alignment: .center, spacing: HomeLayout.actionZoneSpacing) {
             HStack(spacing: HomeLayout.identitySpacing) {
-                RascOrb(state: .breathing, size: .inline, decorative: true)
+                RascOrb(state: .composing, size: .inline, decorative: true)
                     .frame(width: RascSurfaceLayout.orbSize, height: RascSurfaceLayout.orbSize)
 
                 Text("Rasc")
