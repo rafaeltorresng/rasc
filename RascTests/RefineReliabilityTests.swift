@@ -476,9 +476,13 @@ struct RefineReliabilityTests {
 
     @Test
     func aggregateReportStillDecodesPreM12B003Summaries() throws {
-        let url = corpusRoot
-            .appendingPathComponent("experiments/M12B-001-language-contract/reports/dev/summary.json")
-        let data = try Data(contentsOf: url)
+        // A fresh checkout has no generated reports. Exercise the legacy schema
+        // by omitting the fields introduced after it, using a synthetic report.
+        let current = RefineEvalReportGenerator.generate(bundle: metricBundle(records: [], scores: []), cases: [])
+        let encoded = try JSONEncoder().encode(current)
+        var legacy = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        legacy.removeValue(forKey: "decisionMetrics")
+        let data = try JSONSerialization.data(withJSONObject: legacy)
         let report = try JSONDecoder().decode(RefineEvalAggregateReport.self, from: data)
         #expect(report.decisionMetrics == nil)
     }

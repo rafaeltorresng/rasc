@@ -4,6 +4,28 @@ import Testing
 
 @Suite
 struct RefinementContractTests {
+    @Test
+    func instructionalAndErrorFeedbackIsPersistent() {
+        #expect(RefinementMessage.alreadyUseful.isTransient)
+        #expect(RefinementMessage.nothingToRefine.isTransient)
+        #expect(!RefinementMessage.contextTooLarge.isTransient)
+        #expect(!RefinementMessage.couldNotSaveRefinement.isTransient)
+        #expect(!RefinementMessage.unavailable(.unsupportedEnvironment).isTransient)
+    }
+
+    @Test
+    func selectionPreviewPreservesSurroundingNote() throws {
+        let original = "Before. rough selected text. After."
+        let selection = try #require(original.range(of: "rough selected text"))
+        let preview = RefinementPreview(
+            request: RefinementRequest(snapshot: NoteSnapshot(noteID: UUID(), revision: 1, text: original, selection: selection)),
+            result: RefinementResult(decision: .changed, kind: .messyText, text: "Clear selected text"),
+            metadata: RefinementMetadata(provider: "test", modelIdentifier: "test", promptVersion: "test")
+        )
+        #expect(preview.proposedNoteText == "Before. Clear selected text. After.")
+        #expect(preview.request.snapshot.text == original)
+    }
+
     @Test(arguments: [
         ("deploy", RefinementContentUnitKind.lexicalWord),
         ("deploy?", RefinementContentUnitKind.wordWithAttachedPunctuation),
@@ -231,9 +253,9 @@ struct RefinementContractTests {
         #expect(RefinementMessage.unavailable(.modelNotReady).text ==
             "Apple Intelligence is still preparing its on-device model. Try again later.")
         #expect(RefinementMessage.unavailable(.unsupportedEnvironment).text ==
-            "Refine is currently unavailable.")
+            "Refine needs macOS 26 or later and Apple Intelligence. Capture and Keep still work.")
         #expect(RefinementMessage.unavailable(.unknown).text ==
-            "Refine is currently unavailable.")
+            "Refine is unavailable right now. Capture and Keep still work.")
         #expect(RefinementMessage.couldNotSafelyRefineSelection.text ==
             "Couldn't safely refine this selection.")
         #expect(RefinementMessage.couldNotSaveRefinement.text ==
@@ -883,12 +905,11 @@ struct RefinementContractTests {
 
     @Test
     func loadsTheVersionedRepresentativeEvalDataset() throws {
-        let url = try #require(
-            Bundle(for: RefinementContractBundleToken.self).url(
-                forResource: "RefinementEvals.v1",
-                withExtension: "json"
-            )
-        )
+        #if SWIFT_PACKAGE
+        let url = try #require(Bundle.module.url(forResource: "RefinementEvals.v1", withExtension: "json", subdirectory: "Fixtures"))
+        #else
+        let url = try #require(Bundle(for: RefinementContractBundleToken.self).url(forResource: "RefinementEvals.v1", withExtension: "json"))
+        #endif
         let dataset = try JSONDecoder().decode(
             RefinementEvalDataset.self,
             from: Data(contentsOf: url)
