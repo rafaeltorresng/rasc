@@ -231,6 +231,63 @@ struct ThoughtCompletionTests {
         #expect(groups[1].notes.map(\.id) == [unfinished.id])
     }
 
+    @Test
+    func undoDiscardRestoresOriginalWithoutReplacingNewWork() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        session.text = "original thought"
+        try await session.flush()
+        try await session.discardActiveNote()
+        await session.undoDiscard()
+        #expect(session.text == "original thought")
+        try await session.discardActiveNote()
+        session.text = "new work in progress"
+        await session.undoDiscard()
+        #expect(session.text == "new work in progress")
+        #expect(try await fixture.repository.fetchAllNonDeleted().contains { $0.content == "original thought" })
+    }
+
+    @Test
+    func visibleUndoConsumesOnlyItsDiscardRegistration() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        let manager = UndoManager()
+        manager.groupsByEvent = false
+        let unrelatedTarget = NSObject()
+        manager.beginUndoGrouping()
+        manager.registerUndo(withTarget: unrelatedTarget) { _ in }
+        manager.setActionName("Earlier edit")
+        manager.endUndoGrouping()
+        session.text = "thought to restore"
+        try await session.flush()
+        manager.beginUndoGrouping()
+        try await session.discardActiveNote(undoManager: manager)
+        manager.endUndoGrouping()
+        #expect(manager.undoActionName == "Discard Thought")
+        await session.undoDiscard()
+        #expect(session.text == "thought to restore")
+        #expect(manager.undoActionName == "Earlier edit")
+        #expect(manager.canUndo)
+    }
+
+    @Test
+    func failedKeepPreservesCurrentTextAndReportsSaveFailure() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        session.text = "important unfinished text"
+        try await session.flush()
+        try fixture.repository.closeForTesting()
+        await #expect(throws: (any Error).self) { try await session.keepActiveNote() }
+        #expect(session.text == "important unfinished text")
+        #expect(session.saveErrorMessage != nil)
+        let reopened = try NoteRepository(databaseURL: fixture.databaseURL)
+        #expect(try await reopened.fetchMostRecent()?.content == "important unfinished text")
+        #expect(try await reopened.fetchMostRecent()?.isKept == false)
+    }
+
     private func waitUntil(
         timeout: Duration = .seconds(2),
         _ predicate: @escaping @MainActor () -> Bool
