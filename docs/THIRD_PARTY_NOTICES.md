@@ -32,3 +32,12 @@ SwiftUI `Gradient`. Rasc supplies its violet/orange tint; depth is preserved
 through per-element opacity. Default monochrome rendering, engine geometry,
 state mapping, speeds and reduced-motion behavior are unchanged. MIT notices
 remain intact.
+
+## GRDB and KeyboardShortcuts
+
+Resolved Swift packages are GRDB **7.11.1** (commit `b83108d10f42680d78f23fe4d4d80fc88dab3212`) and KeyboardShortcuts **3.0.1** (commit `49c3fc04ea827f816df67843bfcc57286b47ff06`). Their MIT license texts are reproduced verbatim in `Rasc/Resources/ThirdPartyNotices.txt`, included in the app bundle.
+
+- GRDB: https://github.com/groue/GRDB.swift — upstream `LICENSE`; copyright Gwendal Roué.
+- KeyboardShortcuts: https://github.com/sindresorhus/KeyboardShortcuts — upstream `license`; copyright Sindre Sorhus.
+
+When updating a dependency, review its license and update the bundled notice along with `Package.resolved`. SQLite's upstream source identifies its code as public domain; see GRDB's SQLite distribution license.

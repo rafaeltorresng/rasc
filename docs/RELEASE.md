@@ -1,5 +1,8 @@
 # Rasc Release Workflow (M6A)
 
+> Current source candidate: **0.1.0-beta.4, build 5** (5 October 2026). The existing frozen beta.3/build 4 artifact predates these changes and must not be overwritten. A local candidate is not a signed/notarized public release. Require current native acceptance, Developer ID signing, notarization and artifact verification before public distribution.
+
+
 This document describes how to produce a signed, sandboxed, notarized direct-distribution build of Rasc outside Xcode.
 
 Sparkle and automatic updates are intentionally out of scope for this milestone.
@@ -10,8 +13,8 @@ Sparkle and automatic updates are intentionally out of scope for this milestone.
 | --- | --- |
 | Product name | Rasc |
 | Bundle identifier | `com.rafaeltorres.rasc` |
-| Marketing version | `0.1.0-beta.2` (current canonical private beta); use semver for public releases |
-| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`3` for beta.2) |
+| Marketing version | `0.1.0-beta.4` (local source candidate; not published) |
+| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`5` for beta.4) |
 | Deployment target | macOS 14.0 |
 | Hardened Runtime | Enabled for Debug and Release |
 | App Sandbox | Enabled |
