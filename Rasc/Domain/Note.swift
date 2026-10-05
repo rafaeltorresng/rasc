@@ -53,7 +53,7 @@ struct Note: Codable, Equatable, FetchableRecord, PersistableRecord, Sendable {
         let title = displayTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         guard body.count > title.count + 10 else { return nil }
 
-        let remainder = body.dropFirst(title.count)
+        let remainder = body.dropFirst(title.hasSuffix("…") ? title.count - 1 : title.count)
             .trimmingCharacters(in: .whitespacesAndNewlines)
         guard remainder.count >= 8 else { return nil }
         return Self.truncate(remainder, to: 120)
@@ -78,6 +78,23 @@ struct Note: Codable, Equatable, FetchableRecord, PersistableRecord, Sendable {
         }
 
         return snippet
+    }
+
+    /// A plain-text excerpt around a matched word, preserving the original spelling.
+    func retrievalSnippet(matching query: String) -> String? {
+        let terms = query.split(whereSeparator: { $0.isWhitespace }).map(String.init)
+        let matches = terms.compactMap { term in
+            content.range(of: term, options: [.caseInsensitive, .diacriticInsensitive])
+        }
+        guard !matches.isEmpty else { return displayRetrievalSnippet ?? displayHomeExcerpt }
+        let visibleTitleLength = displayTitle.hasSuffix("…") ? displayTitle.count - 1 : displayTitle.count
+        let match = matches.first { content.distance(from: content.startIndex, to: $0.lowerBound) >= visibleTitleLength }
+            ?? matches[0]
+        let offset = content.distance(from: content.startIndex, to: match.lowerBound)
+        let start = max(0, offset - 32)
+        let remaining = content.dropFirst(start)
+        let excerpt = String(remaining.prefix(120)).replacingOccurrences(of: "\n", with: " ")
+        return (start > 0 ? "…" : "") + excerpt + (remaining.count > 120 ? "…" : "")
     }
 
     private var meaningfulLines: [String] {
