@@ -29,7 +29,7 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
         case .newScratch:
             "New Scratch"
         case .findNote:
-            "Find Note"
+            "Search thoughts"
         case .openHome:
             "Open Home"
         case .refine:
@@ -75,11 +75,11 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
         case .shareNote:
             "Shares the note using macOS share sheet"
         case .discardNote:
-            "Soft-deletes this note"
+            "Discards this thought. Undo restores it while Rasc is running"
         case .newScratch:
             "Creates a new empty scratch"
         case .findNote:
-            "Opens history and search"
+            "Searches your local thoughts"
         case .openHome:
             "Opens Rasc Home"
         case .refine:
@@ -126,7 +126,8 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
         )
 
         return commands.filter { command in
-            let haystack = "\(command.title) \(command.shortcutLabel)".folding(
+            let alias = command == .findNote ? "Find Note" : ""
+            let haystack = "\(command.title) \(command.shortcutLabel) \(alias)".folding(
                 options: [.diacriticInsensitive, .caseInsensitive],
                 locale: .current
             )
