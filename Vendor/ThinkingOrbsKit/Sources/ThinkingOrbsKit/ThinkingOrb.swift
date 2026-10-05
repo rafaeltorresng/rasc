@@ -20,6 +20,7 @@ public struct ThinkingOrb: View {
     private let speed: Double
     private let paused: Bool
     private let displaySize: Double?
+    private let gradient: Gradient?
 
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -37,7 +38,8 @@ public struct ThinkingOrb: View {
         theme: OrbTheme = .auto,
         speed: Double = 1,
         paused: Bool = false,
-        displaySize: Double? = nil
+        displaySize: Double? = nil,
+        gradient: Gradient? = nil
     ) {
         self.state = state
         self.size = size
@@ -45,6 +47,7 @@ public struct ThinkingOrb: View {
         self.speed = speed
         self.paused = paused
         self.displaySize = displaySize
+        self.gradient = gradient
     }
 
     private var isDark: Bool {
@@ -92,21 +95,32 @@ public struct ThinkingOrb: View {
             let zoom = (displaySize ?? size.value) / size.value
             if zoom != 1 { context.scaleBy(x: zoom, y: zoom) }
             let frame = orbFrame(preset, size: size.value, t: t)
+            // Optional product tint; geometry and the default monochrome
+            // renderer stay unchanged. Depth modulates opacity through the tint.
+            let tint = gradient.map {
+                GraphicsContext.Shading.linearGradient(
+                    $0,
+                    startPoint: CGPoint(x: size.value * 0.18, y: size.value * 0.18),
+                    endPoint: CGPoint(x: size.value * 0.82, y: size.value * 0.82)
+                )
+            }
             // lines first, so nodes sit on top of their edges
             for l in frame.lines {
+                context.opacity = tint == nil ? 1 : l.a * (1 - min(1, max(0, l.white)))
                 var path = Path()
                 path.move(to: CGPoint(x: l.x1, y: l.y1))
                 path.addLine(to: CGPoint(x: l.x2, y: l.y2))
                 context.stroke(
                     path,
-                    with: .color(ink(l.white, l.a)),
+                    with: tint ?? .color(ink(l.white, l.a)),
                     lineWidth: l.w
                 )
             }
             // dots are already z-sorted into draw order by the engine
             for d in frame.dots {
+                context.opacity = tint == nil ? 1 : d.a * (1 - min(1, max(0, d.white)))
                 let rect = CGRect(x: d.x - d.r, y: d.y - d.r, width: d.r * 2, height: d.r * 2)
-                context.fill(Path(ellipseIn: rect), with: .color(ink(d.white, d.a)))
+                context.fill(Path(ellipseIn: rect), with: tint ?? .color(ink(d.white, d.a)))
             }
         }
     }
