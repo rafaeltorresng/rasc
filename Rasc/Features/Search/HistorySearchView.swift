@@ -41,8 +41,8 @@ struct HistorySearchTextField: NSViewRepresentable {
         textField.drawsBackground = false
         textField.focusRingType = .none
         textField.font = .systemFont(ofSize: 15)
-        textField.placeholderString = "Find a note…"
-        textField.setAccessibilityLabel("Find a note")
+        textField.placeholderString = "Search thoughts…"
+        textField.setAccessibilityLabel("Search thoughts")
         textField.cell?.usesSingleLineMode = true
         textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return textField
@@ -124,7 +124,7 @@ struct HistorySearchInputField: View {
             session.scheduleSearch()
         }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Find a note")
+        .accessibilityLabel("Search thoughts")
     }
 
     private func handleSearchCommand(_ command: HistorySearchCommand) {
@@ -153,13 +153,20 @@ struct HistorySearchView: View {
 
             searchBody
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            if session.hasMoreSearchResults {
+                Text("Showing 12 recent thoughts. Search more specifically, or browse Home.")
+                    .font(.caption).foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, RascSurfaceLayout.horizontalInset)
+                    .padding(.vertical, 10)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .onExitCommand {
             session.closeSearch()
         }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("History and search")
+        .accessibilityLabel("Search thoughts")
     }
 
     @ViewBuilder
@@ -174,9 +181,9 @@ struct HistorySearchView: View {
                 }
             } else if session.searchResults.isEmpty {
                 if session.searchQuery.isEmpty {
-                    quietStateLabel("No previous notes.")
+                    quietStateLabel("No previous thoughts.")
                 } else {
-                    quietStateLabel("No notes found.")
+                    quietStateLabel("No thoughts found.")
                 }
             } else {
                 resultList
@@ -226,7 +233,7 @@ struct HistorySearchView: View {
             .clipShape(Rectangle())
             .onChange(of: session.selectedSearchIndex) { _, index in
                 guard session.searchResults.indices.contains(index) else { return }
-                proxy.scrollTo(session.searchResults[index].id, anchor: .center)
+                proxy.scrollTo(session.searchResults[index].id)
             }
         }
     }
@@ -240,7 +247,7 @@ struct HistorySearchView: View {
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
 
-                if let snippet = note.displayRetrievalSnippet {
+                if let snippet = note.retrievalSnippet(matching: session.searchQuery) {
                     Text(snippet)
                         .font(.system(size: RascSurfaceMetrics.searchSnippetFontSize))
                         .foregroundStyle(.secondary)
@@ -280,7 +287,7 @@ struct HistorySearchView: View {
         if note.isKept {
             components.append("Kept")
         }
-        if let snippet = note.displayRetrievalSnippet {
+        if let snippet = note.retrievalSnippet(matching: session.searchQuery) {
             components.append(snippet)
         }
         components.append(note.updatedAt.formatted(.relative(presentation: .named)))
