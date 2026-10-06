@@ -389,8 +389,10 @@ enum RefinementMessage: Equatable, Sendable {
             "Refine requires a Mac that supports Apple Intelligence."
         case .unavailable(.modelNotReady):
             "Apple Intelligence is still preparing its on-device model. Try again later."
-        case .unavailable(.unsupportedEnvironment), .unavailable(.unknown):
-            "Refine is currently unavailable."
+        case .unavailable(.unknown):
+            "Refine is unavailable right now. Capture and Keep still work."
+        case .unavailable(.unsupportedEnvironment):
+            "Refine needs macOS 26 or later and Apple Intelligence. Capture and Keep still work."
         case .contextTooLarge:
             "This note is too long to refine at once. Select a smaller section."
         case .couldNotRefine:
@@ -405,6 +407,10 @@ enum RefinementMessage: Equatable, Sendable {
             "Select one section to refine at a time."
         }
     }
+
+    var isTransient: Bool {
+        self == .alreadyUseful || self == .nothingToRefine
+    }
 }
 
 struct RefinementMetadata: Equatable, Sendable {
@@ -417,4 +423,11 @@ struct RefinementPreview: Equatable, Sendable {
     let request: RefinementRequest
     let result: RefinementResult
     let metadata: RefinementMetadata
+
+    var proposedNoteText: String {
+        guard let selection = request.snapshot.selection else { return result.text }
+        var text = request.snapshot.text
+        text.replaceSubrange(selection, with: result.text)
+        return text
+    }
 }

@@ -1,5 +1,8 @@
 # Technical Architecture & Engineering Spec V1
 
+> Historical specification/milestone reference. For current behavior, launch direction and superseded decisions, start with [CURRENT-PRODUCT](CURRENT-PRODUCT.md) and the [documentation index](README.md).
+
+
 ## Scratchpad inteligente para pensamentos ainda não terminados
 
 **Status:** arquitetura proposta para V1

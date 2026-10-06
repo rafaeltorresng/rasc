@@ -28,7 +28,12 @@ struct RefineStatusDescription: Equatable, Sendable {
                 headline: "Preparing",
                 detail: "Apple Intelligence is still preparing its on-device model. Try again later."
             )
-        case .unavailable(.unsupportedEnvironment), .unavailable(.unknown):
+        case .unavailable(.unsupportedEnvironment):
+            RefineStatusDescription(
+                headline: "macOS 26 required",
+                detail: "Refine needs macOS 26 or later and Apple Intelligence. Capture and Keep work without it."
+            )
+        case .unavailable(.unknown):
             RefineStatusDescription(
                 headline: "Unavailable",
                 detail: "Refine is currently unavailable on this Mac."
@@ -130,7 +135,8 @@ struct SettingsView: View {
                     Text(refineStatus.detail)
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.trailing)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .accessibilityElement(children: .combine)
 
@@ -163,6 +169,8 @@ struct SettingsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
+                Link("Source on GitHub", destination: URL(string: "https://github.com/rafaeltorresng/rasc")!)
+
                 Button("Send Feedback…") {
                     BetaFeedback.open()
                 }
@@ -172,7 +180,7 @@ struct SettingsView: View {
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
         .padding(20)
-        .frame(width: 460)
+        .frame(minWidth: 460, idealWidth: 500, maxWidth: 560)
         .rascWindowSurface()
         .registersSettingsOpenAction()
         .task {

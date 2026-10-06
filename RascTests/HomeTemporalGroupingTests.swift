@@ -3,6 +3,7 @@ import Testing
 @testable import Rasc
 
 @Suite
+@MainActor
 struct HomeTemporalGroupingTests {
     @Test
     func groupsNotesByCalendarDayBoundaries() throws {
@@ -69,11 +70,21 @@ struct HomeTemporalGroupingTests {
         let yesterdayLate = try #require(calendar.date(byAdding: .hour, value: -2, to: startOfToday))
         let earlier = try #require(calendar.date(byAdding: .day, value: -5, to: startOfToday))
 
-        #expect(HomeNoteTimestampFormatter.format(now, calendar: calendar, now: now) == "15:31")
+        let timeFormatter = DateFormatter()
+        timeFormatter.locale = calendar.locale ?? .current
+        timeFormatter.calendar = calendar
+        timeFormatter.timeZone = calendar.timeZone
+        timeFormatter.setLocalizedDateFormatFromTemplate("jm")
+        #expect(HomeNoteTimestampFormatter.format(now, calendar: calendar, now: now) == timeFormatter.string(from: now))
         #expect(HomeNoteTimestampFormatter.format(yesterdayLate, calendar: calendar, now: now) == "Yesterday")
 
         let earlierLabel = HomeNoteTimestampFormatter.format(earlier, calendar: calendar, now: now)
-        #expect(earlierLabel == "Sep 15")
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = calendar.locale ?? .current
+        dateFormatter.calendar = calendar
+        dateFormatter.timeZone = calendar.timeZone
+        dateFormatter.setLocalizedDateFormatFromTemplate("MMMd")
+        #expect(earlierLabel == dateFormatter.string(from: earlier))
     }
 
     private func makeNote(updatedAt: Date) -> Note {

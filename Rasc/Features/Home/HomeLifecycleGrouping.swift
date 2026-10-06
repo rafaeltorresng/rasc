@@ -59,7 +59,7 @@ enum HomeLifecycleGrouping {
             groups.append(
                 HomeBrowseGroup(
                     kind: .kept,
-                    notes: Array(keptNotes.prefix(keptSectionLimit))
+                    notes: keptNotes
                 )
             )
         }

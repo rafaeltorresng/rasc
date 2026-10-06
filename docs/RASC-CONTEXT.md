@@ -1,5 +1,8 @@
 # Rasc — Product & Engineering Context
 
+> Historical specification/milestone reference. For current behavior, launch direction and superseded decisions, start with [CURRENT-PRODUCT](CURRENT-PRODUCT.md) and the [documentation index](README.md).
+
+
 **Snapshot:** 22 Sep 2026  
 **Purpose:** canonical context document for product, design, engineering, reliability, release, and commercial work on Rasc.  
 **Status:** the core macOS product is functionally complete for the current 0.1 line; the next major phase is commercial positioning, landing page, distribution, and launch readiness.

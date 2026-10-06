@@ -1,0 +1,30 @@
+name: Native build and tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  macos:
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Toolchain
+        run: xcodebuild -version
+      - name: Debug build
+        run: xcodebuild -project Rasc.xcodeproj -scheme Rasc -configuration Debug -derivedDataPath .derivedData/Rasc CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM= build
+      - name: Domain and persistence tests
+        run: python3 Scripts/test-domain.py
+      - name: Full native test suite
+        run: xcodebuild -project Rasc.xcodeproj -scheme Rasc -configuration Debug -derivedDataPath .derivedData/Rasc -destination 'platform=macOS' CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM= test
+      - name: Release build
+        run: xcodebuild -project Rasc.xcodeproj -scheme Rasc -configuration Release -derivedDataPath .derivedData/Rasc CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM= build

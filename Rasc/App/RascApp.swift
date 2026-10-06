@@ -21,7 +21,7 @@ struct RascApp: App {
                     appDelegate.openHome()
                 }
 
-                Button("Find Note") {
+                Button("Search thoughts") {
                     appDelegate.openSearch()
                 }
                 .keyboardShortcut("p")

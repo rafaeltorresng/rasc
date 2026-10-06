@@ -97,13 +97,18 @@ enum RascSurfacePalette {
         colorScheme == .dark ? darkActionAccent : lightActionAccent
     }
 
-    /// Filled primary CTAs with white labels — darker than `actionAccent` for contrast.
+    /// Filled primary CTAs with white labels use an independent contrast-safe tone.
     static func actionAccentFill(for colorScheme: ColorScheme) -> Color {
         Color(nsColor: actionAccentFillNSColor(for: colorScheme))
     }
 
     static func actionAccentFillNSColor(for colorScheme: ColorScheme) -> NSColor {
         colorScheme == .dark ? darkActionAccentFill : lightActionAccentFill
+    }
+
+    /// Text has its own contrast-safe tone; Orb and selection colors stay unchanged.
+    static func violetText(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? Color(nsColor: darkViolet) : Color(red: 0.380, green: 0.300, blue: 0.760)
     }
 
     static func violet(for colorScheme: ColorScheme) -> Color {
@@ -284,9 +289,9 @@ enum RascSurfacePalette {
     )
 
     private static let lightActionAccent = NSColor(
-        srgbRed: 0.835,
-        green: 0.318,
-        blue: 0.106,
+        srgbRed: 0.700,
+        green: 0.235,
+        blue: 0.065,
         alpha: 1
     )
 
@@ -393,12 +398,24 @@ struct RascKeyboardActionHint: View {
             Text(title)
                 .font(.system(size: 11, weight: .medium))
         }
-        .foregroundStyle(RascSurfacePalette.violet(for: colorScheme).opacity(0.82))
+        .foregroundStyle(RascSurfacePalette.violetText(for: colorScheme))
+    }
+}
+
+@MainActor
+enum RascAccessibility {
+    static func announce(_ message: String) {
+        guard let app = NSApp else { return }
+        NSAccessibility.post(element: app, notification: .announcementRequested, userInfo: [
+            .announcement: message,
+            .priority: NSAccessibilityPriorityLevel.medium.rawValue
+        ])
     }
 }
 
 struct RascTransientInputShell<Content: View>: View {
     let isFocused: Bool
+    @Environment(\.colorSchemeContrast) private var contrast
     @ViewBuilder var content: () -> Content
 
     @Environment(\.colorScheme) private var colorScheme
@@ -421,9 +438,9 @@ struct RascTransientInputShell<Content: View>: View {
                 )
                 .strokeBorder(
                     isFocused
-                        ? RascSurfacePalette.focusedFieldBorder(for: colorScheme)
-                        : RascSurfacePalette.border(for: colorScheme).opacity(0.72),
-                    lineWidth: 1
+                        ? (contrast == .increased ? RascSurfacePalette.violetText(for: colorScheme) : RascSurfacePalette.focusedFieldBorder(for: colorScheme))
+                        : RascSurfacePalette.border(for: colorScheme).opacity(contrast == .increased ? 1 : 0.72),
+                    lineWidth: contrast == .increased ? 1.5 : 1
                 )
             }
     }

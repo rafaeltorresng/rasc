@@ -166,7 +166,7 @@ final class PanelController: NSObject, NSWindowDelegate {
                 await hide()
             }
         } catch {
-            session.markLoadFailed()
+            session.reportCompletionFailure(.keep)
         }
     }
 
@@ -174,29 +174,31 @@ final class PanelController: NSObject, NSWindowDelegate {
         do {
             try await session.unkeepActiveNote()
         } catch {
-            session.markLoadFailed()
+            session.reportCompletionFailure(.unkeep)
         }
     }
 
     func copyActiveNote() async {
-        guard let text = try? await session.copyActiveNoteText() else { return }
-        NoteHandoff.copyPlainText(text)
+        do {
+            guard let text = try await session.copyActiveNoteText() else { return }
+            NoteHandoff.copyPlainText(text)
+        } catch { session.reportCompletionFailure(.copy) }
     }
 
     func shareActiveNote() {
         Task { @MainActor in
-            guard let text = try? await session.copyActiveNoteText(),
-                  let contentView = panel.contentView
-            else { return }
-            NoteHandoff.presentSharePicker(for: text, relativeTo: contentView)
+            do {
+                guard let text = try await session.copyActiveNoteText(), let contentView = panel.contentView else { return }
+                NoteHandoff.presentSharePicker(for: text, relativeTo: contentView)
+            } catch { session.reportCompletionFailure(.share) }
         }
     }
 
     func discardActiveNote() async {
         do {
-            try await session.discardActiveNote()
+            try await session.discardActiveNote(undoManager: panel.undoManager)
         } catch {
-            session.markLoadFailed()
+            session.reportCompletionFailure(.discard)
         }
     }
 

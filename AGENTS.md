@@ -2,7 +2,7 @@
 
 Native macOS scratchpad for unfinished thoughts. The core loop is **capture → refine if needed → back to work**. Optimize for speed, trust, simplicity, and low cognitive overhead.
 
-Read `Docs/` when deeper product or architectural context is relevant; do not duplicate those documents here.
+Read `docs/` when deeper product or architectural context is relevant; do not duplicate those documents here.
 
 ## Product invariants
 

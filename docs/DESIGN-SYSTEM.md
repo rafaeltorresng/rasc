@@ -1,5 +1,8 @@
 # Rasc Design System
 
+> Historical specification/milestone reference. For current behavior, launch direction and superseded decisions, start with [CURRENT-PRODUCT](CURRENT-PRODUCT.md) and the [documentation index](README.md).
+
+
 Rasc is a quiet macOS utility for unfinished thoughts.
 
 Its visual language is **Shaping**:

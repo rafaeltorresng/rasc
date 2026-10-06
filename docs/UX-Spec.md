@@ -1,5 +1,8 @@
 # UX/UI Spec V1 — Scratchpad Inteligente para macOS
 
+> Historical specification/milestone reference. For current behavior, launch direction and superseded decisions, start with [CURRENT-PRODUCT](CURRENT-PRODUCT.md) and the [documentation index](README.md).
+
+
 **Status:** Especificação de experiência
 **Versão:** V1
 **Plataforma:** macOS

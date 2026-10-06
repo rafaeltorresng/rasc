@@ -4,6 +4,7 @@ import Observation
 @MainActor
 @Observable
 final class HomeSession {
+    enum NavigationDirection: Equatable { case left, right, up, down }
     static let searchResultLimit = 500
 
     var searchQuery = "" {
@@ -18,6 +19,11 @@ final class HomeSession {
     private(set) var selectedNoteID: UUID?
     private(set) var isLoading = false
     private(set) var loadErrorMessage: String?
+    var showsAllKept = false
+    var actionErrorMessage: String?
+    private(set) var lastDiscard: NoteDiscardReceipt?
+    private var discardUndoRegistrations: [UUID: DiscardUndoRegistration] = [:]
+    private(set) var hasMoreSearchResults = false
 
     private let repository: NoteRepository
     private let calendar: Calendar
@@ -55,7 +61,49 @@ final class HomeSession {
     }
 
     var displayedNotes: [Note] {
-        isSearching ? searchResults : browseGroups.flatMap(\.notes)
+        isSearching ? searchResults : visibleBrowseGroups.flatMap(\.notes)
+    }
+
+    var keptCount: Int {
+        browseGroups.first { $0.kind == .kept }?.notes.count ?? 0
+    }
+
+    var visibleBrowseGroups: [HomeBrowseGroup] {
+        browseGroups.map { group in
+            guard group.kind == .kept, !showsAllKept else { return group }
+            return HomeBrowseGroup(kind: .kept, notes: Array(group.notes.prefix(HomeLifecycleGrouping.keptSectionLimit)))
+        }
+    }
+
+    func toggleKeptVisibility() {
+        showsAllKept.toggle()
+        reconcileSelection()
+    }
+
+    /// Each section starts a new visual row. Horizontal navigation does not wrap.
+    func moveSelection(_ direction: NavigationDirection, columns: Int) {
+        let width = max(1, columns)
+        let sections = isSearching ? [searchResults] : visibleBrowseGroups.map(\.notes)
+        let rows = sections.flatMap { notes in
+            stride(from: 0, to: notes.count, by: width).map { start in
+                Array(notes[start..<min(start + width, notes.count)])
+            }
+        }
+        guard !rows.isEmpty else { selectedNoteID = nil; return }
+        guard let row = rows.firstIndex(where: { $0.contains { $0.id == selectedNoteID } }),
+              let column = rows[row].firstIndex(where: { $0.id == selectedNoteID }) else {
+            selectedNoteID = rows[0][0].id
+            return
+        }
+        switch direction {
+        case .left:
+            selectedNoteID = rows[row][max(0, column - 1)].id
+        case .right:
+            selectedNoteID = rows[row][min(rows[row].count - 1, column + 1)].id
+        case .up, .down:
+            let nextRow = min(max(row + (direction == .up ? -1 : 1), 0), rows.count - 1)
+            selectedNoteID = rows[nextRow][min(column, rows[nextRow].count - 1)].id
+        }
     }
 
     func reloadImmediately() async {
@@ -102,9 +150,32 @@ final class HomeSession {
         return displayedNotes.first { $0.id == selectedNoteID }
     }
 
-    func discardNote(id: UUID) async throws {
-        try await repository.delete(id: id)
+    func discardNote(id: UUID, undoManager: UndoManager? = nil) async throws {
+        let receipt = try await repository.delete(id: id)
+        lastDiscard = receipt
+        if let receipt, let undoManager {
+            let registration = DiscardUndoRegistration(manager: undoManager) { [weak self] in
+                Task { await self?.undoDiscard(receipt) }
+            }
+            discardUndoRegistrations[receipt.id] = registration
+            registration.register()
+        }
         await reloadImmediately()
+    }
+
+    func undoDiscard(_ receipt: NoteDiscardReceipt? = nil) async {
+        guard let receipt = receipt ?? lastDiscard else { return }
+        do {
+            let note = try await repository.restoreDiscard(receipt)
+            discardUndoRegistrations.removeValue(forKey: receipt.id)?.invalidate()
+            if lastDiscard == receipt { lastDiscard = nil }
+            actionErrorMessage = nil
+            selectedNoteID = note.id
+            if note.isKept { showsAllKept = true }
+            await reloadImmediately()
+        } catch {
+            actionErrorMessage = "Couldn't restore this thought. Try Undo again."
+        }
     }
 
     func duplicateNote(id: UUID) async throws -> Note {
@@ -151,10 +222,12 @@ final class HomeSession {
                     now: now
                 )
                 searchResults = []
+                hasMoreSearchResults = false
             } else {
-                let results = try await repository.search(query, limit: Self.searchResultLimit)
+                let results = try await repository.search(query, limit: Self.searchResultLimit + 1)
                 guard !Task.isCancelled, normalizedSearchQuery == query else { return }
-                searchResults = results
+                hasMoreSearchResults = results.count > Self.searchResultLimit
+                searchResults = Array(results.prefix(Self.searchResultLimit))
                 browseGroups = []
             }
 

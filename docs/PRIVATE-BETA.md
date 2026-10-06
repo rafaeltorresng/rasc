@@ -1,5 +1,8 @@
 # Rasc Private Beta Distribution (M6B / M11)
 
+> Historical specification/milestone reference. For current behavior, launch direction and superseded decisions, start with [CURRENT-PRODUCT](CURRENT-PRODUCT.md) and the [documentation index](README.md).
+
+
 This path produces a repeatable private-beta `.dmg` for trusted testers **without** an Apple Developer Program membership.
 
 It is separate from the future Developer ID / notarization workflow documented in [RELEASE.md](RELEASE.md). Ad-hoc signing does **not** provide developer identity or Gatekeeper trust.

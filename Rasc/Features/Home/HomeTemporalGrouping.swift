@@ -53,7 +53,10 @@ enum HomeTemporalGrouping {
     }
 }
 
+@MainActor
 enum HomeNoteTimestampFormatter {
+    private static let timeFormatter = DateFormatter()
+    private static let dateFormatter = DateFormatter()
     static func format(
         _ date: Date,
         calendar: Calendar,
@@ -61,31 +64,25 @@ enum HomeNoteTimestampFormatter {
     ) -> String {
         let startOfToday = calendar.startOfDay(for: now)
         guard let startOfYesterday = calendar.date(byAdding: .day, value: -1, to: startOfToday) else {
-            return shortDateFormatter(calendar: calendar).string(from: date)
+            return configured(dateFormatter, template: "MMMd", calendar: calendar).string(from: date)
         }
 
         if date >= startOfToday {
-            return timeFormatter(calendar: calendar).string(from: date)
+            return configured(timeFormatter, template: "jm", calendar: calendar).string(from: date)
         }
         if date >= startOfYesterday {
             return "Yesterday"
         }
-        return shortDateFormatter(calendar: calendar).string(from: date)
+        return configured(dateFormatter, template: "MMMd", calendar: calendar).string(from: date)
     }
 
-    private static func timeFormatter(calendar: Calendar) -> DateFormatter {
-        let formatter = DateFormatter()
+    private static func configured(_ formatter: DateFormatter, template: String, calendar: Calendar) -> DateFormatter {
+        let locale = calendar.locale ?? .autoupdatingCurrent
+        formatter.locale = locale
         formatter.calendar = calendar
         formatter.timeZone = calendar.timeZone
-        formatter.dateFormat = "HH:mm"
-        return formatter
-    }
-
-    private static func shortDateFormatter(calendar: Calendar) -> DateFormatter {
-        let formatter = DateFormatter()
-        formatter.calendar = calendar
-        formatter.timeZone = calendar.timeZone
-        formatter.dateFormat = "MMM d"
+        // "j" honors the user's 12/24-hour preference, including system overrides.
+        formatter.setLocalizedDateFormatFromTemplate(template)
         return formatter
     }
 }

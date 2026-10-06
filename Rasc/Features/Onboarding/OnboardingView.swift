@@ -3,9 +3,6 @@ import SwiftUI
 
 private enum OnboardingLayout {
     static let welcomeMaxWidth: CGFloat = 400
-    static let welcomeOrbScale: CGFloat = 1.2
-    static let welcomeOrbGlowDiameter: CGFloat = 96
-    static let welcomeOrbGlowBlur: CGFloat = 22
     static let lockupSpacing: CGFloat = 3
     static let identityClusterSpacing: CGFloat = 12
     static let headlineToSupportSpacing: CGFloat = 8
@@ -157,21 +154,8 @@ struct OnboardingView: View {
 
     private var welcomeIdentityLockup: some View {
         VStack(spacing: OnboardingLayout.lockupSpacing) {
-            ZStack {
-                Circle()
-                    .fill(
-                        RascSurfacePalette.violet(for: colorScheme)
-                            .opacity(colorScheme == .dark ? 0.1 : 0.06)
-                    )
-                    .frame(
-                        width: OnboardingLayout.welcomeOrbGlowDiameter,
-                        height: OnboardingLayout.welcomeOrbGlowDiameter
-                    )
-                    .blur(radius: OnboardingLayout.welcomeOrbGlowBlur)
-
-                RascOrb(state: .connecting, size: .hero, decorative: true)
-                    .scaleEffect(OnboardingLayout.welcomeOrbScale)
-            }
+            RascLogo(size: 56)
+                .padding(.bottom, 8)
 
             Text("Rasc")
                 .font(.system(size: 13, weight: .semibold))

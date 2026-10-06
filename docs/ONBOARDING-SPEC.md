@@ -1,5 +1,8 @@
 # Rasc Onboarding Specification
 
+> Historical specification/milestone reference. For current behavior, launch direction and superseded decisions, start with [CURRENT-PRODUCT](CURRENT-PRODUCT.md) and the [documentation index](README.md).
+
+
 ## 1. Goal
 
 The onboarding must teach the core Rasc loop through direct interaction:

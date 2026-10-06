@@ -80,11 +80,17 @@ echo "==> Version and build"
 MARKETING_VERSION="$(marketing_version_from_app "${APP_PATH}")"
 BUILD_NUMBER="$(build_number_from_app "${APP_PATH}")"
 EXPECTED_MARKETING_VERSION="$(marketing_version_from_project)"
+EXPECTED_BUILD_NUMBER="$(build_number_from_project)"
 echo "Marketing version: ${MARKETING_VERSION}"
 echo "Build number: ${BUILD_NUMBER}"
 
 if [[ "${MARKETING_VERSION}" != "${EXPECTED_MARKETING_VERSION}" ]]; then
   echo "error: expected marketing version ${EXPECTED_MARKETING_VERSION}, found ${MARKETING_VERSION}" >&2
+  exit 1
+fi
+
+if [[ "${BUILD_NUMBER}" != "${EXPECTED_BUILD_NUMBER}" ]]; then
+  echo "error: expected build ${EXPECTED_BUILD_NUMBER}, found ${BUILD_NUMBER}" >&2
   exit 1
 fi
 
@@ -142,10 +148,12 @@ if [[ ! -f "${THIRD_PARTY_NOTICES}" ]]; then
   echo "error: ThirdPartyNotices.txt not found in app bundle" >&2
   exit 1
 fi
-if ! grep -q 'ThinkingOrbsKit' "${THIRD_PARTY_NOTICES}"; then
-  echo "error: ThirdPartyNotices.txt is missing ThinkingOrbsKit attribution" >&2
-  exit 1
-fi
+for dependency in ThinkingOrbsKit GRDB KeyboardShortcuts; do
+  if ! grep -q "${dependency}" "${THIRD_PARTY_NOTICES}"; then
+    echo "error: ThirdPartyNotices.txt is missing ${dependency} attribution" >&2
+    exit 1
+  fi
+done
 echo "Third-party notices present"
 
 echo "==> bundle audit"

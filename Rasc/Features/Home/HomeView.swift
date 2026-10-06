@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 private enum HomeLayout {
@@ -12,7 +13,7 @@ private enum HomeLayout {
     static let keptToTemporalExtraSpacing: CGFloat = 4
     static let gridSpacing: CGFloat = 16
     static let gridMaxColumns = 4
-    static let idealCardWidth: CGFloat = 280
+    static let idealCardWidth: CGFloat = 260
     static let browseCardHeight: CGFloat = 116
     static let browseCompactCardHeight: CGFloat = 86
     static let searchCardHeight: CGFloat = 108
@@ -37,7 +38,11 @@ struct HomeView: View {
     let onNoteUnkept: (UUID) -> Void
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var gridContainerWidth: CGFloat = HomeLayout.contentMaxWidth
+    @Environment(\.undoManager) private var undoManager
+    @FocusState private var searchIsFocused: Bool
+    @FocusState private var gridIsFocused: Bool
+    @State private var retryAction: (() -> Void)?
+    @State private var gridContainerWidth: CGFloat = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -61,32 +66,71 @@ struct HomeView: View {
                                 .padding(.bottom, HomeLayout.contentBottomPadding)
                         }
                     }
+                    .focusable()
+                    .focused($gridIsFocused)
                     .onChange(of: session.selectedNoteID) { _, noteID in
                         guard let noteID else { return }
-                        scrollProxy.scrollTo(noteID, anchor: .center)
+                        scrollProxy.scrollTo(noteID)
                     }
                 }
+            }
+            if let error = session.actionErrorMessage {
+                HStack(spacing: 12) {
+                    Text(error).fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 8)
+                    if let retryAction { Button("Retry", action: retryAction) }
+                    else if session.lastDiscard != nil { Button("Undo") { Task { await session.undoDiscard() } } }
+                    Button("Dismiss") { session.actionErrorMessage = nil; retryAction = nil }
+                }
+                .font(.callout)
+                .padding(.horizontal, HomeLayout.horizontalPadding)
+                .padding(.vertical, 12)
+                .accessibilityElement(children: .contain)
+            } else if session.lastDiscard != nil {
+                HStack {
+                    Text("Thought discarded.").foregroundStyle(.secondary)
+                    Spacer()
+                    Button("Undo") { Task { await session.undoDiscard() } }
+                }
+                .font(.callout)
+                .padding(.horizontal, HomeLayout.horizontalPadding)
+                .padding(.vertical, 12)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .rascWindowSurface()
+        .onChange(of: session.actionErrorMessage) { _, message in
+            if let message { RascAccessibility.announce(message) }
+        }
+        .onChange(of: session.lastDiscard) { _, receipt in
+            if receipt != nil { RascAccessibility.announce("Thought discarded. Undo is available.") }
+        }
         .onKeyPress(.upArrow) {
-            session.moveSelection(by: -1)
+            guard !searchIsFocused else { return .ignored }
+            gridIsFocused = true
+            session.moveSelection(.up, columns: HomeGridLayout.columnCount(for: max(0, gridContainerWidth - HomeLayout.horizontalPadding * 2)))
             return .handled
         }
         .onKeyPress(.downArrow) {
-            session.moveSelection(by: 1)
+            guard !searchIsFocused else { return .ignored }
+            gridIsFocused = true
+            session.moveSelection(.down, columns: HomeGridLayout.columnCount(for: max(0, gridContainerWidth - HomeLayout.horizontalPadding * 2)))
             return .handled
         }
         .onKeyPress(.leftArrow) {
-            session.moveSelection(by: -1)
+            guard !searchIsFocused else { return .ignored }
+            gridIsFocused = true
+            session.moveSelection(.left, columns: HomeGridLayout.columnCount(for: max(0, gridContainerWidth - HomeLayout.horizontalPadding * 2)))
             return .handled
         }
         .onKeyPress(.rightArrow) {
-            session.moveSelection(by: 1)
+            guard !searchIsFocused else { return .ignored }
+            gridIsFocused = true
+            session.moveSelection(.right, columns: HomeGridLayout.columnCount(for: max(0, gridContainerWidth - HomeLayout.horizontalPadding * 2)))
             return .handled
         }
         .onKeyPress(.return) {
+            guard !searchIsFocused, gridIsFocused else { return .ignored }
             openSelectedNote()
             return .handled
         }
@@ -103,7 +147,7 @@ struct HomeView: View {
     private var actionZone: some View {
         HStack(alignment: .center, spacing: HomeLayout.actionZoneSpacing) {
             HStack(spacing: HomeLayout.identitySpacing) {
-                RascOrb(state: .composing, size: .inline, decorative: true)
+                RascLogo(size: RascSurfaceLayout.orbSize)
                     .frame(width: RascSurfaceLayout.orbSize, height: RascSurfaceLayout.orbSize)
 
                 Text("Rasc")
@@ -113,7 +157,13 @@ struct HomeView: View {
             .accessibilityElement(children: .combine)
             .accessibilityLabel("Rasc")
 
-            HomeSearchField(text: $session.searchQuery)
+            HomeSearchField(text: $session.searchQuery, isFocused: $searchIsFocused)
+                .onSubmit { searchIsFocused = false; gridIsFocused = true }
+                .onKeyPress(.downArrow) {
+                    searchIsFocused = false
+                    gridIsFocused = true
+                    return .handled
+                }
                 .frame(minWidth: HomeLayout.searchMinWidth, maxWidth: HomeLayout.searchMaxWidth)
 
             Spacer(minLength: 12)
@@ -137,7 +187,7 @@ struct HomeView: View {
         if let loadErrorMessage = session.loadErrorMessage {
             quietStateLabel(loadErrorMessage)
         } else if session.showsNoSearchResults {
-            quietStateLabel("No notes found.")
+            quietStateLabel("No thoughts found.")
         } else if session.isSearching {
             searchResultsGrid
         } else {
@@ -153,7 +203,7 @@ struct HomeView: View {
                 RascOrb(state: session.emptyStateOrbState, size: .hero, decorative: true)
                     .padding(.bottom, 2)
 
-                Text("Your notes")
+                Text("Your thoughts")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(RascSurfacePalette.homeSectionLabel(for: colorScheme))
                     .accessibilityAddTraits(.isHeader)
@@ -163,7 +213,7 @@ struct HomeView: View {
                         .font(.system(size: 17, weight: .medium))
                         .foregroundStyle(.primary.opacity(0.9))
 
-                    Text("Your notes will appear here as you use Rasc.")
+                    Text("Your thoughts will appear here as you use Rasc.")
                         .font(.system(size: 13))
                         .foregroundStyle(RascSurfacePalette.homeSupportingText(for: colorScheme))
                         .multilineTextAlignment(.center)
@@ -171,6 +221,7 @@ struct HomeView: View {
                 }
 
                 HomeNewScratchButton(style: .prominent, action: onNewScratch)
+                    .keyboardShortcut(.defaultAction)
                     .padding(.top, 6)
             }
             .frame(maxWidth: HomeLayout.emptyStateMaxWidth)
@@ -182,12 +233,12 @@ struct HomeView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         .padding(.bottom, HomeLayout.actionZoneTopPadding)
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Nothing here yet. Your notes will appear here as you use Rasc.")
+        .accessibilityLabel("Nothing here yet. Your thoughts will appear here as you use Rasc.")
     }
 
     private var chronologicalGrid: some View {
         VStack(alignment: .leading, spacing: HomeLayout.temporalGroupSpacing) {
-            ForEach(Array(session.browseGroups.enumerated()), id: \.element.id) { index, group in
+            ForEach(Array(session.visibleBrowseGroups.enumerated()), id: \.element.id) { index, group in
                 VStack(alignment: .leading, spacing: HomeLayout.temporalLabelSpacing) {
                     sectionTitle(for: group)
 
@@ -196,6 +247,13 @@ struct HomeView: View {
                         style: .browse,
                         showsKeptIndicator: !isKeptSection(group)
                     )
+                    if isKeptSection(group), session.keptCount > HomeLifecycleGrouping.keptSectionLimit {
+                        Button(session.showsAllKept ? "Show fewer" : "Show all \(session.keptCount) kept thoughts") {
+                            session.toggleKeptVisibility()
+                        }
+                        .buttonStyle(.link)
+                        .padding(.top, 4)
+                    }
                 }
                 .padding(.top, sectionTopInset(for: group, at: index))
             }
@@ -204,7 +262,13 @@ struct HomeView: View {
     }
 
     private var searchResultsGrid: some View {
-        noteGrid(for: session.searchResults, style: .search)
+        VStack(alignment: .leading, spacing: 12) {
+            noteGrid(for: session.searchResults, style: .search)
+            if session.hasMoreSearchResults {
+                Text("Showing the first 500 matches. Narrow your search to find more.")
+                    .font(.callout).foregroundStyle(.secondary)
+            }
+        }
             .animation(RascMotion.bodyContentAnimation(reduceMotion: reduceMotion), value: session.searchResults.map(\.id))
     }
 
@@ -223,6 +287,7 @@ struct HomeView: View {
                 isSelected: session.selectedNoteID == note.id,
                 showsKeptIndicator: showsKeptIndicator,
                 timestamp: session.formattedTimestamp(for: note),
+                searchQuery: session.searchQuery,
                 onOpen: { onOpenNote(note.id) },
                 onSelect: { session.selectNote(note.id) },
                 onDuplicate: { duplicateNote(note.id) },
@@ -252,7 +317,14 @@ struct HomeView: View {
 
     private func duplicateNote(_ noteID: UUID) {
         Task {
-            _ = try? await session.duplicateNote(id: noteID)
+            do {
+                _ = try await session.duplicateNote(id: noteID)
+                session.actionErrorMessage = nil
+                retryAction = nil
+            } catch {
+                session.actionErrorMessage = "Couldn't duplicate this thought. The original is safe."
+                retryAction = { duplicateNote(noteID) }
+            }
         }
     }
 
@@ -261,7 +333,11 @@ struct HomeView: View {
             do {
                 try await session.unkeepNote(id: noteID)
                 onNoteUnkept(noteID)
+                session.actionErrorMessage = nil
+                retryAction = nil
             } catch {
+                session.actionErrorMessage = "Couldn't unkeep this thought. Try again."
+                retryAction = { unkeepNote(noteID) }
             }
         }
     }
@@ -269,9 +345,13 @@ struct HomeView: View {
     private func discardNote(_ noteID: UUID) {
         Task {
             do {
-                try await session.discardNote(id: noteID)
+                try await session.discardNote(id: noteID, undoManager: undoManager)
                 onNoteDiscarded(noteID)
+                session.actionErrorMessage = nil
+                retryAction = nil
             } catch {
+                session.actionErrorMessage = "Couldn't discard this thought. It is still available."
+                retryAction = { discardNote(noteID) }
             }
         }
     }
@@ -330,10 +410,10 @@ private enum HomeNoteCardStyle {
 
 private struct HomeSearchField: View {
     @Binding var text: String
-    @FocusState private var isFocused: Bool
+    let isFocused: FocusState<Bool>.Binding
 
     var body: some View {
-        RascTransientInputShell(isFocused: isFocused) {
+        RascTransientInputShell(isFocused: isFocused.wrappedValue) {
             HStack(spacing: 7) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 12, weight: .medium))
@@ -342,16 +422,16 @@ private struct HomeSearchField: View {
                 TextField(
                     "",
                     text: $text,
-                    prompt: Text("Search notes…")
+                    prompt: Text("Search thoughts…")
                         .foregroundStyle(.tertiary)
                 )
                 .textFieldStyle(.plain)
                 .font(.system(size: 13.5))
-                .focused($isFocused)
+                .focused(isFocused)
             }
         }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Search notes")
+        .accessibilityLabel("Search thoughts")
     }
 }
 
@@ -361,6 +441,7 @@ private struct HomeNoteCard: View {
     let isSelected: Bool
     let showsKeptIndicator: Bool
     let timestamp: String
+    let searchQuery: String
     let onOpen: () -> Void
     let onSelect: () -> Void
     let onDuplicate: () -> Void
@@ -371,6 +452,7 @@ private struct HomeNoteCard: View {
     @Environment(\.colorSchemeContrast) private var colorSchemeContrast
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isHovered = false
+    @FocusState private var cardIsFocused: Bool
 
     private var showsCardActions: Bool {
         isHovered || isSelected
@@ -381,7 +463,7 @@ private struct HomeNoteCard: View {
         case .browse:
             note.displayHomeExcerpt
         case .search:
-            note.displayRetrievalSnippet ?? note.displayHomeExcerpt
+            note.retrievalSnippet(matching: searchQuery)
         }
     }
 
@@ -397,7 +479,9 @@ private struct HomeNoteCard: View {
             cardContent
         }
         .buttonStyle(HomeNoteCardButtonStyle())
-        .frame(width: HomeLayout.idealCardWidth, alignment: .leading)
+        .focused($cardIsFocused)
+        .onChange(of: cardIsFocused) { _, focused in if focused { onSelect() } }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .frame(maxHeight: .infinity, alignment: .topLeading)
         .overlay(alignment: .topTrailing) {
             cardHeaderActions
@@ -454,7 +538,7 @@ private struct HomeNoteCard: View {
     }
 
     private var cardHeaderTrailingInset: CGFloat {
-        showsCardActions ? 54 : 40
+        note.isKept && showsKeptIndicator ? 84 : 70
     }
 
     private var cardHeaderActions: some View {
@@ -468,10 +552,11 @@ private struct HomeNoteCard: View {
                 .foregroundStyle(.tertiary)
                 .lineLimit(1)
 
-            if showsCardActions {
-                noteActionsMenu
-                    .transition(.opacity)
-            }
+            noteActionsMenu
+                .opacity(showsCardActions ? 1 : 0)
+                .allowsHitTesting(showsCardActions)
+                .disabled(!showsCardActions)
+                .accessibilityHidden(!showsCardActions)
         }
         .fixedSize(horizontal: true, vertical: false)
         .animation(RascMotion.micro(reduceMotion: reduceMotion), value: showsCardActions)
@@ -634,7 +719,7 @@ private enum HomeGridLayout {
         let columnCount = columnCount(for: availableWidth)
 
         return Array(
-            repeating: GridItem(.fixed(cardWidth), spacing: spacing),
+            repeating: GridItem(.flexible(minimum: cardWidth, maximum: 360), spacing: spacing),
             count: columnCount
         )
     }
