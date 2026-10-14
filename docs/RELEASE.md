@@ -1,6 +1,6 @@
-# Rasc Release Workflow (M6A)
+# Rasc Release Workflow
 
-> Current source candidate: **0.1.0-beta.4, build 5** (5 October 2026). The existing frozen beta.3/build 4 artifact predates these changes and must not be overwritten. A local candidate is not a signed/notarized public release. Require current native acceptance, Developer ID signing, notarization and artifact verification before public distribution.
+> Current source candidate: **0.1.0, build 6**. The frozen beta.3/build 4 artifact predates these changes and must not be overwritten or renamed as 0.1.0. **v0.1 public release** can ship as **open source + unsigned DMG** ([PUBLISH-0.1.md](PUBLISH-0.1.md), [INSTALL-UNSIGNED.md](INSTALL-UNSIGNED.md)). **Developer ID + notarization** below is optional and improves Gatekeeper UX for download-only users.
 
 
 This document describes how to produce a signed, sandboxed, notarized direct-distribution build of Rasc outside Xcode.
@@ -13,9 +13,10 @@ Sparkle and automatic updates are intentionally out of scope for this milestone.
 | --- | --- |
 | Product name | Rasc |
 | Bundle identifier | `com.rafaeltorres.rasc` |
-| Marketing version | `0.1.0-beta.4` (local source candidate; not published) |
-| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`5` for beta.4) |
+| Marketing version | `0.1.0` (publication candidate) |
+| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`6` for this candidate) |
 | Deployment target | macOS 14.0 |
+| First public artifact | Apple silicon (`arm64`); `archive.sh` fixes the architecture |
 | Hardened Runtime | Enabled for Debug and Release |
 | App Sandbox | Enabled |
 | LSUIElement | `true` (menu bar utility, no Dock icon) |
@@ -49,10 +50,7 @@ export RASC_DEVELOPMENT_TEAM="YOURTEAMID"
 Create a notarytool keychain profile (recommended: app-specific password in Keychain):
 
 ```bash
-xcrun notarytool store-credentials "RASC_NOTARY" \
-  --apple-id "you@example.com" \
-  --team-id "YOURTEAMID" \
-  --password "@keychain:AC_PASSWORD"
+xcrun notarytool store-credentials "RASC_NOTARY"
 ```
 
 Optional override for the profile name:
@@ -61,7 +59,9 @@ Optional override for the profile name:
 export RASC_NOTARY_KEYCHAIN_PROFILE="RASC_NOTARY"
 ```
 
-Do not commit Apple IDs, team IDs used as secrets, app-specific passwords, or private keys.
+Enter the Apple ID, Team ID and app-specific password at the interactive prompts.
+Do not put passwords on command lines, in shell history or in source control.
+The profile is stored in Keychain. Team IDs identify the signing team, not a password.
 
 ## Release artifact flow
 
@@ -93,7 +93,8 @@ Output: `build/Rasc.xcarchive`
 
 Output: `build/export/Rasc.app`
 
-The exported app should contain embedded Swift package frameworks (`GRDB`, `KeyboardShortcuts`) under `Contents/Frameworks/`.
+GRDB and KeyboardShortcuts are statically linked; their resource bundles are
+included under `Contents/Resources/`, together with third-party notices.
 
 ### 4. Package DMG
 
@@ -119,7 +120,8 @@ export RASC_DEVELOPMENT_TEAM="YOURTEAMID"
 
 ## Notarization flow
 
-Submit the final DMG (or a signed ZIP of the app), wait for approval, then staple:
+Submit the final DMG, wait for approval, then staple. The script intentionally
+accepts only DMG: ZIP cannot receive a stapled ticket.
 
 ```bash
 ./Scripts/release/notarize.sh build/Rasc.dmg
@@ -157,7 +159,11 @@ spctl --assess --type execute --verbose=4 /path/to/Rasc.app
 xcrun stapler validate build/Rasc.dmg
 ```
 
-The verification script fails if `get-task-allow` is present.
+The verification script requires Developer ID, a Team ID, hardened runtime,
+sandbox without network entitlements, matching bundle/version/build, Gatekeeper
+acceptance and a stapled ticket. It rejects debug/test/database artifacts and
+`get-task-allow`. For an `.app` argument, staple the app ticket first; the normal
+workflow verifies the distributed DMG and its ticket.
 
 ## Bundle audit checklist
 
@@ -185,7 +191,10 @@ The exported app should not contain `Contents/PlugIns/RascTests.xctest` or other
 | Rasc | `com.rafaeltorres.rasc` | `com.rafaeltorres.rasc` |
 | RascTests | `com.rafaeltorres.rasc.tests` | `com.rafaeltorres.rasc.tests` |
 
-Ad-hoc local builds (Debug or Release without Developer ID export) may include the `get-task-allow` entitlement. Developer ID–signed export artifacts must not; `verify-release.sh` enforces this.
+Debug is unsandboxed for local evaluation tools; Release uses the sandbox.
+Ad-hoc Xcode builds may include `get-task-allow` and Xcode can disable hardened
+runtime with ad-hoc signing. They are build evidence, not public artifacts.
+Developer ID exports must satisfy `verify-release.sh`.
 
 ## Clean-machine beta verification
 
@@ -237,6 +246,11 @@ Starting with **0.1.0-beta.2**, retain every shipped or private-release artifact
 3. beta.1 → beta.2 upgrade was **not testable** (beta.1 artifact not retained). Not a blocker for beta.2 acceptance.
 4. Store artifacts outside git if needed; record paths and SHA256 in the release manifest.
 
+Scripts now refuse to overwrite an existing DMG or erase an existing `build/rc/`
+or `build/private-beta/` directory. Move prior artifacts to a versioned retained
+directory before building again. Retain the checksum, manifest and matching backup.
+These checks do not certify an ad-hoc RC as a public release.
+
 ### RC build commands (private beta, ad-hoc)
 
 ```bash
@@ -252,6 +266,16 @@ Output directory: `build/rc/`.
 
 - User-visible version: update `MARKETING_VERSION` (for example `0.1.0`, `0.1.1`).
 - Build number: increment `CURRENT_PROJECT_VERSION` for each distributable build.
+
+For the first public release, use **0.1.0/build 6 or later**, after acceptance.
+Do not rename the frozen beta.3 binary as 0.1.0. Build the new source, sign, notarize,
+then compute the checksum **after stapling**, because stapling changes the artifact.
+Retain `build/Rasc.dmg` as `build/releases/Rasc-0.1.0.dmg` with its SHA256 sidecar
+and source revision. Publish those exact bytes and update the web launch metadata.
+
+The local audit/checklist is [RELEASE_READINESS](../RELEASE_READINESS.md).
+Step-by-step publication gates are in [PUBLISH-0.1.md](PUBLISH-0.1.md).
+Developer ID/notarization must be verified on the machine that produces the public DMG.
 
 ## CI note
 

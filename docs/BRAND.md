@@ -27,10 +27,11 @@ symbol; the editor's state indicator remains the Orb.
 ## Orb
 
 Rasc wraps the vendored engine in `RascOrb`; product views do not depend directly
-on engine vocabulary. Preserve the approved violet/orange gradient:
+on engine vocabulary. Preserve the violet-led / warm-accent identity in `RascOrbPalette`:
 
-- Violet: `117/100/216`, stops 0 and 0.58.
-- Orange: `199/74/20`, stop 1.
+- Light: periwinkle highlight → `117/100/216` family → `199/74/20` accent.
+- Dark: luminous violet (aligned with `RascSurfacePalette`) → brand violet → bright orange accent for graphite legibility.
+- Optional soft violet shadow for presence; omit when Reduce Transparency is on.
 - Editor/writing: Composing.
 - Quick Search: Searching.
 - Refine in progress: Shaping (`.refining` in the wrapper).
