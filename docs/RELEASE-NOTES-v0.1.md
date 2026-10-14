@@ -41,15 +41,13 @@ the sandboxed store; unsandboxed Debug data is separate.
 
 ## Release metadata
 
-Fill from the verified artifact immediately before publishing:
-
 | Field | Value |
 | --- | --- |
 | Version / build | 0.1.0 (6) |
-| Source revision | _git SHA at build tag_ |
+| Source revision | `7736b88bc683959af718b87620c6aab12a857275` |
 | Git tag | `v0.1.0` |
 | DMG filename | `Rasc-0.1.0-unsigned.dmg` |
-| SHA256 | _from `build/releases/Rasc-0.1.0-unsigned.dmg.sha256`_ |
+| SHA256 | `c14f5ad965b6eb963311e0548cf6d42a24c1e086545b49f741a404a3e47e3853` |
 | Signing | Ad-hoc (`-`) Release + hardened runtime + App Sandbox |
 | Notarization | **None** (v0.1 ships without Apple Developer Program) |
-| Install verification | _macOS version / hardware tested; Gatekeeper first-open documented_ |
+| Install verification | `verify-private-beta.sh` passed on Apple silicon / macOS 26.5; first-open steps in [INSTALL-UNSIGNED.md](INSTALL-UNSIGNED.md) |
