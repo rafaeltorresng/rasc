@@ -9,8 +9,13 @@ ARTIFACT_PATH="${1:-${DMG_PATH}}"
 NOTARY_PROFILE="${RASC_NOTARY_KEYCHAIN_PROFILE:-RASC_NOTARY}"
 
 if [[ ! -e "${ARTIFACT_PATH}" ]]; then
-  echo "usage: $0 [path-to-dmg-or-zip]" >&2
+  echo "usage: $0 [path-to-dmg]" >&2
   echo "error: artifact not found at ${ARTIFACT_PATH}" >&2
+  exit 1
+fi
+
+if [[ "${ARTIFACT_PATH}" != *.dmg ]]; then
+  echo "error: this workflow staples a DMG; ZIP archives cannot be stapled. Package a DMG first." >&2
   exit 1
 fi
 
