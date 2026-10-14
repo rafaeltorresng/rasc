@@ -25,6 +25,10 @@ Refine offers a conservative edit. Compare Suggested and Original before accepti
 Keep original dismisses the proposal without changing your text.
 Discard has Undo while Rasc remains running; it does not introduce a Trash system.
 
+![Rasc scratchpad in dark mode, using a synthetic thought](docs/images/scratchpad.png)
+
+Rasc 0.1.0 source candidate. Refine is optional; screenshots are not certification of a notarized release artifact.
+
 ## Requirements and installation
 
 - **App:** macOS 14 or later. Current direct-distribution builds target Apple silicon.
@@ -32,14 +36,14 @@ Discard has Undo while Rasc remains running; it does not introduce a Trash syste
   enabled, and its on-device model ready. Rasc remains useful when Refine is unavailable.
 - **Development:** Xcode 26.2 or later, Swift 6, and the macOS 26 SDK.
 
-This source revision is **0.1.0-beta.4, build 5**. It is a local candidate, not a
-published release. There is no published GitHub Release for this revision yet.
-The older beta.3 DMG does not contain these changes. Build from source below, or
-use a separately supplied versioned DMG whose checksum and release notes you can verify.
+This source revision is **0.1.0, build 6**. Public distribution for v0.1 is **open
+source first**, with an optional **unsigned** Release DMG on GitHub (not notarized;
+macOS will ask you to allow the app on first open). See
+[installing the unsigned DMG](docs/INSTALL-UNSIGNED.md).
 
-For public distribution, Developer ID signing, notarization and packaged-app
-verification remain release gates. An ad hoc development build is not notarized.
-See [release workflow](docs/RELEASE.md).
+Developer ID signing and notarization are optional later improvements; they are
+documented in [release workflow](docs/RELEASE.md). Publication steps without a paid
+Apple program are in [Publish 0.1](docs/PUBLISH-0.1.md).
 
 ## Build and test
 
@@ -79,6 +83,11 @@ accepting; automated checks do not prove that every meaning is unchanged.
 
 Copy and Share are explicit handoffs. Feedback opens a draft email with app/system
 version details; it does not attach your thoughts or send automatically.
+
+The database is not encrypted by Rasc. Discard hides a thought; it does not securely
+erase its content or accepted refinement history. There is no built-in backup,
+export, sync or recovery UI. See [data, privacy and backup](docs/DATA-AND-PRIVACY.md)
+for storage paths and safe manual backups.
 
 ## Contributing
 

@@ -76,6 +76,25 @@ struct ScratchpadSessionTests {
     }
 
     @Test
+    func failedSaveOfADiscardedNotePreservesTheUnsavedText() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        session.text = "original"
+        try await session.flush()
+        let note = try #require(try await fixture.repository.fetchMostRecent())
+        try await fixture.repository.delete(id: note.id)
+        session.text = "unsaved edit"
+
+        await #expect(throws: NoteRepository.PersistenceError.staleContent) {
+            try await session.flush()
+        }
+        #expect(session.text == "unsaved edit")
+        #expect(session.saveErrorMessage != nil)
+        #expect(try await fixture.repository.fetch(id: note.id) == nil)
+    }
+
+    @Test
     func contentRevisionInvalidatesARefinementBeforeAutosavePersistsTheEdit() async throws {
         let fixture = try makeFixture()
         defer { fixture.remove() }

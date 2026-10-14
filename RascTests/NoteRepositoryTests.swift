@@ -88,6 +88,26 @@ struct NoteRepositoryTests {
         #expect(fetched?.updatedAt == originalUpdatedAt)
     }
 
+    @Test
+    func updatingAMissingNoteReportsFailure() async throws {
+        let repository = try makeRepository()
+        await #expect(throws: NoteRepository.PersistenceError.staleContent) {
+            try await repository.update(id: UUID(), content: "unsaved edit")
+        }
+    }
+
+    @Test
+    func updatingADiscardedNoteDoesNotReportASuccessfulSave() async throws {
+        let repository = try makeRepository()
+        let note = try await repository.createScratch(content: "original")
+        let receipt = try #require(try await repository.delete(id: note.id))
+
+        await #expect(throws: NoteRepository.PersistenceError.staleContent) {
+            try await repository.update(id: note.id, content: "unsaved edit")
+        }
+        #expect(try await repository.restoreDiscard(receipt).content == "original")
+    }
+
     @Test(arguments: ["", "  \n\t "])
     func rejectsContentWithoutMeaningfulCharacters(content: String) async throws {
         let repository = try makeRepository()

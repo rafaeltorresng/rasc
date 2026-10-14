@@ -12,6 +12,9 @@ Current implementation and the product/launch decisions reconciled on 5 October
 | [Brand](BRAND.md) | Symbol, Orb, colors and reproducible asset exports |
 | [Native validation](NATIVE-UI-VALIDATION.md) | Manual platform and accessibility checks |
 | [Release](RELEASE.md) | Versioning, packaging, signing and notarization |
+| [Publish 0.1](PUBLISH-0.1.md) | Maintainer runbook (unsigned / no Developer ID) |
+| [Install unsigned](INSTALL-UNSIGNED.md) | End-user steps for non-notarized DMG or source build |
+| [Data and privacy](DATA-AND-PRIVACY.md) | Storage, retention and safe manual backups |
 | [Third-party notices](THIRD_PARTY_NOTICES.md) | Dependency licenses/provenance |
 | [Contributing](../CONTRIBUTING.md) | Development and review |
 

@@ -80,6 +80,52 @@ struct PanelControllerTests {
     }
 
     @Test
+    func orbVisibilityFollowsWindowPresentationAndHiding() async throws {
+        let controller = try makeController()
+        // Other native suites run concurrently; keep this observer window unoccluded.
+        controller.panel.level = NSWindow.Level(rawValue: NSWindow.Level.screenSaver.rawValue + 20)
+        controller.panel.animationBehavior = .none
+        let observer = OrbWindowVisibilityView()
+        var visible = false
+        observer.onVisibilityChange = { visible = $0 }
+        controller.panel.contentView?.addSubview(observer)
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(!visible)
+
+        controller.panel.orderFrontRegardless()
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(visible)
+
+        controller.panel.orderOut(nil)
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(!visible)
+
+        controller.panel.orderFrontRegardless()
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(visible)
+        controller.panel.orderOut(nil)
+    }
+
+    @Test
+    func detachingAnOrbFromItsWindowPausesIt() async throws {
+        let controller = try makeController()
+        controller.panel.level = NSWindow.Level(rawValue: NSWindow.Level.screenSaver.rawValue + 20)
+        controller.panel.animationBehavior = .none
+        let observer = OrbWindowVisibilityView()
+        var visible = false
+        observer.onVisibilityChange = { visible = $0 }
+        controller.panel.contentView?.addSubview(observer)
+        controller.panel.orderFrontRegardless()
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(visible)
+
+        observer.removeFromSuperview()
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(!visible)
+        controller.panel.orderOut(nil)
+    }
+
+    @Test
     func restoresAndPersistsWindowFrame() throws {
         let userDefaults = UserDefaults(suiteName: "RascTests.\(UUID().uuidString)")!
         let store = WindowFrameStore(userDefaults: userDefaults)

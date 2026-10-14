@@ -99,7 +99,11 @@ package_dmg() {
   require_command hdiutil
   require_command ditto
 
-  rm -rf "${staging_dir}" "${dmg_path}"
+  if [[ -e "${dmg_path}" ]]; then
+    echo "error: refusing to overwrite retained artifact ${dmg_path}. Move it to a versioned archive first." >&2
+    exit 1
+  fi
+  rm -rf "${staging_dir}"
   mkdir -p "${staging_dir}"
 
   ditto "${app_path}" "${staging_dir}/Rasc.app"
@@ -109,7 +113,6 @@ package_dmg() {
   hdiutil create \
     -volname "Rasc" \
     -srcfolder "${staging_dir}" \
-    -ov \
     -format UDZO \
     "${dmg_path}"
 

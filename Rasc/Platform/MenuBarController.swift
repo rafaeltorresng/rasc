@@ -51,7 +51,7 @@ final class MenuBarController {
             modifierMask: .command
         ))
         menu.addItem(makeItem(
-            title: "History / Search",
+            title: "Search thoughts",
             action: #selector(openSearch),
             keyEquivalent: "p",
             modifierMask: .command

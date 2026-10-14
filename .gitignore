@@ -68,6 +68,14 @@ dist/
 *.xcarchive
 *.dmg
 Config/Local.xcconfig
+.env
+.env.*
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.p12
+*.p8
+*.pem
 
 # Refine reliability lab outputs (M12A)
 Evals/Refine/reports/

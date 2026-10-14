@@ -15,7 +15,10 @@ BETA_CHECKSUM_PATH="$(beta_checksum_path "${BETA_DMG_PATH}")"
 
 echo "Building Rasc private beta (version ${MARKETING_VERSION}, build ${BUILD_NUMBER})..."
 
-rm -rf "${BETA_DIR}"
+if [[ -e "${BETA_DIR}" ]]; then
+  echo "error: refusing to erase ${BETA_DIR}. Retain the previous beta in a versioned directory before building again." >&2
+  exit 1
+fi
 mkdir -p "${BETA_EXPORT_DIR}"
 
 echo "==> Clean Release build (ad-hoc signing)..."

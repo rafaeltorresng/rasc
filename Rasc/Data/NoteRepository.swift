@@ -90,7 +90,8 @@ actor NoteRepository {
                 .filter(Note.Columns.deletedAt == nil)
                 .fetchOne(database)
             else {
-                return
+                // A save must not appear successful after Home discarded this note.
+                throw PersistenceError.staleContent
             }
 
             guard existing.content != content else {

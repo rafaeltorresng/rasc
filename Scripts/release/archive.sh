@@ -14,8 +14,11 @@ xcodebuild \
   -project "${PROJECT_PATH}" \
   -scheme "${SCHEME}" \
   -configuration "${CONFIGURATION}" \
+  -destination 'generic/platform=macOS' \
   -archivePath "${ARCHIVE_PATH}" \
   archive \
+  ARCHS=arm64 \
+  ONLY_ACTIVE_ARCH=NO \
   DEVELOPMENT_TEAM="${RASC_DEVELOPMENT_TEAM}" \
   CODE_SIGN_STYLE=Manual \
   "CODE_SIGN_IDENTITY=Developer ID Application"
