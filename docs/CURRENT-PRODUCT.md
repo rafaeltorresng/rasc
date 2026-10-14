@@ -1,7 +1,7 @@
 # Current Rasc product
 
-**Source candidate:** 0.1.0-beta.4, build 5 · 5 October 2026.
-This describes the implementation; it does not certify a public release.
+**Source candidate:** 0.1.0, build 6 · 13 October 2026.
+This describes the implementation; public release still requires a signed, notarized DMG.
 
 Rasc is **a scratchpad for unfinished thoughts**: the place before the note.
 The core flow is Invoke → Capture → optional Refine → Keep → return to work.
