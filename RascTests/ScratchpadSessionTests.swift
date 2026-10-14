@@ -350,8 +350,9 @@ struct ScratchpadSessionTests {
         session.scheduleSearch()
         #expect(!session.searchResults.isEmpty)
 
-        try await Task.sleep(for: .milliseconds(120))
-        #expect(session.searchResults.map(\.content) == ["window focus"])
+        try await waitUntil {
+            session.searchResults.map(\.content) == ["window focus"]
+        }
     }
 
     @Test
@@ -399,6 +400,18 @@ struct ScratchpadSessionTests {
 
         #expect(session.text == "")
         #expect(fixture.userDefaults.string(forKey: "activeNoteID") == nil)
+    }
+
+    private func waitUntil(
+        timeout: Duration = .seconds(2),
+        _ predicate: @escaping @MainActor () -> Bool
+    ) async throws {
+        let deadline = ContinuousClock.now + timeout
+        while ContinuousClock.now < deadline {
+            if predicate() { return }
+            try await Task.sleep(for: .milliseconds(20))
+        }
+        Issue.record("Timed out waiting for condition")
     }
 
     private func makeFixture() throws -> Fixture {
