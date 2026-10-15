@@ -25,7 +25,7 @@ Refine offers a conservative edit. Compare Suggested and Original before accepti
 Keep original dismisses the proposal without changing your text.
 Discard has Undo while Rasc remains running; it does not introduce a Trash system.
 
-![Rasc scratchpad in dark mode, using a synthetic thought](docs/images/scratchpad.png)
+![Empty Rasc scratchpad in light mode](docs/images/scratchpad.png)
 
 Rasc 0.1.1. Refine is optional; screenshots are not certification of a notarized release artifact.
 
