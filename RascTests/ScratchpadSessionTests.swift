@@ -51,7 +51,11 @@ struct ScratchpadSessionTests {
         session.text = "latest version"
         session.scheduleAutosave()
 
-        try await Task.sleep(for: .milliseconds(300))
+        // Persistence resumes on MainActor after the debounce. A busy CI runner
+        // can delay that continuation beyond a fixed 300 ms sleep.
+        try await waitUntil {
+            fixture.userDefaults.string(forKey: "activeNoteID") != nil
+        }
 
         #expect(try await fixture.repository.fetchMostRecent()?.content == "latest version")
         #expect(fixture.userDefaults.string(forKey: "activeNoteID") != nil)

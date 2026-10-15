@@ -68,6 +68,8 @@ python3 Scripts/test-domain.py
 This fallback excludes five native window suites. It does not verify keyboard
 focus, VoiceOver, fullscreen, Spaces, Stage Manager, or multiple monitors.
 Use the [current manual checklist](docs/NATIVE-UI-VALIDATION.md) for those.
+The harness runs the scale benchmarks separately from functional tests to avoid
+concurrent-suite contention; their original performance thresholds remain intact.
 
 ## Privacy and boundaries
 

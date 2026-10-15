@@ -51,4 +51,12 @@ let package = Package(name: "RascDomainVerification", platforms: [.macOS(.v14)],
 ])
 ''')
 print("Running actual sources and domain tests. Five native window suites require Xcode.", flush=True)
-raise SystemExit(subprocess.call(["xcrun", "swift", "test", "--package-path", str(work)], cwd=ROOT))
+# Swift Testing schedules independent suites concurrently. Keep the wall-clock
+# benchmarks in their own process so unrelated tests cannot consume their budget.
+# Both invocations retain every original assertion and performance threshold.
+command = ["xcrun", "swift", "test", "--package-path", str(work)]
+functional_status = subprocess.call(command + ["--skip", "AppReliabilityScaleTests"], cwd=ROOT)
+benchmark_status = subprocess.call(
+    command + ["--skip-build", "--filter", "AppReliabilityScaleTests"], cwd=ROOT
+)
+raise SystemExit(functional_status or benchmark_status)
