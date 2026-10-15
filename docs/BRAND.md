@@ -50,3 +50,23 @@ Orb gradient or selection token. Use shared RascSurfacePalette/metrics/motion.
 Keep the editor solid. Materials must respect Reduce Transparency; borders and
 focus must remain readable with Increase Contrast. Validate the rendered result,
 not merely the presence of a modifier.
+
+## Home identity at native small sizes
+
+Home uses `RascLogoCompact` at 24 pt instead of reducing the 512px logo to
+20 pt. The compact imageset supplies 24px (1x) and 48px (Retina 2x) representations
+for both appearances. They are exported directly from the same retained source
+alpha by `Scripts/assets/export-brand.swift`; no new silhouette, colors or
+Thinking Orb behavior is introduced. The existing large logo and AppIcon exports
+are unchanged. Onboarding continues using the large representation.
+
+Debug and Release builds succeeded. The compiled asset catalog contains all four expected
+appearance/scale combinations. Native SwiftUI ImageRenderer checks used the real
+`RascLogo` component and compiled catalog in light/dark at 1x/2x. PNG comparisons
+and asset checks are in `docs/validation/home-logo/`. The 1x perimeter has faint
+anti-aliasing coverage (maximum 59/255); no opaque silhouette reaches the edge.
+Retina perimeters are fully transparent. The Home, theme selection and search
+focus were also checked in the isolated native Release app. VoiceOver and the
+full native window suite were not revalidated locally. Release 0.1.1/build 7 is
+installed at `/Applications/Rasc.app`; the retained DMG and previous installation
+are documented in `docs/validation/home-logo/README.md`.

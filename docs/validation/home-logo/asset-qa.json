@@ -1,0 +1,34 @@
+[
+  {
+    "file": "rasc-dark.png",
+    "width": 24,
+    "height": 24,
+    "appearance": "light",
+    "borderMaxAlpha": 59,
+    "opaqueSilhouetteTouchesBorder": false
+  },
+  {
+    "file": "rasc-dark@2x.png",
+    "width": 48,
+    "height": 48,
+    "appearance": "light",
+    "borderMaxAlpha": 0,
+    "opaqueSilhouetteTouchesBorder": false
+  },
+  {
+    "file": "rasc-light.png",
+    "width": 24,
+    "height": 24,
+    "appearance": "dark",
+    "borderMaxAlpha": 59,
+    "opaqueSilhouetteTouchesBorder": false
+  },
+  {
+    "file": "rasc-light@2x.png",
+    "width": 48,
+    "height": 48,
+    "appearance": "dark",
+    "borderMaxAlpha": 0,
+    "opaqueSilhouetteTouchesBorder": false
+  }
+]

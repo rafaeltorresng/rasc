@@ -1,6 +1,6 @@
 # Rasc Release Workflow
 
-> Current source candidate: **0.1.0, build 6**. The frozen beta.3/build 4 artifact predates these changes and must not be overwritten or renamed as 0.1.0. **v0.1 public release** can ship as **open source + unsigned DMG** ([PUBLISH-0.1.md](PUBLISH-0.1.md), [INSTALL-UNSIGNED.md](INSTALL-UNSIGNED.md)). **Developer ID + notarization** below is optional and improves Gatekeeper UX for download-only users.
+> Current release: **0.1.1, build 7**. The published v0.1.0/build 6 artifact is retained unchanged. The frozen beta.3/build 4 artifact predates these changes and must not be overwritten or renamed as 0.1.0. **v0.1 public release** can ship as **open source + unsigned DMG** ([PUBLISH-0.1.md](PUBLISH-0.1.md), [INSTALL-UNSIGNED.md](INSTALL-UNSIGNED.md)). **Developer ID + notarization** below is optional and improves Gatekeeper UX for download-only users.
 
 
 This document describes how to produce a signed, sandboxed, notarized direct-distribution build of Rasc outside Xcode.
@@ -13,8 +13,8 @@ Sparkle and automatic updates are intentionally out of scope for this milestone.
 | --- | --- |
 | Product name | Rasc |
 | Bundle identifier | `com.rafaeltorres.rasc` |
-| Marketing version | `0.1.0` (publication candidate) |
-| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`6` for this candidate) |
+| Marketing version | `0.1.1` |
+| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`7` for this release) |
 | Deployment target | macOS 14.0 |
 | First public artifact | Apple silicon (`arm64`); `archive.sh` fixes the architecture |
 | Hardened Runtime | Enabled for Debug and Release |

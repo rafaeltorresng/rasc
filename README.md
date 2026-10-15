@@ -27,7 +27,7 @@ Discard has Undo while Rasc remains running; it does not introduce a Trash syste
 
 ![Rasc scratchpad in dark mode, using a synthetic thought](docs/images/scratchpad.png)
 
-Rasc 0.1.0 source candidate. Refine is optional; screenshots are not certification of a notarized release artifact.
+Rasc 0.1.1. Refine is optional; screenshots are not certification of a notarized release artifact.
 
 ## Requirements and installation
 
@@ -36,7 +36,7 @@ Rasc 0.1.0 source candidate. Refine is optional; screenshots are not certificati
   enabled, and its on-device model ready. Rasc remains useful when Refine is unavailable.
 - **Development:** Xcode 26.2 or later, Swift 6, and the macOS 26 SDK.
 
-This source revision is **0.1.0, build 6**. Public distribution for v0.1 is **open
+This source revision is **0.1.1, build 7**. Public distribution is **open
 source first**, with an optional **unsigned** Release DMG on GitHub (not notarized;
 macOS will ask you to allow the app on first open). See
 [installing the unsigned DMG](docs/INSTALL-UNSIGNED.md).

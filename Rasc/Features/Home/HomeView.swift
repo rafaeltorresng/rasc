@@ -147,8 +147,8 @@ struct HomeView: View {
     private var actionZone: some View {
         HStack(alignment: .center, spacing: HomeLayout.actionZoneSpacing) {
             HStack(spacing: HomeLayout.identitySpacing) {
-                RascLogo(size: RascSurfaceLayout.orbSize)
-                    .frame(width: RascSurfaceLayout.orbSize, height: RascSurfaceLayout.orbSize)
+                RascLogo(size: RascLogo.compactSize)
+                    .frame(width: RascLogo.compactSize, height: RascLogo.compactSize)
 
                 Text("Rasc")
                     .font(.system(size: 14, weight: .semibold))

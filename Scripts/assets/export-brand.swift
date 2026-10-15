@@ -89,6 +89,20 @@ for (name, color) in [("rasc-dark", graphite), ("rasc-light", white)] {
     let output = context(512)
     drawSymbol(in: output, rect: CGRect(x: 16, y: 16, width: 480, height: 480), color: color)
     export(output.makeImage()!, to: "\(assets)/RascLogo.imageset/\(name).png")
+    // Home renders the identity at 24 pt. Export its exact backing sizes directly
+    // from the retained source alpha, avoiding a second runtime reduction of 512 px.
+    for scale in [1, 2] {
+        let edge = 24 * scale
+        let compact = context(edge)
+        let inset = CGFloat(edge) / 32
+        drawSymbol(in: compact,
+                   rect: CGRect(x: inset, y: inset,
+                                width: CGFloat(edge) - inset * 2,
+                                height: CGFloat(edge) - inset * 2),
+                   color: color)
+        let suffix = scale == 2 ? "@2x" : ""
+        export(compact.makeImage()!, to: "\(assets)/RascLogoCompact.imageset/\(name)\(suffix).png")
+    }
 }
 for points in [16, 32, 128, 256, 512] {
     for scale in [1, 2] {
@@ -109,4 +123,4 @@ for points in [16, 32, 128, 256, 512] {
         export(output.makeImage()!, to: "\(assets)/AppIcon.appiconset/icon_\(points)x\(points)\(suffix).png")
     }
 }
-print("Exported logo appearances and 10 AppIcon sizes from the canonical symbol alpha.")
+print("Exported logo appearances, compact 1x/2x logos and 10 AppIcon sizes from the canonical symbol alpha.")
