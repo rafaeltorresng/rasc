@@ -371,6 +371,7 @@ final class ScratchpadSession {
         activeNoteKeptAt = nil
         activeNoteStore.noteID = nil
         text = ""
+        requestEditorFocus()
     }
 
     func openSearch() async throws {

@@ -172,6 +172,40 @@ struct PanelControllerTests {
     }
 
     @Test
+    func startNewScratchUsesTheSameEntryPointAsCommandN() async throws {
+        let controller = try makeController()
+        defer { controller.panel.orderOut(nil) }
+        controller.scratchpadSession.text = "previous thought"
+        let focusBefore = controller.scratchpadSession.focusRequest
+
+        await controller.startNewScratch()
+
+        #expect(controller.scratchpadSession.text.isEmpty)
+        #expect(controller.scratchpadSession.surface == .editor)
+        #expect(controller.scratchpadSession.focusRequest > focusBefore)
+        #expect(controller.scratchpadSession.saveErrorMessage == nil)
+        #expect(controller.scratchpadSession.isActiveNoteKept == false)
+        let stored = try #require(try await controller.repository.fetchMostRecent())
+        #expect(stored.content == "previous thought")
+        #expect(stored.isKept == false)
+    }
+
+    @Test
+    func startNewScratchKeepsTheVisibleScratchWhenPersistenceFails() async throws {
+        let controller = try makeController()
+        defer { controller.panel.orderOut(nil) }
+        controller.scratchpadSession.text = "do not lose this"
+        try await controller.scratchpadSession.flush()
+        try controller.repository.closeForTesting()
+
+        await controller.startNewScratch()
+
+        #expect(controller.scratchpadSession.text == "do not lose this")
+        #expect(controller.scratchpadSession.saveErrorMessage == "Couldn't save locally.")
+        #expect(controller.scratchpadSession.isActiveNoteKept == false)
+    }
+
+    @Test
     func searchFieldRoutesNativeNavigationAndSubmitCommands() {
         var commands: [HistorySearchCommand] = []
         let searchField = HistorySearchTextField(
