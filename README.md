@@ -8,6 +8,31 @@ No account, folders, prompts, or organization required.
 
 <p><img src="Rasc/Resources/Assets.xcassets/AppIcon.appiconset/icon_128x128@2x.png" width="96" alt="Rasc app icon"></p>
 
+## Start here
+
+- **Install the app:** follow the [installation guide](docs/INSTALL-UNSIGNED.md),
+  including the checksum and first-launch steps for the unsigned DMG.
+- **Build from source or contribute:** see [Build and test](#build-and-test)
+  and [Contributing](CONTRIBUTING.md).
+
+## Your first thought
+
+After installing and opening Rasc:
+
+1. Press `⌥\` (Option + backslash) to open the scratchpad and type a thought.
+2. Press `Esc` to hide it. Press `⌥\` again to continue the same thought.
+3. When you want to keep it, press `⇧⌘K` (Shift + Command + K). Rasc keeps the
+   thought and returns you to work; the next capture starts fresh.
+4. Press `⌘⌥\` (Command + Option + backslash) to open Home and find it again.
+
+Refine is optional: with a thought open, press `⌘J` to request an edit when
+available. Compare Suggested and Original before accepting, or choose **Keep
+original** to leave your text unchanged. You can complete all four steps above
+without Apple Intelligence.
+
+Rasc lives in the menu bar and has no Dock icon. Its menu also provides **Open
+Home**, **New Scratch**, **Search thoughts**, and **Settings**.
+
 ## Using Rasc
 
 | Action | Default shortcut |

@@ -1,11 +1,14 @@
 # Current Rasc product
 
-**Source candidate:** 0.1.0, build 6 · 13 October 2026.
-This describes the implementation; public release still requires a signed, notarized DMG.
+This describes the current implementation. See the [repository README](../README.md#requirements-and-installation)
+for the source version and requirements, and [GitHub Releases](https://github.com/rafaeltorresng/rasc/releases)
+for published artifacts. Public distribution is open source first, with an optional
+unsigned (ad-hoc signed, not notarized) DMG. Developer ID signing and notarization
+are optional improvements; see the [release workflow](RELEASE.md).
 
 Rasc is **a scratchpad for unfinished thoughts**: the place before the note.
 The core flow is Invoke → Capture → optional Refine → Keep → return to work.
-The project is intended to be open source under MIT. GitHub is source/transparency;
+The project is open source under MIT. GitHub is source/transparency;
 download remains the primary product action when a verified artifact is available.
 Private-beta access requests, checkout and licensing are not current priorities.
 
