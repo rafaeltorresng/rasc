@@ -10,6 +10,7 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
     case findNote
     case openHome
     case refine
+    case keyboardShortcuts
     case settings
 
     var id: String { rawValue }
@@ -34,6 +35,8 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             "Open Home"
         case .refine:
             "Refine"
+        case .keyboardShortcuts:
+            "Keyboard Shortcuts"
         case .settings:
             "Settings"
         }
@@ -42,7 +45,7 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
     var shortcutLabel: String {
         switch self {
         case .keep:
-            "⇧⌘K"
+            RascShortcutCatalog.keep.shortcut
         case .unkeep:
             ""
         case .copyNote:
@@ -52,16 +55,27 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
         case .discardNote:
             ""
         case .newScratch:
-            "⌘N"
+            RascShortcutCatalog.newScratch.shortcut
         case .findNote:
-            "⌘P"
+            RascShortcutCatalog.searchThoughts.shortcut
         case .openHome:
+            // Search alias for the documented default. Visible surfaces use the stored shortcut.
             "⌘⌥\\"
         case .refine:
-            "⌘J"
+            RascShortcutCatalog.refine.shortcut
+        case .keyboardShortcuts:
+            ""
         case .settings:
-            "⌘,"
+            RascShortcutCatalog.settings.shortcut
         }
+    }
+
+    @MainActor
+    func displayedShortcutLabel() -> String {
+        if self == .openHome {
+            return GlobalShortcutFormatting.currentHomeShortcutDisplay()
+        }
+        return shortcutLabel
     }
 
     var accessibilityHint: String {
@@ -84,6 +98,8 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             "Opens Rasc Home"
         case .refine:
             "Refines the current note"
+        case .keyboardShortcuts:
+            "Opens keyboard shortcut settings"
         case .settings:
             "Opens Rasc settings"
         }
@@ -109,10 +125,18 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             commands.append(.discardNote)
         }
 
-        commands.append(contentsOf: [.newScratch, .findNote, .openHome, .refine, .settings])
+        commands.append(contentsOf: [
+            .newScratch,
+            .findNote,
+            .openHome,
+            .refine,
+            .keyboardShortcuts,
+            .settings
+        ])
         return commands
     }
 
+    @MainActor
     static func filtered(
         by query: String,
         in commands: [PaletteCommand]
@@ -127,7 +151,7 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
 
         return commands.filter { command in
             let alias = command == .findNote ? "Find Note" : ""
-            let haystack = "\(command.title) \(command.shortcutLabel) \(alias)".folding(
+            let haystack = "\(command.title) \(command.displayedShortcutLabel()) \(command.shortcutLabel) \(alias)".folding(
                 options: [.diacriticInsensitive, .caseInsensitive],
                 locale: .current
             )

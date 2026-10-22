@@ -55,6 +55,7 @@ struct SettingsView: View {
     private let supportedLocales: any RefineSupportedLocaleDiscovering
 
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var selectedTheme: AppTheme = .system
     @State private var launchAtLogin = false
     @State private var loginItemState = LoginItemState.disabled
@@ -71,6 +72,8 @@ struct SettingsView: View {
         isUsingFallback: false,
         unsupportedSavedLocaleIdentifier: nil
     )
+    @State private var globalShortcutRevision = 0
+    @State private var shortcutRestoreMessage: String?
 
     init(
         refinementProvider: any RefinementProvider = FoundationModelsRefinementProvider(),
@@ -87,6 +90,23 @@ struct SettingsView: View {
     }
 
     var body: some View {
+        let _ = globalShortcutRevision
+        ScrollViewReader { proxy in
+            settingsForm
+                .onAppear {
+                    scrollToKeyboardShortcutsIfNeeded(proxy)
+                }
+                .onReceive(NotificationCenter.default.publisher(for: SettingsNavigation.revealNotification)) { _ in
+                    scrollToKeyboardShortcutsIfNeeded(proxy)
+                }
+        }
+        .onGlobalShortcutChange {
+            globalShortcutRevision += 1
+            shortcutRestoreMessage = nil
+        }
+    }
+
+    private var settingsForm: some View {
         Form {
             Section("General") {
                 Picker("Theme", selection: $selectedTheme) {
@@ -99,11 +119,6 @@ struct SettingsView: View {
                     themeSettings.save(theme)
                     AppThemeApplicator.apply(theme)
                 }
-
-                KeyboardShortcuts.Recorder(
-                    "Global shortcut:",
-                    name: .toggleScratchpad
-                )
 
                 Toggle("Launch at Login", isOn: $launchAtLogin)
                     .onChange(of: launchAtLogin) { _, isEnabled in
@@ -129,6 +144,8 @@ struct SettingsView: View {
                 }
             }
             .listRowBackground(settingsSectionBackground)
+
+            keyboardShortcutsSection
 
             Section("Refine") {
                 LabeledContent(refineStatus.headline) {
@@ -193,6 +210,140 @@ struct SettingsView: View {
             selectedTheme = themeSettings.load()
             refreshLaunchAtLoginState()
             refreshLanguageSettings()
+        }
+    }
+
+    private var keyboardShortcutsSection: some View {
+        Section {
+            shortcutCategory(
+                "Global Shortcuts",
+                detail: "Available from anywhere on your Mac."
+            )
+
+            KeyboardShortcuts.Recorder("Toggle Scratchpad", name: .toggleScratchpad)
+                .shortcutValidation { shortcut in
+                    GlobalShortcutPolicy.validation(
+                        proposed: shortcut,
+                        other: .toggleHome,
+                        otherTitle: "Toggle Home"
+                    )
+                }
+                .accessibilityHint("Editable global shortcut")
+
+            Button("Restore Default") {
+                restoreGlobalShortcut(
+                    .toggleScratchpad,
+                    other: .toggleHome,
+                    title: "Toggle Scratchpad",
+                    otherTitle: "Toggle Home"
+                )
+            }
+            .disabled(GlobalShortcutPolicy.isUsingInitialShortcut(.toggleScratchpad))
+            .accessibilityLabel("Restore Toggle Scratchpad")
+            .accessibilityHint("Returns Toggle Scratchpad to its default shortcut")
+
+            KeyboardShortcuts.Recorder("Toggle Home", name: .toggleHome)
+                .shortcutValidation { shortcut in
+                    GlobalShortcutPolicy.validation(
+                        proposed: shortcut,
+                        other: .toggleScratchpad,
+                        otherTitle: "Toggle Scratchpad"
+                    )
+                }
+                .accessibilityHint("Editable global shortcut")
+
+            Button("Restore Default") {
+                restoreGlobalShortcut(
+                    .toggleHome,
+                    other: .toggleScratchpad,
+                    title: "Toggle Home",
+                    otherTitle: "Toggle Scratchpad"
+                )
+            }
+            .disabled(GlobalShortcutPolicy.isUsingInitialShortcut(.toggleHome))
+            .accessibilityLabel("Restore Toggle Home")
+            .accessibilityHint("Returns Toggle Home to its default shortcut")
+
+            if let shortcutRestoreMessage {
+                Text(shortcutRestoreMessage)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            shortcutCategory(
+                "Inside Rasc",
+                detail: "Shortcuts for working with your thoughts."
+            )
+
+            ForEach(RascShortcutCatalog.insideRasc) { entry in
+                insideRascShortcutRow(entry)
+            }
+        } header: {
+            Text("Keyboard Shortcuts")
+        }
+        .id(SettingsNavigation.keyboardShortcutsID)
+        .listRowBackground(settingsSectionBackground)
+    }
+
+    private func shortcutCategory(_ title: String, detail: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+                .font(.subheadline.weight(.semibold))
+                .accessibilityAddTraits(.isHeader)
+            Text(detail)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    private func insideRascShortcutRow(_ entry: RascShortcutEntry) -> some View {
+        LabeledContent {
+            Text(entry.shortcut)
+                .font(.body.monospaced())
+                .foregroundStyle(.primary)
+                .layoutPriority(1)
+        } label: {
+            VStack(alignment: .leading, spacing: 1) {
+                Text(entry.title)
+                if let detail = entry.detail {
+                    Text(detail)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(entry.title), \(entry.shortcut)")
+        .accessibilityHint(entry.detail.map { "\($0). Not customizable." } ?? "Not customizable.")
+    }
+
+    private func restoreGlobalShortcut(
+        _ name: KeyboardShortcuts.Name,
+        other: KeyboardShortcuts.Name,
+        title: String,
+        otherTitle: String
+    ) {
+        if GlobalShortcutPolicy.restoreDefault(name, other: other) {
+            shortcutRestoreMessage = nil
+        } else {
+            shortcutRestoreMessage = "\(title) can't return to its default while \(otherTitle) uses that shortcut."
+        }
+    }
+
+    private func scrollToKeyboardShortcutsIfNeeded(_ proxy: ScrollViewProxy) {
+        guard SettingsNavigation.consumeKeyboardShortcutsRequest() else { return }
+        let scroll = {
+            proxy.scrollTo(SettingsNavigation.keyboardShortcutsID, anchor: .top)
+        }
+        if reduceMotion {
+            scroll()
+        } else {
+            withAnimation(.easeOut(duration: 0.2)) {
+                scroll()
+            }
         }
     }
 

@@ -32,12 +32,12 @@ struct OnboardingScratchpadOverlay: View {
                         .transition(.opacity)
                 } else if guidance.showEscapeHint {
                     HStack(spacing: 18) {
-                        hintRow(symbol: "⇧⌘K", text: "Keep and return to work")
-                        hintRow(symbol: "Esc", text: "Hide and continue later")
+                        hintRow(symbol: RascShortcutCatalog.keep.shortcut, text: "Keep and return to work")
+                        hintRow(symbol: RascShortcutCatalog.hideScratchpad.shortcut, text: "Hide and continue later")
                     }
                         .transition(hintTransition)
                 } else if guidance.showRefineHint {
-                    hintRow(symbol: "⌘J", text: "Refine")
+                    hintRow(symbol: RascShortcutCatalog.refine.shortcut, text: "Refine")
                         .transition(hintTransition)
                 } else if guidance.showEmptyHint && editorText.isEmpty && showDelayedEmptyHint {
                     emptyHint

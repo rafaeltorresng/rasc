@@ -442,6 +442,9 @@ final class PanelController: NSObject, NSWindowDelegate {
         case .openHome:
             session.closeCommandPalette()
             onOpenHome?()
+        case .keyboardShortcuts:
+            session.closeCommandPalette()
+            SettingsNavigation.revealKeyboardShortcuts()
         case .settings:
             session.closeCommandPalette()
             onOpenSettings?()

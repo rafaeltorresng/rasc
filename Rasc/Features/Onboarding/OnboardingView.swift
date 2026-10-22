@@ -19,8 +19,10 @@ struct OnboardingView: View {
     @Environment(\.colorScheme) private var colorScheme
     @FocusState private var welcomeFocused: Bool
     @FocusState private var completionFocused: Bool
+    @State private var globalShortcutRevision = 0
 
     var body: some View {
+        let _ = globalShortcutRevision
         ZStack {
             OnboardingBackground()
 
@@ -76,6 +78,7 @@ struct OnboardingView: View {
         .onChange(of: coordinator.captureSubstep) {
             focusCurrentStep()
         }
+        .onGlobalShortcutChange { globalShortcutRevision += 1 }
     }
 
     private var showsOnboardingSkip: Bool {
@@ -330,7 +333,7 @@ struct OnboardingView: View {
                     .foregroundStyle(onboardingSecondaryText)
 
                 ShortcutKeycapView(
-                    label: PaletteCommand.openHome.shortcutLabel,
+                    label: GlobalShortcutFormatting.currentHomeShortcutDisplay(),
                     style: .compact
                 )
             }

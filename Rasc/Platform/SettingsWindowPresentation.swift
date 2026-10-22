@@ -2,6 +2,29 @@ import AppKit
 import SwiftUI
 
 @MainActor
+enum SettingsNavigation {
+    static let keyboardShortcutsID = "keyboard-shortcuts"
+    static let revealNotification = Notification.Name("RascSettingsRevealKeyboardShortcuts")
+    private static var pendingKeyboardShortcuts = false
+
+    static func revealKeyboardShortcuts() {
+        prepareKeyboardShortcutsReveal()
+        SettingsWindowPresentation.present()
+    }
+
+    static func prepareKeyboardShortcutsReveal() {
+        pendingKeyboardShortcuts = true
+        NotificationCenter.default.post(name: revealNotification, object: nil)
+    }
+
+    static func consumeKeyboardShortcutsRequest() -> Bool {
+        let pending = pendingKeyboardShortcuts
+        pendingKeyboardShortcuts = false
+        return pending
+    }
+}
+
+@MainActor
 enum SettingsWindowPresentation {
     private static let settingsFrameAutosaveName = "com.apple.SwiftUI.Settings"
     private static var didInstallObservers = false

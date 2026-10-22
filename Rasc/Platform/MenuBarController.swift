@@ -1,4 +1,5 @@
 import AppKit
+import KeyboardShortcuts
 
 @MainActor
 protocol MenuBarControllerDelegate: AnyObject {
@@ -14,13 +15,14 @@ protocol MenuBarControllerDelegate: AnyObject {
 }
 
 @MainActor
-final class MenuBarController {
+final class MenuBarController: NSObject, NSMenuDelegate {
     private let statusItem: NSStatusItem
     private weak var delegate: MenuBarControllerDelegate?
 
     init(delegate: MenuBarControllerDelegate) {
         self.delegate = delegate
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        super.init()
         configureMenu()
     }
 
@@ -37,13 +39,15 @@ final class MenuBarController {
 
         let menu = NSMenu()
         menu.autoenablesItems = false
+        menu.delegate = self
 
-        menu.addItem(makeItem(
+        let home = makeItem(
             title: "Open Home",
             action: #selector(openRasc),
-            keyEquivalent: "\\",
-            modifierMask: [.command, .option]
-        ))
+            keyEquivalent: ""
+        )
+        home.setShortcut(for: .toggleHome)
+        menu.addItem(home)
         menu.addItem(makeItem(
             title: "New Scratch",
             action: #selector(newScratch),
@@ -97,6 +101,14 @@ final class MenuBarController {
         item.target = self
         item.keyEquivalentModifierMask = modifierMask
         return item
+    }
+
+    func menuWillOpen(_ menu: NSMenu) {
+        KeyboardShortcuts.disable(.toggleScratchpad, .toggleHome)
+    }
+
+    func menuDidClose(_ menu: NSMenu) {
+        KeyboardShortcuts.enable(.toggleScratchpad, .toggleHome)
     }
 
     @objc private func openRasc() {

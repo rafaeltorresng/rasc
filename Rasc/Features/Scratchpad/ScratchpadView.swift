@@ -8,6 +8,7 @@ struct ScratchpadView: View {
     @Environment(\.undoManager) private var undoManager
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var globalShortcutRevision = 0
 
     let onEscape: () -> Void
     let onPaletteCommand: (PaletteCommand) -> Void
@@ -16,6 +17,7 @@ struct ScratchpadView: View {
     let onUnkeep: () -> Void
 
     var body: some View {
+        let _ = globalShortcutRevision
         VStack(spacing: 0) {
             if showsScratchpadChrome {
                 scratchpadChrome
@@ -32,6 +34,7 @@ struct ScratchpadView: View {
         .scratchpadCanvas()
         .registersSettingsOpenAction()
         .presentsSettings(on: session.settingsPresentationRequest)
+        .onGlobalShortcutChange { globalShortcutRevision += 1 }
         .animation(RascMotion.micro(reduceMotion: reduceMotion), value: session.message)
         .safeAreaInset(edge: .bottom, spacing: 0) {
             if let saveErrorMessage = session.saveErrorMessage {
@@ -151,17 +154,17 @@ struct ScratchpadView: View {
             if showsRefineAction {
                 ScratchpadChromeButton(
                     title: "New",
-                    shortcut: PaletteCommand.newScratch.shortcutLabel,
+                    shortcut: RascShortcutCatalog.newScratch.shortcut,
                     action: { onPaletteCommand(.newScratch) }
                 )
                 .accessibilityLabel("New Scratch")
                 .accessibilityHint(PaletteCommand.newScratch.accessibilityHint)
-                .help("New Scratch (\(PaletteCommand.newScratch.shortcutLabel))")
+                .help("New Scratch (\(RascShortcutCatalog.newScratch.shortcut))")
                 .transition(.opacity)
 
                 ScratchpadChromeButton(
                     title: "Refine",
-                    shortcut: "⌘J",
+                    shortcut: RascShortcutCatalog.refine.shortcut,
                     action: { session.startRefinement() }
                 )
                 .keyboardShortcut("j", modifiers: .command)
@@ -177,7 +180,7 @@ struct ScratchpadView: View {
                 } else if session.hasPersistableContent {
                     ScratchpadChromeButton(
                         title: "Keep",
-                        shortcut: "⇧⌘K",
+                        shortcut: RascShortcutCatalog.keep.shortcut,
                         isPrimary: true,
                         action: onKeep
                     )
@@ -199,7 +202,7 @@ struct ScratchpadView: View {
             systemName: "house",
             action: onOpenHome
         )
-        .help("Open Home (⌘⌥\\)")
+        .help("Open Home (\(GlobalShortcutFormatting.currentHomeShortcutDisplay()))")
         .accessibilityLabel("Open Rasc Home")
     }
 
@@ -317,7 +320,7 @@ struct ScratchpadView: View {
                 Button {
                     _ = session.handleEscape()
                 } label: {
-                    RefinementActionLabel(title: "Keep original", shortcut: "Esc")
+                    RefinementActionLabel(title: "Keep original", shortcut: RascShortcutCatalog.keepOriginal.shortcut)
                 }
                 .buttonStyle(.plain)
                 .keyboardShortcut(.cancelAction)
@@ -330,7 +333,7 @@ struct ScratchpadView: View {
                         try? await session.acceptRefinement(undoManager: undoManager)
                     }
                 } label: {
-                    RefinementActionLabel(title: "Accept suggestion", shortcut: "↵", isPrimary: true)
+                    RefinementActionLabel(title: "Accept suggestion", shortcut: RascShortcutCatalog.acceptSuggestion.shortcut, isPrimary: true)
                 }
                 .buttonStyle(.plain)
                 .keyboardShortcut(.defaultAction)
