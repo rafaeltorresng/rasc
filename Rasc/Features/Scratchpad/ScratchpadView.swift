@@ -137,6 +137,7 @@ struct ScratchpadView: View {
             Spacer(minLength: 8)
 
             scratchpadTrailingActions
+                .layoutPriority(1)
         }
         .padding(.horizontal, RascSurfaceLayout.horizontalInset)
         .padding(.top, RascSurfaceLayout.topInset)
@@ -148,6 +149,16 @@ struct ScratchpadView: View {
     private var scratchpadTrailingActions: some View {
         HStack(spacing: 2) {
             if showsRefineAction {
+                ScratchpadChromeButton(
+                    title: "New",
+                    shortcut: PaletteCommand.newScratch.shortcutLabel,
+                    action: { onPaletteCommand(.newScratch) }
+                )
+                .accessibilityLabel("New Scratch")
+                .accessibilityHint(PaletteCommand.newScratch.accessibilityHint)
+                .help("New Scratch (\(PaletteCommand.newScratch.shortcutLabel))")
+                .transition(.opacity)
+
                 ScratchpadChromeButton(
                     title: "Refine",
                     shortcut: "⌘J",
