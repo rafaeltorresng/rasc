@@ -18,12 +18,12 @@ Run the **Rasc** scheme (Debug is fine for personal use). See the repository REA
 
 ## Install the unsigned DMG
 
-1. Download `Rasc-0.1.2-unsigned.dmg` and `Rasc-0.1.2-unsigned.dmg.sha256` from the
+1. Download `Rasc-0.1.3-unsigned.dmg` and `Rasc-0.1.3-unsigned.dmg.sha256` from the
    GitHub Release for the version you trust.
 2. Verify the checksum:
 
    ```sh
-   shasum -a 256 -c Rasc-0.1.2-unsigned.dmg.sha256
+   shasum -a 256 -c Rasc-0.1.3-unsigned.dmg.sha256
    ```
 
 3. Open the DMG and drag **Rasc** to Applications.
