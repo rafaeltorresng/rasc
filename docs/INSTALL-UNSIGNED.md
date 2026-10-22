@@ -1,8 +1,8 @@
 # Installing Rasc without notarization
 
-Some Rasc releases are distributed as an **ad-hoc signed DMG**, not a **notarized**
-Developer ID build. The app is still built from the open-source project; macOS simply
-cannot tie it to a registered Apple developer.
+The release files labeled **unsigned** contain an **ad-hoc signed app**, not a
+Developer ID-signed or **notarized** build. macOS may block the first launch because
+it cannot verify the developer or check the app for malicious software.
 
 ## Before you start
 
@@ -12,18 +12,6 @@ cannot tie it to a registered Apple developer.
   Home and Search work without it.
 - Installing the DMG does **not** require Xcode. Building from source requires
   **Xcode 26.2 or later**, Swift 6, and the macOS 26 SDK.
-
-## Recommended: build from source
-
-If you have Xcode, this avoids Gatekeeper friction and matches the MIT license:
-
-```sh
-git clone https://github.com/rafaeltorresng/rasc.git
-cd rasc
-open Rasc.xcodeproj
-```
-
-Run the **Rasc** scheme (Debug is fine for personal use). See the repository README for tests.
 
 ## Install the unsigned DMG
 
@@ -43,24 +31,40 @@ Run the **Rasc** scheme (Debug is fine for personal use). See the repository REA
    open the DMG; download both files again from the official release. For another
    version, substitute that version's checksum filename in the command above.
 
-3. Open the DMG and drag **Rasc** to Applications.
-4. **First launch:** Finder may say the app cannot be opened because the developer
-   cannot be verified. Either:
-   - **Right-click** (or Control-click) **Rasc** in Applications → **Open**, then confirm; or
-   - **System Settings → Privacy & Security** → **Open Anyway** for Rasc.
+3. Open the DMG and drag **Rasc** to Applications, then open **Rasc** from
+   Applications.
+4. If macOS blocks it because the developer cannot be verified or Apple cannot
+   check it for malicious software, and you trust the download, open **System
+   Settings → Privacy & Security**. Scroll to the Rasc message, click **Open
+   Anyway**, and confirm **Open** when prompted. This option appears after you
+   attempt to open the app. See [Apple's first-launch guidance](https://support.apple.com/en-us/102445).
+5. Once open, Rasc lives in the menu bar, with no Dock icon. After quitting, open
+   it again from Applications.
 
-5. Later launches work normally from the menu bar.
+A matching checksum confirms that the download matches the published file; it is
+not a security review or notarization. If macOS reports malware or a damaged app,
+do not bypass that warning; see the Apple guidance above. Do not disable Gatekeeper
+globally to install Rasc.
 
 ## First use
 
 Follow [Your first thought](../README.md#your-first-thought) to capture, keep and
-retrieve a thought. Rasc runs in the menu bar, with no Dock icon.
+retrieve a thought.
+
+## Build from source
+
+If you prefer to build the app yourself, use Xcode 26.2 or later:
+
+```sh
+git clone https://github.com/rafaeltorresng/rasc.git
+cd rasc
+open Rasc.xcodeproj
+```
+
+Select the **Rasc** scheme and run a Debug build. See [Build and test](../README.md#build-and-test)
+for command-line builds and tests. Debug builds and the packaged app use separate
+note stores; see [Data and privacy](DATA-AND-PRIVACY.md) before switching between them.
 
 ## Privacy
 
 Rasc does not require an account. Notes stay on your Mac. See [Data and privacy](DATA-AND-PRIVACY.md).
-
-## Not a security bypass
-
-Only install DMGs whose SHA256 you verified from the official release page. Do not disable
-Gatekeeper globally or use third-party “crack” tools to open unknown binaries.
