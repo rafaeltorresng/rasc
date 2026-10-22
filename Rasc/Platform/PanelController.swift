@@ -105,7 +105,9 @@ final class PanelController: NSObject, NSWindowDelegate {
         do {
             try await session.startNewScratch()
         } catch {
-            session.markLoadFailed()
+            if session.saveErrorMessage == nil {
+                session.markLoadFailed()
+            }
         }
 
         presentPanel()
@@ -130,7 +132,9 @@ final class PanelController: NSObject, NSWindowDelegate {
         do {
             try await session.startNewScratch()
         } catch {
-            session.markLoadFailed()
+            if session.saveErrorMessage == nil {
+                session.markLoadFailed()
+            }
         }
 
         presentPanel()
