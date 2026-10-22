@@ -228,6 +228,210 @@ struct ScratchpadSessionTests {
     }
 
     @Test
+    func startNewScratchOnAnEmptyDraftDoesNotCreateANoteAndFocusesTheEditor() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "  \n\t "
+
+        try await session.startNewScratch()
+
+        #expect(session.text.isEmpty)
+        #expect(session.surface == .editor)
+        #expect(session.focusRequest == 1)
+        #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
+        #expect(fixture.userDefaults.string(forKey: "activeNoteID") == nil)
+    }
+
+    @Test
+    func startNewScratchPreservesAnUnfinishedThoughtWithoutKeepingIt() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "unfinished thought"
+
+        try await session.startNewScratch()
+
+        let stored = try #require(try await fixture.repository.fetchMostRecent())
+        #expect(stored.content == "unfinished thought")
+        #expect(stored.isKept == false)
+        #expect(session.text.isEmpty)
+        #expect(session.isActiveNoteKept == false)
+        #expect(fixture.userDefaults.string(forKey: "activeNoteID") == nil)
+
+        let recovered = try await session.openNote(id: stored.id)
+        #expect(recovered)
+        #expect(session.text == "unfinished thought")
+    }
+
+    @Test
+    func startNewScratchLeavesAKeptThoughtKeptAndRecoverable() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let kept = try await fixture.repository.createScratch(content: "already kept")
+        _ = try await fixture.repository.keep(id: kept.id)
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        let opened = try await session.openNote(id: kept.id)
+        #expect(opened)
+        #expect(session.isActiveNoteKept)
+
+        try await session.startNewScratch()
+
+        #expect(session.text.isEmpty)
+        #expect(session.isActiveNoteKept == false)
+        let stored = try #require(try await fixture.repository.fetch(id: kept.id))
+        #expect(stored.content == "already kept")
+        #expect(stored.isKept)
+        let recovered = try await session.openNote(id: kept.id)
+        #expect(recovered)
+        #expect(session.text == "already kept")
+        #expect(session.isActiveNoteKept)
+    }
+
+    @Test
+    func startNewScratchAfterRestorePreservesTheReopenedThought() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "hidden by escape"
+        try await session.flush()
+
+        let reopened = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        try await reopened.restore()
+        #expect(reopened.text == "hidden by escape")
+
+        try await reopened.startNewScratch()
+
+        #expect(reopened.text.isEmpty)
+        #expect(try await fixture.repository.fetchMostRecent()?.content == "hidden by escape")
+        #expect(try await fixture.repository.fetchMostRecent()?.isKept == false)
+    }
+
+    @Test
+    func startNewScratchDoesNotReplaceTheCurrentScratchWhenSaveFails() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "important unfinished text"
+        try await session.flush()
+        let focusBeforeFailure = session.focusRequest
+        try fixture.repository.closeForTesting()
+
+        await #expect(throws: (any Error).self) {
+            try await session.startNewScratch()
+        }
+
+        #expect(session.text == "important unfinished text")
+        #expect(session.saveErrorMessage != nil)
+        #expect(session.focusRequest == focusBeforeFailure)
+        let reopened = try NoteRepository(databaseURL: fixture.databaseURL)
+        #expect(try await reopened.fetchMostRecent()?.content == "important unfinished text")
+        #expect(try await reopened.fetchMostRecent()?.isKept == false)
+    }
+
+    @Test
+    func repeatedStartNewScratchPreservesTheOriginalThoughtOnce() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "first thought"
+        try await session.startNewScratch()
+        try await session.startNewScratch()
+
+        #expect(session.text.isEmpty)
+        let notes = try await fixture.repository.fetchAllNonDeleted()
+        #expect(notes.map(\.content) == ["first thought"])
+        #expect(notes.allSatisfy { !$0.isKept })
+    }
+
+    @Test
+    func startNewScratchDropsAPendingRefinementWithoutAcceptingIt() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let provider = HeaderNewScratchRefinementProvider()
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            refinementProvider: provider,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "rough note about deploy retry"
+        session.startRefinement()
+        try await waitUntil { session.surface == .refinementPreview }
+        #expect(session.refinementPreview?.result.text == "Suggested rewrite")
+
+        try await session.startNewScratch()
+        try await Task.sleep(for: .milliseconds(50))
+
+        #expect(session.text.isEmpty)
+        #expect(session.surface == .editor)
+        #expect(session.refinementPreview == nil)
+        #expect(session.message == nil)
+        let stored = try #require(try await fixture.repository.fetchMostRecent())
+        #expect(stored.content == "rough note about deploy retry")
+        #expect(try await fixture.repository.refinementRevisions(for: stored.id).isEmpty)
+    }
+
+    @Test
+    func startNewScratchCancelsAnInFlightRefinementWithoutApplyingIt() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let provider = HeaderNewScratchRefinementProvider(delay: .milliseconds(400))
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            refinementProvider: provider,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "rough note about deploy retry"
+        session.startRefinement()
+        try await waitUntil { session.surface == .refining }
+
+        try await session.startNewScratch()
+        try await Task.sleep(for: .milliseconds(500))
+
+        #expect(session.text.isEmpty)
+        #expect(session.surface == .editor)
+        #expect(session.refinementPreview == nil)
+        #expect(session.message == nil)
+        #expect(try await fixture.repository.fetchMostRecent()?.content == "rough note about deploy retry")
+    }
+
+    @Test
+    func escapeFromTheEditorPreservesTheCurrentThought() throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "still unfinished"
+
+        #expect(session.handleEscape() == false)
+        #expect(session.text == "still unfinished")
+        #expect(session.surface == .editor)
+    }
+
+    @Test
     func emptySearchShowsRecentNotes() async throws {
         let fixture = try makeFixture()
         defer { fixture.remove() }
@@ -430,6 +634,30 @@ struct ScratchpadSessionTests {
             repository: try NoteRepository(databaseURL: databaseURL),
             userDefaults: userDefaults,
             suiteName: suiteName
+        )
+    }
+}
+
+private struct HeaderNewScratchRefinementProvider: RefinementProvider {
+    let metadata = RefinementMetadata(
+        provider: "test",
+        modelIdentifier: "test",
+        promptVersion: "test"
+    )
+    var delay: Duration = .zero
+
+    func availability(for _: RefinementRequest) async -> RefinementAvailability {
+        .available
+    }
+
+    func refine(_: RefinementRequest) async throws -> RefinementResult {
+        if delay > .zero {
+            try await Task.sleep(for: delay)
+        }
+        return RefinementResult(
+            decision: .changed,
+            kind: .messyText,
+            text: "Suggested rewrite"
         )
     }
 }
