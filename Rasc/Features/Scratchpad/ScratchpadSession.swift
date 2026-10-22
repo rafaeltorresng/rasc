@@ -107,6 +107,7 @@ final class ScratchpadSession {
         canPerformCompletion: true
     )
     private(set) var selectedCommandIndex = 0
+    private(set) var commandPaletteQuery = ""
     private(set) var commandPaletteKeyFocusRequest = 0
     private(set) var saveErrorMessage: String?
     private(set) var completionFailure: CompletionFailure?
@@ -523,9 +524,29 @@ final class ScratchpadSession {
         guard acceptanceTask == nil else { return }
         dismissTransientSurfaces(except: .commandPalette)
         surface = .commandPalette
+        commandPaletteQuery = ""
         refreshPaletteCommands()
         selectedCommandIndex = 0
         requestCommandPaletteKeyFocus()
+    }
+
+    func insertCommandPaletteText(_ text: String) {
+        guard surface == .commandPalette, !text.isEmpty else { return }
+        commandPaletteQuery += text
+        refreshPaletteCommands()
+        selectedCommandIndex = 0
+    }
+
+    func deleteCommandPaletteText() {
+        guard surface == .commandPalette, !commandPaletteQuery.isEmpty else { return }
+        commandPaletteQuery.removeLast()
+        refreshPaletteCommands()
+        selectedCommandIndex = 0
+    }
+
+    func refreshCommandsForShortcutChange() {
+        guard surface == .commandPalette else { return }
+        refreshPaletteCommands()
     }
 
     func closeCommandPalette() {
@@ -991,12 +1012,19 @@ final class ScratchpadSession {
 
     private func resetCommandPaletteState() {
         surface = .editor
+        commandPaletteQuery = ""
         refreshPaletteCommands()
         selectedCommandIndex = 0
     }
 
     private func refreshPaletteCommands() {
-        filteredCommands = paletteCommandsForCurrentState()
+        filteredCommands = PaletteCommand.filtered(
+            by: commandPaletteQuery,
+            in: paletteCommandsForCurrentState()
+        )
+        if !filteredCommands.indices.contains(selectedCommandIndex) {
+            selectedCommandIndex = 0
+        }
     }
 
     private func paletteCommandsForCurrentState() -> [PaletteCommand] {

@@ -26,6 +26,8 @@ enum CommandPaletteCommand: Equatable {
 struct CommandPaletteKeyboardHandler: NSViewRepresentable {
     let focusRequest: Int
     let onCommand: (CommandPaletteCommand) -> Void
+    let onInsert: (String) -> Void
+    let onDelete: () -> Void
 
     func makeNSView(context: Context) -> CommandPaletteKeyView {
         let view = CommandPaletteKeyView()
@@ -35,6 +37,8 @@ struct CommandPaletteKeyboardHandler: NSViewRepresentable {
 
     func updateNSView(_ nsView: CommandPaletteKeyView, context: Context) {
         nsView.onCommand = onCommand
+        nsView.onInsert = onInsert
+        nsView.onDelete = onDelete
         nsView.claimFocus(for: focusRequest)
     }
 }
@@ -42,12 +46,36 @@ struct CommandPaletteKeyboardHandler: NSViewRepresentable {
 @MainActor
 final class CommandPaletteKeyView: NSView {
     var onCommand: ((CommandPaletteCommand) -> Void)?
+    var onInsert: ((String) -> Void)?
+    var onDelete: (() -> Void)?
     private var fulfilledFocusRequest = -1
 
     override var acceptsFirstResponder: Bool { true }
 
     override func keyDown(with event: NSEvent) {
+        let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        if modifiers.contains(.command) || modifiers.contains(.control) {
+            return
+        }
         interpretKeyEvents([event])
+    }
+
+    override func insertText(_ insertString: Any) {
+        let string: String
+        if let value = insertString as? String {
+            string = value
+        } else if let value = insertString as? NSAttributedString {
+            string = value.string
+        } else {
+            return
+        }
+        guard !string.isEmpty else { return }
+        guard string.unicodeScalars.allSatisfy({ !CharacterSet.controlCharacters.contains($0) }) else { return }
+        onInsert?(string)
+    }
+
+    override func deleteBackward(_ sender: Any?) {
+        onDelete?()
     }
 
     override func moveUp(_ sender: Any?) {
@@ -80,9 +108,11 @@ final class CommandPaletteKeyView: NSView {
 struct CommandPaletteView: View {
     @Bindable var session: ScratchpadSession
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var globalShortcutRevision = 0
     let onExecute: (PaletteCommand) -> Void
 
     var body: some View {
+        let _ = globalShortcutRevision
         VStack(spacing: 0) {
             paletteHeader
 
@@ -95,8 +125,14 @@ struct CommandPaletteView: View {
         .background {
             CommandPaletteKeyboardHandler(
                 focusRequest: session.commandPaletteKeyFocusRequest,
-                onCommand: handlePaletteCommand
+                onCommand: handlePaletteCommand,
+                onInsert: { session.insertCommandPaletteText($0) },
+                onDelete: { session.deleteCommandPaletteText() }
             )
+        }
+        .onGlobalShortcutChange {
+            globalShortcutRevision += 1
+            session.refreshCommandsForShortcutChange()
         }
         .onExitCommand {
             session.closeCommandPalette()
@@ -110,10 +146,12 @@ struct CommandPaletteView: View {
             RascOrb(state: .note, size: .inline, decorative: true)
                 .frame(width: RascSurfaceLayout.orbSize, height: RascSurfaceLayout.orbSize)
 
-            Text("Commands")
+            Text(session.commandPaletteQuery.isEmpty ? "Commands" : session.commandPaletteQuery)
                 .font(.system(size: 15, weight: .medium))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(session.commandPaletteQuery.isEmpty ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .accessibilityLabel(session.commandPaletteQuery.isEmpty ? "Commands" : "Command filter")
+                .accessibilityValue(session.commandPaletteQuery)
         }
         .padding(.horizontal, RascSurfaceLayout.horizontalInset)
         .padding(.top, RascSurfaceLayout.topInset)
@@ -122,17 +160,25 @@ struct CommandPaletteView: View {
 
     private var commandList: some View {
         VStack(spacing: RascSurfaceLayout.listRowSpacing) {
-            ForEach(Array(session.filteredCommands.enumerated()), id: \.element.id) { index, command in
-                Button {
-                    session.selectCommand(at: index)
-                    execute(command)
-                } label: {
-                    commandRow(command, isSelected: index == session.selectedCommandIndex)
+            if session.filteredCommands.isEmpty {
+                Text("No matching commands.")
+                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityLabel("No matching commands")
+            } else {
+                ForEach(Array(session.filteredCommands.enumerated()), id: \.element.id) { index, command in
+                    Button {
+                        session.selectCommand(at: index)
+                        execute(command)
+                    } label: {
+                        commandRow(command, isSelected: index == session.selectedCommandIndex)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(command.title)
+                    .accessibilityHint(command.accessibilityHint)
+                    .accessibilityAddTraits(index == session.selectedCommandIndex ? .isSelected : [])
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel(command.title)
-                .accessibilityHint(command.accessibilityHint)
-                .accessibilityAddTraits(index == session.selectedCommandIndex ? .isSelected : [])
             }
         }
         .padding(.horizontal, RascSurfaceLayout.horizontalInset)
@@ -148,7 +194,7 @@ struct CommandPaletteView: View {
                 .font(.system(size: RascSurfaceMetrics.searchTitleFontSize, weight: .medium))
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text(command.shortcutLabel)
+            Text(command.displayedShortcutLabel())
                 .font(.system(size: RascSurfaceMetrics.searchTimestampFontSize, design: .monospaced))
                 .foregroundStyle(.tertiary)
         }

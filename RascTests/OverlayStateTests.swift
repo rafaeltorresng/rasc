@@ -142,6 +142,26 @@ struct OverlayStateTests {
     }
 
     @Test
+    func commandPaletteQueryFindsKeyboardShortcuts() throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+
+        session.openCommandPalette()
+        session.insertCommandPaletteText("shortcuts")
+
+        #expect(session.filteredCommands == [.keyboardShortcuts])
+        #expect(session.selectedCommandIndex == 0)
+
+        session.deleteCommandPaletteText()
+        #expect(session.commandPaletteQuery == "shortcut")
+        #expect(session.filteredCommands == [.keyboardShortcuts])
+    }
+
+    @Test
     func commandPaletteListsAllCommands() throws {
         let fixture = try makeFixture()
         defer { fixture.remove() }
