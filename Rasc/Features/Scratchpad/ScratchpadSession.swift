@@ -69,6 +69,11 @@ final class ScratchpadSession {
             }
         }
     }
+    private(set) var document: NoteDocument?
+    private var persistedDocument: NoteDocument?
+    private var documentWriteTask: Task<Void, Error>?
+    private var pendingImageImport: Task<Int?, Error>?
+    private var pendingImageImportID: UUID?
     private(set) var contentRevision = 0
     private(set) var surface = Surface.editor {
         didSet {
@@ -127,6 +132,8 @@ final class ScratchpadSession {
     private var noteID: UUID?
     /// Changes whenever the displayed scratch stops being the one a save was started for.
     private var sessionEpoch = 0
+    var editorEpoch: Int { sessionEpoch }
+    private(set) var editorIdentity = 0
     private var autosaveTask: Task<Void, Never>?
     private var searchTask: Task<Void, Never>?
     private var refinementTask: Task<Void, Never>?
@@ -189,11 +196,25 @@ final class ScratchpadSession {
         saveErrorMessage = "Couldn't load local notes."
     }
 
+    func markStructuredContentUnavailable() {
+        saveErrorMessage = "Couldn't open this thought safely. It remains saved in Home."
+    }
+
+    func reportImageImportFailure(_ message: String) {
+        showTransientFeedback(message, duration: .seconds(3))
+    }
+
+    func reportImageCopy(_ document: NoteDocument) {
+        let imageCount = document.parts.filter { if case .image = $0 { true } else { false } }.count
+        let imageOnly = imageCount == 1 && document.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        showTransientFeedback(imageOnly ? "Image copied." : "Copied with images. Paste into a rich-text app.", duration: .seconds(3))
+    }
+
     func reportCompletionFailure(_ failure: CompletionFailure) { completionFailure = failure }
     func dismissCompletionFailure() { completionFailure = nil }
 
     var hasPersistableContent: Bool {
-        !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        document?.hasImages == true || !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     var isActiveNoteKept: Bool {
@@ -222,7 +243,7 @@ final class ScratchpadSession {
 
         if !activeNoteStore.hasEstablishedState {
             if let note = try await repository.fetchMostRecent() {
-                adoptDisplayedNote(note)
+                try await adoptDisplayedNote(note)
             } else {
                 clearDisplayedIdentity()
                 text = ""
@@ -242,7 +263,7 @@ final class ScratchpadSession {
             return
         }
 
-        adoptDisplayedNote(note)
+        try await adoptDisplayedNote(note)
     }
 
     func keepActiveNote() async throws -> ThoughtCompletionOutcome {
@@ -269,7 +290,15 @@ final class ScratchpadSession {
         guard canPerformThoughtCompletion else { return nil }
         try await prepareForThoughtCompletionAction()
         guard hasPersistableContent else { return nil }
+        guard document?.hasImages != true else { throw NoteRepository.PersistenceError.structuredContentRequiresDocument }
         return text
+    }
+
+    func documentForHandoff() async throws -> NoteDocument? {
+        guard canPerformThoughtCompletion else { return nil }
+        try await prepareForThoughtCompletionAction()
+        guard hasPersistableContent else { return nil }
+        return document ?? NoteDocument(parts: [.text(text)])
     }
 
     func discardActiveNote(undoManager: UndoManager? = nil) async throws {
@@ -294,8 +323,11 @@ final class ScratchpadSession {
         guard let receipt = receipt ?? lastDiscard else { return }
         do {
             let restored = try await repository.restoreDiscard(receipt)
+            guard let editable = try await repository.fetchEditable(id: restored.id) else {
+                throw NoteRepository.PersistenceError.staleContent
+            }
             if noteID == nil, !hasPersistableContent {
-                adoptDisplayedNote(restored)
+                adoptDisplayedNote(editable.note, document: editable.document)
                 requestEditorFocus()
             }
             discardUndoRegistrations.removeValue(forKey: receipt.id)?.invalidate()
@@ -339,6 +371,7 @@ final class ScratchpadSession {
         let previousAutosave = autosaveTask
         previousAutosave?.cancel()
         let snapshot = text
+        let documentSnapshot = document
 
         autosaveTask = Task { [weak self] in
             await previousAutosave?.value
@@ -346,7 +379,11 @@ final class ScratchpadSession {
             do {
                 try await Task.sleep(for: .milliseconds(200))
                 guard !Task.isCancelled else { return }
-                try await self?.persist(snapshot)
+                if let documentSnapshot {
+                    try await self?.persistDocument(documentSnapshot)
+                } else {
+                    try await self?.persist(snapshot)
+                }
             } catch is CancellationError {
                 return
             } catch {
@@ -355,7 +392,31 @@ final class ScratchpadSession {
         }
     }
 
+    /// Home must duplicate a stable snapshot, including a paste still being imported.
+    func flushIfActiveNote(id: UUID) async throws {
+        // A newly created row may become visible in Home before its ID is
+        // published back to the scratchpad session.
+        if noteID == nil, inFlightNoteCreate != nil || documentWriteTask != nil {
+            try await flush()
+        }
+        while noteID == id {
+            let epoch = sessionEpoch
+            let revision = contentRevision
+            try await flush()
+            guard noteID == id, sessionEpoch == epoch else { return }
+            if contentRevision == revision { return }
+        }
+    }
+
     func flush() async throws {
+        if let pendingImageImport, try await pendingImageImport.value == nil {
+            reportImageImportFailure("The thought changed. Paste the image again.")
+            throw NoteImageImport.ImportError.thoughtChanged
+        }
+        try await flushCurrentContent()
+    }
+
+    private func flushCurrentContent() async throws {
         try await acceptanceTask?.value
 
         let pendingAutosave = autosaveTask
@@ -364,7 +425,8 @@ final class ScratchpadSession {
         await pendingAutosave?.value
 
         do {
-            try await persist(text)
+            if let document { try await persistDocument(document) }
+            else { try await persist(text) }
         } catch {
             saveErrorMessage = "Couldn't save locally."
             throw error
@@ -493,13 +555,22 @@ final class ScratchpadSession {
         }
 
         cancelRefinement()
+        let openingEpoch = sessionEpoch
+        let startingRevision = contentRevision
+        if let pendingImageImport {
+            let inserted = try await pendingImageImport.value
+            let expectedRevision = inserted == nil ? startingRevision : startingRevision &+ 1
+            guard sessionEpoch == openingEpoch, contentRevision == expectedRevision else { return false }
+        }
+        let openingRevision = contentRevision
         try await flush()
+        guard sessionEpoch == openingEpoch, contentRevision == openingRevision else { return false }
 
         if let fromSearchQuery {
             guard surface == .search, searchQuery == fromSearchQuery else { return false }
         }
 
-        guard let selectedNote = try await repository.fetch(id: id) else {
+        guard let selected = try await repository.fetchEditable(id: id) else {
             if fromSearchQuery != nil {
                 try await refreshSearch()
             }
@@ -510,9 +581,10 @@ final class ScratchpadSession {
             guard surface == .search, searchQuery == fromSearchQuery else { return false }
         }
 
+        guard sessionEpoch == openingEpoch, contentRevision == openingRevision else { return false }
         editorSelection = nil
         editorHasMultipleSelections = false
-        adoptDisplayedNote(selectedNote)
+        adoptDisplayedNote(selected.note, document: selected.document)
         resetSearchState()
         surface = .editor
         requestEditorFocus()
@@ -609,6 +681,10 @@ final class ScratchpadSession {
         cancelRefinement()
         clearMessage(returnToEditor: false)
 
+        guard document?.hasImages != true else {
+            showMessage(.containsImages)
+            return
+        }
         guard !editorHasMultipleSelections else {
             showMessage(.multipleSelection)
             return
@@ -732,6 +808,7 @@ final class ScratchpadSession {
         autosaveTask = nil
         pendingAutosave?.cancel()
         await pendingAutosave?.value
+        if let documentWriteTask { try await documentWriteTask.value }
         guard isCurrent(preview.request) else { return }
 
         do {
@@ -760,6 +837,11 @@ final class ScratchpadSession {
             )
         }
         isApplyingAcceptedRefinement = true
+        if document != nil {
+            let plain = NoteDocument(parts: [.text(afterContent)])
+            document = plain
+            persistedDocument = plain
+        }
         text = afterContent
         isApplyingAcceptedRefinement = false
         editorSelection = acceptedSelection
@@ -773,14 +855,20 @@ final class ScratchpadSession {
         restoring content: String,
         inverse: String
     ) {
+        let identity = editorIdentity
         undoManager.registerUndo(withTarget: self) { session in
+            guard session.editorIdentity == identity else { return }
             session.registerUndo(
                 with: undoManager,
                 restoring: inverse,
                 inverse: content
             )
-            session.text = content
-            session.scheduleAutosave()
+            if session.document != nil {
+                session.replaceDocumentFromEditor(NoteDocument(parts: [.text(content)]))
+            } else {
+                session.text = content
+                session.scheduleAutosave()
+            }
             session.requestEditorFocus()
         }
         undoManager.setActionName("Refine")
@@ -798,7 +886,8 @@ final class ScratchpadSession {
         }
 
         do {
-            try await persist(draft.text)
+            if let document { try await persistDocument(document) }
+            else { try await persist(draft.text) }
             guard isCurrent(draft), let noteID else {
                 logRefinementRejection(Task.isCancelled ? .cancelled : .staleResult)
                 return
@@ -1059,17 +1148,164 @@ final class ScratchpadSession {
         saveErrorMessage = nil
     }
 
-    private func adoptDisplayedNote(_ note: Note) {
+    func replaceDocumentFromEditor(_ value: NoteDocument) {
+        guard document != value else { return }
+        let oldText = text
+        document = value
+        text = value.editorText
+        if text == oldText {
+            contentRevision &+= 1
+            cancelRefinement()
+        }
+        scheduleAutosave()
+    }
+
+    func beginImageImport(_ source: NoteImageImport.Source, selection: NSRange) -> Task<Int?, Error>? {
+        beginImageImports([source], selection: selection)
+    }
+
+    func beginImageImports(_ sources: [NoteImageImport.Source], selection: NSRange) -> Task<Int?, Error>? {
+        guard pendingImageImport == nil, !sources.isEmpty else { return nil }
+        let id = UUID()
+        let revision = contentRevision
+        let epoch = sessionEpoch
+        let task = Task { @MainActor [weak self] () throws -> Int? in
+            guard let self else { return nil }
+            defer {
+                if self.pendingImageImportID == id {
+                    self.pendingImageImport = nil
+                    self.pendingImageImportID = nil
+                }
+            }
+            if sources.count == 1, case let .documentPasteboard(name, type, count) = sources[0] {
+                let fragment = try await NoteImageImport.loadDocument(name: name, type: type, changeCount: count)
+                guard self.contentRevision == revision, self.sessionEpoch == epoch else { return nil }
+                return try await self.insertDocument(fragment, selection: selection)
+            }
+            var images: [NoteDocument.Part] = []
+            var importedBytes = 0
+            let maximumImageBytes = 256 * 1024 * 1024
+            for source in sources {
+                let image = try await NoteImageImport.load(source)
+                if case let .image(data, _) = image {
+                    guard data.count <= maximumImageBytes - importedBytes else { throw NoteImageImport.ImportError.tooMuchContent }
+                    importedBytes += data.count
+                }
+                images.append(image)
+            }
+            guard self.contentRevision == revision, self.sessionEpoch == epoch else { return nil }
+            return try await self.insertImages(images, selection: selection)
+        }
+        pendingImageImportID = id
+        pendingImageImport = task
+        return task
+    }
+
+    func insertImage(_ part: NoteDocument.Part, selection: NSRange) async throws -> Int? {
+        try await insertImages([part], selection: selection)
+    }
+
+    private func insertImages(_ images: [NoteDocument.Part], selection: NSRange) async throws -> Int? {
+        let revision = contentRevision
+        let epoch = sessionEpoch
+        try await flushCurrentContent()
+        guard contentRevision == revision, sessionEpoch == epoch else { return nil }
+        let current = document ?? NoteDocument(parts: [.text(text)])
+        var updated = current
+        var replacement = selection
+        var caret = selection.location
+        for image in images {
+            guard case let .image(data, typeIdentifier) = image else { return nil }
+            let insertion = try updated.insertingImage(data: data, typeIdentifier: typeIdentifier, replacing: replacement)
+            updated = insertion.document
+            caret = insertion.caretUTF16Offset
+            replacement = NSRange(location: caret, length: 0)
+        }
+        let maximumImageBytes = 256 * 1024 * 1024
+        var total = 0
+        for part in updated.parts {
+            if case let .image(data, _) = part {
+                guard data.count <= maximumImageBytes - total else { throw NoteImageImport.ImportError.tooMuchContent }
+                total += data.count
+            }
+        }
+        if document == nil { persistedDocument = noteID == nil ? nil : current }
+        replaceDocumentFromEditor(updated)
+        return caret
+    }
+
+    private func insertDocument(_ fragment: NoteDocument, selection: NSRange) async throws -> Int? {
+        let revision = contentRevision
+        let epoch = sessionEpoch
+        try await flushCurrentContent()
+        guard contentRevision == revision, sessionEpoch == epoch else { return nil }
+        let current = document ?? NoteDocument(parts: [.text(text)])
+        let insertion = try current.insertingDocument(fragment, replacing: selection)
+        let maximumImageBytes = 256 * 1024 * 1024
+        var total = 0
+        for part in insertion.document.parts {
+            if case let .image(data, _) = part {
+                guard data.count <= maximumImageBytes - total else { throw NoteImageImport.ImportError.tooMuchContent }
+                total += data.count
+            }
+        }
+        if document == nil { persistedDocument = noteID == nil ? nil : current }
+        replaceDocumentFromEditor(insertion.document)
+        return insertion.caretUTF16Offset
+    }
+
+    private func persistDocument(_ snapshot: NoteDocument) async throws {
+        let previous = documentWriteTask
+        let epoch = sessionEpoch
+        let task = Task { @MainActor [weak self] in
+            if let previous { _ = try? await previous.value }
+            guard let self, self.sessionEpoch == epoch else { return }
+            if let id = self.noteID {
+                guard let expected = self.persistedDocument else { throw NoteRepository.PersistenceError.staleContent }
+                try await self.repository.update(id: id, document: snapshot, ifCurrent: expected)
+                guard self.sessionEpoch == epoch, self.noteID == id else { return }
+                self.persistedDocument = snapshot
+                self.activeNoteStore.noteID = id
+            } else {
+                guard snapshot.hasImages || !snapshot.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+                let created = try await self.repository.createScratch(document: snapshot)
+                guard self.sessionEpoch == epoch, self.noteID == nil else { return }
+                self.noteID = created.id
+                self.persistedDocument = snapshot
+                self.activeNoteStore.noteID = created.id
+            }
+            self.saveErrorMessage = nil
+        }
+        documentWriteTask = task
+        try await task.value
+    }
+
+    private func adoptDisplayedNote(_ note: Note) async throws {
+        guard let editable = try await repository.fetchEditable(id: note.id) else {
+            throw NoteRepository.PersistenceError.staleContent
+        }
+        adoptDisplayedNote(editable.note, document: editable.document)
+    }
+
+    private func adoptDisplayedNote(_ note: Note, document: NoteDocument?) {
+        if noteID != note.id { editorIdentity &+= 1 }
         sessionEpoch &+= 1
         noteID = note.id
-        text = note.content
+        self.document = document
+        persistedDocument = document
+        documentWriteTask = nil
+        text = document?.editorText ?? note.content
         activeNoteKeptAt = note.keptAt
         activeNoteStore.noteID = note.id
     }
 
     private func clearDisplayedIdentity() {
         sessionEpoch &+= 1
+        editorIdentity &+= 1
         noteID = nil
+        document = nil
+        persistedDocument = nil
+        documentWriteTask = nil
         activeNoteKeptAt = nil
         activeNoteStore.noteID = nil
     }
@@ -1133,11 +1369,11 @@ final class ScratchpadSession {
         surface = .editor
     }
 
-    private func showTransientFeedback(_ message: String) {
+    private func showTransientFeedback(_ message: String, duration: Duration = .seconds(1)) {
         feedbackTask?.cancel()
         transientFeedback = message
         feedbackTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(1))
+            try? await Task.sleep(for: duration)
             guard !Task.isCancelled, self?.transientFeedback == message else { return }
             self?.transientFeedback = nil
         }
