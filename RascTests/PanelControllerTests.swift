@@ -349,20 +349,24 @@ struct PanelControllerTests {
         #expect(outcome == .keptShouldHide)
         let kept = try #require(try await controller.repository.fetchMostRecent())
         #expect(kept.keptAt != nil)
+        #expect(session.text.isEmpty)
 
-        guard let textView = await waitForTextView(in: controller.panel) else {
-            Issue.record("The scratchpad editor did not install a text view")
+        let opened = try await session.openNote(id: kept.id)
+        #expect(opened)
+        #expect(session.text == "keep this thought")
+
+        guard let textView = await waitForTextView(in: controller.panel, showing: "keep this thought") else {
+            Issue.record("The scratchpad editor did not show the reopened note")
             return
         }
         controller.panel.makeKey()
         _ = controller.panel.makeFirstResponder(textView)
         textView.selectAll(nil)
         textView.deleteBackward(nil)
-        try await Task.sleep(for: .milliseconds(80))
-        textView.undoManager?.undo()
-        try await Task.sleep(for: .milliseconds(80))
+        #expect(await waitUntil { session.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty })
 
-        #expect(session.text == "keep this thought")
+        textView.undoManager?.undo()
+        #expect(await waitUntil { session.text == "keep this thought" })
         try await session.flush()
         let restored = try #require(try await controller.repository.fetch(id: kept.id))
         #expect(restored.content == "keep this thought")
@@ -412,6 +416,24 @@ struct PanelControllerTests {
             try? await Task.sleep(for: .milliseconds(50))
         }
         return nil
+    }
+
+    private func waitForTextView(in panel: NSPanel, showing expected: String) async -> NSTextView? {
+        for _ in 0..<40 {
+            if let textView = firstTextView(in: panel.contentView), textView.string == expected {
+                return textView
+            }
+            try? await Task.sleep(for: .milliseconds(50))
+        }
+        return nil
+    }
+
+    private func waitUntil(_ condition: @MainActor () -> Bool) async -> Bool {
+        for _ in 0..<40 {
+            if condition() { return true }
+            try? await Task.sleep(for: .milliseconds(50))
+        }
+        return condition()
     }
 
     private func firstTextView(in view: NSView?) -> NSTextView? {
