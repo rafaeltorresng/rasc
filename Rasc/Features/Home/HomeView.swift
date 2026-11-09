@@ -793,6 +793,7 @@ private struct HomeNewScratchButton: View {
     let action: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorSchemeContrast) private var colorSchemeContrast
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isHovered = false
 
@@ -850,7 +851,7 @@ private struct HomeNewScratchButton: View {
                 for: colorScheme,
                 isHovered: isHovered,
                 isSelected: false,
-                increasedContrast: false
+                increasedContrast: colorSchemeContrast == .increased
             ),
             lineWidth: 0.85
         )

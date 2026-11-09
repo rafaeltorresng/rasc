@@ -39,11 +39,7 @@ struct ScratchpadView: View {
         .safeAreaInset(edge: .bottom, spacing: 0) {
             if let saveErrorMessage = session.saveErrorMessage {
                 feedbackRow(saveErrorMessage) {
-                    if session.lastDiscard != nil {
-                        Button("Undo") { Task { await session.undoDiscard() } }
-                    } else {
-                        Button("Retry") { Task { await session.retrySave() } }
-                    }
+                    Button("Retry") { Task { await session.retrySave() } }
                 }
             } else if let failure = session.completionFailure {
                 feedbackRow(failure.text) {
@@ -151,50 +147,65 @@ struct ScratchpadView: View {
     @ViewBuilder
     private var scratchpadTrailingActions: some View {
         HStack(spacing: 2) {
-            if showsRefineAction {
-                ScratchpadChromeButton(
-                    title: "New",
-                    shortcut: RascShortcutCatalog.newScratch.shortcut,
-                    action: { onPaletteCommand(.newScratch) }
-                )
-                .accessibilityLabel("New Scratch")
-                .accessibilityHint(PaletteCommand.newScratch.accessibilityHint)
-                .help("New Scratch (\(RascShortcutCatalog.newScratch.shortcut))")
-                .transition(.opacity)
+            reservedChromeButton(
+                title: "New",
+                shortcut: InternalShortcutStore.shared.displayString(for: .newScratch),
+                isVisible: showsRefineAction,
+                action: { onPaletteCommand(.newScratch) }
+            )
+            .accessibilityLabel("New Scratch")
+            .accessibilityHint(PaletteCommand.newScratch.accessibilityHint)
+            .help("New Scratch (\(InternalShortcutStore.shared.displayString(for: .newScratch)))")
 
-                ScratchpadChromeButton(
-                    title: "Refine",
-                    shortcut: RascShortcutCatalog.refine.shortcut,
-                    action: { session.startRefinement() }
-                )
-                .keyboardShortcut("j", modifiers: .command)
-                .accessibilityLabel("Refine")
-                .help("Refine note")
-                .transition(.opacity)
-            }
+            reservedChromeButton(
+                title: "Refine",
+                shortcut: InternalShortcutStore.shared.displayString(for: .refine),
+                isVisible: showsRefineAction,
+                action: { session.startRefinement() }
+            )
+            .accessibilityLabel("Refine")
+            .help("Refine note")
 
-            if session.surface == .editor, session.canPerformThoughtCompletion {
-                if session.isActiveNoteKept {
-                    ScratchpadChromeButton(title: "Unkeep", action: onUnkeep)
-                        .accessibilityLabel("Unkeep")
-                } else if session.hasPersistableContent {
-                    ScratchpadChromeButton(
-                        title: "Keep",
-                        shortcut: RascShortcutCatalog.keep.shortcut,
-                        isPrimary: true,
-                        action: onKeep
-                    )
-                    .keyboardShortcut("k", modifiers: [.command, .shift])
-                    .accessibilityLabel("Keep")
-                    .help("Keep note")
-                }
-            }
+            reservedChromeButton(
+                title: session.isActiveNoteKept ? "Unkeep" : "Keep",
+                shortcut: session.isActiveNoteKept ? nil : InternalShortcutStore.shared.displayString(for: .keep),
+                isPrimary: !session.isActiveNoteKept,
+                isVisible: showsThoughtCompletionAction,
+                action: session.isActiveNoteKept ? onUnkeep : onKeep
+            )
+            .accessibilityLabel(session.isActiveNoteKept ? "Unkeep" : "Keep")
 
-            if showsHomeAffordance {
-                scratchpadHomeButton
-            }
+            scratchpadHomeButton
+                .opacity(showsHomeAffordance ? 1 : 0)
+                .allowsHitTesting(showsHomeAffordance)
+                .accessibilityHidden(!showsHomeAffordance)
         }
         .animation(RascMotion.micro(reduceMotion: reduceMotion), value: showsRefineAction)
+        .animation(RascMotion.micro(reduceMotion: reduceMotion), value: showsThoughtCompletionAction)
+    }
+
+    private var showsThoughtCompletionAction: Bool {
+        session.surface == .editor
+            && session.canPerformThoughtCompletion
+            && (session.isActiveNoteKept || session.hasPersistableContent)
+    }
+
+    private func reservedChromeButton(
+        title: String,
+        shortcut: String?,
+        isPrimary: Bool = false,
+        isVisible: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        ScratchpadChromeButton(
+            title: title,
+            shortcut: shortcut,
+            isPrimary: isPrimary,
+            action: action
+        )
+        .opacity(isVisible ? 1 : 0)
+        .allowsHitTesting(isVisible)
+        .accessibilityHidden(!isVisible)
     }
 
     private var scratchpadHomeButton: some View {
@@ -529,7 +540,7 @@ private struct ScratchpadChromeButton: View {
                 if let shortcut {
                     Text(shortcut)
                         .font(.system(size: 10, weight: .medium, design: .monospaced))
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(.secondary)
                 }
 
                 Text(title)
