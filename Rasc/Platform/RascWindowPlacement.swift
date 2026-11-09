@@ -2,7 +2,7 @@ import AppKit
 
 enum RascWindowInitialPlacement: Equatable {
     case geometricCenter
-    case opticalCenter(verticalRatio: CGFloat = 0.45)
+    case opticalCenter(verticalRatio: CGFloat = 0.55)
 
     func origin(for windowSize: NSSize, in visibleFrame: NSRect) -> NSPoint {
         switch self {
@@ -19,7 +19,7 @@ enum RascWindowInitialPlacement: Equatable {
 }
 
 enum RascWindowPlacement {
-    static let scratchpadOpticalVerticalRatio: CGFloat = 0.45
+    static let scratchpadOpticalVerticalRatio: CGFloat = 0.55
 
     static func opticalCenterOrigin(
         for windowSize: NSSize,

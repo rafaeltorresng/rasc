@@ -34,7 +34,7 @@ struct WindowFramePlacementTests {
         let optical = RascWindowPlacement.opticalCenterOrigin(for: size, in: visible)
 
         #expect(optical.x == geometric.x)
-        #expect(optical.y < geometric.y)
+        #expect(optical.y > geometric.y)
     }
 }
 
@@ -121,6 +121,6 @@ struct WindowFrameStoreTests {
         )
         let contentSize = window.contentRect(forFrameRect: window.frame).size
         #expect(contentSize == RascWindowMetrics.scratchpadDefault)
-        #expect(window.frame.origin.y < geometric.y)
+        #expect(window.frame.origin.y > geometric.y)
     }
 }
