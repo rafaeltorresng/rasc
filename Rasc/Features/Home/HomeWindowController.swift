@@ -24,10 +24,11 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
         repository: NoteRepository,
         onOpenNote: @escaping (UUID) -> Void,
         onNewScratch: @escaping () -> Void,
+        prepareForDuplicate: @escaping @MainActor (UUID) async throws -> Void = { _ in },
         onNoteDiscarded: @escaping (UUID) -> Void = { _ in },
         onNoteUnkept: @escaping (UUID) -> Void = { _ in }
     ) {
-        let session = session ?? HomeSession(repository: repository)
+        let session = session ?? HomeSession(repository: repository, prepareForDuplicate: prepareForDuplicate)
         self.session = session
 
         let contentView = HomeView(

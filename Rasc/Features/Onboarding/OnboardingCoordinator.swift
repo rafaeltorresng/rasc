@@ -265,7 +265,7 @@ final class OnboardingCoordinator {
             scratchpadGuidance.showRefineHint = false
             scratchpadGuidance.showEscapeHint = true
             panelController?.scratchpadGuidance = scratchpadGuidance
-        case .nothingToRefine, .multipleSelection:
+        case .nothingToRefine, .multipleSelection, .containsImages:
             break
         }
     }

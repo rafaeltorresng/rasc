@@ -41,8 +41,12 @@ enum RascSurfaceMetrics {
         return headerHeight + rowsHeight + RascSurfaceLayout.bottomInset
     }
     static let noteFontSize: CGFloat = 16
-    /// Empty-state placeholder: slightly below editor size so it reads as entry, not headline.
-    static let scratchpadPlaceholderFontSize: CGFloat = 15
+    /// Matches `noteFontSize` so the caret lines up with the empty-state prompt.
+    static let scratchpadPlaceholderFontSize: CGFloat = noteFontSize
+
+    static var noteFont: NSFont {
+        NSFont.systemFont(ofSize: noteFontSize, weight: .regular)
+    }
     static let noteLineSpacing: CGFloat = 4.5
 
     static let previewCornerRadius: CGFloat = 14
@@ -91,6 +95,13 @@ enum RascSurfacePalette {
 
     static func accentNSColor(for colorScheme: ColorScheme) -> NSColor {
         actionAccentNSColor(for: colorScheme)
+    }
+
+    /// Scratchpad caret; mirrors the SwiftUI editor tint before the AppKit text surface.
+    static let scratchpadInsertionPoint = NSColor(
+        name: NSColor.Name("RascScratchpadInsertionPoint")
+    ) { appearance in
+        appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua ? darkViolet : lightViolet
     }
 
     static func actionAccentNSColor(for colorScheme: ColorScheme) -> NSColor {

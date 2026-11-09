@@ -378,6 +378,7 @@ enum RefinementMessage: Equatable, Sendable {
     case couldNotSaveRefinement
     case nothingToRefine
     case multipleSelection
+    case containsImages
 
     var text: String {
         switch self {
@@ -405,6 +406,8 @@ enum RefinementMessage: Equatable, Sendable {
             "Nothing to refine."
         case .multipleSelection:
             "Select one section to refine at a time."
+        case .containsImages:
+            "Refine isn't available for thoughts containing images yet."
         }
     }
 

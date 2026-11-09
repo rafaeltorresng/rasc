@@ -26,16 +26,19 @@ final class HomeSession {
     private(set) var hasMoreSearchResults = false
 
     private let repository: NoteRepository
+    private let prepareForDuplicate: @MainActor (UUID) async throws -> Void
     private let calendar: Calendar
     private var reloadTask: Task<Void, Never>?
     private var now: Date
 
     init(
         repository: NoteRepository,
+        prepareForDuplicate: @escaping @MainActor (UUID) async throws -> Void = { _ in },
         calendar: Calendar = .current,
         now: Date = Date()
     ) {
         self.repository = repository
+        self.prepareForDuplicate = prepareForDuplicate
         self.calendar = calendar
         self.now = now
     }
@@ -178,12 +181,16 @@ final class HomeSession {
         }
     }
 
-    func duplicateNote(id: UUID) async throws -> Note {
-        guard let source = try await repository.fetch(id: id) else {
+    func documentForCopy(id: UUID) async throws -> NoteDocument {
+        guard let document = try await repository.fetchDocument(id: id) else {
             throw NoteRepository.PersistenceError.staleContent
         }
+        return document
+    }
 
-        let duplicate = try await repository.createScratch(content: source.content)
+    func duplicateNote(id: UUID) async throws -> Note {
+        try await prepareForDuplicate(id)
+        let duplicate = try await repository.duplicate(id: id)
         selectedNoteID = duplicate.id
         await reloadImmediately()
         return duplicate

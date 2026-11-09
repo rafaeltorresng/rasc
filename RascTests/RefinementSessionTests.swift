@@ -6,6 +6,49 @@ import Testing
 @MainActor
 struct RefinementSessionTests {
     @Test
+    func imageChangeCancelsInFlightRefinement() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let provider = ControlledRefinementProvider()
+        let session = fixture.makeSession(provider: provider)
+        session.text = "rough note"
+        session.startRefinement()
+        let request = await provider.nextRequest()
+        let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        _ = try await session.insertImage(.image(data: image, typeIdentifier: "public.png"), selection: NSRange(location: 5, length: 0))
+        await provider.succeed(requestID: request.requestID, with: .init(decision: .changed, kind: .messyText, text: "Clear note."))
+        await Task.yield()
+        #expect(session.refinementPreview == nil)
+        #expect(session.document?.hasImages == true)
+        try await session.flush()
+        #expect(try await fixture.repository.fetchDocument(id: request.snapshot.noteID)?.hasImages == true)
+    }
+
+    @Test
+    func refiningAfterRemovingImagePreservesText() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let provider = ControlledRefinementProvider()
+        let session = fixture.makeSession(provider: provider)
+        session.text = "rough note"
+        let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        _ = try await session.insertImage(.image(data: image, typeIdentifier: "public.png"), selection: NSRange(location: 10, length: 0))
+        session.replaceDocumentFromEditor(NoteDocument(parts: [.text("rough note")]))
+        session.startRefinement()
+        let request = await provider.nextRequest()
+        await provider.succeed(requestID: request.requestID, with: .init(decision: .changed, kind: .messyText, text: "Clear note."))
+        try await waitUntil { session.surface == .refinementPreview }
+        let undo = UndoManager()
+        try await session.acceptRefinement(undoManager: undo)
+        #expect(session.text == "Clear note.")
+        #expect(try await fixture.repository.fetch(id: request.snapshot.noteID)?.content == "Clear note.")
+        undo.undo()
+        try await session.flush()
+        #expect(session.text == "rough note")
+        #expect(try await fixture.repository.fetchDocument(id: request.snapshot.noteID)?.text == "rough note")
+    }
+
+    @Test
     func wholeNoteSingleContentUnitReturnsNoChangeWithoutInvokingTheProvider() async throws {
         let fixture = try makeFixture()
         defer { fixture.remove() }
@@ -247,6 +290,25 @@ struct RefinementSessionTests {
         #expect(session.text == "Clear note.")
         #expect(try await fixture.repository.fetch(id: request.snapshot.noteID)?.content == "Clear note.")
         #expect(try await fixture.repository.refinementRevisions(for: request.snapshot.noteID).count == 1)
+    }
+
+    @Test
+    func undoOfAnEarlierRefinementDoesNotReplaceANewerThought() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let provider = ControlledRefinementProvider()
+        let session = fixture.makeSession(provider: provider)
+        let undo = UndoManager()
+        session.text = "original thought"
+        session.startRefinement()
+        let request = await provider.nextRequest()
+        await provider.succeed(requestID: request.requestID, with: .init(decision: .changed, kind: .messyText, text: "Refined thought."))
+        try await waitUntil { session.surface == .refinementPreview }
+        try await session.acceptRefinement(undoManager: undo)
+        try await session.startNewScratch()
+        session.text = "another thought"
+        undo.undo()
+        #expect(session.text == "another thought")
     }
 
     @Test

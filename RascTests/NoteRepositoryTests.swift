@@ -1,4 +1,6 @@
 import Foundation
+import AppKit
+import ImageIO
 import GRDB
 import Testing
 @testable import Rasc
@@ -62,7 +64,7 @@ struct NoteRepositoryTests {
         let columns = try await DatabaseQueue(path: databaseURL.path).read { database in
             try database.columns(in: Note.databaseTableName).map(\.name)
         }
-        #expect(columns == ["id", "content", "created_at", "updated_at", "deleted_at", "kept_at"])
+        #expect(columns == ["id", "content", "created_at", "updated_at", "deleted_at", "kept_at", "has_images"])
     }
 
     @Test
@@ -338,7 +340,7 @@ struct NoteRepositoryTests {
         let columns = try await database.read { database in
             try database.columns(in: Note.databaseTableName).map(\.name)
         }
-        #expect(columns == ["id", "content", "created_at", "updated_at", "deleted_at", "kept_at"])
+        #expect(columns == ["id", "content", "created_at", "updated_at", "deleted_at", "kept_at", "has_images"])
     }
 
     @Test
@@ -679,6 +681,426 @@ struct NoteRepositoryTests {
         try DatabaseQueue(path: databaseURL.path).read { database in
             try Int.fetchOne(database, sql: "SELECT COUNT(*) FROM notes") ?? 0
         }
+    }
+
+    @Test
+    func migrationPreservesEmptyKeptAndDiscardedNotes() async throws {
+        let url = makeDatabaseURL()
+        defer { removeDatabase(at: url) }
+        let db = try DatabaseQueue(path: url.path)
+        try AppDatabase.migrator.migrate(db, upTo: "v5_m16_notes_kept_at")
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+        let notes = [
+            Note(id: UUID(), content: "", createdAt: date, updatedAt: date, deletedAt: nil, keptAt: date),
+            Note(id: UUID(), content: "discarded text", createdAt: date, updatedAt: date, deletedAt: date, keptAt: nil),
+            Note(id: UUID(), content: "ordinary text", createdAt: date, updatedAt: date, deletedAt: nil, keptAt: nil),
+        ]
+        try await db.write { db in
+            for note in notes {
+                try db.execute(sql: "INSERT INTO notes (id, content, created_at, updated_at, deleted_at, kept_at) VALUES (?, ?, ?, ?, ?, ?)", arguments: [note.id, note.content, note.createdAt, note.updatedAt, note.deletedAt, note.keptAt])
+            }
+        }
+        let repository = try NoteRepository(databaseURL: url)
+        let reopened = try AppDatabase.open(at: url)
+        let stored = try await reopened.read { db in try Note.fetchAll(db) }
+        #expect(stored.sorted { $0.id.uuidString < $1.id.uuidString } == notes.sorted { $0.id.uuidString < $1.id.uuidString })
+        #expect(try await repository.fetchDocument(id: notes[0].id) == NoteDocument(parts: [.text("")]))
+        #expect(try await repository.search("ordinary", limit: 10).map(\.id) == [notes[2].id])
+    }
+
+    @Test
+    func migrationAddsImageIndicatorToExistingDocuments() async throws {
+        let url = makeDatabaseURL()
+        defer { removeDatabase(at: url) }
+        let db = try DatabaseQueue(path: url.path)
+        try AppDatabase.migrator.migrate(db, upTo: "v6_structured_note_content")
+        let id = UUID()
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+        let document = NoteDocument(parts: [.image(data: testPNG, typeIdentifier: "public.png")])
+        let bytes = try PropertyListEncoder().encode(document)
+        try await db.write { db in
+            try db.execute(sql: "INSERT INTO notes (id, content, created_at, updated_at) VALUES (?, ?, ?, ?)", arguments: [id, document.text, date, date])
+            try db.execute(sql: "INSERT INTO note_documents (note_id, document) VALUES (?, ?)", arguments: [id, bytes])
+        }
+        let repository = try NoteRepository(databaseURL: url)
+        let note = try #require(try await repository.fetch(id: id))
+        #expect(note.hasImages)
+        #expect(note.displayTitle == "Image")
+        #expect(try await repository.fetchDocument(id: id) == document)
+    }
+
+    @Test
+    func migratesV7DocumentsWithoutRewritingImagesOrExposingStaleContentToOlderVersions() async throws {
+        let url = makeDatabaseURL()
+        defer { removeDatabase(at: url) }
+        let db = try DatabaseQueue(path: url.path)
+        try AppDatabase.migrator.migrate(db, upTo: "v7_note_image_indicator")
+        let id = UUID()
+        let discardedID = UUID()
+        let emptyID = UUID()
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+        let document = NoteDocument(parts: [.text("legacy\n"), .image(data: testPNG, typeIdentifier: "public.png")])
+        let encoder = PropertyListEncoder()
+        encoder.outputFormat = .binary
+        let original = try encoder.encode(document)
+        try await db.write { db in
+            try db.execute(sql: "INSERT INTO notes (id, content, created_at, updated_at, kept_at, has_images) VALUES (?, ?, ?, ?, ?, 1)", arguments: [id, document.text, date, date, date])
+            try db.execute(sql: "INSERT INTO note_documents (note_id, document) VALUES (?, ?)", arguments: [id, original])
+            try db.execute(sql: "INSERT INTO notes (id, content, created_at, updated_at, deleted_at, has_images) VALUES (?, ?, ?, ?, ?, 1)", arguments: [discardedID, document.text, date, date, date])
+            try db.execute(sql: "INSERT INTO note_documents (note_id, document) VALUES (?, ?)", arguments: [discardedID, original])
+            try db.execute(sql: "INSERT INTO notes (id, content, created_at, updated_at) VALUES (?, '', ?, ?)", arguments: [emptyID, date, date])
+        }
+        let repository = try NoteRepository(databaseURL: url)
+        let kept = try #require(try await repository.fetch(id: id))
+        #expect(kept.isKept && kept.hasImages && kept.createdAt == date)
+        #expect(try await repository.fetchDocument(id: id) == document)
+        #expect(try await repository.fetch(id: discardedID) == nil)
+        #expect(try await repository.fetch(id: emptyID)?.content == "")
+        let migrated = try AppDatabase.open(at: url)
+        let stored = try await migrated.read { db in
+            (try Data.fetchOne(db, sql: "SELECT document FROM note_document_bases WHERE note_id = ?", arguments: [id]),
+             try Data.fetchOne(db, sql: "SELECT document FROM note_documents WHERE note_id = ?", arguments: [id]),
+             try Int.fetchOne(db, sql: "SELECT COUNT(*) FROM note_document_edits"))
+        }
+        #expect(stored.0 == original)
+        let legacyValue = try #require(stored.1)
+        #expect(throws: (any Error).self) { try PropertyListDecoder().decode(NoteDocument.self, from: legacyValue) }
+        await #expect(throws: (any Error).self) {
+            try await migrated.write { db in
+                try db.execute(sql: "UPDATE note_documents SET document = ? WHERE note_id = ?", arguments: [original, id])
+            }
+        }
+        #expect(try await repository.fetchDocument(id: id) == document)
+        #expect(stored.2 == 2)
+    }
+
+    private var testPNG: Data {
+        Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+    }
+
+    @Test(arguments: [
+        (0, "\u{fffc}\nHello world", 2),
+        (5, "Hello\n\u{fffc}\n world", 8),
+        (11, "Hello world\n\u{fffc}\n", 14),
+    ])
+    func insertingImagePreservesTextAtCursor(offset: Int, expected: String, caret: Int) throws {
+        let original = NoteDocument(parts: [.text("Hello world")])
+        let result = try original.insertingImage(data: testPNG, typeIdentifier: "public.png", replacing: NSRange(location: offset, length: 0))
+        #expect(result.document.editorText == expected)
+        #expect(result.caretUTF16Offset == caret)
+        #expect(result.document.text.replacingOccurrences(of: "\n", with: "") == "Hello world")
+    }
+
+    @Test
+    func imageInsertionReplacesSelectionAndKeepsOtherImages() throws {
+        let original = NoteDocument(parts: [.text("start\n"), .image(data: testPNG, typeIdentifier: "public.png"), .text("\nreplace this end")])
+        let range = (original.editorText as NSString).range(of: "replace this")
+        let result = try original.insertingImage(data: testPNG, typeIdentifier: "public.png", replacing: range)
+        #expect(result.document.editorText == "start\n\u{fffc}\n\u{fffc}\n end")
+        #expect(result.document.parts.filter { if case .image = $0 { true } else { false } }.count == 2)
+    }
+
+    @Test
+    func imageImportCopiesOriginalFileAndRejectsInvalidData() async throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".png")
+        defer { try? FileManager.default.removeItem(at: url) }
+        try testPNG.write(to: url)
+        let imported = try await NoteImageImport.load(.file(url))
+        try FileManager.default.removeItem(at: url)
+        #expect(imported == .image(data: testPNG, typeIdentifier: "public.png"))
+        await #expect(throws: NoteImageImport.ImportError.invalidImage) {
+            try await NoteImageImport.load(.data(Data([1, 2, 3])))
+        }
+        await #expect(throws: NoteImageImport.ImportError.notLocalFile) {
+            try await NoteImageImport.load(.file(URL(string: "https://example.invalid/image.png")!))
+        }
+    }
+
+    @Test
+    func imageImportRejectsOversizedFileBeforeReadingIt() async throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
+        FileManager.default.createFile(atPath: url.path, contents: nil)
+        let handle = try FileHandle(forWritingTo: url)
+        try handle.truncate(atOffset: UInt64(NoteImageImport.maximumBytes + 1))
+        try handle.close()
+        await #expect(throws: NoteImageImport.ImportError.tooLarge) {
+            try await NoteImageImport.load(.file(url))
+        }
+    }
+
+    @Test
+    @MainActor
+    func importsCommonImageFormatsWithoutChangingOriginalBytes() async throws {
+        let bitmap = try #require(NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: 8, pixelsHigh: 8, bitsPerSample: 8, samplesPerPixel: 3, hasAlpha: false, isPlanar: false, colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0))
+        for x in 0..<8 { for y in 0..<8 { bitmap.setColor(.red, atX: x, y: y) } }
+        for (format, type) in [(NSBitmapImageRep.FileType.png, "public.png"), (.jpeg, "public.jpeg"), (.tiff, "public.tiff")] {
+            let data = try #require(bitmap.representation(using: format, properties: [:]))
+            let image = try await NoteImageImport.load(.data(data))
+            #expect(image == .image(data: data, typeIdentifier: type))
+        }
+    }
+
+    @Test
+    func imageImportRejectsClipboardThatChanged() async throws {
+        let board = NSPasteboard(name: .init("RascTests.\(UUID().uuidString)"))
+        defer { board.releaseGlobally() }
+        board.clearContents()
+        board.setData(testPNG, forType: .png)
+        let source = NoteImageImport.Source.pasteboard(name: board.name.rawValue, type: NSPasteboard.PasteboardType.png.rawValue, changeCount: board.changeCount)
+        let imported = try await NoteImageImport.load(source)
+        #expect(imported == .image(data: testPNG, typeIdentifier: "public.png"))
+        board.clearContents()
+        await #expect(throws: NoteImageImport.ImportError.clipboardChanged) {
+            try await NoteImageImport.load(source)
+        }
+    }
+
+    @Test
+    func imageInsertionRejectsInvalidUnicodeAndOutOfRangeSelections() throws {
+        let original = NoteDocument(parts: [.text("a😀b")])
+        #expect(throws: NoteDocument.EditError.invalidSelection) {
+            try original.insertingImage(data: testPNG, typeIdentifier: "public.png", replacing: NSRange(location: 2, length: 0))
+        }
+        #expect(throws: NoteDocument.EditError.invalidSelection) {
+            try original.insertingImage(data: testPNG, typeIdentifier: "public.png", replacing: NSRange(location: 99, length: 1))
+        }
+    }
+
+    @Test
+    func importedInlineImagesBecomeSeparateLines() {
+        let document = NoteDocument(parts: [.text("before"), .image(data: testPNG, typeIdentifier: "public.png"), .text("after")])
+        #expect(document.placingImagesOnSeparateLines().editorText == "before\n\u{fffc}\nafter")
+    }
+
+    @Test
+    func adjacentTextPartsHaveOneStableRepresentation() {
+        let document = NoteDocument(parts: [.text("first"), .text(""), .text(" second")])
+        #expect(document.parts == [.text("first second")])
+        #expect(NoteDocument(parts: []).parts == [.text("")])
+    }
+
+    @Test
+    @MainActor
+    func measuresTextAutosaveWithARepresentativeImage() async throws {
+        let width = 2048, height = 2048, stride = width * 3
+        var pixels = Data(count: stride * height)
+        pixels.withUnsafeMutableBytes { bytes in arc4random_buf(bytes.baseAddress, bytes.count) }
+        let provider = try #require(CGDataProvider(data: pixels as CFData))
+        let image = try #require(CGImage(width: width, height: height, bitsPerComponent: 8, bitsPerPixel: 24, bytesPerRow: stride, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue), provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent))
+        let output = NSMutableData()
+        let destination = try #require(CGImageDestinationCreateWithData(output, "public.png" as CFString, 1, nil))
+        CGImageDestinationAddImage(destination, image, nil)
+        #expect(CGImageDestinationFinalize(destination))
+        let bytes = output as Data
+        let databaseURL = makeDatabaseURL()
+        defer { removeDatabase(at: databaseURL) }
+        let repository = try NoteRepository(databaseURL: databaseURL)
+        let original = NoteDocument(parts: [.text("before\n"), .image(data: bytes, typeIdentifier: "public.png"), .text("\nafter")])
+        let note = try await repository.createScratch(document: original)
+        let suite = "RascBenchmark.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let session = ScratchpadSession(repository: repository, userDefaults: defaults)
+        #expect(try await session.openNote(id: note.id))
+        var milliseconds: [Int] = []
+        for index in 0..<3 {
+            session.replaceDocumentFromEditor(NoteDocument(parts: [.text("before \(index)\n"), .image(data: bytes, typeIdentifier: "public.png"), .text("\nafter")]))
+            let start = ContinuousClock.now
+            try await session.flush()
+            let duration = start.duration(to: .now)
+            milliseconds.append(Int(duration.components.seconds * 1000 + duration.components.attoseconds / 1_000_000_000_000_000))
+        }
+        print("RASC_IMAGE_AUTOSAVE_BENCHMARK bytes=\(bytes.count) milliseconds=\(milliseconds)")
+        #expect(try await repository.fetchDocument(id: note.id) == session.document)
+        try repository.closeForTesting()
+    }
+
+    @Test
+    func textEditsLeaveTheStoredImageBlobUntouched() async throws {
+        let url = makeDatabaseURL()
+        defer { removeDatabase(at: url) }
+        let repository = try NoteRepository(databaseURL: url)
+        let original = NoteDocument(parts: [.text("before\n"), .image(data: testPNG, typeIdentifier: "public.png"), .text("\nafter")])
+        let note = try await repository.createScratch(document: original)
+        let db = try DatabaseQueue(path: url.path)
+        let oldBytes = try await db.read { db in try Data.fetchOne(db, sql: "SELECT document FROM note_document_bases WHERE note_id = ?", arguments: [note.id]) }
+        try await db.write { db in
+            try db.execute(sql: "CREATE TRIGGER reject_image_blob_update BEFORE UPDATE OF document ON note_document_bases BEGIN SELECT RAISE(ABORT, 'image was rewritten'); END")
+        }
+        let changed = NoteDocument(parts: [.text("updated\n"), .image(data: testPNG, typeIdentifier: "public.png"), .text("\nending")])
+        try await repository.update(id: note.id, document: changed, ifCurrent: original)
+        let newBytes = try await db.read { db in try Data.fetchOne(db, sql: "SELECT document FROM note_document_bases WHERE note_id = ?", arguments: [note.id]) }
+        #expect(newBytes == oldBytes)
+        let reopened = try NoteRepository(databaseURL: url)
+        #expect(try await reopened.fetchDocument(id: note.id) == changed)
+        #expect(try await reopened.search("updated", limit: 10).map(\.id) == [note.id])
+        let copy = try await reopened.duplicate(id: note.id)
+        #expect(try await reopened.fetchDocument(id: copy.id) == changed)
+        _ = try await reopened.keep(id: note.id)
+        let receipt = try #require(try await reopened.delete(id: note.id))
+        _ = try await reopened.restoreDiscard(receipt)
+        #expect(try await reopened.fetchDocument(id: note.id) == changed)
+    }
+
+    @Test
+    func staleTextEditCannotOverwriteChangedImagesWithSameProjection() async throws {
+        let url = makeDatabaseURL()
+        defer { removeDatabase(at: url) }
+        let writer = try NoteRepository(databaseURL: url)
+        let reader = try NoteRepository(databaseURL: url)
+        let first = NoteDocument(parts: [.text("same"), .image(data: testPNG, typeIdentifier: "public.png")])
+        let note = try await writer.createScratch(document: first)
+        #expect(try await reader.fetchDocument(id: note.id) == first)
+        let otherImage = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYPj/HwADAgH/5ncLrgAAAABJRU5ErkJggg==")!
+        let newer = NoteDocument(parts: [.text("same"), .image(data: otherImage, typeIdentifier: "public.png")])
+        try await writer.update(id: note.id, document: newer, ifCurrent: first)
+        let stale = NoteDocument(parts: [.text("stale"), .image(data: testPNG, typeIdentifier: "public.png")])
+        await #expect(throws: NoteRepository.PersistenceError.staleContent) { try await reader.update(id: note.id, document: stale, ifCurrent: first) }
+        #expect(try await reader.fetchDocument(id: note.id) == newer)
+    }
+
+    @Test
+    func unchangedStructuredDocumentPreservesItsTimestamp() async throws {
+        let repository = try makeRepository()
+        let document = NoteDocument(parts: [.text("same"), .image(data: testPNG, typeIdentifier: "public.png")])
+        let note = try await repository.createScratch(document: document)
+        let originalTimestamp = try #require(try await repository.fetch(id: note.id)?.updatedAt)
+        try await repository.update(id: note.id, document: document, ifCurrent: document)
+        #expect(try await repository.fetch(id: note.id)?.updatedAt == originalTimestamp)
+    }
+
+    @Test
+    func structuredContentSurvivesReopenSearchDuplicationAndDiscard() async throws {
+        let url = makeDatabaseURL()
+        defer { removeDatabase(at: url) }
+        let repository = try NoteRepository(databaseURL: url)
+        let document = NoteDocument(parts: [
+            .text("Before\n• list item\n"),
+            .image(data: testPNG, typeIdentifier: "public.png"),
+            .text("\nAfter café"),
+            .image(data: testPNG, typeIdentifier: "public.png"),
+        ])
+        let note = try await repository.createScratch(document: document)
+        let reader = try NoteRepository(databaseURL: url)
+        #expect(try await reader.fetchDocument(id: note.id) == document)
+        #expect(try await reader.search("list", limit: 10).map(\.id) == [note.id])
+        #expect(try await reader.search("cafe", limit: 10).map(\.id) == [note.id])
+
+        let changed = NoteDocument(parts: [.text("replacement"), .image(data: testPNG, typeIdentifier: "public.png")])
+        try await repository.update(id: note.id, document: changed, ifCurrent: document)
+        #expect(try await reader.fetchDocument(id: note.id) == changed)
+        #expect(try await reader.search("list", limit: 10).isEmpty)
+        #expect(try await reader.search("replacement", limit: 10).map(\.id) == [note.id])
+        let copy = try await repository.duplicate(id: note.id)
+        #expect(try await repository.fetchDocument(id: copy.id) == changed)
+        let receipt = try #require(try await repository.delete(id: note.id))
+        #expect(try await repository.fetchDocument(id: note.id) == nil)
+        _ = try await repository.restoreDiscard(receipt)
+        #expect(try await repository.fetchDocument(id: note.id) == changed)
+    }
+
+    @Test
+    func textOnlyWritesAndRefinementCannotOverwriteStructuredContent() async throws {
+        let repository = try makeRepository()
+        let document = NoteDocument(parts: [.text("original"), .image(data: testPNG, typeIdentifier: "public.png")])
+        let note = try await repository.createScratch(document: document)
+        await #expect(throws: NoteRepository.PersistenceError.structuredContentRequiresDocument) {
+            try await repository.update(id: note.id, content: "replacement")
+        }
+        let metadata = RefinementMetadata(provider: "test", modelIdentifier: "test", promptVersion: "test")
+        await #expect(throws: NoteRepository.PersistenceError.structuredContentRequiresDocument) {
+            try await repository.acceptRefinement(noteID: note.id, beforeContent: "original", afterContent: "replacement", metadata: metadata)
+        }
+        #expect(try await repository.fetchDocument(id: note.id) == document)
+        #expect(try await repository.refinementRevisions(for: note.id).isEmpty)
+    }
+
+    @Test
+    func failedProjectionWriteRollsBackDocumentAndSearch() async throws {
+        let url = makeDatabaseURL()
+        defer { removeDatabase(at: url) }
+        let repository = try NoteRepository(databaseURL: url)
+        let original = NoteDocument(parts: [.text("original"), .image(data: testPNG, typeIdentifier: "public.png")])
+        let note = try await repository.createScratch(document: original)
+        let db = try DatabaseQueue(path: url.path)
+        try await db.write { db in
+            try db.execute(sql: "CREATE TRIGGER reject_content_update BEFORE UPDATE OF content ON notes BEGIN SELECT RAISE(ABORT, 'test failure'); END")
+        }
+        let replacement = NoteDocument(parts: [.text("replacement"), .image(data: testPNG, typeIdentifier: "public.png")])
+        do {
+            try await repository.update(id: note.id, document: replacement, ifCurrent: original)
+            Issue.record("Expected the transaction to fail")
+        } catch { }
+        #expect(try await repository.fetchDocument(id: note.id) == original)
+        #expect(try await repository.search("original", limit: 10).map(\.id) == [note.id])
+        #expect(try await repository.search("replacement", limit: 10).isEmpty)
+    }
+
+    @Test
+    func staleDocumentUpdateCannotOverwriteNewerImages() async throws {
+        let repository = try makeRepository()
+        let original = NoteDocument(parts: [.text("same text")])
+        let note = try await repository.createScratch(content: original.text)
+        let withImage = NoteDocument(parts: [.text("same text"), .image(data: testPNG, typeIdentifier: "public.png")])
+        try await repository.update(id: note.id, document: withImage, ifCurrent: original)
+        let stale = NoteDocument(parts: [.text("stale edit")])
+        await #expect(throws: NoteRepository.PersistenceError.staleContent) {
+            try await repository.update(id: note.id, document: stale, ifCurrent: original)
+        }
+        #expect(try await repository.fetchDocument(id: note.id) == withImage)
+    }
+
+    @Test
+    func imageOnlyDocumentCanBeKeptAndInvalidImageCannotBeSaved() async throws {
+        let repository = try makeRepository()
+        let document = NoteDocument(parts: [.image(data: testPNG, typeIdentifier: "public.png")])
+        let note = try await repository.createScratch(document: document)
+        let kept = try await repository.keep(id: note.id)
+        #expect(kept.isKept)
+        #expect(kept.hasImages)
+        #expect(kept.displayTitle == "Image")
+        #expect(try await repository.fetchDocument(id: note.id) == document)
+        await #expect(throws: NoteDocument.DocumentError.invalidImage) {
+            try await repository.update(id: note.id, document: NoteDocument(parts: [.image(data: Data(), typeIdentifier: "public.png")]), ifCurrent: document)
+        }
+        #expect(try await repository.fetchDocument(id: note.id) == document)
+    }
+
+    @Test
+    @MainActor
+    func measuresSuffixAutosaveWithARepresentativeImage() async throws {
+        let width = 2048, height = 2048, stride = width * 3
+        var pixels = Data(count: stride * height)
+        pixels.withUnsafeMutableBytes { bytes in arc4random_buf(bytes.baseAddress, bytes.count) }
+        let provider = try #require(CGDataProvider(data: pixels as CFData))
+        let image = try #require(CGImage(width: width, height: height, bitsPerComponent: 8, bitsPerPixel: 24, bytesPerRow: stride, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue), provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent))
+        let output = NSMutableData()
+        let destination = try #require(CGImageDestinationCreateWithData(output, "public.png" as CFString, 1, nil))
+        CGImageDestinationAddImage(destination, image, nil)
+        #expect(CGImageDestinationFinalize(destination))
+        let bytes = output as Data
+        let databaseURL = makeDatabaseURL()
+        defer { removeDatabase(at: databaseURL) }
+        let repository = try NoteRepository(databaseURL: databaseURL)
+        let original = NoteDocument(parts: [.text("before\n"), .image(data: bytes, typeIdentifier: "public.png"), .text("\nafter")])
+        let note = try await repository.createScratch(document: original)
+        let suite = "RascSuffixBenchmark.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let session = ScratchpadSession(repository: repository, userDefaults: defaults)
+        #expect(try await session.openNote(id: note.id))
+        var milliseconds: [Int] = []
+        for index in 0..<3 {
+            session.replaceDocumentFromEditor(NoteDocument(parts: [.text("before\n"), .image(data: bytes, typeIdentifier: "public.png"), .text("\nafter \(index)")]))
+            let start = ContinuousClock.now
+            try await session.flush()
+            let duration = start.duration(to: .now)
+            milliseconds.append(Int(duration.components.seconds * 1000 + duration.components.attoseconds / 1_000_000_000_000_000))
+        }
+        print("RASC_SUFFIX_BENCHMARK bytes=\(bytes.count) milliseconds=\(milliseconds)")
+        #expect(try await repository.fetchDocument(id: note.id) == session.document)
+        try repository.closeForTesting()
     }
 
     private func makeRepository() throws -> NoteRepository {

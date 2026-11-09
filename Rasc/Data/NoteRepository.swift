@@ -16,10 +16,20 @@ actor NoteRepository {
         case emptyContent
         case noContentChange
         case staleContent
+        case structuredContentRequiresDocument
     }
 
     private let database: DatabaseQueue
     private var discardReceipts: [UUID: NoteDiscardReceipt] = [:]
+    // Retain at most one decoded note; the revision is checked in SQLite on every write.
+    private var cachedDocument: (id: UUID, document: NoteDocument, revision: Int64)?
+
+    private struct StoredDocument {
+        let document: NoteDocument
+        let bytes: Data
+        let textSegments: Data?
+        let revision: Int64
+    }
 
     nonisolated static var defaultDatabaseURL: URL {
         get throws {
@@ -94,6 +104,80 @@ actor NoteRepository {
         }
     }
 
+    private nonisolated static func textSegments(_ document: NoteDocument) -> [String] {
+        var segments = [""]
+        for part in document.parts {
+            switch part {
+            case .text(let text): segments[segments.count - 1] += text
+            case .image: segments.append("")
+            }
+        }
+        return segments
+    }
+
+    private nonisolated static func imagesMatch(_ lhs: NoteDocument, _ rhs: NoteDocument) -> Bool {
+        let left = lhs.parts.filter { if case .image = $0 { true } else { false } }
+        let right = rhs.parts.filter { if case .image = $0 { true } else { false } }
+        return left == right
+    }
+
+    private nonisolated static func loadStructured(id: UUID, in db: Database) throws -> StoredDocument? {
+        guard let row = try Row.fetchOne(db, sql: """
+            SELECT note_document_bases.document, note_document_edits.revision, note_document_edits.text_segments
+            FROM note_document_bases LEFT JOIN note_document_edits USING (note_id)
+            WHERE note_document_bases.note_id = ?
+            """, arguments: [id]) else { return nil }
+        let bytes: Data = row["document"]
+        guard let revision: Int64 = row["revision"] else { throw PersistenceError.staleContent }
+        let segmentsData: Data? = row["text_segments"]
+        let base = try PropertyListDecoder().decode(NoteDocument.self, from: bytes)
+        try base.validate()
+        let document: NoteDocument
+        if let segmentsData {
+            let segments = try PropertyListDecoder().decode([String].self, from: segmentsData)
+            let images = base.parts.filter { if case .image = $0 { true } else { false } }
+            guard segments.count == images.count + 1 else { throw PersistenceError.staleContent }
+            var parts: [NoteDocument.Part] = []
+            for (index, image) in images.enumerated() {
+                parts.append(.text(segments[index]))
+                parts.append(image)
+            }
+            parts.append(.text(segments[images.count]))
+            document = NoteDocument(parts: parts)
+        } else {
+            document = base
+        }
+        return StoredDocument(document: document, bytes: bytes, textSegments: segmentsData, revision: revision)
+    }
+
+    func duplicate(id: UUID) throws -> Note {
+        let result: (Note, NoteDocument?) = try database.write { db in
+            guard let source = try Note.filter(Note.Columns.id == id)
+                .filter(Note.Columns.deletedAt == nil).fetchOne(db) else {
+                throw PersistenceError.staleContent
+            }
+            let stored = try Self.loadStructured(id: id, in: db)
+            if let stored {
+                guard stored.document.text == source.content, stored.document.hasImages == source.hasImages else { throw PersistenceError.staleContent }
+            } else if source.hasImages {
+                throw PersistenceError.staleContent
+            } else if !Self.hasMeaningfulContent(source.content) {
+                throw PersistenceError.emptyContent
+            }
+            let now = Date()
+            let copy = Note(id: UUID(), content: source.content, createdAt: now,
+                            updatedAt: now, deletedAt: nil, keptAt: nil, hasImages: source.hasImages)
+            try copy.insert(db)
+            if let stored {
+                try db.execute(sql: "INSERT INTO note_document_bases (note_id, document) VALUES (?, ?)", arguments: [copy.id, stored.bytes])
+                try db.execute(sql: "INSERT INTO note_document_edits (note_id, revision, text_segments) VALUES (?, 0, ?)", arguments: [copy.id, stored.textSegments])
+            }
+            return (copy, stored?.document)
+        }
+        if let document = result.1 { cachedDocument = (result.0.id, document, 0) }
+        return result.0
+    }
+
     func fetch(id: UUID) throws -> Note? {
         try database.read { database in
             try Note
@@ -117,6 +201,9 @@ actor NoteRepository {
                 throw PersistenceError.staleContent
             }
 
+            guard try !Self.hasDocument(id: id, in: database) else {
+                throw PersistenceError.structuredContentRequiresDocument
+            }
             guard existing.content != content else {
                 return
             }
@@ -144,7 +231,13 @@ actor NoteRepository {
             throw PersistenceError.emptyContent
         }
 
-        return try database.write { database in
+        let revision: RefinementRevision = try database.write { database in
+            if let stored = try Self.loadStructured(id: noteID, in: database) {
+                guard !stored.document.hasImages else { throw PersistenceError.structuredContentRequiresDocument }
+                guard stored.document.text == beforeContent else { throw PersistenceError.staleContent }
+                try database.execute(sql: "DELETE FROM note_document_edits WHERE note_id = ?", arguments: [noteID])
+                try database.execute(sql: "DELETE FROM note_document_bases WHERE note_id = ?", arguments: [noteID])
+            }
             let now = Date()
             let updatedCount = try Note
                 .filter(Note.Columns.id == noteID)
@@ -171,6 +264,121 @@ actor NoteRepository {
             try revision.insert(database)
             return revision
         }
+        if cachedDocument?.id == noteID { cachedDocument = nil }
+        return revision
+    }
+
+    /// Structured content and its search projection are committed together.
+    func createScratch(document: NoteDocument) throws -> Note {
+        #if DEBUG
+        testGate?.enter()
+        #endif
+        try document.validate()
+        guard document.hasImages || Self.hasMeaningfulContent(document.text) else {
+            throw PersistenceError.emptyContent
+        }
+        let encoder = PropertyListEncoder()
+        encoder.outputFormat = .binary
+        let bytes = try encoder.encode(document)
+        let note: Note = try database.write { db in
+            let now = Date()
+            let note = Note(id: UUID(), content: document.text, createdAt: now,
+                            updatedAt: now, deletedAt: nil, keptAt: nil, hasImages: document.hasImages)
+            try note.insert(db)
+            try db.execute(sql: "INSERT INTO note_document_bases (note_id, document) VALUES (?, ?)", arguments: [note.id, bytes])
+            try db.execute(sql: "INSERT INTO note_document_edits (note_id, revision) VALUES (?, 0)", arguments: [note.id])
+            return note
+        }
+        cachedDocument = (note.id, document, 0)
+        return note
+    }
+
+    /// Reads the note and optional structured content from the same database snapshot.
+    func fetchEditable(id: UUID) throws -> (note: Note, document: NoteDocument?)? {
+        let result: (Note, StoredDocument?)? = try database.read { db in
+            guard let note = try Note.filter(Note.Columns.id == id)
+                .filter(Note.Columns.deletedAt == nil).fetchOne(db) else { return nil }
+            let stored = try Self.loadStructured(id: id, in: db)
+            guard let stored else {
+                guard !note.hasImages else { throw PersistenceError.staleContent }
+                return (note, nil)
+            }
+            guard stored.document.text == note.content, stored.document.hasImages == note.hasImages else { throw PersistenceError.staleContent }
+            return (note, stored)
+        }
+        guard let result else { return nil }
+        if let stored = result.1 { cachedDocument = (id, stored.document, stored.revision) }
+        else if cachedDocument?.id == id { cachedDocument = nil }
+        return (result.0, result.1?.document)
+    }
+
+    func fetchDocument(id: UUID) throws -> NoteDocument? {
+        guard let editable = try fetchEditable(id: id) else { return nil }
+        return editable.document ?? NoteDocument(parts: [.text(editable.note.content)])
+    }
+
+    func update(id: UUID, document: NoteDocument, ifCurrent expected: NoteDocument) throws {
+        #if DEBUG
+        testGate?.enter()
+        #endif
+        // A cached document is safe only with the database revision check below.
+        var baseline = cachedDocument.flatMap { $0.id == id && $0.document == expected ? $0 : nil }
+        if baseline == nil {
+            let stored = try database.read { try Self.loadStructured(id: id, in: $0) }
+            if let stored { baseline = (id, stored.document, stored.revision) }
+        }
+        if let baseline, baseline.document != expected { throw PersistenceError.staleContent }
+        guard document.version == NoteDocument.currentVersion else { throw NoteDocument.DocumentError.unsupportedVersion }
+        let textOnly = baseline != nil && Self.imagesMatch(expected, document)
+        let encoder = PropertyListEncoder()
+        encoder.outputFormat = .binary
+        let segments = textOnly ? try encoder.encode(Self.textSegments(document)) : nil
+        let bytes: Data?
+        if textOnly { bytes = nil }
+        else {
+            try document.validate()
+            bytes = try encoder.encode(document)
+        }
+        let newRevision: Int64 = try database.write { db in
+            guard let existing = try Note.filter(Note.Columns.id == id)
+                .filter(Note.Columns.deletedAt == nil).fetchOne(db),
+                  existing.content == expected.text, existing.hasImages == expected.hasImages else {
+                throw PersistenceError.staleContent
+            }
+            if document == expected {
+                if let baseline {
+                    let revision = try Int64.fetchOne(db, sql: "SELECT revision FROM note_document_edits JOIN note_document_bases USING (note_id) WHERE note_id = ?", arguments: [id])
+                    guard revision == baseline.revision else { throw PersistenceError.staleContent }
+                    return baseline.revision
+                }
+                guard try !Self.hasDocument(id: id, in: db) else { throw PersistenceError.staleContent }
+                return 0
+            }
+            if let baseline {
+                // CAS uses a small separate row; SQLite never rewrites the image blob for text edits.
+                try db.execute(sql: "UPDATE note_document_edits SET revision = revision + 1, text_segments = ? WHERE note_id = ? AND revision = ? AND EXISTS (SELECT 1 FROM note_document_bases WHERE note_id = ?)", arguments: [segments, id, baseline.revision, id])
+                guard db.changesCount == 1 else { throw PersistenceError.staleContent }
+                if let bytes {
+                    try db.execute(sql: "UPDATE note_document_bases SET document = ? WHERE note_id = ?", arguments: [bytes, id])
+                    guard db.changesCount == 1 else { throw PersistenceError.staleContent }
+                }
+            } else {
+                guard try !Self.hasDocument(id: id, in: db), let bytes else { throw PersistenceError.staleContent }
+                try db.execute(sql: "INSERT INTO note_document_bases (note_id, document) VALUES (?, ?)", arguments: [id, bytes])
+                try db.execute(sql: "INSERT INTO note_document_edits (note_id, revision) VALUES (?, 0)", arguments: [id])
+            }
+            try Note.filter(Note.Columns.id == id).updateAll(db, [
+                Note.Columns.content.set(to: document.text),
+                Note.Columns.hasImages.set(to: document.hasImages),
+                Note.Columns.updatedAt.set(to: Date()),
+            ])
+            return baseline.map { $0.revision + 1 } ?? 0
+        }
+        if baseline != nil || document != expected { cachedDocument = (id, document, newRevision) }
+    }
+
+    private nonisolated static func hasDocument(id: UUID, in db: Database) throws -> Bool {
+        try Bool.fetchOne(db, sql: "SELECT EXISTS(SELECT 1 FROM note_document_bases WHERE note_id = ?)", arguments: [id]) ?? false
     }
 
     func refinementRevisions(for noteID: UUID) throws -> [RefinementRevision] {
@@ -274,14 +482,23 @@ actor NoteRepository {
     }
 
     func keep(id: UUID) throws -> Note {
-        guard let note = try fetch(id: id) else {
-            throw PersistenceError.staleContent
-        }
-        guard Self.hasMeaningfulContent(note.content) else {
-            throw PersistenceError.emptyContent
-        }
-
         return try database.write { database in
+            guard let note = try Note.filter(Note.Columns.id == id)
+                .filter(Note.Columns.deletedAt == nil).fetchOne(database) else {
+                throw PersistenceError.staleContent
+            }
+            let stored = try Self.loadStructured(id: id, in: database)
+            let hasImages: Bool
+            if let stored {
+                guard stored.document.text == note.content, stored.document.hasImages == note.hasImages else { throw PersistenceError.staleContent }
+                hasImages = stored.document.hasImages
+            } else {
+                guard !note.hasImages else { throw PersistenceError.staleContent }
+                hasImages = false
+            }
+            guard hasImages || Self.hasMeaningfulContent(note.content) else {
+                throw PersistenceError.emptyContent
+            }
             let now = Date()
             let updatedCount = try Note
                 .filter(Note.Columns.id == id)
