@@ -88,21 +88,18 @@ struct PanelControllerTests {
         let observer = OrbWindowVisibilityView()
         var visible = false
         observer.onVisibilityChange = { visible = $0 }
+        controller.panel.setFrame(NSRect(x: 220, y: 240, width: 640, height: 420), display: false)
         controller.panel.contentView?.addSubview(observer)
-        try await Task.sleep(for: .milliseconds(100))
-        #expect(!visible)
+        #expect(await waitUntil { !visible })
 
         controller.panel.orderFrontRegardless()
-        try await Task.sleep(for: .milliseconds(100))
-        #expect(visible)
+        #expect(await waitUntil { visible })
 
         controller.panel.orderOut(nil)
-        try await Task.sleep(for: .milliseconds(100))
-        #expect(!visible)
+        #expect(await waitUntil { !visible })
 
         controller.panel.orderFrontRegardless()
-        try await Task.sleep(for: .milliseconds(100))
-        #expect(visible)
+        #expect(await waitUntil { visible })
         controller.panel.orderOut(nil)
     }
 
@@ -114,14 +111,13 @@ struct PanelControllerTests {
         let observer = OrbWindowVisibilityView()
         var visible = false
         observer.onVisibilityChange = { visible = $0 }
+        controller.panel.setFrame(NSRect(x: 220, y: 240, width: 640, height: 420), display: false)
         controller.panel.contentView?.addSubview(observer)
         controller.panel.orderFrontRegardless()
-        try await Task.sleep(for: .milliseconds(100))
-        #expect(visible)
+        #expect(await waitUntil { visible })
 
         observer.removeFromSuperview()
-        try await Task.sleep(for: .milliseconds(100))
-        #expect(!visible)
+        #expect(await waitUntil { !visible })
         controller.panel.orderOut(nil)
     }
 
