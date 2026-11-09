@@ -72,10 +72,20 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
 
     @MainActor
     func displayedShortcutLabel() -> String {
-        if self == .openHome {
+        switch self {
+        case .openHome:
             return GlobalShortcutFormatting.currentHomeShortcutDisplay()
+        case .newScratch:
+            return InternalShortcutStore.shared.displayString(for: .newScratch)
+        case .findNote:
+            return InternalShortcutStore.shared.displayString(for: .search)
+        case .refine:
+            return InternalShortcutStore.shared.displayString(for: .refine)
+        case .keep:
+            return InternalShortcutStore.shared.displayString(for: .keep)
+        default:
+            return shortcutLabel
         }
-        return shortcutLabel
     }
 
     var accessibilityHint: String {
