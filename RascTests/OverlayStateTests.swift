@@ -67,11 +67,11 @@ struct OverlayStateTests {
         #expect(RascOrbState.connecting.speed == 0.58)
         #expect(RascOrbState.composing.thinkingOrbState.rawValue == "composing")
         #expect(RascOrbState.composing.speed == 0.48)
-        #expect(!RascOrbState.note.isPaused)
+        #expect(RascOrbState.note.isPaused)
         #expect(!RascOrbState.searching.isPaused)
         #expect(!RascOrbState.refining.isPaused)
         #expect(!RascOrbState.connecting.isPaused)
-        #expect(!RascOrbState.composing.isPaused)
+        #expect(RascOrbState.composing.isPaused)
     }
 
     @Test
@@ -159,6 +159,42 @@ struct OverlayStateTests {
         session.deleteCommandPaletteText()
         #expect(session.commandPaletteQuery == "shortcut")
         #expect(session.filteredCommands == [.keyboardShortcuts])
+    }
+
+    @Test
+    func commandPaletteListsKeepWhenTheEditorHasText() throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "unfinished thought"
+        session.openCommandPalette()
+
+        #expect(session.filteredCommands.first == .keep)
+        #expect(session.filteredCommands.contains(.copyNote))
+        #expect(session.filteredCommands.contains(.shareNote))
+        #expect(session.filteredCommands.contains(.discardNote))
+        #expect(!session.filteredCommands.contains(.unkeep))
+    }
+
+    @Test
+    func commandPaletteHidesCompletionWhileRefining() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            refinementProvider: ControlledRefinementProvider(),
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "refine this"
+        session.startRefinement()
+        session.openCommandPalette()
+
+        #expect(session.surface == .commandPalette)
+        #expect(!session.filteredCommands.contains(.keep))
+        #expect(!session.filteredCommands.contains(.discardNote))
     }
 
     @Test
