@@ -18,8 +18,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
     private let onboardingCoordinator = OnboardingCoordinator()
     private var menuBarController: MenuBarController?
 
+    override init() {
+        #if DEBUG
+        TestHostIsolation.installIfNeeded()
+        #endif
+        super.init()
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         #if DEBUG
+        if TestHostIsolation.isAppTestHost {
+            if !TestHostIsolation.isInstalled {
+                fatalError("Rasc test host launched without isolated storage")
+            }
+            return
+        }
         if RefineReviewCommandLine.runIfRequested() { return }
         if RefineEvalLanguageResolverCommandLine.runIfRequested() { return }
         if RefineEvalCommandLine.runIfRequested() { return }
@@ -32,14 +45,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
             await self?.bootstrap.prepareForSettingsPresentation()
         }
         menuBarController = MenuBarController(delegate: self)
+        InternalShortcutStore.shared.applyToMainMenu()
         bootstrap.start()
 
         let forceResetOnboarding = ProcessInfo.processInfo.arguments.contains("-resetOnboarding")
+        #if DEBUG
+        let showScratchpad = ProcessInfo.processInfo.arguments.contains("-showScratchpad")
+        #endif
         Task { @MainActor in
             await onboardingCoordinator.prepare(
                 bootstrap: bootstrap,
                 forceReset: forceResetOnboarding
             )
+            #if DEBUG
+            if showScratchpad {
+                await bootstrap.awaitPanel()?.show()
+            }
+            #endif
         }
 
         KeyboardShortcuts.onKeyUp(for: .toggleScratchpad) { [weak self] in
@@ -149,6 +171,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
     func toggleHome() {
         Task { @MainActor in
             await bootstrap.toggleHome()
+        }
+    }
+
+    func menuBarOpenScratch() {
+        Task { @MainActor in
+            await bootstrap.awaitPanel()?.show()
         }
     }
 
