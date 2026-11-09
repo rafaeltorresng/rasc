@@ -44,6 +44,51 @@ struct HomeSessionTests {
     }
 
     @Test
+    func emptiedNoteStaysInHomeWithAReadableTitle() async throws {
+        let repository = try makeRepository()
+        let note = try await repository.createScratch(content: "queue retry investigation")
+        try await repository.update(id: note.id, content: "")
+
+        let session = await MainActor.run {
+            HomeSession(repository: repository)
+        }
+        await session.reloadImmediately()
+
+        let shown = await MainActor.run {
+            session.browseGroups.flatMap(\.notes)
+        }
+        #expect(shown.map(\.id) == [note.id])
+        #expect(shown.first?.displayTitle == "Empty thought")
+        #expect(shown.first?.isKept == false)
+
+        await MainActor.run {
+            session.searchQuery = "queue"
+        }
+        await session.reloadImmediately()
+        let matches = await MainActor.run { session.searchResults.map(\.id) }
+        #expect(matches.isEmpty)
+    }
+
+    @Test
+    func emptiedKeptNoteStaysInTheKeptGroup() async throws {
+        let repository = try makeRepository()
+        let note = try await repository.createScratch(content: "kept thought")
+        _ = try await repository.keep(id: note.id)
+        try await repository.update(id: note.id, content: "")
+
+        let session = await MainActor.run {
+            HomeSession(repository: repository)
+        }
+        await session.reloadImmediately()
+
+        let groups = await MainActor.run { session.browseGroups }
+        #expect(groups.first?.kind == .kept)
+        #expect(groups.first?.notes.map(\.id) == [note.id])
+        #expect(groups.first?.notes.first?.displayTitle == "Empty thought")
+        #expect(groups.first?.notes.first?.isKept == true)
+    }
+
+    @Test
     func discardNoteRemovesNoteFromHome() async throws {
         let repository = try makeRepository()
         let kept = try await repository.createScratch(content: "kept note")

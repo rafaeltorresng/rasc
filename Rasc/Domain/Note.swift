@@ -34,7 +34,8 @@ struct Note: Codable, Equatable, FetchableRecord, PersistableRecord, Sendable {
     }
 
     var displayTitle: String {
-        Self.truncate(meaningfulLines.first ?? content.trimmingCharacters(in: .whitespacesAndNewlines), to: 80)
+        let title = Self.truncate(meaningfulLines.first ?? "", to: 80)
+        return title.isEmpty ? "Empty thought" : title
     }
 
     var displaySnippet: String? {
