@@ -11,6 +11,8 @@ enum RascSurfaceLayout {
     static let scratchpadChromeToBodyGap: CGFloat = 8
     static let scratchpadChromeBottomPadding: CGFloat = 10
     static let scratchpadEditorContentTopPadding: CGFloat = 12
+    /// Nudges the NSTextView caret to the same cap line as the SwiftUI empty-state prompt.
+    static let scratchpadEditorCaretTopInset: CGFloat = 3
     static let transientHeaderBodyGap: CGFloat = 8
     static let bottomInset: CGFloat = 12
     static let textContainerHorizontalInset: CGFloat = 5
