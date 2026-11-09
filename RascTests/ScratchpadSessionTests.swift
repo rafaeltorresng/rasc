@@ -7,6 +7,216 @@ import Testing
 @MainActor
 struct ScratchpadSessionTests {
     @Test
+    func imageDocumentIsSavedAndReopened() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        session.text = "hello world"
+        let caret = try await session.insertImage(.image(data: image, typeIdentifier: "public.png"), selection: NSRange(location: 5, length: 0))
+        #expect(caret == 8)
+        #expect(session.document?.hasImages == true)
+        try await session.flush()
+        let id = try #require(activeNoteID(in: fixture.userDefaults))
+        let saved = try #require(try await fixture.repository.fetchDocument(id: id))
+        #expect(saved == session.document)
+        try await session.startNewScratch()
+        #expect(try await session.openNote(id: id))
+        #expect(session.document == saved)
+        #expect(session.text == "hello\n\u{fffc}\n world")
+    }
+
+    @Test
+    func imageOnlyThoughtCanBeKeptAndRestored() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        _ = try await session.insertImage(.image(data: image, typeIdentifier: "public.png"), selection: NSRange(location: 0, length: 0))
+        #expect(session.hasPersistableContent)
+        #expect(try await session.keepActiveNote() == .keptShouldHide)
+        let note = try #require(try await fixture.repository.fetchMostRecent())
+        #expect(note.displayTitle == "Image")
+        #expect(note.isKept)
+        #expect(try await session.openNote(id: note.id))
+        #expect(session.document?.hasImages == true)
+        session.startRefinement()
+        #expect(session.message == .containsImages)
+    }
+
+    @Test
+    func changedThoughtPreventsHidingWhilePasteIsRejected() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        session.text = "first"
+        let importTask = try #require(session.beginImageImport(.data(image), selection: NSRange(location: 5, length: 0)))
+        session.text = "newer text"
+        await #expect(throws: NoteImageImport.ImportError.thoughtChanged) { try await session.flush() }
+        #expect(try await importTask.value == nil)
+        #expect(session.text == "newer text")
+        #expect(session.transientFeedback != nil)
+    }
+
+    @Test
+    func imageRemainsAfterItsOriginalFileIsDeleted() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        let source = FileManager.default.temporaryDirectory.appendingPathComponent("RascSource-\(UUID().uuidString).png")
+        try image.write(to: source)
+        defer { try? FileManager.default.removeItem(at: source) }
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        let task = try #require(session.beginImageImport(.file(source), selection: NSRange(location: 0, length: 0)))
+        #expect(try await task.value != nil)
+        try FileManager.default.removeItem(at: source)
+        try await session.flush()
+        let id = try #require(activeNoteID(in: fixture.userDefaults))
+        try await session.startNewScratch()
+        #expect(try await session.openNote(id: id))
+        #expect(session.document?.parts.contains(.image(data: image, typeIdentifier: "public.png")) == true)
+    }
+
+    @Test
+    func imageSaveFailureKeepsTheUnsavedDocumentVisible() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        _ = try await session.insertImage(.image(data: image, typeIdentifier: "public.png"), selection: NSRange(location: 0, length: 0))
+        let document = session.document
+        try fixture.repository.closeForTesting()
+        await #expect(throws: (any Error).self) { try await session.flush() }
+        #expect(session.document == document)
+        #expect(session.document?.hasImages == true)
+        #expect(session.saveErrorMessage != nil)
+    }
+
+    @Test
+    func multipleImagesPasteInOrderAndPersist() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        session.text = "ABC"
+        let task = try #require(session.beginImageImports([.data(image), .data(image)], selection: NSRange(location: 1, length: 0)))
+        #expect(try await task.value != nil)
+        #expect(session.text == "A\n\u{fffc}\n\u{fffc}\nBC")
+        try await session.flush()
+        let id = try #require(activeNoteID(in: fixture.userDefaults))
+        let saved = try #require(try await fixture.repository.fetchDocument(id: id))
+        #expect(saved.parts.filter { if case .image = $0 { true } else { false } }.count == 2)
+    }
+
+    @Test
+    func invalidImageInBatchDoesNotInsertPartialContent() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        session.text = "intact"
+        let task = try #require(session.beginImageImports([.data(image), .data(Data([1, 2]))], selection: NSRange(location: 3, length: 0)))
+        await #expect(throws: NoteImageImport.ImportError.invalidImage) { try await task.value }
+        #expect(session.text == "intact")
+        #expect(session.document == nil)
+    }
+
+    @Test
+    func openingAnotherNoteWaitsForPastedImage() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let target = try await fixture.repository.createScratch(content: "destination")
+        let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        session.text = "previous"
+        let importTask = try #require(session.beginImageImport(.data(image), selection: NSRange(location: 8, length: 0)))
+        #expect(try await session.openNote(id: target.id))
+        #expect(try await importTask.value != nil)
+        #expect(session.text == "destination")
+        let previous = try #require(try await fixture.repository.search("previous", limit: 10).first)
+        #expect(try await fixture.repository.fetchDocument(id: previous.id)?.hasImages == true)
+    }
+
+    @Test
+    func startingNewScratchWaitsForPastedImage() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        session.text = "previous"
+        let importTask = try #require(session.beginImageImport(.data(image), selection: NSRange(location: 8, length: 0)))
+        try await session.startNewScratch()
+        #expect(try await importTask.value != nil)
+        #expect(session.text.isEmpty)
+        let note = try #require(try await fixture.repository.fetchMostRecent())
+        #expect(note.hasImages)
+        #expect(try await fixture.repository.fetchDocument(id: note.id)?.hasImages == true)
+    }
+
+    @Test
+    func newerImageEditSurvivesConcurrentSave() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        _ = try await session.insertImage(.image(data: image, typeIdentifier: "public.png"), selection: NSRange(location: 0, length: 0))
+        let gate = NoteRepositoryTestGate()
+        await fixture.repository.installTestGate(gate)
+        let first = Task { try await session.flush() }
+        await gate.waitForFirstEntry()
+        let newer = NoteDocument(parts: [.image(data: image, typeIdentifier: "public.png"), .text("\nnew text")])
+        session.replaceDocumentFromEditor(newer)
+        gate.release()
+        try await first.value
+        try await session.flush()
+        let id = try #require(activeNoteID(in: fixture.userDefaults))
+        #expect(try await fixture.repository.fetchDocument(id: id) == newer)
+        #expect(try await fixture.repository.fetchAllNonDeleted().count == 1)
+    }
+
+    @Test
+    func discardedImageNoteCanBeRestored() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        _ = try await session.insertImage(.image(data: image, typeIdentifier: "public.png"), selection: NSRange(location: 0, length: 0))
+        try await session.flush()
+        let original = try #require(session.document)
+        let id = try #require(activeNoteID(in: fixture.userDefaults))
+        try await session.discardActiveNote()
+        #expect(try await fixture.repository.fetch(id: id) == nil)
+        await session.undoDiscard()
+        #expect(session.document == original)
+        #expect(try await fixture.repository.fetchDocument(id: id) == original)
+    }
+
+    @Test
+    func typingDuringNoteSwitchKeepsTheCurrentDraft() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let target = try await fixture.repository.createScratch(content: "another note")
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.userDefaults)
+        session.text = "original draft"
+        try await session.flush()
+        session.text = "pending edit"
+        let gate = NoteRepositoryTestGate()
+        await fixture.repository.installTestGate(gate)
+        let opening = Task { try await session.openNote(id: target.id) }
+        await gate.waitForFirstEntry()
+        session.text = "newer edit"
+        session.scheduleAutosave()
+        gate.release()
+        #expect(try await opening.value == false)
+        #expect(session.text == "newer edit")
+        try await session.flush()
+        let activeID = try #require(activeNoteID(in: fixture.userDefaults))
+        #expect(try await fixture.repository.fetch(id: activeID)?.content == "newer edit")
+        #expect(try await fixture.repository.fetch(id: target.id)?.content == "another note")
+    }
+
+    @Test
     func requestingSettingsDoesNotChangeTheActiveScratchpad() throws {
         let fixture = try makeFixture()
         defer { fixture.remove() }

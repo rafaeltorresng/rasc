@@ -302,6 +302,50 @@ struct HomeSessionTests {
         #expect(!home.hasMoreSearchResults)
     }
 
+    @Test
+    @MainActor
+    func copyIncludesTheFullImageDocument() async throws {
+        let repository = try makeRepository()
+        let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        let document = NoteDocument(parts: [.text("mixed"), .image(data: image, typeIdentifier: "public.png")])
+        let mixed = try await repository.createScratch(document: document)
+        let plain = try await repository.createScratch(content: "plain")
+        let session = HomeSession(repository: repository)
+        #expect(try await session.documentForCopy(id: plain.id) == NoteDocument(parts: [.text("plain")]))
+        #expect(try await session.documentForCopy(id: mixed.id) == document)
+        #expect(try await repository.fetchDocument(id: mixed.id) == document)
+    }
+
+    @Test
+    @MainActor
+    func duplicateWaitsForImagePasteAndCopiesTheCurrentDocument() async throws {
+        let repository = try makeRepository()
+        let note = try await repository.createScratch(content: "active thought")
+        let suite = "RascDuplicate.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let scratch = ScratchpadSession(repository: repository, userDefaults: defaults)
+        #expect(try await scratch.openNote(id: note.id))
+        let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        let pending = try #require(scratch.beginImageImport(.data(image), selection: NSRange(location: 6, length: 0)))
+        let home = HomeSession(repository: repository, prepareForDuplicate: { id in try await scratch.flushIfActiveNote(id: id) })
+        let copy = try await home.duplicateNote(id: note.id)
+        #expect(try await pending.value != nil)
+        let source = try #require(try await repository.fetchDocument(id: note.id))
+        #expect(source.hasImages)
+        #expect(try await repository.fetchDocument(id: copy.id) == source)
+    }
+
+    @Test
+    @MainActor
+    func duplicateStopsWhenActiveSaveFails() async throws {
+        let repository = try makeRepository()
+        let note = try await repository.createScratch(content: "original")
+        let home = HomeSession(repository: repository, prepareForDuplicate: { _ in throw NoteRepository.PersistenceError.staleContent })
+        await #expect(throws: NoteRepository.PersistenceError.staleContent) { try await home.duplicateNote(id: note.id) }
+        #expect(try await repository.fetchAllNonDeleted().map(\.id) == [note.id])
+    }
+
     private func makeRepository() throws -> NoteRepository {
         let databaseURL = FileManager.default.temporaryDirectory
             .appending(path: UUID().uuidString)

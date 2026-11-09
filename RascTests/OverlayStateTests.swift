@@ -14,8 +14,7 @@ struct OverlayStateTests {
         #expect(RascSurfaceLayout.scratchpadContentGap <= 18)
         #expect(RascSurfaceLayout.scratchpadEmptySupportingGap >= 6)
         #expect(RascSurfaceLayout.scratchpadEmptySupportingGap <= 12)
-        #expect(RascSurfaceMetrics.scratchpadPlaceholderFontSize == 15)
-        #expect(RascSurfaceMetrics.scratchpadPlaceholderFontSize < RascSurfaceMetrics.noteFontSize)
+        #expect(RascSurfaceMetrics.scratchpadPlaceholderFontSize == RascSurfaceMetrics.noteFontSize)
         #expect(RascSurfaceLayout.scratchpadChromeToBodyGap >= 6)
         #expect(RascSurfaceLayout.scratchpadChromeToBodyGap <= 12)
         #expect(
