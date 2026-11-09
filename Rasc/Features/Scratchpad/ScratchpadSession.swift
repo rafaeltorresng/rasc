@@ -125,6 +125,8 @@ final class ScratchpadSession {
     private let activeNoteStore: ActiveNoteStore
     private let languageSettings: RefineLanguageSettingsStore
     private var noteID: UUID?
+    /// Changes whenever the displayed scratch stops being the one a save was started for.
+    private var sessionEpoch = 0
     private var autosaveTask: Task<Void, Never>?
     private var searchTask: Task<Void, Never>?
     private var refinementTask: Task<Void, Never>?
@@ -133,6 +135,20 @@ final class ScratchpadSession {
     private var feedbackTask: Task<Void, Never>?
     private var activeRefinementID: UUID?
     private var isApplyingAcceptedRefinement = false
+    private var commandPaletteCompletionEligible = false
+    private var inFlightNoteCreate: InFlightNoteCreate?
+    #if DEBUG
+    private var persistEntryProbe: (@MainActor (String) -> Void)?
+    private var persistExitProbe: (@MainActor (String) -> Void)?
+
+    func setPersistProbesForTesting(
+        onEntry: (@MainActor (String) -> Void)? = nil,
+        onExit: (@MainActor (String) -> Void)? = nil
+    ) {
+        persistEntryProbe = onEntry
+        persistExitProbe = onExit
+    }
+    #endif
 
     #if DEBUG
     private static let refinementLogger = Logger(
@@ -185,7 +201,15 @@ final class ScratchpadSession {
     }
 
     var canPerformThoughtCompletion: Bool {
-        acceptanceTask == nil && (surface == .editor || surface == .message)
+        guard acceptanceTask == nil else { return false }
+        switch surface {
+        case .editor, .message:
+            return true
+        case .commandPalette:
+            return commandPaletteCompletionEligible
+        case .search, .refining, .refinementPreview:
+            return false
+        }
     }
 
     func restore() async throws {
@@ -198,38 +222,27 @@ final class ScratchpadSession {
 
         if !activeNoteStore.hasEstablishedState {
             if let note = try await repository.fetchMostRecent() {
-                noteID = note.id
-                text = note.content
-                activeNoteKeptAt = note.keptAt
-                activeNoteStore.noteID = note.id
+                adoptDisplayedNote(note)
             } else {
-                noteID = nil
+                clearDisplayedIdentity()
                 text = ""
-                activeNoteKeptAt = nil
-                activeNoteStore.noteID = nil
             }
             return
         }
 
         guard let activeNoteID = activeNoteStore.noteID else {
-            activeNoteStore.noteID = nil
-            noteID = nil
+            clearDisplayedIdentity()
             text = ""
-            activeNoteKeptAt = nil
             return
         }
 
         guard let note = try await repository.fetch(id: activeNoteID) else {
-            activeNoteStore.noteID = nil
-            noteID = nil
+            clearDisplayedIdentity()
             text = ""
-            activeNoteKeptAt = nil
             return
         }
 
-        noteID = note.id
-        text = note.content
-        activeNoteKeptAt = note.keptAt
+        adoptDisplayedNote(note)
     }
 
     func keepActiveNote() async throws -> ThoughtCompletionOutcome {
@@ -282,10 +295,7 @@ final class ScratchpadSession {
         do {
             let restored = try await repository.restoreDiscard(receipt)
             if noteID == nil, !hasPersistableContent {
-                noteID = restored.id
-                text = restored.content
-                activeNoteKeptAt = restored.keptAt
-                activeNoteStore.noteID = restored.id
+                adoptDisplayedNote(restored)
                 requestEditorFocus()
             }
             discardUndoRegistrations.removeValue(forKey: receipt.id)?.invalidate()
@@ -368,9 +378,7 @@ final class ScratchpadSession {
         try await flush()
         resetSearchState()
         resetCommandPaletteState()
-        noteID = nil
-        activeNoteKeptAt = nil
-        activeNoteStore.noteID = nil
+        clearDisplayedIdentity()
         text = ""
         requestEditorFocus()
     }
@@ -502,12 +510,9 @@ final class ScratchpadSession {
             guard surface == .search, searchQuery == fromSearchQuery else { return false }
         }
 
-        noteID = selectedNote.id
-        activeNoteStore.noteID = selectedNote.id
-        activeNoteKeptAt = selectedNote.keptAt
         editorSelection = nil
         editorHasMultipleSelections = false
-        text = selectedNote.content
+        adoptDisplayedNote(selectedNote)
         resetSearchState()
         surface = .editor
         requestEditorFocus()
@@ -522,6 +527,7 @@ final class ScratchpadSession {
 
     func openCommandPalette() {
         guard acceptanceTask == nil else { return }
+        commandPaletteCompletionEligible = surface == .editor || surface == .message
         dismissTransientSurfaces(except: .commandPalette)
         surface = .commandPalette
         commandPaletteQuery = ""
@@ -973,23 +979,99 @@ final class ScratchpadSession {
     }
 
     private func persist(_ content: String) async throws {
+        #if DEBUG
+        persistEntryProbe?(content)
+        defer { persistExitProbe?(content) }
+        #endif
+        let epoch = sessionEpoch
         if content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             if let noteID {
-                try await repository.delete(id: noteID)
-                self.noteID = nil
+                try await repository.update(id: noteID, content: content)
+                guard sessionEpoch == epoch, self.noteID == noteID else { return }
+                activeNoteStore.noteID = noteID
+            } else if let flight = inFlightNoteCreate {
+                let createdID: UUID
+                do {
+                    createdID = try await flight.task.value
+                } catch {
+                    if inFlightNoteCreate === flight {
+                        inFlightNoteCreate = nil
+                    }
+                    throw error
+                }
+                if inFlightNoteCreate === flight {
+                    inFlightNoteCreate = nil
+                }
+                guard sessionEpoch == epoch else { return }
+                try await repository.update(id: createdID, content: content)
+                guard sessionEpoch == epoch, self.noteID == nil || self.noteID == createdID else { return }
+                noteID = createdID
+                activeNoteStore.noteID = createdID
+            } else {
+                // No suspension before this write. A published identity has a non-nil
+                // noteID, so this branch cannot clear an id that another save already exposed.
+                guard sessionEpoch == epoch else { return }
+                activeNoteStore.noteID = nil
             }
-            activeNoteStore.noteID = nil
+            saveErrorMessage = nil
             return
         }
 
         if let noteID {
             try await repository.update(id: noteID, content: content)
+            guard sessionEpoch == epoch, self.noteID == noteID else { return }
             activeNoteStore.noteID = noteID
-        } else {
-            noteID = try await repository.createScratch(content: content).id
-            activeNoteStore.noteID = noteID
+            saveErrorMessage = nil
+            return
         }
+
+        let flight: InFlightNoteCreate
+        if let inFlightNoteCreate {
+            flight = inFlightNoteCreate
+        } else {
+            let contentToCreate = content
+            let task = Task { [repository] in
+                try await repository.createScratch(content: contentToCreate).id
+            }
+            flight = InFlightNoteCreate(task: task, content: contentToCreate)
+            inFlightNoteCreate = flight
+        }
+
+        let createdID: UUID
+        do {
+            createdID = try await flight.task.value
+        } catch {
+            if inFlightNoteCreate === flight {
+                inFlightNoteCreate = nil
+            }
+            throw error
+        }
+        if inFlightNoteCreate === flight {
+            inFlightNoteCreate = nil
+        }
+
+        if content != flight.content {
+            try await repository.update(id: createdID, content: content)
+        }
+        guard sessionEpoch == epoch, self.noteID == nil || self.noteID == createdID else { return }
+        noteID = createdID
+        activeNoteStore.noteID = createdID
         saveErrorMessage = nil
+    }
+
+    private func adoptDisplayedNote(_ note: Note) {
+        sessionEpoch &+= 1
+        noteID = note.id
+        text = note.content
+        activeNoteKeptAt = note.keptAt
+        activeNoteStore.noteID = note.id
+    }
+
+    private func clearDisplayedIdentity() {
+        sessionEpoch &+= 1
+        noteID = nil
+        activeNoteKeptAt = nil
+        activeNoteStore.noteID = nil
     }
 
     private func applySearchResults(_ results: [Note]) {
@@ -1044,9 +1126,7 @@ final class ScratchpadSession {
     }
 
     private func clearActiveScratchSession() {
-        noteID = nil
-        activeNoteKeptAt = nil
-        activeNoteStore.noteID = nil
+        clearDisplayedIdentity()
         text = ""
         editorSelection = nil
         editorHasMultipleSelections = false
@@ -1083,6 +1163,16 @@ final class ScratchpadSession {
 
         cancelRefinement()
         clearMessage(returnToEditor: false)
+    }
+}
+
+private final class InFlightNoteCreate {
+    let task: Task<UUID, Error>
+    let content: String
+
+    init(task: Task<UUID, Error>, content: String) {
+        self.task = task
+        self.content = content
     }
 }
 

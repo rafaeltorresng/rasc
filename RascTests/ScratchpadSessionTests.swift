@@ -1,4 +1,5 @@
 import Foundation
+import GRDB
 import Testing
 @testable import Rasc
 
@@ -36,6 +37,250 @@ struct ScratchpadSessionTests {
 
         #expect(try await fixture.repository.fetchMostRecent() == nil)
         #expect(fixture.userDefaults.string(forKey: "activeNoteID") == nil)
+    }
+
+    @Test
+    func clearingPersistedTextKeepsTheSameNote() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "original thought"
+        try await session.flush()
+        let noteID = try #require(activeNoteID(in: fixture.userDefaults))
+
+        session.text = ""
+        try await session.flush()
+
+        #expect(activeNoteID(in: fixture.userDefaults) == noteID)
+        #expect(session.text == "")
+        #expect(fixture.userDefaults.string(forKey: "activeNoteID") == noteID.uuidString)
+        let stored = try #require(try await fixture.repository.fetch(id: noteID))
+        #expect(stored.content == "")
+        #expect(stored.deletedAt == nil)
+        #expect(try rowCount(at: fixture.databaseURL) == 1)
+    }
+
+    @Test
+    func clearingAKeptNotePreservesKeptState() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "kept thought"
+        try await session.flush()
+        let outcome = try await session.keepActiveNote()
+        #expect(outcome == .keptShouldHide)
+        let noteID = try #require(try await fixture.repository.fetchMostRecent()?.id)
+        try await session.openNote(id: noteID)
+
+        session.text = ""
+        try await session.flush()
+
+        let stored = try #require(try await fixture.repository.fetch(id: noteID))
+        #expect(activeNoteID(in: fixture.userDefaults) == noteID)
+        #expect(stored.content == "")
+        #expect(stored.isKept)
+        #expect(session.isActiveNoteKept)
+    }
+
+    @Test
+    func restoringClearedTextReusesTheSameNote() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "original thought"
+        try await session.flush()
+        let noteID = try #require(activeNoteID(in: fixture.userDefaults))
+        session.text = ""
+        try await session.flush()
+
+        session.text = "original thought"
+        try await session.flush()
+
+        #expect(activeNoteID(in: fixture.userDefaults) == noteID)
+        #expect(try await fixture.repository.fetch(id: noteID)?.content == "original thought")
+        #expect(try await fixture.repository.fetchAllNonDeleted().map(\.id) == [noteID])
+        #expect(try rowCount(at: fixture.databaseURL) == 1)
+    }
+
+    @Test
+    func reopeningAfterClearRestoresTheEmptyNote() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "original thought"
+        try await session.flush()
+        let noteID = try #require(activeNoteID(in: fixture.userDefaults))
+        session.text = ""
+        try await session.flush()
+
+        let reopened = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        try await reopened.restore()
+
+        #expect(activeNoteID(in: fixture.userDefaults) == noteID)
+        #expect(reopened.text == "")
+        #expect(try await fixture.repository.fetch(id: noteID)?.content == "")
+    }
+
+    @Test
+    func newScratchAfterClearKeepsTheEmptyNote() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "original thought"
+        try await session.flush()
+        let noteID = try #require(activeNoteID(in: fixture.userDefaults))
+        session.text = ""
+        try await session.flush()
+
+        try await session.startNewScratch()
+
+        #expect(activeNoteID(in: fixture.userDefaults) == nil)
+        #expect(session.text == "")
+        #expect(fixture.userDefaults.string(forKey: "activeNoteID") == nil)
+        let stored = try #require(try await fixture.repository.fetch(id: noteID))
+        #expect(stored.content == "")
+        #expect(try rowCount(at: fixture.databaseURL) == 1)
+    }
+
+    @Test
+    func discardAfterClearUsesTheExplicitDiscardFlow() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "original thought"
+        try await session.flush()
+        let noteID = try #require(activeNoteID(in: fixture.userDefaults))
+        _ = try await fixture.repository.keep(id: noteID)
+        await session.refreshActiveNoteIfMatching(id: noteID)
+        session.text = ""
+        try await session.flush()
+
+        try await session.discardActiveNote()
+
+        #expect(activeNoteID(in: fixture.userDefaults) == nil)
+        #expect(session.text == "")
+        #expect(try await fixture.repository.fetch(id: noteID) == nil)
+        await session.undoDiscard()
+        let restored = try #require(try await fixture.repository.fetch(id: noteID))
+        #expect(restored.content == "")
+        #expect(restored.isKept)
+        #expect(activeNoteID(in: fixture.userDefaults) == noteID)
+        #expect(session.text == "")
+        #expect(session.isActiveNoteKept)
+    }
+
+    @Test
+    func openingAnotherNoteAfterClearKeepsTheEmptyOriginal() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "original thought"
+        try await session.flush()
+        let originalID = try #require(activeNoteID(in: fixture.userDefaults))
+        let other = try await fixture.repository.createScratch(content: "other thought")
+        session.text = ""
+        try await session.flush()
+
+        let didOpen = try await session.openNote(id: other.id)
+
+        #expect(didOpen)
+        #expect(activeNoteID(in: fixture.userDefaults) == other.id)
+        #expect(session.text == "other thought")
+        #expect(try await fixture.repository.fetch(id: originalID)?.content == "")
+        let home = HomeSession(repository: fixture.repository)
+        await home.reloadImmediately()
+        let homeIDs = home.browseGroups.flatMap(\.notes).map(\.id)
+        #expect(homeIDs.contains(originalID))
+        #expect(homeIDs.contains(other.id))
+    }
+
+    @Test
+    func clearedTextNoLongerMatchesSearch() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "queue retry investigation"
+        try await session.flush()
+        let noteID = try #require(activeNoteID(in: fixture.userDefaults))
+        session.text = ""
+        try await session.flush()
+
+        #expect(try await fixture.repository.search("queue", limit: 10).isEmpty)
+        try await session.openSearch()
+        #expect(session.searchResults.map(\.id) == [noteID])
+        #expect(session.searchResults.first?.displayTitle == "Empty thought")
+    }
+
+    @Test
+    func failedSaveOfClearedTextDoesNotSwapTheSession() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "original thought"
+        try await session.flush()
+        let noteID = try #require(activeNoteID(in: fixture.userDefaults))
+        try await fixture.repository.delete(id: noteID)
+        session.text = ""
+
+        await #expect(throws: NoteRepository.PersistenceError.staleContent) {
+            try await session.flush()
+        }
+        #expect(activeNoteID(in: fixture.userDefaults) == noteID)
+        #expect(session.text == "")
+        #expect(session.saveErrorMessage != nil)
+        #expect(try await fixture.repository.fetch(id: noteID) == nil)
+    }
+
+    @Test
+    func flushBeatsAPendingAutosaveThatWouldClearTheNote() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "original thought"
+        try await session.flush()
+        let noteID = try #require(activeNoteID(in: fixture.userDefaults))
+        session.text = ""
+        session.scheduleAutosave()
+        session.text = "recovered before the debounce"
+        try await session.flush()
+        try await Task.sleep(for: .milliseconds(250))
+
+        #expect(activeNoteID(in: fixture.userDefaults) == noteID)
+        #expect(try await fixture.repository.fetch(id: noteID)?.content == "recovered before the debounce")
+        #expect(try rowCount(at: fixture.databaseURL) == 1)
     }
 
     @Test
@@ -610,6 +855,305 @@ struct ScratchpadSessionTests {
         #expect(fixture.userDefaults.string(forKey: "activeNoteID") == nil)
     }
 
+    @Test
+    func refineThenNewDoesNotDuplicateOrReattachTheDraft() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let gate = NoteRepositoryTestGate()
+        await fixture.repository.installTestGate(gate)
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        let secondPersist = AsyncSignal()
+        var persistEntries = 0
+        session.setPersistProbesForTesting(onEntry: { _ in
+            persistEntries += 1
+            if persistEntries == 2 { secondPersist.signal() }
+        })
+        session.text = "original thought"
+        session.startRefinement()
+        await gate.waitForFirstEntry()
+
+        let switching = Task { try await session.startNewScratch() }
+        await secondPersist.wait()
+        gate.release()
+        try await switching.value
+
+        #expect(session.text.isEmpty)
+        #expect(activeNoteID(in: fixture.userDefaults) == nil)
+        #expect(try rowCount(at: fixture.databaseURL) == 1)
+        let stored = try #require(try await fixture.repository.fetchAllNonDeleted().first)
+        #expect(stored.content == "original thought")
+
+        let reopened = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        try await reopened.restore()
+        #expect(reopened.text.isEmpty)
+        #expect(activeNoteID(in: fixture.userDefaults) == nil)
+    }
+
+    @Test
+    func refineThenEscapeKeepsTheSameDraft() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let gate = NoteRepositoryTestGate()
+        await fixture.repository.installTestGate(gate)
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        let persistFinished = AsyncSignal()
+        session.setPersistProbesForTesting(onExit: { _ in persistFinished.signal() })
+        session.text = "original thought"
+        session.startRefinement()
+        await gate.waitForFirstEntry()
+
+        #expect(session.handleEscape())
+        gate.release()
+        await persistFinished.wait()
+
+        let noteID = try #require(activeNoteID(in: fixture.userDefaults))
+        #expect(session.text == "original thought")
+        #expect(session.surface == .editor)
+        #expect(session.refinementPreview == nil)
+        #expect(try rowCount(at: fixture.databaseURL) == 1)
+        #expect(try await fixture.repository.fetch(id: noteID)?.content == "original thought")
+
+        let reopened = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        try await reopened.restore()
+        #expect(reopened.text == "original thought")
+        #expect(activeNoteID(in: fixture.userDefaults) == noteID)
+    }
+
+    @Test
+    func openingAnotherNoteWhileTheFirstSaveIsInFlightKeepsOneDraft() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let other = try await fixture.repository.createScratch(content: "other thought")
+        let gate = NoteRepositoryTestGate()
+        await fixture.repository.installTestGate(gate)
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        let secondPersist = AsyncSignal()
+        var persistEntries = 0
+        session.setPersistProbesForTesting(onEntry: { _ in
+            persistEntries += 1
+            if persistEntries == 2 { secondPersist.signal() }
+        })
+        session.text = "original thought"
+        session.startRefinement()
+        await gate.waitForFirstEntry()
+
+        let switching = Task { try await session.openNote(id: other.id) }
+        await secondPersist.wait()
+        gate.release()
+        let didOpen = try await switching.value
+
+        #expect(didOpen)
+        #expect(session.text == "other thought")
+        #expect(activeNoteID(in: fixture.userDefaults) == other.id)
+        #expect(try rowCount(at: fixture.databaseURL) == 2)
+        let notes = try await fixture.repository.fetchAllNonDeleted()
+        #expect(notes.contains { $0.content == "original thought" })
+        #expect(notes.filter { $0.content == "original thought" }.count == 1)
+    }
+
+    @Test
+    func abandonDuringAnInFlightSaveDoesNotRepublishTheOldIdentity() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "original thought"
+        try await session.flush()
+        let noteID = try #require(activeNoteID(in: fixture.userDefaults))
+        let gate = NoteRepositoryTestGate()
+        await fixture.repository.installTestGate(gate)
+        let persistFinished = AsyncSignal()
+        session.setPersistProbesForTesting(onExit: { _ in persistFinished.signal() })
+        session.text = "original thought revised"
+        session.startRefinement()
+        await gate.waitForFirstEntry()
+
+        await session.abandonActiveNoteIfMatching(id: noteID)
+        #expect(session.text.isEmpty)
+        #expect(activeNoteID(in: fixture.userDefaults) == nil)
+        gate.release()
+        await persistFinished.wait()
+
+        #expect(session.text.isEmpty)
+        #expect(activeNoteID(in: fixture.userDefaults) == nil)
+        #expect(try await fixture.repository.fetch(id: noteID)?.content == "original thought revised")
+    }
+
+    @Test
+    func clearingTextWhileTheFirstCreateIsInFlightStoresAnEmptyNote() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let gate = NoteRepositoryTestGate()
+        await fixture.repository.installTestGate(gate)
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        let emptyEntered = AsyncSignal()
+        let emptyFinished = AsyncSignal()
+        session.setPersistProbesForTesting(
+            onEntry: { content in
+                if content.isEmpty { emptyEntered.signal() }
+            },
+            onExit: { content in
+                if content.isEmpty { emptyFinished.signal() }
+            }
+        )
+        session.text = "thought to clear"
+        let revisionBeforeClear = session.contentRevision
+        session.startRefinement()
+        await gate.waitForFirstEntry()
+
+        session.text = ""
+        #expect(session.contentRevision == revisionBeforeClear + 1)
+        let flushing = Task { try await session.flush() }
+        await emptyEntered.wait()
+        #expect(activeNoteID(in: fixture.userDefaults) == nil)
+        gate.release()
+        try await flushing.value
+        await emptyFinished.wait()
+
+        let noteID = try #require(activeNoteID(in: fixture.userDefaults))
+        #expect(session.text.isEmpty)
+        #expect(session.contentRevision == revisionBeforeClear + 1)
+        let stored = try #require(try await fixture.repository.fetch(id: noteID))
+        #expect(stored.content.isEmpty)
+        #expect(stored.deletedAt == nil)
+        #expect(stored.keptAt == nil)
+        #expect(try rowCount(at: fixture.databaseURL) == 1)
+
+        let reopened = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        try await reopened.restore()
+        #expect(reopened.text.isEmpty)
+        #expect(activeNoteID(in: fixture.userDefaults) == noteID)
+    }
+
+    @Test
+    func overlappingSavesFinishInCallOrder() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "base"
+        try await session.flush()
+        let noteID = try #require(activeNoteID(in: fixture.userDefaults))
+        let gate = NoteRepositoryTestGate()
+        await fixture.repository.installTestGate(gate)
+        let secondPersist = AsyncSignal()
+        var persistEntries = 0
+        session.setPersistProbesForTesting(onEntry: { _ in
+            persistEntries += 1
+            if persistEntries == 2 { secondPersist.signal() }
+        })
+        session.text = "first write"
+        session.startRefinement()
+        await gate.waitForFirstEntry()
+        session.text = "second write"
+
+        let flushing = Task { try await session.flush() }
+        await secondPersist.wait()
+        gate.release()
+        try await flushing.value
+
+        #expect(activeNoteID(in: fixture.userDefaults) == noteID)
+        #expect(try await fixture.repository.fetch(id: noteID)?.content == "second write")
+        #expect(try rowCount(at: fixture.databaseURL) == 1)
+    }
+
+    @Test
+    func failedCreateWhileStartingANewScratchDoesNotClearTheEditor() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let gate = NoteRepositoryTestGate()
+        await fixture.repository.installTestGate(gate)
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        let secondPersist = AsyncSignal()
+        var persistEntries = 0
+        session.setPersistProbesForTesting(onEntry: { _ in
+            persistEntries += 1
+            if persistEntries == 2 { secondPersist.signal() }
+        })
+        session.text = "important unfinished text"
+        session.startRefinement()
+        await gate.waitForFirstEntry()
+
+        let switching = Task { try await session.startNewScratch() }
+        await secondPersist.wait()
+        try fixture.repository.closeForTesting()
+        gate.release()
+
+        await #expect(throws: (any Error).self) {
+            try await switching.value
+        }
+        #expect(session.text == "important unfinished text")
+        #expect(session.saveErrorMessage != nil)
+        #expect(activeNoteID(in: fixture.userDefaults) == nil)
+        #expect(try rowCount(at: fixture.databaseURL) == 0)
+    }
+
+    @Test
+    func cancelledRefinementDoesNotApplyALateResult() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let provider = GatedRefinementProvider()
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            refinementProvider: provider,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "original thought"
+        session.startRefinement()
+        await provider.entered.wait()
+        let noteID = try #require(activeNoteID(in: fixture.userDefaults))
+
+        #expect(session.handleEscape())
+        provider.release()
+        await provider.finished.wait()
+        await Task.yield()
+
+        #expect(session.text == "original thought")
+        #expect(session.refinementPreview == nil)
+        #expect(session.surface == .editor)
+        #expect(activeNoteID(in: fixture.userDefaults) == noteID)
+        #expect(try rowCount(at: fixture.databaseURL) == 1)
+        #expect(try await fixture.repository.refinementRevisions(for: noteID).isEmpty)
+    }
+
+    private func activeNoteID(in userDefaults: UserDefaults) -> UUID? {
+        userDefaults.string(forKey: "activeNoteID").flatMap(UUID.init(uuidString:))
+    }
+
+    private func rowCount(at databaseURL: URL) throws -> Int {
+        try DatabaseQueue(path: databaseURL.path).read { database in
+            try Int.fetchOne(database, sql: "SELECT COUNT(*) FROM notes") ?? 0
+        }
+    }
+
     private func waitUntil(
         timeout: Duration = .seconds(2),
         _ predicate: @escaping @MainActor () -> Bool
@@ -623,9 +1167,7 @@ struct ScratchpadSessionTests {
     }
 
     private func makeFixture() throws -> Fixture {
-        let databaseURL = FileManager.default.temporaryDirectory
-            .appending(path: UUID().uuidString)
-            .appendingPathExtension("sqlite")
+        let databaseURL = try isolatedDatabaseURL()
         let suiteName = "RascTests.\(UUID().uuidString)"
         let userDefaults = try #require(UserDefaults(suiteName: suiteName))
         userDefaults.removePersistentDomain(forName: suiteName)
@@ -635,6 +1177,87 @@ struct ScratchpadSessionTests {
             userDefaults: userDefaults,
             suiteName: suiteName
         )
+    }
+}
+
+private func isolatedDatabaseURL() throws -> URL {
+    let url = FileManager.default.temporaryDirectory
+        .appending(path: UUID().uuidString)
+        .appendingPathExtension("sqlite")
+    let path = url.resolvingSymlinksInPath().standardizedFileURL.path
+    let home = FileManager.default.homeDirectoryForCurrentUser.standardizedFileURL.path
+    let productionRoots = [
+        home + "/Library/Application Support/Rasc",
+        home + "/Library/Containers/com.rafaeltorres.rasc",
+    ]
+    guard productionRoots.allSatisfy({ !path.hasPrefix($0) }) else {
+        throw TestDatabaseIsolationError.refusedProductionPath(path)
+    }
+    guard path.contains("/T/") || path.hasPrefix("/tmp/") else {
+        throw TestDatabaseIsolationError.refusedProductionPath(path)
+    }
+    return url
+}
+
+private enum TestDatabaseIsolationError: Error {
+    case refusedProductionPath(String)
+}
+
+private final class AsyncSignal: @unchecked Sendable {
+    private let lock = NSLock()
+    private var continuation: CheckedContinuation<Void, Never>?
+    private var fired = false
+
+    func signal() {
+        lock.lock()
+        fired = true
+        let continuation = continuation
+        self.continuation = nil
+        lock.unlock()
+        continuation?.resume()
+    }
+
+    func wait() async {
+        await withCheckedContinuation { continuation in
+            lock.lock()
+            if fired {
+                lock.unlock()
+                continuation.resume()
+                return
+            }
+            self.continuation = continuation
+            lock.unlock()
+        }
+    }
+}
+
+private final class GatedRefinementProvider: RefinementProvider, @unchecked Sendable {
+    let metadata = RefinementMetadata(
+        provider: "test",
+        modelIdentifier: "test",
+        promptVersion: "test"
+    )
+    let entered = AsyncSignal()
+    let finished = AsyncSignal()
+    private let releaseSignal = AsyncSignal()
+
+    func availability(for _: RefinementRequest) async -> RefinementAvailability {
+        .available
+    }
+
+    func refine(_: RefinementRequest) async throws -> RefinementResult {
+        entered.signal()
+        await releaseSignal.wait()
+        finished.signal()
+        return RefinementResult(
+            decision: .changed,
+            kind: .messyText,
+            text: "late suggestion"
+        )
+    }
+
+    func release() {
+        releaseSignal.signal()
     }
 }
 
