@@ -20,6 +20,21 @@ struct NoteRepositoryTests {
         #expect(note.displaySnippet == "Check next_retry_at after deploy.")
     }
 
+    @Test(arguments: ["", "  \n\t "])
+    func emptyContentUsesAReadableTitle(content: String) {
+        let note = Note(
+            id: UUID(),
+            content: content,
+            createdAt: .distantPast,
+            updatedAt: .distantPast,
+            deletedAt: nil,
+            keptAt: nil
+        )
+
+        #expect(note.displayTitle == "Empty thought")
+        #expect(note.displaySnippet == nil)
+    }
+
     @Test
     func retrievalSnippetAvoidsRepeatingTitlePrefix() {
         let note = Note(
@@ -72,6 +87,60 @@ struct NoteRepositoryTests {
         try await repository.update(id: created.id, content: "revised thought")
 
         #expect(try await repository.fetch(id: created.id)?.content == "revised thought")
+    }
+
+    @Test(arguments: ["", "  \n\t "])
+    func clearingAnExistingNotePreservesItsIdentity(content: String) async throws {
+        let databaseURL = makeDatabaseURL()
+        defer { removeDatabase(at: databaseURL) }
+        let repository = try NoteRepository(databaseURL: databaseURL)
+        let created = try await repository.createScratch(content: "original thought")
+        let persisted = try #require(try await repository.fetch(id: created.id))
+
+        try await repository.update(id: created.id, content: content)
+
+        let stored = try #require(try await repository.fetch(id: created.id))
+        #expect(stored.id == created.id)
+        #expect(stored.content == content)
+        #expect(stored.createdAt == persisted.createdAt)
+        #expect(stored.updatedAt >= persisted.updatedAt)
+        #expect(stored.deletedAt == nil)
+        #expect(stored.keptAt == nil)
+        #expect(try await repository.fetchAllNonDeleted().map(\.id) == [created.id])
+        #expect(try rowCount(at: databaseURL) == 1)
+        #expect(try await repository.search("original", limit: 10).isEmpty)
+        #expect(try await repository.recent(limit: 10).map(\.id) == [created.id])
+    }
+
+    @Test
+    func clearingAKeptNotePreservesKeptAt() async throws {
+        let repository = try makeRepository()
+        let created = try await repository.createScratch(content: "keep me")
+        let kept = try await repository.keep(id: created.id)
+
+        try await repository.update(id: created.id, content: "")
+
+        let stored = try #require(try await repository.fetch(id: created.id))
+        #expect(stored.id == kept.id)
+        #expect(stored.content == "")
+        #expect(stored.keptAt == kept.keptAt)
+        #expect(stored.isKept)
+        await #expect(throws: NoteRepository.PersistenceError.emptyContent) {
+            try await repository.keep(id: created.id)
+        }
+    }
+
+    @Test
+    func clearingADiscardedNoteDoesNotReportSuccess() async throws {
+        let repository = try makeRepository()
+        let created = try await repository.createScratch(content: "original")
+        let receipt = try #require(try await repository.delete(id: created.id))
+
+        await #expect(throws: NoteRepository.PersistenceError.staleContent) {
+            try await repository.update(id: created.id, content: "")
+        }
+        #expect(try await repository.fetch(id: created.id) == nil)
+        #expect(try await repository.restoreDiscard(receipt).content == "original")
     }
 
     @Test
@@ -604,6 +673,12 @@ struct NoteRepositoryTests {
             try database.columns(in: Note.databaseTableName).map(\.name)
         }
         #expect(columns.contains("kept_at"))
+    }
+
+    private func rowCount(at databaseURL: URL) throws -> Int {
+        try DatabaseQueue(path: databaseURL.path).read { database in
+            try Int.fetchOne(database, sql: "SELECT COUNT(*) FROM notes") ?? 0
+        }
     }
 
     private func makeRepository() throws -> NoteRepository {

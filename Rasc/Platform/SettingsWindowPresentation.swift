@@ -81,6 +81,22 @@ enum SettingsWindowPresentation {
     static func configureIfNeeded(_ window: NSWindow, reposition: Bool = false) {
         guard isSettingsWindow(window) else { return }
         window.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
+        let visibleHeight = window.screen?.visibleFrame.height
+            ?? NSScreen.main?.visibleFrame.height
+            ?? 680
+        let minimumHeight = fittedMinimumHeight(visibleHeight: visibleHeight)
+        window.minSize = NSSize(width: 460, height: minimumHeight)
+        if window.frame.height < minimumHeight {
+            var frame = window.frame
+            let growth = minimumHeight - frame.height
+            frame.size.height = minimumHeight
+            frame.origin.y -= growth
+            let visibleFrame = (window.screen ?? NSScreen.main)?.visibleFrame
+            if let visibleFrame, frame.maxY > visibleFrame.maxY {
+                frame.origin.y = visibleFrame.maxY - frame.height
+            }
+            window.setFrame(frame, display: true)
+        }
         if reposition {
             positionOnPresentationScreen(window)
         }
@@ -133,6 +149,12 @@ enum SettingsWindowPresentation {
                 in: screen.visibleFrame
             )
         )
+    }
+
+    /// 680 shows the shortcut editors. A shorter visible frame keeps the window on screen and lets the form scroll.
+    nonisolated static func fittedMinimumHeight(visibleHeight: CGFloat) -> CGFloat {
+        let available = visibleHeight - 36
+        return min(680, max(360, available))
     }
 
     private static func isSettingsWindow(_ window: NSWindow) -> Bool {

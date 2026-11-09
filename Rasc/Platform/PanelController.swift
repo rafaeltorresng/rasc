@@ -2,6 +2,56 @@ import AppKit
 import CoreGraphics
 import SwiftUI
 
+struct PanelOcclusionWindow: Equatable, Sendable {
+    var ownerPID: pid_t
+    var ownerName: String
+    var layer: Int
+    var width: CGFloat
+    var height: CGFloat
+}
+
+enum ScratchpadPanelLevelPolicy {
+    static let modalLayer = NSWindow.Level.modalPanel.rawValue
+
+    static func level(
+        homeIsVisible: Bool,
+        appIsActive: Bool,
+        menuIsTracking: Bool,
+        systemInteractionNeedsPriority: Bool = false
+    ) -> NSWindow.Level {
+        if systemInteractionNeedsPriority || (homeIsVisible && appIsActive) {
+            return .normal
+        }
+        if menuIsTracking {
+            return .floating
+        }
+        return .screenSaver
+    }
+
+    /// Alerts, menus, and authorization windows sit between modal level and the menu bar.
+    /// Menu-bar strips and the Dock are always present and must not lower the scratchpad.
+    static func systemInteractionNeedsPriority(
+        windows: [PanelOcclusionWindow],
+        ourPID: pid_t
+    ) -> Bool {
+        let ignoredOwners: Set<String> = ["Window Server", "Dock"]
+        for window in windows where window.ownerPID != ourPID {
+            guard window.layer >= modalLayer else { continue }
+            if ignoredOwners.contains(window.ownerName) { continue }
+            // Menu bars and app strips sit above modal level but are not dialogs.
+            if window.height < 120 { continue }
+            if window.width >= 900, window.height < 200 { continue }
+            return true
+        }
+        return false
+    }
+}
+
+private struct PanelKeySnapshot: Sendable {
+    var isCommandW: Bool
+    var shortcut: InternalShortcut?
+}
+
 @MainActor
 final class PanelController: NSObject, NSWindowDelegate {
     let panel: NSPanel
@@ -12,6 +62,10 @@ final class PanelController: NSObject, NSWindowDelegate {
     private var hostingController: NSHostingController<AnyView>!
     private var previousApplication: NSRunningApplication?
     private var displayObservers: [NSObjectProtocol] = []
+    private var keyMonitor: Any?
+    private var homeIsVisible = false
+    private var menuIsTracking = false
+    private var occlusionTimer: Timer?
     weak var onboardingDelegate: OnboardingPanelDelegate?
     var onOpenHome: (() -> Void)?
     var onOpenSettings: (() -> Void)?
@@ -46,6 +100,8 @@ final class PanelController: NSObject, NSWindowDelegate {
         wireSessionObservation()
         configurePanel()
         observeDisplayChanges()
+        observeActivation()
+        installKeyMonitor()
         let rootView = ScratchpadView(
             session: session,
             onEscape: { [weak self] in
@@ -214,6 +270,11 @@ final class PanelController: NSObject, NSWindowDelegate {
         await session.refreshActiveNoteIfMatching(id: id)
     }
 
+    func noteHomeVisibility(_ isVisible: Bool) {
+        homeIsVisible = isVisible
+        updatePanelLevel()
+    }
+
     func openNote(id: UUID) async {
         do {
             if !panel.isVisible {
@@ -243,6 +304,8 @@ final class PanelController: NSObject, NSWindowDelegate {
 
         positionPanelIfNeeded()
         NSApp.activate(ignoringOtherApps: true)
+        updatePanelLevel()
+        startOcclusionMonitoring()
         panel.orderFrontRegardless()
         panel.makeKeyAndOrderFront(nil)
         focusActiveSurface()
@@ -261,6 +324,7 @@ final class PanelController: NSObject, NSWindowDelegate {
             return
         }
 
+        stopOcclusionMonitoring()
         windowFrameStore.save(panel)
 
         let shouldRestorePreviousApplication = NSApp.isActive && panel.isKeyWindow
@@ -320,7 +384,7 @@ final class PanelController: NSObject, NSWindowDelegate {
         panel.becomesKeyOnlyIfNeeded = false
         // `.screenSaver` is required for the scratchpad to appear above native fullscreen apps.
         // `.floating` stays below fullscreen Spaces; validated on macOS 26 with `.fullScreenAuxiliary`.
-        panel.level = .screenSaver
+        updatePanelLevel()
         panel.collectionBehavior = [
             .canJoinAllSpaces,
             .canJoinAllApplications,
@@ -355,6 +419,164 @@ final class PanelController: NSObject, NSWindowDelegate {
             excludingProcessID: NSRunningApplication.current.processIdentifier,
             reason: reason
         )
+    }
+
+    private func installKeyMonitor() {
+        keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            let snapshot = PanelKeySnapshot(
+                isCommandW: flags == .command && event.charactersIgnoringModifiers?.lowercased() == "w",
+                shortcut: InternalShortcut(event: event)
+            )
+            let handled = MainActor.assumeIsolated {
+                self?.handleKeySnapshot(snapshot) ?? false
+            }
+            return handled ? nil : event
+        }
+    }
+
+    private func handleKeySnapshot(_ snapshot: PanelKeySnapshot) -> Bool {
+        guard panel.isKeyWindow else { return false }
+        if snapshot.isCommandW {
+            Task { await hide() }
+            return true
+        }
+        if let shortcut = snapshot.shortcut,
+           let command = InternalShortcutStore.shared.command(matching: shortcut) {
+            performInternalCommand(command)
+            return true
+        }
+        return false
+    }
+
+    private func performInternalCommand(_ command: InternalCommand) {
+        switch command {
+        case .newScratch:
+            Task { await startNewScratch() }
+        case .search:
+            Task { await openSearch() }
+        case .refine:
+            startRefinement()
+        case .commandPalette:
+            Task { await openCommandPalette() }
+        case .keep:
+            Task { await keepActiveNote() }
+        }
+    }
+
+    private func observeActivation() {
+        let center = NotificationCenter.default
+        displayObservers.append(
+            center.addObserver(
+                forName: NSApplication.didBecomeActiveNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor in
+                    self?.updatePanelLevel()
+                    InternalShortcutStore.shared.applyToMainMenu()
+                }
+            }
+        )
+        displayObservers.append(
+            NSWorkspace.shared.notificationCenter.addObserver(
+                forName: NSWorkspace.didActivateApplicationNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor in
+                    self?.updatePanelLevel()
+                }
+            }
+        )
+        displayObservers.append(
+            center.addObserver(
+                forName: NSApplication.didResignActiveNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor in
+                    self?.updatePanelLevel()
+                }
+            }
+        )
+        displayObservers.append(
+            center.addObserver(
+                forName: NSMenu.didBeginTrackingNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor in
+                    self?.menuIsTracking = true
+                    self?.updatePanelLevel()
+                }
+            }
+        )
+        displayObservers.append(
+            center.addObserver(
+                forName: NSMenu.didEndTrackingNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor in
+                    self?.menuIsTracking = false
+                    self?.updatePanelLevel()
+                }
+            }
+        )
+    }
+
+    private func updatePanelLevel() {
+        panel.level = ScratchpadPanelLevelPolicy.level(
+            homeIsVisible: homeIsVisible,
+            appIsActive: NSApp.isActive,
+            menuIsTracking: menuIsTracking,
+            systemInteractionNeedsPriority: systemInteractionNeedsPriority()
+        )
+    }
+
+    private func systemInteractionNeedsPriority() -> Bool {
+        ScratchpadPanelLevelPolicy.systemInteractionNeedsPriority(
+            windows: Self.onScreenOcclusionWindows(),
+            ourPID: ProcessInfo.processInfo.processIdentifier
+        )
+    }
+
+    private func startOcclusionMonitoring() {
+        guard occlusionTimer == nil else { return }
+        let timer = Timer(timeInterval: 0.5, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.updatePanelLevel()
+            }
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        occlusionTimer = timer
+    }
+
+    private func stopOcclusionMonitoring() {
+        occlusionTimer?.invalidate()
+        occlusionTimer = nil
+    }
+
+    private static func onScreenOcclusionWindows() -> [PanelOcclusionWindow] {
+        guard let info = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? [[String: Any]] else {
+            return []
+        }
+        return info.compactMap { window in
+            guard let ownerPID = window[kCGWindowOwnerPID as String] as? pid_t,
+                  let layer = window[kCGWindowLayer as String] as? Int,
+                  let bounds = window[kCGWindowBounds as String] as? [String: CGFloat]
+            else {
+                return nil
+            }
+            return PanelOcclusionWindow(
+                ownerPID: ownerPID,
+                ownerName: window[kCGWindowOwnerName as String] as? String ?? "",
+                layer: layer,
+                width: bounds["Width"] ?? 0,
+                height: bounds["Height"] ?? 0
+            )
+        }
     }
 
     private func observeDisplayChanges() {

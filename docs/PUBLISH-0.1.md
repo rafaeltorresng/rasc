@@ -51,7 +51,7 @@ Record `git rev-parse HEAD` and the SHA256 in [RELEASE-NOTES-v0.1.md](RELEASE-NO
 
 1. Copy `Rasc-0.1.0-unsigned.dmg` to a folder as if downloaded (not from Xcode).
 2. Open DMG, drag to Applications.
-3. First launch: expect Gatekeeper — use **Right-click → Open** (or System Settings → Privacy & Security).
+3. First launch: expect Gatekeeper — use **Right-click → Open**, or **System Settings → Privacy & Security**, scroll to **Security**, and choose **Open Anyway**. That button appears only after macOS has blocked an open attempt. Do not disable Gatekeeper.
 4. Smoke: capture, autosave, Keep, Home, Search, hide/reopen.
 
 Document this in the GitHub Release body (see [INSTALL-UNSIGNED.md](INSTALL-UNSIGNED.md)).

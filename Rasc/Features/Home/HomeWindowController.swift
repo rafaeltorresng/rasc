@@ -12,6 +12,8 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
         window?.isVisible == true
     }
 
+    var onVisibilityChange: ((Bool) -> Void)?
+
     init(windowFrameStore: WindowFrameStore = .home()) {
         self.windowFrameStore = windowFrameStore
         super.init()
@@ -44,6 +46,7 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
         NSApp.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(nil)
         self.window = window
+        onVisibilityChange?(true)
         reloadIfVisible()
     }
 
@@ -51,6 +54,7 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
         guard let window else { return }
         windowFrameStore.save(window)
         window.orderOut(nil)
+        onVisibilityChange?(false)
     }
 
     func reloadIfVisible() {
@@ -67,6 +71,7 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         windowFrameStore.save(sender)
         sender.orderOut(nil)
+        onVisibilityChange?(false)
         return false
     }
 

@@ -4,6 +4,7 @@ import KeyboardShortcuts
 @MainActor
 protocol MenuBarControllerDelegate: AnyObject {
     func menuBarOpenHome()
+    func menuBarOpenScratch()
     func menuBarNewScratch()
     func menuBarOpenSearch()
     func menuBarOpenSettings()
@@ -41,6 +42,11 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         menu.autoenablesItems = false
         menu.delegate = self
 
+        menu.addItem(makeItem(
+            title: "Open Scratch",
+            action: #selector(openScratch),
+            keyEquivalent: ""
+        ))
         let home = makeItem(
             title: "Open Home",
             action: #selector(openRasc),
@@ -89,6 +95,29 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         ))
 
         statusItem.menu = menu
+        applyInternalShortcuts()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(internalShortcutsDidChange),
+            name: InternalShortcutStore.didChange,
+            object: nil
+        )
+    }
+
+    @objc private func internalShortcutsDidChange() {
+        applyInternalShortcuts()
+    }
+
+    private func applyInternalShortcuts() {
+        guard let menu = statusItem.menu else { return }
+        for item in menu.items {
+            guard let command = InternalCommand.allCases.first(where: { $0.menuTitle == item.title }) else {
+                continue
+            }
+            let shortcut = InternalShortcutStore.shared.shortcut(for: command)
+            item.keyEquivalent = shortcut.key
+            item.keyEquivalentModifierMask = shortcut.modifierMask
+        }
     }
 
     private func makeItem(
@@ -109,6 +138,10 @@ final class MenuBarController: NSObject, NSMenuDelegate {
 
     func menuDidClose(_ menu: NSMenu) {
         KeyboardShortcuts.enable(.toggleScratchpad, .toggleHome)
+    }
+
+    @objc private func openScratch() {
+        delegate?.menuBarOpenScratch()
     }
 
     @objc private func openRasc() {

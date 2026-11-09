@@ -30,7 +30,7 @@ Run the **Rasc** scheme (Debug is fine for personal use). See the repository REA
 4. **First launch:** Finder may say the app cannot be opened because the developer
    cannot be verified. Either:
    - **Right-click** (or Control-click) **Rasc** in Applications → **Open**, then confirm; or
-   - **System Settings → Privacy & Security** → **Open Anyway** for Rasc.
+   - **System Settings → Privacy & Security**. Scroll down to the **Security** section. **Open Anyway** appears there only after macOS has blocked an attempt to open Rasc. Choose it for Rasc.
 
 5. Later launches work normally from the menu bar.
 

@@ -64,15 +64,30 @@ enum WindowFramePlacement {
                 continue
             }
 
-            return NSRect(
+            let quartz = NSRect(
                 x: bounds["X"] ?? 0,
                 y: bounds["Y"] ?? 0,
                 width: bounds["Width"] ?? 0,
                 height: bounds["Height"] ?? 0
             )
+            return appKitFrame(fromQuartzBounds: quartz)
         }
 
         return nil
+    }
+
+    /// Quartz window bounds use a top-left origin on the primary display. AppKit uses a bottom-left origin on that same display.
+    static func appKitFrame(
+        fromQuartzBounds quartz: NSRect,
+        primaryScreenHeight: CGFloat? = nil
+    ) -> NSRect {
+        let primaryHeight = primaryScreenHeight ?? NSScreen.screens.first { $0.frame.origin == .zero }?.frame.height ?? 0
+        return NSRect(
+            x: quartz.origin.x,
+            y: primaryHeight - quartz.origin.y - quartz.height,
+            width: quartz.width,
+            height: quartz.height
+        )
     }
 
     static func targetPresentationScreen(

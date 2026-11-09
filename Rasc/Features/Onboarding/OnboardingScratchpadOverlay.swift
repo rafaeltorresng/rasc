@@ -31,8 +31,9 @@ struct OnboardingScratchpadOverlay: View {
                     unavailableView(unavailable)
                         .transition(.opacity)
                 } else if guidance.showEscapeHint {
-                    HStack(spacing: 18) {
-                        hintRow(symbol: RascShortcutCatalog.keep.shortcut, text: "Keep and return to work")
+                    VStack(alignment: .leading, spacing: 6) {
+                        hintRow(symbol: InternalShortcutStore.shared.displayString(for: .keep), text: "Keep this thought")
+                        hintRow(symbol: InternalShortcutStore.shared.displayString(for: .newScratch), text: "Start another thought")
                         hintRow(symbol: RascShortcutCatalog.hideScratchpad.shortcut, text: "Hide and continue later")
                     }
                         .transition(hintTransition)
@@ -72,17 +73,10 @@ struct OnboardingScratchpadOverlay: View {
     }
 
     private var emptyHint: some View {
-        HStack(spacing: 7) {
-            Image(systemName: "text.cursor")
-                .font(.caption2)
-                .accessibilityHidden(true)
-
-            Text("Anything unfinished is enough.")
-                .font(.caption)
-        }
-        .foregroundStyle(.tertiary)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("Anything unfinished is enough.")
+        Text("Anything unfinished is enough.")
+            .font(.caption)
+            .foregroundStyle(.tertiary)
+            .accessibilityLabel("Anything unfinished is enough.")
     }
 
     @ViewBuilder

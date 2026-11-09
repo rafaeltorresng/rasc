@@ -29,10 +29,37 @@ struct ShortcutKeycapView: View {
     }
 
     private var tokens: [String] {
-        label
-            .split(separator: " ")
-            .map(String.init)
-            .filter { !$0.isEmpty }
+        Self.tokens(in: label)
+    }
+
+    nonisolated static func tokens(in label: String) -> [String] {
+        let parts = label.split(separator: " ").map(String.init).filter { !$0.isEmpty }
+        if parts.count > 1 {
+            return parts.flatMap(splitModifiers)
+        }
+        return splitModifiers(label)
+    }
+
+    private nonisolated static let modifierGlyphs: Set<Character> = ["⌘", "⌥", "⇧", "⌃", "🌐"]
+
+    private nonisolated static func splitModifiers(_ token: String) -> [String] {
+        var tokens: [String] = []
+        var current = ""
+        for character in token {
+            if modifierGlyphs.contains(character) {
+                if !current.isEmpty {
+                    tokens.append(current)
+                    current = ""
+                }
+                tokens.append(String(character))
+            } else {
+                current.append(character)
+            }
+        }
+        if !current.isEmpty {
+            tokens.append(current)
+        }
+        return tokens
     }
 
     private var keySpacing: CGFloat {

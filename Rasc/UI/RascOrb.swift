@@ -54,7 +54,12 @@ enum RascOrbState: Equatable {
     }
 
     var isPaused: Bool {
-        false
+        switch self {
+        case .note, .composing:
+            true
+        case .searching, .refining, .connecting:
+            false
+        }
     }
 }
 
@@ -125,6 +130,15 @@ struct RascOrb: View {
     let size: RascOrbSize
     var decorative: Bool = false
 
+    /// Debug-only paired measurement. Idle states stay paused unless this argument is present.
+    private static var animatesIdleOrb: Bool {
+        #if DEBUG
+        ProcessInfo.processInfo.arguments.contains("-animateIdleOrb")
+        #else
+        false
+        #endif
+    }
+
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
@@ -153,7 +167,7 @@ struct RascOrb: View {
             size: thinkingOrbSize,
             theme: .auto,
             speed: state.speed,
-            paused: state.isPaused || !windowIsVisible,
+            paused: (state.isPaused && !Self.animatesIdleOrb) || !windowIsVisible,
             gradient: RascOrbPalette.gradient(for: colorScheme)
         )
         if reduceTransparency {

@@ -197,7 +197,14 @@ struct SettingsView: View {
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
         .padding(20)
-        .frame(minWidth: 460, idealWidth: 500, maxWidth: 560)
+        .frame(
+            minWidth: 460,
+            idealWidth: 500,
+            maxWidth: 560,
+            minHeight: SettingsWindowPresentation.fittedMinimumHeight(
+                visibleHeight: NSScreen.main?.visibleFrame.height ?? 680
+            )
+        )
         .rascWindowSurface()
         .registersSettingsOpenAction()
         .task {
@@ -273,10 +280,21 @@ struct SettingsView: View {
 
             shortcutCategory(
                 "Inside Rasc",
-                detail: "Shortcuts for working with your thoughts."
+                detail: "New, Search, Refine, the Command Palette, and Keep can be changed. Esc, ⌘W, ⌘, and ⌘Q stay with macOS."
             )
 
-            ForEach(RascShortcutCatalog.insideRasc) { entry in
+            ForEach(InternalCommand.allCases) { command in
+                InternalShortcutEditor(command: command)
+            }
+
+            Button("Restore Defaults") {
+                InternalShortcutStore.shared.restoreDefaults()
+            }
+            .accessibilityLabel("Restore inside shortcuts")
+
+            ForEach(RascShortcutCatalog.insideRasc.filter { entry in
+                !["new-scratch", "refine", "keep", "search-thoughts", "command-palette"].contains(entry.id)
+            }) { entry in
                 insideRascShortcutRow(entry)
             }
         } header: {
@@ -415,5 +433,87 @@ struct SettingsView: View {
             )
         )
         refineStatus = RefineStatusDescription.make(from: availability)
+    }
+}
+
+private struct InternalShortcutEditor: View {
+    let command: InternalCommand
+
+    @ObservedObject private var store = InternalShortcutStore.shared
+    @State private var isRecording = false
+    @State private var message: String?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            LabeledContent(command.title) {
+                Button(isRecording ? "Type shortcut…" : store.displayString(for: command)) {
+                    isRecording = true
+                    message = nil
+                }
+                .buttonStyle(.bordered)
+                .accessibilityLabel("\(command.title) shortcut")
+                .accessibilityHint(isRecording ? "Type the new shortcut" : "Activate to record a new shortcut")
+            }
+            if let message {
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .background {
+            if isRecording {
+                InternalShortcutCapture(
+                    onCapture: { event in
+                        guard let shortcut = InternalShortcut(event: event) else {
+                            message = "Use a key with ⌘, ⌥, or ⌃."
+                            isRecording = false
+                            return
+                        }
+                        message = store.assign(shortcut, to: command)
+                        isRecording = false
+                    },
+                    onCancel: {
+                        message = nil
+                        isRecording = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+private struct InternalShortcutCapture: NSViewRepresentable {
+    var onCapture: (NSEvent) -> Void
+    var onCancel: () -> Void
+
+    func makeNSView(context: Context) -> CaptureView {
+        let view = CaptureView()
+        view.onCapture = onCapture
+        view.onCancel = onCancel
+        return view
+    }
+
+    func updateNSView(_ view: CaptureView, context: Context) {
+        view.onCapture = onCapture
+        view.onCancel = onCancel
+        guard view.window?.firstResponder !== view else { return }
+        DispatchQueue.main.async {
+            view.window?.makeFirstResponder(view)
+        }
+    }
+
+    final class CaptureView: NSView {
+        var onCapture: ((NSEvent) -> Void)?
+        var onCancel: (() -> Void)?
+
+        override var acceptsFirstResponder: Bool { true }
+
+        override func keyDown(with event: NSEvent) {
+            if event.keyCode == 53 {
+                onCancel?()
+                return
+            }
+            onCapture?(event)
+        }
     }
 }

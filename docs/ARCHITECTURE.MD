@@ -503,22 +503,18 @@ A aparência pode ficar quase borderless sem abandonar semântica nativa de jane
 
 # 17. Window level
 
-**Decisão implementada (validada no spike, macOS 26):**
+**Decisão implementada:** o nível deixa de ser fixo. O spike em macOS 26 mostrou que `.floating` sozinho não cobre um app em fullscreen nativo, e que `.screenSaver` com `.fullScreenAuxiliary` e `.canJoinAllApplications` cobre. `.screenSaver` também fica acima de menus (cerca de 101) e de alertas modais (8).
 
-```swift
-.level = .screenSaver
-```
+`updatePanelLevel()` mantém `.screenSaver` como padrão, inclusive com o app ativo. Mostrar o painel ativa o Rasc; baixar o nível nesse momento faria o scratchpad sumir de um Space fullscreen, que foi o motivo do nível atual.
 
-O spike inicial com `.floating` falhou no requisito crítico: o scratchpad ficava invisível acima de apps em fullscreen nativo.
+Exceções pontuais:
 
-`.screenSaver` é mais agressivo que o default de floating utilities, mas é o nível necessário para aparecer no Space fullscreen do app ativo quando combinado com `.fullScreenAuxiliary` e `.canJoinAllApplications`.
+* Home visível e app ativo: `.normal`, para as duas janelas poderem ser ordenadas.
+* Um menu está aberto (`NSMenu.didBeginTrackingNotification`): `.floating`, porque menus ficam acima de floating e abaixo de screen saver. Ao fechar o menu, o nível volta.
+* Uma janela de outro processo em nível modal ou acima, maior que a barra de menus, está visível: `.normal`. Isso cobre alertas, autenticação e menus que não são a barra. A varredura roda a cada 0,5 s só enquanto o painel está visível.
+* Settings esconde o painel antes de aparecer. `⌘,`, o menu e a paleta usam o mesmo caminho. A altura mínima de Settings é 680, limitada à área visível da tela.
 
-Trade-offs conscientes:
-
-* pode conflitar com outras overlays de nível similar;
-* não deve ser usado para "ganhar de tudo" — apenas para o caso de uso de capture utility acima de fullscreen.
-
-Se o comportamento se tornar invasivo em cenários específicos (vídeo, lock screen), reavaliar com testes reais antes de regredir.
+Fullscreen não foi revalidado nesta rodada. Alertas soltos do sistema, se não forem menus nem sheets do próprio painel, ainda podem ficar atrás do nível padrão.
 
 ---
 
