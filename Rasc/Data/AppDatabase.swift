@@ -61,6 +61,44 @@ enum AppDatabase {
             }
         }
 
+        migrator.registerMigration("v6_structured_note_content") { database in
+            try database.create(table: "note_documents") { table in
+                table.column("note_id", .text).primaryKey()
+                    .references(Note.databaseTableName, onDelete: .cascade)
+                table.column("document", .blob).notNull()
+            }
+        }
+
+        migrator.registerMigration("v7_note_image_indicator") { database in
+            try database.alter(table: Note.databaseTableName) { table in
+                table.add(column: "has_images", .boolean).notNull().defaults(to: false)
+            }
+            let rows = try Row.fetchAll(database, sql: "SELECT note_id, document FROM note_documents")
+            for row in rows {
+                let id: UUID = row["note_id"]
+                let data: Data = row["document"]
+                let document = try PropertyListDecoder().decode(NoteDocument.self, from: data)
+                try document.validate()
+                if document.hasImages {
+                    try database.execute(sql: "UPDATE notes SET has_images = 1 WHERE id = ?", arguments: [id])
+                }
+            }
+        }
+
+        migrator.registerMigration("v8_structured_text_overrides") { database in
+            // Older binaries see a deliberately unreadable marker, so they cannot
+            // silently ignore text overlays or overwrite newer structured content.
+            try database.rename(table: "note_documents", to: "note_document_bases")
+            try database.execute(sql: "CREATE VIEW note_documents AS SELECT note_id, X'00' AS document FROM note_document_bases")
+            try database.create(table: "note_document_edits") { table in
+                table.column("note_id", .text).primaryKey()
+                    .references("note_document_bases", onDelete: .cascade)
+                table.column("revision", .integer).notNull().defaults(to: 0)
+                table.column("text_segments", .blob)
+            }
+            try database.execute(sql: "INSERT INTO note_document_edits (note_id) SELECT note_id FROM note_document_bases")
+        }
+
         return migrator
     }
 }
