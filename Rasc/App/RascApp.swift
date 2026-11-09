@@ -3,6 +3,7 @@ import SwiftUI
 @main
 struct RascApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @ObservedObject private var shortcuts = InternalShortcutStore.shared
 
     var body: some Scene {
         Settings {
@@ -13,7 +14,10 @@ struct RascApp: App {
                 Button("New Scratch") {
                     appDelegate.startNewScratch()
                 }
-                .keyboardShortcut("n")
+                .keyboardShortcut(
+                    shortcuts.shortcut(for: .newScratch).keyEquivalent,
+                    modifiers: shortcuts.shortcut(for: .newScratch).eventModifiers
+                )
             }
 
             CommandGroup(after: .newItem) {
@@ -24,24 +28,36 @@ struct RascApp: App {
                 Button("Search thoughts") {
                     appDelegate.openSearch()
                 }
-                .keyboardShortcut("p")
+                .keyboardShortcut(
+                    shortcuts.shortcut(for: .search).keyEquivalent,
+                    modifiers: shortcuts.shortcut(for: .search).eventModifiers
+                )
 
                 Button("Refine") {
                     appDelegate.refine()
                 }
-                .keyboardShortcut("j")
+                .keyboardShortcut(
+                    shortcuts.shortcut(for: .refine).keyEquivalent,
+                    modifiers: shortcuts.shortcut(for: .refine).eventModifiers
+                )
 
                 Button("Command Palette") {
                     appDelegate.openCommandPalette()
                 }
-                .keyboardShortcut("k")
+                .keyboardShortcut(
+                    shortcuts.shortcut(for: .commandPalette).keyEquivalent,
+                    modifiers: shortcuts.shortcut(for: .commandPalette).eventModifiers
+                )
             }
 
             CommandGroup(after: .pasteboard) {
                 Button("Keep") {
                     appDelegate.keepActiveNote()
                 }
-                .keyboardShortcut("k", modifiers: [.command, .shift])
+                .keyboardShortcut(
+                    shortcuts.shortcut(for: .keep).keyEquivalent,
+                    modifiers: shortcuts.shortcut(for: .keep).eventModifiers
+                )
 
                 Button("Copy Note") {
                     appDelegate.copyActiveNote()
@@ -57,8 +73,8 @@ struct RascApp: App {
             }
 
             CommandGroup(replacing: .appSettings) {
-                SettingsLink {
-                    Text("Settings…")
+                Button("Settings…") {
+                    appDelegate.openSettings()
                 }
                 .keyboardShortcut(",")
             }
