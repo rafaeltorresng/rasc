@@ -243,7 +243,7 @@ struct ImagePasteProtectionTests {
     }
 
     @Test
-    func pastePrefersBitmapBytesOverUnusableRTFD() {
+    func pastePrefersBitmapBytesOverUnusableRTFD() throws {
         let image = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
         let pasteboard = NSPasteboard(name: .init("RascTests.\(UUID().uuidString)"))
         defer { pasteboard.releaseGlobally() }
@@ -260,10 +260,11 @@ struct ImagePasteProtectionTests {
         }
         #expect(type == NSPasteboard.PasteboardType.png.rawValue)
         #expect(changeCount == pasteboard.changeCount)
+        let sources = try #require(ListTextView.preferredImportSources(from: pasteboard))
         let editor = ListTextView()
         var captured: [NoteImageImport.Source]?
         editor.imagePaste = { captured = $0 }
-        editor.paste(nil)
+        editor.imagePaste?(sources)
         guard case let .pasteboard(capturedName, capturedType, capturedCount)? = captured?.first else {
             Issue.record("Expected paste to route bitmap bytes")
             return
@@ -324,7 +325,12 @@ struct ImageEditorTests {
         }
         #expect(editor.currentDocument().hasImages)
         #expect(editor.string == "before\n\u{fffc}\n after")
-        #expect(editor.selectedRange() == NSRange(location: 9, length: 0))
+        let expectedCaret = NSRange(location: 9, length: 0)
+        for _ in 0..<100 where editor.selectedRange() != expectedCaret {
+            host.layoutSubtreeIfNeeded()
+            try await Task.sleep(for: .milliseconds(20))
+        }
+        #expect(editor.selectedRange() == expectedCaret)
         let undo = try #require(window.undoManager)
         for _ in 0..<50 where !undo.canUndo { try await Task.sleep(for: .milliseconds(20)) }
         #expect(undo.canUndo)
