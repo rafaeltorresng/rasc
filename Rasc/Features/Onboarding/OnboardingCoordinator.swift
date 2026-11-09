@@ -213,9 +213,8 @@ final class OnboardingCoordinator {
         if OnboardingMeaningfulInput.isMeaningful(text) {
             store.meaningfulTextEntered = true
             scratchpadGuidance.showEmptyHint = false
-            if !scratchpadGuidance.showEscapeHint {
-                scratchpadGuidance.showRefineHint = true
-            }
+            scratchpadGuidance.showRefineHint = false
+            scratchpadGuidance.showEscapeHint = true
             panelController?.scratchpadGuidance = scratchpadGuidance
         }
     }
