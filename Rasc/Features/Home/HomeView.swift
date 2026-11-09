@@ -42,6 +42,8 @@ struct HomeView: View {
     @FocusState private var searchIsFocused: Bool
     @FocusState private var gridIsFocused: Bool
     @State private var retryAction: (() -> Void)?
+    @State private var copyFeedback: String?
+    @State private var copyFeedbackTask: Task<Void, Never>?
     @State private var gridContainerWidth: CGFloat = 0
 
     var body: some View {
@@ -95,11 +97,21 @@ struct HomeView: View {
                 .font(.callout)
                 .padding(.horizontal, HomeLayout.horizontalPadding)
                 .padding(.vertical, 12)
+            } else if let copyFeedback {
+                Text(copyFeedback)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, HomeLayout.horizontalPadding)
+                    .padding(.vertical, 12)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .rascWindowSurface()
         .onChange(of: session.actionErrorMessage) { _, message in
+            if let message { RascAccessibility.announce(message) }
+        }
+        .onChange(of: copyFeedback) { _, message in
             if let message { RascAccessibility.announce(message) }
         }
         .onChange(of: session.lastDiscard) { _, receipt in
@@ -290,6 +302,7 @@ struct HomeView: View {
                 searchQuery: session.searchQuery,
                 onOpen: { onOpenNote(note.id) },
                 onSelect: { session.selectNote(note.id) },
+                onCopy: { copyNote(note.id) },
                 onDuplicate: { duplicateNote(note.id) },
                 onUnkeep: { unkeepNote(note.id) },
                 onDiscard: { discardNote(note.id) }
@@ -313,6 +326,31 @@ struct HomeView: View {
     private func openSelectedNote() {
         guard let note = session.selectedNote() else { return }
         onOpenNote(note.id)
+    }
+
+    private func copyNote(_ noteID: UUID) {
+        Task {
+            do {
+                let document = try await session.documentForCopy(id: noteID)
+                try await NoteHandoff.copy(document)
+                session.actionErrorMessage = nil
+                retryAction = nil
+                if document.hasImages {
+                    let imageCount = document.parts.filter { if case .image = $0 { true } else { false } }.count
+                    let imageOnly = imageCount == 1 && document.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    copyFeedback = imageOnly ? "Image copied." : "Copied with images. Paste into a rich-text app."
+                    copyFeedbackTask?.cancel()
+                    copyFeedbackTask = Task { @MainActor in
+                        try? await Task.sleep(for: .seconds(3))
+                        guard !Task.isCancelled else { return }
+                        copyFeedback = nil
+                    }
+                }
+            } catch {
+                session.actionErrorMessage = "Couldn't copy this thought. Try again."
+                retryAction = { copyNote(noteID) }
+            }
+        }
     }
 
     private func duplicateNote(_ noteID: UUID) {
@@ -444,6 +482,7 @@ private struct HomeNoteCard: View {
     let searchQuery: String
     let onOpen: () -> Void
     let onSelect: () -> Void
+    let onCopy: () -> Void
     let onDuplicate: () -> Void
     let onUnkeep: () -> Void
     let onDiscard: () -> Void
@@ -591,9 +630,7 @@ private struct HomeNoteCard: View {
         if note.isKept {
             Button("Unkeep", action: onUnkeep)
         }
-        Button("Copy content") {
-            NoteHandoff.copyPlainText(note.content)
-        }
+        Button("Copy content", action: onCopy)
         Button("Duplicate", action: onDuplicate)
         Button("Discard Note", role: .destructive, action: onDiscard)
     }
