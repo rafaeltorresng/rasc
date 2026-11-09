@@ -67,6 +67,9 @@ final class AppBootstrap {
 
         let home = homeWindowController ?? HomeWindowController()
         homeWindowController = home
+        home.onVisibilityChange = { [weak self] isVisible in
+            self?.panelController?.noteHomeVisibility(isVisible)
+        }
         home.show(
             repository: panel.repository,
             onOpenNote: { noteID in
