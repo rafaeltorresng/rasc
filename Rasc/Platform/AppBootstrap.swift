@@ -82,6 +82,10 @@ final class AppBootstrap {
                     await panel.startNewScratch()
                 }
             },
+            prepareForDuplicate: { [weak panel] noteID in
+                guard let panel else { throw NoteRepository.PersistenceError.staleContent }
+                try await panel.flushActiveNoteIfMatching(id: noteID)
+            },
             onNoteDiscarded: { noteID in
                 Task { @MainActor in
                     await panel.abandonActiveNoteIfMatching(id: noteID)

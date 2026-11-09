@@ -149,6 +149,8 @@ final class PanelController: NSObject, NSWindowDelegate {
     func show() async {
         do {
             try await session.restore()
+        } catch NoteRepository.PersistenceError.structuredContentRequiresDocument {
+            session.markStructuredContentUnavailable()
         } catch {
             AppDiagnostics.panelRestoreFailed()
             session.markLoadFailed()
@@ -240,16 +242,17 @@ final class PanelController: NSObject, NSWindowDelegate {
 
     func copyActiveNote() async {
         do {
-            guard let text = try await session.copyActiveNoteText() else { return }
-            NoteHandoff.copyPlainText(text)
+            guard let document = try await session.documentForHandoff() else { return }
+            try await NoteHandoff.copy(document)
+            if document.hasImages { session.reportImageCopy(document) }
         } catch { session.reportCompletionFailure(.copy) }
     }
 
     func shareActiveNote() {
         Task { @MainActor in
             do {
-                guard let text = try await session.copyActiveNoteText(), let contentView = panel.contentView else { return }
-                NoteHandoff.presentSharePicker(for: text, relativeTo: contentView)
+                guard let document = try await session.documentForHandoff(), let contentView = panel.contentView else { return }
+                try await NoteHandoff.presentSharePicker(for: document, relativeTo: contentView)
             } catch { session.reportCompletionFailure(.share) }
         }
     }
@@ -282,6 +285,10 @@ final class PanelController: NSObject, NSWindowDelegate {
             }
             let opened = try await session.openNote(id: id)
             guard opened else { return }
+        } catch NoteRepository.PersistenceError.structuredContentRequiresDocument {
+            session.markStructuredContentUnavailable()
+            presentPanel()
+            return
         } catch {
             session.markLoadFailed()
             return
@@ -338,6 +345,10 @@ final class PanelController: NSObject, NSWindowDelegate {
         previousApplication = nil
         onboardingDelegate?.panelDidHide()
         onDidHide?()
+    }
+
+    func flushActiveNoteIfMatching(id: UUID) async throws {
+        try await session.flushIfActiveNote(id: id)
     }
 
     func flushForTermination() async -> Bool {
