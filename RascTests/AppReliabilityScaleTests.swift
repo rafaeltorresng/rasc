@@ -67,7 +67,8 @@ struct AppReliabilityScaleTests {
         print("M13A_BENCHMARK \(String(data: try JSONEncoder().encode(sample), encoding: .utf8) ?? "{}")")
 
         #expect(bootstrapMs < 2_000)
-        #expect(seedMs < Double(noteCount) * 5 + 500)
+        // GitHub-hosted runners vary; keep a generous ceiling below user-visible regression.
+        #expect(seedMs < Double(noteCount) * 6 + 1_000)
         #expect(recentNoteLoadMs < 100)
         #expect(searchMs < max(250, Double(noteCount) * 0.5))
         // Session-level switch includes flush and active-note bookkeeping, not just fetch.
