@@ -108,6 +108,7 @@
 		01000000000000000000007D /* HomeLifecycleGrouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007D /* HomeLifecycleGrouping.swift */; };
 		01000000000000000000007E /* NoteHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007E /* NoteHandoff.swift */; };
 		01000000000000000000007F /* ThoughtCompletionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007F /* ThoughtCompletionTests.swift */; };
+		010000000000000000000083 /* QualitySprintTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000083 /* QualitySprintTests.swift */; };
 		010000000000000000000058 /* RefineReliabilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000058 /* RefineReliabilityTests.swift */; };
 		01000000000000000000005D /* RefineLanguageContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005D /* RefineLanguageContractTests.swift */; };
 		01000000000000000000005E /* RefinementLanguageTrace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005E /* RefinementLanguageTrace.swift */; };
@@ -242,6 +243,7 @@
 		02000000000000000000007D /* HomeLifecycleGrouping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Home/HomeLifecycleGrouping.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000007E /* NoteHandoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/NoteHandoff.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000007F /* ThoughtCompletionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThoughtCompletionTests.swift; sourceTree = "<group>"; };
+		020000000000000000000083 /* QualitySprintTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QualitySprintTests.swift; sourceTree = "<group>"; };
 		020000000000000000000058 /* RefineReliabilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefineReliabilityTests.swift; sourceTree = "<group>"; };
 		02000000000000000000005D /* RefineLanguageContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefineLanguageContractTests.swift; sourceTree = "<group>"; };
 		02000000000000000000005E /* RefinementLanguageTrace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Domain/RefinementLanguageTrace.swift; sourceTree = SOURCE_ROOT; };
@@ -423,6 +425,7 @@
 				020000000000000000000078 /* AppReliabilityLifecycleTests.swift */,
 				020000000000000000000079 /* AppReliabilityScaleTests.swift */,
 				02000000000000000000007F /* ThoughtCompletionTests.swift */,
+				020000000000000000000083 /* QualitySprintTests.swift */,
 				020000000000000000000067 /* RefineAdjudicationTests.swift */,
 			);
 			path = RascTests;
@@ -668,6 +671,7 @@
 				01000000000000000000007B /* AppReliabilityLifecycleTests.swift in Sources */,
 				01000000000000000000007C /* AppReliabilityScaleTests.swift in Sources */,
 				01000000000000000000007F /* ThoughtCompletionTests.swift in Sources */,
+				010000000000000000000083 /* QualitySprintTests.swift in Sources */,
 				010000000000000000000067 /* RefineAdjudicationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
