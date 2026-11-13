@@ -1315,7 +1315,15 @@ Notes, shortcuts, Launch at Login, and window placement are never modified by mi
 
 **Original requirement:** optional post-onboarding History hint.
 
-**Implemented behavior:** deferred in M7. No proactive `⌘P` discovery UI was added.
+**Implemented behavior:** Home shows a one-time, dismissible tip after the user has at least 3 notes and has opened Home at least twice: “Search from anywhere with `⌘P` Search thoughts.” Dismissal and the visit count persist in `UserDefaults`; existing installs migrated into onboarding-complete never see the tip. Reset Onboarding clears both so the full first-run path can be re-tested.
+
+## Completion feature map
+
+**Implemented behavior:** the Ready screen now summarizes the rest of the product in four compact rows (Keep, Search/Home, Command Palette, Settings) using live shortcut values, plus a line stating that Refine is optional. Rows reveal with a short stagger; Reduce Motion switches to a quick opacity change.
+
+## Capture hints
+
+**Implemented behavior:** after meaningful input, the scratchpad footer shows `⌘J Refine` and `Esc Hide and continue later`. The earlier Keep/New hints were removed from live capture to keep the moment focused; Keep and the other surfaces are taught on the Ready screen.
 
 ## Debug reset
 
