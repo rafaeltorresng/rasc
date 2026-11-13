@@ -11,15 +11,6 @@ private enum HomeLayout {
     static let temporalGroupSpacing: CGFloat = 24
     static let temporalLabelSpacing: CGFloat = 8
     static let keptToTemporalExtraSpacing: CGFloat = 4
-    static let gridSpacing: CGFloat = 16
-    static let gridMaxColumns = 4
-    static let idealCardWidth: CGFloat = 260
-    static let browseCardHeight: CGFloat = 116
-    static let browseCompactCardHeight: CGFloat = 86
-    static let searchCardHeight: CGFloat = 108
-    static let searchCompactCardHeight: CGFloat = 84
-    static let cardCornerRadius: CGFloat = 12
-    static let cardPadding: CGFloat = 14
     static let searchMinWidth: CGFloat = 200
     static let searchMaxWidth: CGFloat = 400
     static let identitySpacing: CGFloat = 9
@@ -41,11 +32,10 @@ struct HomeView: View {
     @Environment(\.undoManager) private var undoManager
     @ObservedObject private var internalShortcuts = InternalShortcutStore.shared
     @FocusState private var searchIsFocused: Bool
-    @FocusState private var gridIsFocused: Bool
+    @FocusState private var listIsFocused: Bool
     @State private var retryAction: (() -> Void)?
     @State private var copyFeedback: String?
     @State private var copyFeedbackTask: Task<Void, Never>?
-    @State private var gridContainerWidth: CGFloat = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -80,7 +70,7 @@ struct HomeView: View {
                         }
                     }
                     .focusable()
-                    .focused($gridIsFocused)
+                    .focused($listIsFocused)
                     .onChange(of: session.selectedNoteID) { _, noteID in
                         guard let noteID else { return }
                         scrollProxy.scrollTo(noteID)
@@ -101,7 +91,8 @@ struct HomeView: View {
                 .accessibilityElement(children: .contain)
             } else if session.lastDiscard != nil {
                 HStack {
-                    Text("Thought discarded.").foregroundStyle(.secondary)
+                    Text("Thought discarded.")
+                        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                     Spacer()
                     Button("Undo") { Task { await session.undoDiscard() } }
                 }
@@ -111,7 +102,7 @@ struct HomeView: View {
             } else if let copyFeedback {
                 Text(copyFeedback)
                     .font(.callout)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, HomeLayout.horizontalPadding)
                     .padding(.vertical, 12)
@@ -131,30 +122,30 @@ struct HomeView: View {
         }
         .onKeyPress(.upArrow) {
             guard !searchIsFocused else { return .ignored }
-            gridIsFocused = true
-            session.moveSelection(.up, columns: HomeGridLayout.columnCount(for: max(0, gridContainerWidth - HomeLayout.horizontalPadding * 2)))
+            listIsFocused = true
+            session.moveSelection(.up, columns: 1)
             return .handled
         }
         .onKeyPress(.downArrow) {
             guard !searchIsFocused else { return .ignored }
-            gridIsFocused = true
-            session.moveSelection(.down, columns: HomeGridLayout.columnCount(for: max(0, gridContainerWidth - HomeLayout.horizontalPadding * 2)))
+            listIsFocused = true
+            session.moveSelection(.down, columns: 1)
             return .handled
         }
         .onKeyPress(.leftArrow) {
             guard !searchIsFocused else { return .ignored }
-            gridIsFocused = true
-            session.moveSelection(.left, columns: HomeGridLayout.columnCount(for: max(0, gridContainerWidth - HomeLayout.horizontalPadding * 2)))
+            listIsFocused = true
+            session.moveSelection(.left, columns: 1)
             return .handled
         }
         .onKeyPress(.rightArrow) {
             guard !searchIsFocused else { return .ignored }
-            gridIsFocused = true
-            session.moveSelection(.right, columns: HomeGridLayout.columnCount(for: max(0, gridContainerWidth - HomeLayout.horizontalPadding * 2)))
+            listIsFocused = true
+            session.moveSelection(.right, columns: 1)
             return .handled
         }
         .onKeyPress(.return) {
-            guard !searchIsFocused, gridIsFocused else { return .ignored }
+            guard !searchIsFocused, listIsFocused else { return .ignored }
             openSelectedNote()
             return .handled
         }
@@ -165,7 +156,6 @@ struct HomeView: View {
             .frame(maxWidth: HomeLayout.contentMaxWidth, alignment: .leading)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, HomeLayout.horizontalPadding)
-            .homeLayoutWidthReader($gridContainerWidth)
     }
 
     private var actionZone: some View {
@@ -182,10 +172,10 @@ struct HomeView: View {
             .accessibilityLabel("Rasc")
 
             HomeSearchField(text: $session.searchQuery, isFocused: $searchIsFocused)
-                .onSubmit { searchIsFocused = false; gridIsFocused = true }
+                .onSubmit { searchIsFocused = false; listIsFocused = true }
                 .onKeyPress(.downArrow) {
                     searchIsFocused = false
-                    gridIsFocused = true
+                    listIsFocused = true
                     return .handled
                 }
                 .frame(minWidth: HomeLayout.searchMinWidth, maxWidth: HomeLayout.searchMaxWidth)
@@ -197,7 +187,7 @@ struct HomeView: View {
             RascSettingsLink {
                 Image(systemName: "gearshape")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                     .frame(width: 26, height: 26)
             }
             .buttonStyle(.plain)
@@ -228,7 +218,7 @@ struct HomeView: View {
             } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                     .frame(width: 22, height: 22)
                     .contentShape(Rectangle())
             }
@@ -237,7 +227,7 @@ struct HomeView: View {
             .help("Dismiss")
         }
         .font(.callout)
-        .foregroundStyle(.secondary)
+        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background {
@@ -253,9 +243,9 @@ struct HomeView: View {
         } else if session.showsNoSearchResults {
             quietStateLabel("No thoughts found.")
         } else if session.isSearching {
-            searchResultsGrid
+            searchResultsList
         } else {
-            chronologicalGrid
+            chronologicalList
         }
     }
 
@@ -300,15 +290,14 @@ struct HomeView: View {
         .accessibilityLabel("Nothing here yet. Your thoughts will appear here as you use Rasc.")
     }
 
-    private var chronologicalGrid: some View {
+    private var chronologicalList: some View {
         VStack(alignment: .leading, spacing: HomeLayout.temporalGroupSpacing) {
             ForEach(Array(session.visibleBrowseGroups.enumerated()), id: \.element.id) { index, group in
                 VStack(alignment: .leading, spacing: HomeLayout.temporalLabelSpacing) {
                     sectionTitle(for: group)
 
-                    noteGrid(
+                    noteList(
                         for: group.notes,
-                        style: .browse,
                         showsKeptIndicator: !isKeptSection(group)
                     )
                     if isKeptSection(group), session.keptCount > HomeLifecycleGrouping.keptSectionLimit {
@@ -325,48 +314,52 @@ struct HomeView: View {
         .animation(RascMotion.bodyContentAnimation(reduceMotion: reduceMotion), value: session.browseGroups.map(\.id))
     }
 
-    private var searchResultsGrid: some View {
+    private var searchResultsList: some View {
         VStack(alignment: .leading, spacing: 12) {
-            noteGrid(for: session.searchResults, style: .search)
+            noteList(for: session.searchResults)
             if session.hasMoreSearchResults {
                 Text("Showing the first 500 matches. Narrow your search to find more.")
-                    .font(.callout).foregroundStyle(.secondary)
+                    .font(.callout)
+                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
             }
         }
             .animation(RascMotion.bodyContentAnimation(reduceMotion: reduceMotion), value: session.searchResults.map(\.id))
     }
 
-    private func noteGrid(
+    private func noteList(
         for notes: [Note],
-        style: HomeNoteCardStyle,
         showsKeptIndicator: Bool = true
     ) -> some View {
-        HomeNoteGrid(
-            notes: notes,
-            containerWidth: max(0, gridContainerWidth - HomeLayout.horizontalPadding * 2)
-        ) { note in
-            HomeNoteCard(
-                note: note,
-                style: style,
-                isSelected: session.selectedNoteID == note.id,
-                showsKeptIndicator: showsKeptIndicator,
-                timestamp: session.formattedTimestamp(for: note),
-                searchQuery: session.searchQuery,
-                onOpen: { onOpenNote(note.id) },
-                onSelect: { session.selectNote(note.id) },
-                onCopy: { copyNote(note.id) },
-                onDuplicate: { duplicateNote(note.id) },
-                onUnkeep: { unkeepNote(note.id) },
-                onDiscard: { discardNote(note.id) }
-            )
-            .id(note.id)
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(Array(notes.enumerated()), id: \.element.id) { index, note in
+                HomeNoteRowView(
+                    note: note,
+                    isSelected: session.selectedNoteID == note.id,
+                    showsKeptIndicator: showsKeptIndicator,
+                    timestamp: session.formattedTimestamp(for: note),
+                    searchQuery: session.searchQuery,
+                    onOpen: { onOpenNote(note.id) },
+                    onSelect: { session.selectNote(note.id) },
+                    onCopy: { copyNote(note.id) },
+                    onDuplicate: { duplicateNote(note.id) },
+                    onUnkeep: { unkeepNote(note.id) },
+                    onDiscard: { discardNote(note.id) }
+                )
+                .id(note.id)
+
+                if index < notes.count - 1 {
+                    Rectangle()
+                        .fill(.primary.opacity(0.055))
+                        .frame(height: 1)
+                }
+            }
         }
     }
 
     private func quietStateLabel(_ text: String) -> some View {
         Text(text)
             .font(.system(size: 15))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
             .frame(
                 maxWidth: .infinity,
                 minHeight: HomeLayout.quietStateMinHeight,
@@ -454,10 +447,19 @@ struct HomeView: View {
     }
 
     private func sectionTitle(for group: HomeBrowseGroup) -> some View {
-        Text(group.sectionTitle)
-            .font(.system(size: 12, weight: .semibold))
-            .foregroundStyle(RascSurfacePalette.homeSectionLabel(for: colorScheme))
-            .accessibilityAddTraits(.isHeader)
+        HStack(spacing: 8) {
+            Text(group.sectionTitle.uppercased())
+                .font(.system(size: 10.5, weight: .semibold))
+                .tracking(0.8)
+
+            if case .kept = group.kind {
+                Text("\(session.keptCount)")
+                    .font(.system(size: 10.5, weight: .semibold))
+                    .monospacedDigit()
+            }
+        }
+        .foregroundStyle(RascSurfacePalette.homeSectionLabel(for: colorScheme))
+        .accessibilityAddTraits(.isHeader)
     }
 
     private func sectionTopInset(for group: HomeBrowseGroup, at index: Int) -> CGFloat {
@@ -470,50 +472,24 @@ struct HomeView: View {
     }
 }
 
-private enum HomeNoteCardStyle {
-    case browse
-    case search
-
-    func cardHeight(hasExcerpt: Bool) -> CGFloat {
-        switch self {
-        case .browse:
-            hasExcerpt ? HomeLayout.browseCardHeight : HomeLayout.browseCompactCardHeight
-        case .search:
-            hasExcerpt ? HomeLayout.searchCardHeight : HomeLayout.searchCompactCardHeight
-        }
-    }
-
-    var excerptLineLimit: Int {
-        switch self {
-        case .browse, .search:
-            2
-        }
-    }
-
-    var titleFontSize: CGFloat {
-        switch self {
-        case .browse: 14.5
-        case .search: 14
-        }
-    }
-}
-
 private struct HomeSearchField: View {
     @Binding var text: String
     let isFocused: FocusState<Bool>.Binding
+
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         RascTransientInputShell(isFocused: isFocused.wrappedValue) {
             HStack(spacing: 7) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
 
                 TextField(
                     "",
                     text: $text,
                     prompt: Text("Search thoughts…")
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
                 )
                 .textFieldStyle(.plain)
                 .font(.system(size: 13.5))
@@ -525,9 +501,8 @@ private struct HomeSearchField: View {
     }
 }
 
-private struct HomeNoteCard: View {
+private struct HomeNoteRowView: View {
     let note: Note
-    let style: HomeNoteCardStyle
     let isSelected: Bool
     let showsKeptIndicator: Bool
     let timestamp: String
@@ -540,26 +515,20 @@ private struct HomeNoteCard: View {
     let onDiscard: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.colorSchemeContrast) private var colorSchemeContrast
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isHovered = false
-    @FocusState private var cardIsFocused: Bool
+    @FocusState private var rowIsFocused: Bool
 
-    private var showsCardActions: Bool {
+    private var showsTrailingActions: Bool {
         isHovered || isSelected
     }
 
-    private var cardExcerpt: String? {
-        switch style {
-        case .browse:
-            note.displayHomeExcerpt
-        case .search:
-            note.retrievalSnippet(matching: searchQuery)
+    private var rowExcerpt: String? {
+        let trimmed = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            return note.displayHomeExcerpt
         }
-    }
-
-    private var resolvedCardHeight: CGFloat {
-        style.cardHeight(hasExcerpt: cardExcerpt != nil)
+        return note.retrievalSnippet(matching: searchQuery)
     }
 
     var body: some View {
@@ -567,99 +536,84 @@ private struct HomeNoteCard: View {
             onSelect()
             onOpen()
         } label: {
-            cardContent
+            rowContent
         }
-        .buttonStyle(HomeNoteCardButtonStyle())
-        .focused($cardIsFocused)
-        .onChange(of: cardIsFocused) { _, focused in if focused { onSelect() } }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(maxHeight: .infinity, alignment: .topLeading)
-        .overlay(alignment: .topTrailing) {
-            cardHeaderActions
-                .padding(.top, HomeLayout.cardPadding + 1)
-                .padding(.trailing, HomeLayout.cardPadding - 2)
-        }
+        .buttonStyle(.plain)
+        .focused($rowIsFocused)
+        .onChange(of: rowIsFocused) { _, focused in if focused { onSelect() } }
         .contextMenu {
-            noteActionMenuContent
+            noteActionsMenuContent
         }
         .onHover { isHovered = $0 }
         .animation(RascMotion.micro(reduceMotion: reduceMotion), value: isHovered)
         .animation(RascMotion.selection(reduceMotion: reduceMotion), value: isSelected)
-        .accessibilityElement(children: .contain)
+        .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
         .accessibilityHint("Press Return to open")
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
-    private var cardContent: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(note.displayTitle)
-                .font(.system(size: style.titleFontSize, weight: .medium))
-                .foregroundStyle(.primary.opacity(0.94))
-                .lineLimit(2)
-                .multilineTextAlignment(.leading)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.trailing, cardHeaderTrailingInset)
+    private var rowContent: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            Image(systemName: "bookmark.fill")
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                .opacity(note.isKept && showsKeptIndicator ? 1 : 0)
+                .accessibilityHidden(true)
+                .frame(width: 14)
 
-            if let snippet = cardExcerpt {
-                Text(snippet)
-                    .font(.system(size: 12.5))
-                    .foregroundStyle(.secondary.opacity(0.92))
-                    .lineSpacing(1.5)
-                    .lineLimit(style.excerptLineLimit)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(note.displayTitle)
+                    .font(.system(size: 13.5, weight: .medium))
+                    .foregroundStyle(.primary.opacity(0.92))
+                    .lineLimit(1)
                     .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
-            }
-        }
-        .padding(HomeLayout.cardPadding)
-        .frame(
-            maxWidth: .infinity,
-            minHeight: resolvedCardHeight,
-            maxHeight: .infinity,
-            alignment: .topLeading
-        )
-        .background(cardBackground)
-        .overlay(cardBorder)
-        .shadow(
-            color: .black.opacity(cardShadowOpacity),
-            radius: cardShadowRadius,
-            y: cardShadowYOffset
-        )
-        .contentShape(Rectangle())
-    }
+                    .truncationMode(.tail)
 
-    private var cardHeaderTrailingInset: CGFloat {
-        note.isKept && showsKeptIndicator ? 84 : 70
-    }
-
-    private var cardHeaderActions: some View {
-        HStack(alignment: .center, spacing: 5) {
-            if note.isKept, showsKeptIndicator {
-                keptHeaderIndicator
+                if let excerpt = rowExcerpt {
+                    Text(excerpt)
+                        .font(.system(size: 12))
+                        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                        .lineLimit(1)
+                        .multilineTextAlignment(.leading)
+                        .truncationMode(.tail)
+                }
             }
+
+            Spacer(minLength: 16)
 
             Text(timestamp)
-                .font(.system(size: 10.5, weight: .medium, design: .rounded))
-                .foregroundStyle(.tertiary)
+                .font(.system(size: 11, weight: .medium))
+                .monospacedDigit()
+                .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
                 .lineLimit(1)
 
             noteActionsMenu
-                .opacity(showsCardActions ? 1 : 0)
-                .allowsHitTesting(showsCardActions)
-                .disabled(!showsCardActions)
-                .accessibilityHidden(!showsCardActions)
+                .opacity(showsTrailingActions ? 1 : 0)
+                .allowsHitTesting(showsTrailingActions)
+                .disabled(!showsTrailingActions)
+                .accessibilityHidden(!showsTrailingActions)
         }
-        .fixedSize(horizontal: true, vertical: false)
-        .animation(RascMotion.micro(reduceMotion: reduceMotion), value: showsCardActions)
+        .padding(.horizontal, 10)
+        .frame(maxWidth: .infinity, minHeight: 46, maxHeight: 46, alignment: .center)
+        .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .background {
+            if isSelected {
+                RascTransientSelectionBackground(cornerRadius: 8)
+            } else if isHovered {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(RascSurfacePalette.subtleFill(for: colorScheme))
+            }
+        }
     }
 
     private var noteActionsMenu: some View {
         Menu {
-            noteActionMenuContent
+            noteActionsMenuContent
         } label: {
             Image(systemName: "ellipsis")
                 .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                 .symbolRenderingMode(.monochrome)
                 .frame(width: 22, height: 22)
                 .background {
@@ -678,7 +632,7 @@ private struct HomeNoteCard: View {
     }
 
     @ViewBuilder
-    private var noteActionMenuContent: some View {
+    private var noteActionsMenuContent: some View {
         if note.isKept {
             Button("Unkeep", action: onUnkeep)
         }
@@ -688,167 +642,16 @@ private struct HomeNoteCard: View {
         Button("Discard Note", role: .destructive, action: onDiscard)
     }
 
-    private var keptHeaderIndicator: some View {
-        Image(systemName: "bookmark.fill")
-            .font(.system(size: 9, weight: .semibold))
-            .foregroundStyle(RascSurfacePalette.homeSupportingText(for: colorScheme))
-            .frame(width: 11, height: 11)
-            .accessibilityHidden(true)
-    }
-
-    private var cardShadowOpacity: Double {
-        RascSurfacePalette.homeCardShadowOpacity(
-            for: colorScheme,
-            isHovered: isHovered,
-            isSelected: isSelected
-        )
-    }
-
-    private var cardShadowRadius: CGFloat {
-        RascSurfacePalette.homeCardShadowRadius(
-            for: colorScheme,
-            isHovered: isHovered,
-            isSelected: isSelected
-        )
-    }
-
-    private var cardShadowYOffset: CGFloat {
-        if isSelected || isHovered {
-            return colorScheme == .dark ? 4 : 3
-        }
-        return colorScheme == .dark ? 3 : 2
-    }
-
     private var accessibilityLabel: String {
         var components = [note.displayTitle]
         if note.isKept {
             components.append("Kept")
         }
-        if let snippet = cardExcerpt {
-            components.append(snippet)
+        if let excerpt = rowExcerpt {
+            components.append(excerpt)
         }
         components.append(timestamp)
         return components.joined(separator: ", ")
-    }
-
-    private var cardBackground: some View {
-        RoundedRectangle(cornerRadius: HomeLayout.cardCornerRadius, style: .continuous)
-            .fill(RascSurfacePalette.homeCardFill(for: colorScheme))
-            .overlay {
-                RoundedRectangle(cornerRadius: HomeLayout.cardCornerRadius, style: .continuous)
-                    .strokeBorder(
-                        RascSurfacePalette.innerHighlight(for: colorScheme),
-                        lineWidth: 1
-                    )
-            }
-            .overlay {
-                RoundedRectangle(cornerRadius: HomeLayout.cardCornerRadius, style: .continuous)
-                    .strokeBorder(
-                        RascSurfacePalette.homeCardVioletUndertone(
-                            for: colorScheme,
-                            isHovered: isHovered,
-                            isSelected: isSelected
-                        ),
-                        lineWidth: 1
-                    )
-            }
-            .overlay {
-                if isSelected {
-                    RoundedRectangle(cornerRadius: HomeLayout.cardCornerRadius, style: .continuous)
-                        .fill(RascSurfacePalette.homeCardSelectionFill(for: colorScheme))
-                } else if isHovered {
-                    RoundedRectangle(cornerRadius: HomeLayout.cardCornerRadius, style: .continuous)
-                        .fill(RascSurfacePalette.subtleFill(for: colorScheme))
-                }
-            }
-    }
-
-    private var cardBorder: some View {
-        RoundedRectangle(cornerRadius: HomeLayout.cardCornerRadius, style: .continuous)
-            .strokeBorder(borderColor, lineWidth: borderLineWidth)
-    }
-
-    private var borderColor: Color {
-        RascSurfacePalette.homeCardBorder(
-            for: colorScheme,
-            isHovered: isHovered,
-            isSelected: isSelected,
-            increasedContrast: colorSchemeContrast == .increased
-        )
-    }
-
-    private var borderLineWidth: CGFloat {
-        if isSelected {
-            return 1
-        }
-        return 0.85
-    }
-}
-
-private struct HomeNoteCardButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .opacity(configuration.isPressed ? 0.94 : 1)
-    }
-}
-
-private enum HomeGridLayout {
-    static func columnCount(for availableWidth: CGFloat) -> Int {
-        let spacing = HomeLayout.gridSpacing
-        let cardWidth = HomeLayout.idealCardWidth
-
-        guard availableWidth > 0 else { return 1 }
-
-        let count = Int((availableWidth + spacing) / (cardWidth + spacing))
-        return max(1, min(HomeLayout.gridMaxColumns, count))
-    }
-
-    static func columns(for availableWidth: CGFloat) -> [GridItem] {
-        let spacing = HomeLayout.gridSpacing
-        let cardWidth = HomeLayout.idealCardWidth
-        let columnCount = columnCount(for: availableWidth)
-
-        return Array(
-            repeating: GridItem(.flexible(minimum: cardWidth, maximum: 360), spacing: spacing),
-            count: columnCount
-        )
-    }
-}
-
-private struct HomeLayoutWidthReaderModifier: ViewModifier {
-    @Binding var width: CGFloat
-
-    func body(content: Content) -> some View {
-        content.onGeometryChange(for: CGFloat.self) { geometry in
-            geometry.size.width
-        } action: { newWidth in
-            width = newWidth
-        }
-    }
-}
-
-private extension View {
-    func homeLayoutWidthReader(_ width: Binding<CGFloat>) -> some View {
-        modifier(HomeLayoutWidthReaderModifier(width: width))
-    }
-}
-
-private struct HomeNoteGrid<Card: View>: View {
-    let notes: [Note]
-    let containerWidth: CGFloat
-    @ViewBuilder let card: (Note) -> Card
-
-    var body: some View {
-        LazyVGrid(
-            columns: HomeGridLayout.columns(for: containerWidth),
-            alignment: .leading,
-            spacing: HomeLayout.gridSpacing
-        ) {
-            ForEach(notes, id: \.id) { note in
-                card(note)
-                    .frame(maxHeight: .infinity, alignment: .topLeading)
-            }
-        }
     }
 }
 
@@ -891,16 +694,22 @@ private struct HomeNewScratchButton: View {
         Button(action: action) {
             Label("New Scratch", systemImage: "plus")
                 .font(.system(size: style.fontSize, weight: .semibold))
-                .foregroundStyle(RascSurfacePalette.actionAccent(for: colorScheme))
+                .foregroundStyle(labelColor)
                 .padding(.horizontal, style.horizontalPadding)
                 .padding(.vertical, style.verticalPadding)
                 .background(buttonBackground)
                 .overlay(buttonBorder)
         }
-        .buttonStyle(HomeNoteCardButtonStyle())
+        .buttonStyle(.plain)
         .onHover { isHovered = $0 }
         .animation(RascMotion.micro(reduceMotion: reduceMotion), value: isHovered)
         .accessibilityLabel("New Scratch")
+    }
+
+    private var labelColor: Color {
+        style == .prominent
+            ? RascSurfacePalette.actionPrimaryLabel(for: colorScheme)
+            : RascSurfacePalette.primaryText(for: colorScheme)
     }
 
     @ViewBuilder
@@ -909,16 +718,22 @@ private struct HomeNewScratchButton: View {
             cornerRadius: HomeLayout.emptyStateCTACornerRadius,
             style: .continuous
         )
-        .fill(RascSurfacePalette.homeCardFill(for: colorScheme))
+        .fill(
+            style == .prominent
+                ? RascSurfacePalette.actionPrimaryFill(for: colorScheme)
+                : RascSurfacePalette.homeCardFill(for: colorScheme)
+        )
         .overlay {
-            RoundedRectangle(
-                cornerRadius: HomeLayout.emptyStateCTACornerRadius,
-                style: .continuous
-            )
-            .strokeBorder(
-                RascSurfacePalette.innerHighlight(for: colorScheme),
-                lineWidth: 1
-            )
+            if style == .header {
+                RoundedRectangle(
+                    cornerRadius: HomeLayout.emptyStateCTACornerRadius,
+                    style: .continuous
+                )
+                .strokeBorder(
+                    RascSurfacePalette.innerHighlight(for: colorScheme),
+                    lineWidth: 1
+                )
+            }
         }
         .overlay {
             if isHovered {
@@ -926,24 +741,30 @@ private struct HomeNewScratchButton: View {
                     cornerRadius: HomeLayout.emptyStateCTACornerRadius,
                     style: .continuous
                 )
-                .fill(RascSurfacePalette.subtleFill(for: colorScheme))
+                .fill(
+                    style == .prominent
+                        ? RascSurfacePalette.actionPrimaryLabel(for: colorScheme).opacity(0.08)
+                        : RascSurfacePalette.subtleFill(for: colorScheme)
+                )
             }
         }
     }
 
+    @ViewBuilder
     private var buttonBorder: some View {
-        RoundedRectangle(
-            cornerRadius: HomeLayout.emptyStateCTACornerRadius,
-            style: .continuous
-        )
-        .strokeBorder(
-            RascSurfacePalette.homeCardBorder(
-                for: colorScheme,
-                isHovered: isHovered,
-                isSelected: false,
-                increasedContrast: colorSchemeContrast == .increased
-            ),
-            lineWidth: 0.85
-        )
+        if style == .header {
+            RoundedRectangle(
+                cornerRadius: HomeLayout.emptyStateCTACornerRadius,
+                style: .continuous
+            )
+            .strokeBorder(
+                RascSurfacePalette.homeCardBorder(
+                    for: colorScheme,
+                    isHovered: isHovered,
+                    increasedContrast: colorSchemeContrast == .increased
+                ),
+                lineWidth: 0.85
+            )
+        }
     }
 }
