@@ -38,7 +38,7 @@ struct OnboardingScratchpadOverlay: View {
                     }
                         .transition(hintTransition)
                 } else if guidance.showRefineHint {
-                    hintRow(symbol: RascShortcutCatalog.refine.shortcut, text: "Refine")
+                    hintRow(symbol: InternalShortcutStore.shared.displayString(for: .refine), text: "Refine")
                         .transition(hintTransition)
                 } else if guidance.showEmptyHint && editorText.isEmpty && showDelayedEmptyHint {
                     emptyHint
