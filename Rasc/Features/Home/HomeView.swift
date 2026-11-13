@@ -632,6 +632,7 @@ private struct HomeNoteCard: View {
         }
         Button("Copy content", action: onCopy)
         Button("Duplicate", action: onDuplicate)
+            .disabled(!note.hasMeaningfulContent)
         Button("Discard Note", role: .destructive, action: onDiscard)
     }
 

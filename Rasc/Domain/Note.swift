@@ -37,6 +37,11 @@ struct Note: Codable, Equatable, FetchableRecord, PersistableRecord, Sendable {
         keptAt != nil
     }
 
+    /// Whether the note has content worth persisting or duplicating.
+    var hasMeaningfulContent: Bool {
+        hasImages || !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
     var displayTitle: String {
         let title = Self.truncate(meaningfulLines.first ?? "", to: 80)
         return title.isEmpty ? (hasImages ? "Image" : "Empty thought") : title
