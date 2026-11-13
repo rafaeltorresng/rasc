@@ -1,111 +1,5 @@
-import AppKit
 import Observation
 import SwiftUI
-
-enum HistorySearchCommand: Equatable {
-    case moveUp
-    case moveDown
-    case openSelection
-    case closeSearch
-
-    init?(commandSelector: Selector) {
-        switch commandSelector {
-        case #selector(NSResponder.moveUp(_:)):
-            self = .moveUp
-        case #selector(NSResponder.moveDown(_:)):
-            self = .moveDown
-        case #selector(NSResponder.insertNewline(_:)):
-            self = .openSelection
-        case #selector(NSResponder.cancelOperation(_:)):
-            self = .closeSearch
-        default:
-            return nil
-        }
-    }
-}
-
-struct HistorySearchTextField: NSViewRepresentable {
-    @Binding var text: String
-    @Binding var isFocused: Bool
-    let focusRequest: Int
-    let onCommand: (HistorySearchCommand) -> Void
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(parent: self)
-    }
-
-    func makeNSView(context: Context) -> NSTextField {
-        let textField = NSTextField()
-        textField.delegate = context.coordinator
-        textField.isBordered = false
-        textField.drawsBackground = false
-        textField.focusRingType = .none
-        textField.font = .systemFont(ofSize: 15)
-        textField.placeholderString = "Search thoughts…"
-        textField.setAccessibilityLabel("Search thoughts")
-        textField.cell?.usesSingleLineMode = true
-        textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        return textField
-    }
-
-    func updateNSView(_ textField: NSTextField, context: Context) {
-        context.coordinator.parent = self
-
-        if textField.stringValue != text {
-            textField.stringValue = text
-        }
-
-        context.coordinator.focus(textField, for: focusRequest)
-    }
-
-    @MainActor
-    final class Coordinator: NSObject, NSTextFieldDelegate {
-        var parent: HistorySearchTextField
-        private var fulfilledFocusRequest: Int?
-
-        init(parent: HistorySearchTextField) {
-            self.parent = parent
-        }
-
-        func controlTextDidChange(_ notification: Notification) {
-            guard let textField = notification.object as? NSTextField else { return }
-            parent.text = textField.stringValue
-        }
-
-        func controlTextDidBeginEditing(_ notification: Notification) {
-            parent.isFocused = true
-        }
-
-        func controlTextDidEndEditing(_ notification: Notification) {
-            parent.isFocused = false
-        }
-
-        func control(
-            _ control: NSControl,
-            textView: NSTextView,
-            doCommandBy commandSelector: Selector
-        ) -> Bool {
-            guard let command = HistorySearchCommand(commandSelector: commandSelector) else {
-                return false
-            }
-
-            parent.onCommand(command)
-            return true
-        }
-
-        func focus(_ textField: NSTextField, for request: Int) {
-            guard fulfilledFocusRequest != request else { return }
-
-            DispatchQueue.main.async { [weak self, weak textField] in
-                guard let self, let textField, let window = textField.window else { return }
-                window.makeFirstResponder(textField)
-                fulfilledFocusRequest = request
-                parent.isFocused = window.firstResponder === textField.currentEditor()
-                    || window.firstResponder === textField
-            }
-        }
-    }
-}
 
 struct HistorySearchInputField: View {
     @Bindable var session: ScratchpadSession
@@ -113,10 +7,12 @@ struct HistorySearchInputField: View {
 
     var body: some View {
         RascTransientInputShell(isFocused: isFocused) {
-            HistorySearchTextField(
+            RascTransientInputTextField(
                 text: $session.searchQuery,
                 isFocused: $isFocused,
                 focusRequest: session.searchFocusRequest,
+                placeholder: "Search thoughts…",
+                accessibilityLabel: "Search thoughts",
                 onCommand: handleSearchCommand
             )
         }
@@ -127,17 +23,17 @@ struct HistorySearchInputField: View {
         .accessibilityLabel("Search thoughts")
     }
 
-    private func handleSearchCommand(_ command: HistorySearchCommand) {
+    private func handleSearchCommand(_ command: RascTransientFieldCommand) {
         switch command {
         case .moveUp:
             session.moveSearchSelection(by: -1)
         case .moveDown:
             session.moveSearchSelection(by: 1)
-        case .openSelection:
+        case .execute:
             Task {
                 _ = try? await session.openSelectedSearchResult()
             }
-        case .closeSearch:
+        case .close:
             session.closeSearch()
         }
     }
@@ -146,6 +42,7 @@ struct HistorySearchInputField: View {
 struct HistorySearchView: View {
     @Bindable var session: ScratchpadSession
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         VStack(spacing: 0) {
@@ -155,7 +52,8 @@ struct HistorySearchView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             if session.hasMoreSearchResults {
                 Text("Showing 12 recent thoughts. Search more specifically, or browse Home.")
-                    .font(.caption).foregroundStyle(.secondary)
+                    .font(.caption)
+                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, RascSurfaceLayout.horizontalInset)
                     .padding(.vertical, 10)
@@ -195,14 +93,14 @@ struct HistorySearchView: View {
     private var recentSectionHeader: some View {
         Text("Recent")
             .font(.system(size: 11.5, weight: .medium))
-            .foregroundStyle(.tertiary)
+            .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
             .accessibilityAddTraits(.isHeader)
     }
 
     private func quietStateLabel(_ text: String) -> some View {
         Text(text)
             .font(.system(size: 13))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityLabel(text)
     }
@@ -250,7 +148,7 @@ struct HistorySearchView: View {
                 if let snippet = note.retrievalSnippet(matching: session.searchQuery) {
                     Text(snippet)
                         .font(.system(size: RascSurfaceMetrics.searchSnippetFontSize))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                 }
@@ -262,12 +160,12 @@ struct HistorySearchView: View {
                 if note.isKept {
                     Text("Kept")
                         .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
                 }
 
                 Text(note.updatedAt, style: .relative)
                     .font(.system(size: RascSurfaceMetrics.searchTimestampFontSize))
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
                     .lineLimit(1)
 
                 if isSelected {

@@ -1,113 +1,10 @@
-import AppKit
 import SwiftUI
-
-enum CommandPaletteCommand: Equatable {
-    case moveUp
-    case moveDown
-    case executeSelection
-    case closePalette
-
-    init?(commandSelector: Selector) {
-        switch commandSelector {
-        case #selector(NSResponder.moveUp(_:)):
-            self = .moveUp
-        case #selector(NSResponder.moveDown(_:)):
-            self = .moveDown
-        case #selector(NSResponder.insertNewline(_:)):
-            self = .executeSelection
-        case #selector(NSResponder.cancelOperation(_:)):
-            self = .closePalette
-        default:
-            return nil
-        }
-    }
-}
-
-struct CommandPaletteKeyboardHandler: NSViewRepresentable {
-    let focusRequest: Int
-    let onCommand: (CommandPaletteCommand) -> Void
-    let onInsert: (String) -> Void
-    let onDelete: () -> Void
-
-    func makeNSView(context: Context) -> CommandPaletteKeyView {
-        let view = CommandPaletteKeyView()
-        view.focusRingType = .none
-        return view
-    }
-
-    func updateNSView(_ nsView: CommandPaletteKeyView, context: Context) {
-        nsView.onCommand = onCommand
-        nsView.onInsert = onInsert
-        nsView.onDelete = onDelete
-        nsView.claimFocus(for: focusRequest)
-    }
-}
-
-@MainActor
-final class CommandPaletteKeyView: NSView {
-    var onCommand: ((CommandPaletteCommand) -> Void)?
-    var onInsert: ((String) -> Void)?
-    var onDelete: (() -> Void)?
-    private var fulfilledFocusRequest = -1
-
-    override var acceptsFirstResponder: Bool { true }
-
-    override func keyDown(with event: NSEvent) {
-        let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
-        if modifiers.contains(.command) || modifiers.contains(.control) {
-            return
-        }
-        interpretKeyEvents([event])
-    }
-
-    override func insertText(_ insertString: Any) {
-        let string: String
-        if let value = insertString as? String {
-            string = value
-        } else if let value = insertString as? NSAttributedString {
-            string = value.string
-        } else {
-            return
-        }
-        guard !string.isEmpty else { return }
-        guard string.unicodeScalars.allSatisfy({ !CharacterSet.controlCharacters.contains($0) }) else { return }
-        onInsert?(string)
-    }
-
-    override func deleteBackward(_ sender: Any?) {
-        onDelete?()
-    }
-
-    override func moveUp(_ sender: Any?) {
-        onCommand?(.moveUp)
-    }
-
-    override func moveDown(_ sender: Any?) {
-        onCommand?(.moveDown)
-    }
-
-    override func insertNewline(_ sender: Any?) {
-        onCommand?(.executeSelection)
-    }
-
-    override func cancelOperation(_ sender: Any?) {
-        onCommand?(.closePalette)
-    }
-
-    func claimFocus(for request: Int) {
-        guard fulfilledFocusRequest != request else { return }
-
-        DispatchQueue.main.async { [weak self] in
-            guard let self, let window else { return }
-            window.makeFirstResponder(self)
-            fulfilledFocusRequest = request
-        }
-    }
-}
 
 struct CommandPaletteView: View {
     @Bindable var session: ScratchpadSession
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var isFocused = false
     @State private var globalShortcutRevision = 0
     let onExecute: (PaletteCommand) -> Void
 
@@ -122,14 +19,6 @@ struct CommandPaletteView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background {
-            CommandPaletteKeyboardHandler(
-                focusRequest: session.commandPaletteKeyFocusRequest,
-                onCommand: handlePaletteCommand,
-                onInsert: { session.insertCommandPaletteText($0) },
-                onDelete: { session.deleteCommandPaletteText() }
-            )
-        }
         .onGlobalShortcutChange {
             globalShortcutRevision += 1
             session.refreshCommandsForShortcutChange()
@@ -142,19 +31,19 @@ struct CommandPaletteView: View {
     }
 
     private var paletteHeader: some View {
-        HStack(alignment: .center, spacing: RascSurfaceLayout.orbToAccessoryGap) {
-            RascOrb(state: .note, size: .inline, decorative: true)
-                .frame(width: RascSurfaceLayout.orbSize, height: RascSurfaceLayout.orbSize)
-
-            Text(session.commandPaletteQuery.isEmpty ? "Commands" : session.commandPaletteQuery)
-                .font(.system(size: 15, weight: .medium))
-                .foregroundStyle(session.commandPaletteQuery.isEmpty ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .accessibilityLabel(session.commandPaletteQuery.isEmpty ? "Commands" : "Command filter")
-                .accessibilityValue(session.commandPaletteQuery)
+        RascSurfaceOrbHeaderRow(orbState: .note) {
+            RascTransientInputShell(isFocused: isFocused) {
+                RascTransientInputTextField(
+                    text: $session.commandPaletteQuery,
+                    isFocused: $isFocused,
+                    focusRequest: session.commandPaletteKeyFocusRequest,
+                    placeholder: "Type a command…",
+                    accessibilityLabel: "Commands",
+                    onCommand: handlePaletteCommand
+                )
+            }
+            .offset(y: -RascSurfaceLayout.searchFieldOrbVerticalOffset)
         }
-        .padding(.horizontal, RascSurfaceLayout.horizontalInset)
-        .padding(.top, RascSurfaceLayout.topInset)
         .padding(.bottom, RascSurfaceLayout.transientHeaderBodyGap)
     }
 
@@ -163,7 +52,7 @@ struct CommandPaletteView: View {
             if session.filteredCommands.isEmpty {
                 Text("No matching commands.")
                     .font(.system(size: 13))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .accessibilityLabel("No matching commands")
             } else {
@@ -176,12 +65,17 @@ struct CommandPaletteView: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(command.title)
-                    .accessibilityHint(command.accessibilityHint)
+                    .accessibilityHint(
+                        command == .discardNote && session.destructiveConfirmationRequested
+                            ? "Press Return again to discard this note"
+                            : command.accessibilityHint
+                    )
                     .accessibilityAddTraits(index == session.selectedCommandIndex ? .isSelected : [])
                 }
             }
         }
         .padding(.horizontal, RascSurfaceLayout.horizontalInset)
+        .frame(maxHeight: .infinity, alignment: .topLeading)
         .animation(
             RascMotion.selection(reduceMotion: reduceMotion),
             value: session.selectedCommandIndex
@@ -192,11 +86,22 @@ struct CommandPaletteView: View {
         HStack(spacing: 12) {
             Text(command.title)
                 .font(.system(size: RascSurfaceMetrics.searchTitleFontSize, weight: .medium))
+                .foregroundStyle(
+                    command == .discardNote
+                        ? RascSurfacePalette.destructiveText(for: colorScheme)
+                        : Color.primary
+                )
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text(command.displayedShortcutLabel())
-                .font(.system(size: RascSurfaceMetrics.searchTimestampFontSize, design: .monospaced))
-                .foregroundStyle(.tertiary)
+            if command == .discardNote, session.destructiveConfirmationRequested {
+                Text("↵ again to discard")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(RascSurfacePalette.destructiveText(for: colorScheme))
+            } else {
+                Text(command.displayedShortcutLabel())
+                    .font(.system(size: RascSurfaceMetrics.searchTimestampFontSize, design: .monospaced))
+                    .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+            }
         }
         .rascTransientListRow(
             isSelected: isSelected,
@@ -209,16 +114,23 @@ struct CommandPaletteView: View {
         onExecute(command)
     }
 
-    private func handlePaletteCommand(_ command: CommandPaletteCommand) {
+    private func handlePaletteCommand(_ command: RascTransientFieldCommand) {
         switch command {
         case .moveUp:
             session.moveCommandSelection(by: -1)
         case .moveDown:
             session.moveCommandSelection(by: 1)
-        case .executeSelection:
-            guard let selected = session.selectedCommand() else { return }
-            execute(selected)
-        case .closePalette:
+        case .execute:
+            switch session.attemptSelectedCommandExecution() {
+            case .allowed:
+                if let commandToRun = session.selectedCommand() {
+                    execute(commandToRun)
+                }
+            case .requiresConfirmation:
+                // The Discard row shows a deliberate confirmation; the next Return executes.
+                break
+            }
+        case .close:
             session.closeCommandPalette()
         }
     }
