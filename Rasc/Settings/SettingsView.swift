@@ -129,7 +129,7 @@ struct SettingsView: View {
                     HStack {
                         Text("Launch at Login needs approval in System Settings.")
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                         Spacer()
                         Button("Open Login Items Settings") {
                             loginItemController.openSystemSettings()
@@ -151,7 +151,7 @@ struct SettingsView: View {
                 LabeledContent(refineStatus.headline) {
                     Text(refineStatus.detail)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -170,13 +170,13 @@ struct SettingsView: View {
 
                 Text(languageHelpText)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
 
                 if languageResolution.isUsingFallback,
                    let unsupported = languageResolution.unsupportedSavedLocaleIdentifier {
                     Text("Saved language \(unsupported) is unavailable on this Mac. Refine is using Match note language until you choose another option.")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                 }
             }
             .listRowBackground(settingsSectionBackground)
@@ -184,7 +184,7 @@ struct SettingsView: View {
             Section {
                 Text("Your notes are stored locally on this Mac. Refine runs on-device when available.")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
 
                 Link("Source on GitHub", destination: URL(string: "https://github.com/rafaeltorresng/rasc")!)
 
@@ -236,18 +236,20 @@ struct SettingsView: View {
                     )
                 }
                 .accessibilityHint("Editable global shortcut")
+                .frame(maxWidth: .infinity, alignment: .trailing)
 
-            Button("Restore Default") {
-                restoreGlobalShortcut(
-                    .toggleScratchpad,
-                    other: .toggleHome,
-                    title: "Toggle Scratchpad",
-                    otherTitle: "Toggle Home"
-                )
+            if !GlobalShortcutPolicy.isUsingInitialShortcut(.toggleScratchpad) {
+                Button("Restore Default") {
+                    restoreGlobalShortcut(
+                        .toggleScratchpad,
+                        other: .toggleHome,
+                        title: "Toggle Scratchpad",
+                        otherTitle: "Toggle Home"
+                    )
+                }
+                .accessibilityLabel("Restore Toggle Scratchpad")
+                .accessibilityHint("Returns Toggle Scratchpad to its default shortcut")
             }
-            .disabled(GlobalShortcutPolicy.isUsingInitialShortcut(.toggleScratchpad))
-            .accessibilityLabel("Restore Toggle Scratchpad")
-            .accessibilityHint("Returns Toggle Scratchpad to its default shortcut")
 
             KeyboardShortcuts.Recorder("Toggle Home", name: .toggleHome)
                 .shortcutValidation { shortcut in
@@ -258,23 +260,25 @@ struct SettingsView: View {
                     )
                 }
                 .accessibilityHint("Editable global shortcut")
+                .frame(maxWidth: .infinity, alignment: .trailing)
 
-            Button("Restore Default") {
-                restoreGlobalShortcut(
-                    .toggleHome,
-                    other: .toggleScratchpad,
-                    title: "Toggle Home",
-                    otherTitle: "Toggle Scratchpad"
-                )
+            if !GlobalShortcutPolicy.isUsingInitialShortcut(.toggleHome) {
+                Button("Restore Default") {
+                    restoreGlobalShortcut(
+                        .toggleHome,
+                        other: .toggleScratchpad,
+                        title: "Toggle Home",
+                        otherTitle: "Toggle Scratchpad"
+                    )
+                }
+                .accessibilityLabel("Restore Toggle Home")
+                .accessibilityHint("Returns Toggle Home to its default shortcut")
             }
-            .disabled(GlobalShortcutPolicy.isUsingInitialShortcut(.toggleHome))
-            .accessibilityLabel("Restore Toggle Home")
-            .accessibilityHint("Returns Toggle Home to its default shortcut")
 
             if let shortcutRestoreMessage {
                 Text(shortcutRestoreMessage)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                     .fixedSize(horizontal: false, vertical: true)
             }
 
@@ -311,7 +315,7 @@ struct SettingsView: View {
                 .accessibilityAddTraits(.isHeader)
             Text(detail)
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                 .fixedSize(horizontal: false, vertical: true)
         }
         .accessibilityElement(children: .combine)
@@ -329,7 +333,7 @@ struct SettingsView: View {
                 if let detail = entry.detail {
                     Text(detail)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                 }
             }
         }
@@ -439,6 +443,7 @@ struct SettingsView: View {
 private struct InternalShortcutEditor: View {
     let command: InternalCommand
 
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject private var store = InternalShortcutStore.shared
     @State private var isRecording = false
     @State private var message: String?
@@ -457,7 +462,7 @@ private struct InternalShortcutEditor: View {
             if let message {
                 Text(message)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
             }
         }
         .background {
