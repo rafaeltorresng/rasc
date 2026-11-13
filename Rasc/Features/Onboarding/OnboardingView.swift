@@ -10,6 +10,8 @@ private enum OnboardingLayout {
     static let actionClusterSpacing: CGFloat = 10
     static let ctaMinWidth: CGFloat = 168
     static let progressStepCount = 3
+    static let completionMaxWidth: CGFloat = 420
+    static let completionRowSpacing: CGFloat = 9
 }
 
 struct OnboardingView: View {
@@ -20,6 +22,8 @@ struct OnboardingView: View {
     @FocusState private var welcomeFocused: Bool
     @FocusState private var completionFocused: Bool
     @State private var globalShortcutRevision = 0
+    @State private var welcomeLinesVisible = false
+    @State private var completionRowsVisible = false
 
     var body: some View {
         let _ = globalShortcutRevision
@@ -170,9 +174,9 @@ struct OnboardingView: View {
 
     private var welcomeProductLoopCopy: some View {
         VStack(spacing: 3) {
-            Text("Capture without thinking.")
-            Text("Refine without prompting.")
-            Text("Keep what matters.")
+            welcomeLoopLine("Capture without thinking.", index: 0)
+            welcomeLoopLine("Refine without prompting.", index: 1)
+            welcomeLoopLine("Keep what matters.", index: 2)
         }
         .font(.system(size: 14))
         .foregroundStyle(onboardingProductLoopText)
@@ -181,6 +185,14 @@ struct OnboardingView: View {
         .accessibilityLabel(
             "Capture without thinking. Refine without prompting. Keep what matters."
         )
+        .onAppear { welcomeLinesVisible = true }
+    }
+
+    private func welcomeLoopLine(_ text: String, index: Int) -> some View {
+        Text(text)
+            .opacity(welcomeLinesVisible ? 1 : 0)
+            .offset(y: welcomeLinesVisible || reduceMotion ? 0 : 5)
+            .animation(revealAnimation(index: index), value: welcomeLinesVisible)
     }
 
     private var welcomeTrustFooter: some View {
@@ -314,32 +326,77 @@ struct OnboardingView: View {
         VStack(spacing: 0) {
             Text("You're ready.")
                 .font(.title2.weight(.medium))
-                .padding(.bottom, 8)
+                .padding(.bottom, 6)
 
-            Text("Rasc is always one shortcut away.")
+            Text("Your thought is in Home. Esc hides it; Keep marks it.")
                 .font(.body)
                 .foregroundStyle(.secondary)
-                .padding(.bottom, 24)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.bottom, 14)
 
             ShortcutKeycapView(
                 label: GlobalShortcutFormatting.currentToggleShortcutDisplay(),
                 style: .prominent
             )
-            .padding(.bottom, 32)
+            .padding(.bottom, 18)
 
-            HStack(spacing: 8) {
-                Text("Open Rasc Home with")
-                    .font(.caption)
-                    .foregroundStyle(onboardingSecondaryText)
+            VStack(spacing: OnboardingLayout.completionRowSpacing) {
+                completionFeatureRow(title: "Keep what matters", index: 0) {
+                    ShortcutKeycapView(
+                        label: InternalShortcutStore.shared.displayString(for: .keep),
+                        style: .compact
+                    )
+                }
 
-                ShortcutKeycapView(
-                    label: GlobalShortcutFormatting.currentHomeShortcutDisplay(),
-                    style: .compact
-                )
+                completionFeatureRow(title: "Find it again", index: 1) {
+                    HStack(spacing: 5) {
+                        ShortcutKeycapView(
+                            label: InternalShortcutStore.shared.displayString(for: .search),
+                            style: .compact
+                        )
+                        Text("Search")
+                        Text("·")
+                        ShortcutKeycapView(
+                            label: GlobalShortcutFormatting.currentHomeShortcutDisplay(),
+                            style: .compact
+                        )
+                        Text("Home")
+                    }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(
+                        "Search, \(InternalShortcutStore.shared.displayString(for: .search)). Home, \(GlobalShortcutFormatting.currentHomeShortcutDisplay())."
+                    )
+                }
+
+                completionFeatureRow(title: "All commands", index: 2) {
+                    ShortcutKeycapView(
+                        label: InternalShortcutStore.shared.displayString(for: .commandPalette),
+                        style: .compact
+                    )
+                }
+
+                completionFeatureRow(title: "Make it yours", index: 3) {
+                    HStack(spacing: 5) {
+                        ShortcutKeycapView(
+                            label: RascShortcutCatalog.settings.shortcut,
+                            style: .compact
+                        )
+                        Text("Settings")
+                    }
+                }
             }
-            .padding(.bottom, 20)
+            .frame(maxWidth: OnboardingLayout.completionMaxWidth)
+            .padding(.bottom, 12)
 
-            VStack(spacing: 12) {
+            Text("Refine is optional. Capture, Keep, Home, and Search work without it.")
+                .font(.caption)
+                .foregroundStyle(onboardingSecondaryText)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.bottom, 12)
+
+            VStack(spacing: 8) {
                 Text("Keep Rasc ready after login")
                     .font(.subheadline.weight(.medium))
 
@@ -368,12 +425,12 @@ struct OnboardingView: View {
                         : "Enable Launch at Login"
                 )
 
-                Text("Recommended if you want Rasc available whenever you need it.")
+                Text("Optional. Rasc works without it.")
                     .font(.caption)
                     .foregroundStyle(.tertiary)
                     .multilineTextAlignment(.center)
             }
-            .padding(.bottom, 24)
+            .padding(.bottom, 16)
 
             Button("Finish") {
                 coordinator.finish()
@@ -384,7 +441,34 @@ struct OnboardingView: View {
             .focused($completionFocused)
             .accessibilityLabel("Finish onboarding")
         }
-        .frame(maxWidth: 400)
+        .frame(maxWidth: 460)
+        .onAppear { completionRowsVisible = true }
+    }
+
+    private func completionFeatureRow<Shortcuts: View>(
+        title: String,
+        index: Int,
+        @ViewBuilder shortcuts: () -> Shortcuts
+    ) -> some View {
+        HStack(spacing: 12) {
+            Text(title)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(.primary.opacity(0.9))
+
+            Spacer(minLength: 12)
+
+            shortcuts()
+        }
+        .opacity(completionRowsVisible ? 1 : 0)
+        .offset(y: completionRowsVisible || reduceMotion ? 0 : 5)
+        .animation(revealAnimation(index: index), value: completionRowsVisible)
+    }
+
+    private func revealAnimation(index: Int) -> Animation? {
+        if reduceMotion {
+            return .easeOut(duration: 0.12)
+        }
+        return .easeOut(duration: 0.24).delay(0.06 * Double(index))
     }
 
     private func focusCurrentStep() {

@@ -173,6 +173,7 @@ final class OnboardingCoordinator {
     func dismissRefineUnavailable() {
         store.refineSkipped = true
         scratchpadGuidance.unavailablePresentation = nil
+        scratchpadGuidance.showRefineHint = false
         scratchpadGuidance.showEscapeHint = true
         panelController?.scratchpadGuidance = scratchpadGuidance
         presentedStep = .refinePractice
@@ -213,7 +214,7 @@ final class OnboardingCoordinator {
         if OnboardingMeaningfulInput.isMeaningful(text) {
             store.meaningfulTextEntered = true
             scratchpadGuidance.showEmptyHint = false
-            scratchpadGuidance.showRefineHint = false
+            scratchpadGuidance.showRefineHint = true
             scratchpadGuidance.showEscapeHint = true
             panelController?.scratchpadGuidance = scratchpadGuidance
         }

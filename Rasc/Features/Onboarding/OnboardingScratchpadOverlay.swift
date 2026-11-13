@@ -30,18 +30,24 @@ struct OnboardingScratchpadOverlay: View {
                 if let unavailable = guidance.unavailablePresentation {
                     unavailableView(unavailable)
                         .transition(.opacity)
-                } else if guidance.showEscapeHint {
-                    VStack(alignment: .leading, spacing: 6) {
-                        hintRow(symbol: InternalShortcutStore.shared.displayString(for: .keep), text: "Keep this thought")
-                        hintRow(symbol: InternalShortcutStore.shared.displayString(for: .newScratch), text: "Start another thought")
-                        hintRow(symbol: RascShortcutCatalog.hideScratchpad.shortcut, text: "Hide and continue later")
-                    }
-                        .transition(hintTransition)
-                } else if guidance.showRefineHint {
-                    hintRow(symbol: InternalShortcutStore.shared.displayString(for: .refine), text: "Refine")
-                        .transition(hintTransition)
                 } else if guidance.showEmptyHint && editorText.isEmpty && showDelayedEmptyHint {
                     emptyHint
+                        .transition(hintTransition)
+                } else if guidance.showRefineHint || guidance.showEscapeHint {
+                    VStack(alignment: .leading, spacing: 6) {
+                        if guidance.showRefineHint {
+                            hintRow(
+                                symbol: InternalShortcutStore.shared.displayString(for: .refine),
+                                text: "Refine"
+                            )
+                        }
+                        if guidance.showEscapeHint {
+                            hintRow(
+                                symbol: RascShortcutCatalog.hideScratchpad.shortcut,
+                                text: "Hide and continue later"
+                            )
+                        }
+                    }
                         .transition(hintTransition)
                 }
             }
