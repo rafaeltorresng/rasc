@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import SwiftUI
 import Testing
 @testable import Rasc
 
@@ -69,18 +70,21 @@ struct OnboardingBehaviorTests {
     }
 
     @Test
-    func actionAccentFillKeepsProminentButtonLabelsReadable() throws {
-        let darkAccent = RascSurfacePalette.actionAccentFillNSColor(for: .dark)
-        let lightAccent = RascSurfacePalette.actionAccentFillNSColor(for: .light)
-
-        #expect(try contrastRatio(darkAccent, .white) >= 4.5)
-        #expect(try contrastRatio(lightAccent, .white) >= 4.5)
+    func actionPrimaryFillKeepsProminentButtonLabelsReadable() throws {
+        for colorScheme in [ColorScheme.light, .dark] {
+            let fill = RascSurfacePalette.actionPrimaryFillNSColor(for: colorScheme)
+            let label = RascSurfacePalette.actionPrimaryLabelNSColor(for: colorScheme)
+            #expect(try contrastRatio(fill, label) >= 4.5)
+        }
     }
 
     @Test
-    func accentAliasesActionAccent() {
-        #expect(RascSurfacePalette.accentNSColor(for: .light) == RascSurfacePalette.actionAccentNSColor(for: .light))
-        #expect(RascSurfacePalette.accentNSColor(for: .dark) == RascSurfacePalette.actionAccentNSColor(for: .dark))
+    func keepAccentKeepsTheApprovedCopperFillReadable() throws {
+        for colorScheme in [ColorScheme.light, .dark] {
+            let accent = RascSurfacePalette.keepAccentNSColor(for: colorScheme)
+            let fill = RascSurfacePalette.keepFillNSColor(for: colorScheme)
+            #expect(try contrastRatio(accent, fill) >= 4.5)
+        }
     }
 
     private func makeFixture() throws -> ScratchpadTestFixture {
