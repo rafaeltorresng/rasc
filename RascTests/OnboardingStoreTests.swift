@@ -41,6 +41,47 @@ struct OnboardingStoreTests {
     }
 
     @Test
+    func historyHintPolicyRequiresNotesVisitsAndNoDismissal() {
+        #expect(
+            !FeatureDiscoveryPolicy.shouldShowHistoryHint(
+                noteCount: 2, homeVisitCount: 2, dismissed: false
+            )
+        )
+        #expect(
+            !FeatureDiscoveryPolicy.shouldShowHistoryHint(
+                noteCount: 3, homeVisitCount: 1, dismissed: false
+            )
+        )
+        #expect(
+            FeatureDiscoveryPolicy.shouldShowHistoryHint(
+                noteCount: 3, homeVisitCount: 2, dismissed: false
+            )
+        )
+        #expect(
+            !FeatureDiscoveryPolicy.shouldShowHistoryHint(
+                noteCount: 10, homeVisitCount: 5, dismissed: true
+            )
+        )
+    }
+
+    @Test
+    func discoveryStatePersistsAndResetsWithOnboardingState() {
+        let defaults = makeDefaults()
+        let store = OnboardingStore(userDefaults: defaults)
+        store.recordHomeVisit()
+        store.recordHomeVisit()
+        store.dismissHistoryHint()
+
+        let reopened = OnboardingStore(userDefaults: defaults)
+        #expect(reopened.homeVisitCount == 2)
+        #expect(reopened.historyHintDismissed)
+
+        reopened.resetOnboardingStateOnly()
+        #expect(reopened.homeVisitCount == 0)
+        #expect(!reopened.historyHintDismissed)
+    }
+
+    @Test
     func persistsResumeStep() {
         let defaults = makeDefaults()
         let store = OnboardingStore(userDefaults: defaults)

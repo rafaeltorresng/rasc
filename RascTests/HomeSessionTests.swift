@@ -346,6 +346,38 @@ struct HomeSessionTests {
         #expect(try await repository.fetchAllNonDeleted().map(\.id) == [note.id])
     }
 
+    @Test
+    @MainActor
+    func historyHintNeedsEnoughNotesAndHomeVisits() async throws {
+        let repository = try makeRepository()
+        let suite = "RascDiscovery.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = OnboardingStore(userDefaults: defaults)
+        let session = HomeSession(repository: repository, discoveryStore: store)
+
+        _ = try await repository.createScratch(content: "first thought")
+        await session.reloadImmediately()
+        session.recordHomeVisit()
+        #expect(!session.showsHistoryHint)
+
+        _ = try await repository.createScratch(content: "second thought")
+        _ = try await repository.createScratch(content: "third thought")
+        await session.reloadImmediately()
+        #expect(!session.showsHistoryHint)
+
+        session.recordHomeVisit()
+        #expect(session.showsHistoryHint)
+        #expect(store.homeVisitCount == 2)
+
+        session.dismissHistoryHint()
+        #expect(!session.showsHistoryHint)
+        #expect(store.historyHintDismissed)
+
+        await session.reloadImmediately()
+        #expect(!session.showsHistoryHint)
+    }
+
     private func makeRepository() throws -> NoteRepository {
         let databaseURL = FileManager.default.temporaryDirectory
             .appending(path: UUID().uuidString)

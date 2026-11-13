@@ -39,6 +39,7 @@ struct HomeView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.undoManager) private var undoManager
+    @ObservedObject private var internalShortcuts = InternalShortcutStore.shared
     @FocusState private var searchIsFocused: Bool
     @FocusState private var gridIsFocused: Bool
     @State private var retryAction: (() -> Void)?
@@ -63,9 +64,19 @@ struct HomeView: View {
                 ScrollViewReader { scrollProxy in
                     ScrollView {
                         homeContentColumn {
-                            contentBody
-                                .padding(.top, HomeLayout.contentTopPadding)
-                                .padding(.bottom, HomeLayout.contentBottomPadding)
+                            VStack(spacing: 0) {
+                                if session.showsHistoryHint, !session.isSearching {
+                                    historyHint
+                                        .padding(.top, HomeLayout.contentTopPadding)
+                                        .transition(
+                                            RascMotion.headerAccessoryTransition(reduceMotion: reduceMotion)
+                                        )
+                                }
+
+                                contentBody
+                                    .padding(.top, HomeLayout.contentTopPadding)
+                                    .padding(.bottom, HomeLayout.contentBottomPadding)
+                            }
                         }
                     }
                     .focusable()
@@ -108,6 +119,7 @@ struct HomeView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .rascWindowSurface()
+        .animation(RascMotion.surface(reduceMotion: reduceMotion), value: session.showsHistoryHint)
         .onChange(of: session.actionErrorMessage) { _, message in
             if let message { RascAccessibility.announce(message) }
         }
@@ -191,6 +203,46 @@ struct HomeView: View {
             .buttonStyle(.plain)
             .accessibilityLabel("Settings")
             .help("Settings")
+        }
+    }
+
+    private var historyHint: some View {
+        HStack(spacing: 10) {
+            HStack(spacing: 6) {
+                Text("Search from anywhere with")
+                ShortcutKeycapView(
+                    label: internalShortcuts.displayString(for: .search),
+                    style: .compact
+                )
+                Text("Search thoughts")
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(
+                "Search from anywhere with \(internalShortcuts.displayString(for: .search)). Search thoughts."
+            )
+
+            Spacer(minLength: 8)
+
+            Button {
+                session.dismissHistoryHint()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 22, height: 22)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Dismiss search tip")
+            .help("Dismiss")
+        }
+        .font(.callout)
+        .foregroundStyle(.secondary)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background {
+            RoundedRectangle(cornerRadius: 9, style: .continuous)
+                .fill(RascSurfacePalette.subtleFill(for: colorScheme))
         }
     }
 
