@@ -1319,7 +1319,7 @@ Notes, shortcuts, Launch at Login, and window placement are never modified by mi
 
 ## Completion feature map
 
-**Implemented behavior:** the Ready screen now summarizes the rest of the product in four compact rows (Keep, Search/Home, Command Palette, Settings) using live shortcut values, plus a line stating that Refine is optional. Rows reveal with a short stagger; Reduce Motion switches to a quick opacity change.
+**Implemented behavior:** the Ready screen summarizes the rest of the product in five one-line command rows — Keep, Search thoughts, Home, Command Palette and Settings — each with a plain-language description and its live shortcut. A line states that Refine is optional. Rows reveal with a short stagger; Reduce Motion switches to a quick opacity change.
 
 ## Capture hints
 
