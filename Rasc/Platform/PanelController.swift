@@ -134,6 +134,8 @@ final class PanelController: NSObject, NSWindowDelegate {
         hostingController.sizingOptions
     }
 
+    private var lastAutoHeight: CGFloat?
+
     var scratchpadSession: ScratchpadSession {
         session
     }
@@ -310,6 +312,7 @@ final class PanelController: NSObject, NSWindowDelegate {
         }
 
         positionPanelIfNeeded()
+        resizePanelForTransientSurface()
         NSApp.activate(ignoringOtherApps: true)
         updatePanelLevel()
         startOcclusionMonitoring()
@@ -413,6 +416,46 @@ final class PanelController: NSObject, NSWindowDelegate {
         panel.standardWindowButton(.zoomButton)?.isEnabled = false
         panel.minSize = RascWindowMetrics.scratchpadMinimum
         panel.maxSize = RascWindowMetrics.scratchpadMaximum
+    }
+
+    /// Keep the transient panel compact when only a few rows are on screen.
+    /// Switching surfaces must never move a panel the user sized themselves:
+    /// auto-sizing applies only to the default height or the last height we set.
+    private func resizePanelForTransientSurface() {
+        let currentHeight = panel.frame.size.height
+        let isUserSized = currentHeight != RascWindowMetrics.scratchpadDefault.height
+            && abs(currentHeight - (lastAutoHeight ?? -1)) > 0.5
+
+        let isTransient = session.surface == .search || session.surface == .commandPalette
+
+        let target: CGFloat?
+        switch session.surface {
+        case .search:
+            target = RascTransientPanelSizing.searchHeight(resultCount: session.searchResults.count)
+        case .commandPalette:
+            target = RascTransientPanelSizing.paletteHeight(commandCount: session.filteredCommands.count)
+        default:
+            guard let lastAutoHeight,
+                  abs(currentHeight - lastAutoHeight) < 0.5
+            else {
+                return
+            }
+            target = RascWindowMetrics.scratchpadDefault.height
+        }
+
+        guard !isUserSized, let target, abs(currentHeight - target) > 0.5 else { return }
+
+        panel.minSize = isTransient
+            ? NSSize(width: RascWindowMetrics.scratchpadMinimum.width, height: RascTransientPanelSizing.transientMinimumHeight)
+            : RascWindowMetrics.scratchpadMinimum
+
+        var frame = panel.frame
+        let top = frame.maxY
+        frame.size.height = target
+        frame.origin.y = top - target
+        panel.setFrame(frame, display: true)
+        lastAutoHeight = session.surface == .editor || session.surface == .message ? nil : target
+        revalidatePanelFrame(reason: "transient-resize")
     }
 
     private func positionPanelIfNeeded() {
@@ -648,6 +691,15 @@ final class PanelController: NSObject, NSWindowDelegate {
         }
         session.onSurfaceDidChange = { [weak self] surface in
             self?.onboardingDelegate?.sessionSurfaceDidChange(surface)
+            MainActor.assumeIsolated {
+                self?.resizePanelForTransientSurface()
+            }
+        }
+        session.onSearchResultsDidChange = { [weak self] _ in
+            self?.resizePanelForTransientSurface()
+        }
+        session.onPaletteResultsDidChange = { [weak self] _ in
+            self?.resizePanelForTransientSurface()
         }
         session.onMessageDidShow = { [weak self] message in
             self?.onboardingDelegate?.sessionMessageDidShow(message)
