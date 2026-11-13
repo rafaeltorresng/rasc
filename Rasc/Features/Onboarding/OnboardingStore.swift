@@ -8,6 +8,8 @@ struct OnboardingStore {
     static let meaningfulTextEnteredKey = "onboardingMeaningfulTextEntered"
     static let refineAttemptedKey = "onboardingRefineAttempted"
     static let refineSkippedKey = "onboardingRefineSkipped"
+    static let historyHintDismissedKey = "onboardingHistoryHintDismissed"
+    static let homeVisitCountKey = "onboardingHomeVisitCount"
 
     private let userDefaults: UserDefaults
 
@@ -64,6 +66,24 @@ struct OnboardingStore {
         nonmutating set { userDefaults.set(newValue, forKey: Self.refineSkippedKey) }
     }
 
+    var historyHintDismissed: Bool {
+        get { userDefaults.bool(forKey: Self.historyHintDismissedKey) }
+        nonmutating set { userDefaults.set(newValue, forKey: Self.historyHintDismissedKey) }
+    }
+
+    var homeVisitCount: Int {
+        get { userDefaults.integer(forKey: Self.homeVisitCountKey) }
+        nonmutating set { userDefaults.set(newValue, forKey: Self.homeVisitCountKey) }
+    }
+
+    func recordHomeVisit() {
+        homeVisitCount += 1
+    }
+
+    func dismissHistoryHint() {
+        historyHintDismissed = true
+    }
+
     func markCompleted() {
         isCompleted = true
         step = .finished
@@ -72,6 +92,7 @@ struct OnboardingStore {
 
     func markCompletedForExistingUser() {
         migrationApplied = true
+        historyHintDismissed = true
         markCompleted()
     }
 
@@ -84,6 +105,8 @@ struct OnboardingStore {
         step = .welcome
         captureSubstep = .waitingForShortcut
         migrationApplied = false
+        historyHintDismissed = false
+        homeVisitCount = 0
         clearTransientState()
     }
 
@@ -102,5 +125,19 @@ struct OnboardingStore {
         if let captureSubstep {
             self.captureSubstep = captureSubstep
         }
+    }
+}
+
+enum FeatureDiscoveryPolicy {
+    static let minimumNotesForHistoryHint = 3
+    static let minimumHomeVisitsForHistoryHint = 2
+
+    static func shouldShowHistoryHint(
+        noteCount: Int,
+        homeVisitCount: Int,
+        dismissed: Bool
+    ) -> Bool {
+        guard !dismissed, noteCount >= minimumNotesForHistoryHint else { return false }
+        return homeVisitCount >= minimumHomeVisitsForHistoryHint
     }
 }

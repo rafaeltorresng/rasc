@@ -25,8 +25,11 @@ final class HomeSession {
     private var discardUndoRegistrations: [UUID: DiscardUndoRegistration] = [:]
     private(set) var hasMoreSearchResults = false
 
+    private(set) var showsHistoryHint = false
+
     private let repository: NoteRepository
     private let prepareForDuplicate: @MainActor (UUID) async throws -> Void
+    private let discoveryStore: OnboardingStore
     private let calendar: Calendar
     private var reloadTask: Task<Void, Never>?
     private var now: Date
@@ -34,11 +37,13 @@ final class HomeSession {
     init(
         repository: NoteRepository,
         prepareForDuplicate: @escaping @MainActor (UUID) async throws -> Void = { _ in },
+        discoveryStore: OnboardingStore = OnboardingStore(),
         calendar: Calendar = .current,
         now: Date = Date()
     ) {
         self.repository = repository
         self.prepareForDuplicate = prepareForDuplicate
+        self.discoveryStore = discoveryStore
         self.calendar = calendar
         self.now = now
     }
@@ -69,6 +74,20 @@ final class HomeSession {
 
     var keptCount: Int {
         browseGroups.first { $0.kind == .kept }?.notes.count ?? 0
+    }
+
+    var noteCount: Int {
+        browseGroups.reduce(0) { $0 + $1.notes.count }
+    }
+
+    func recordHomeVisit() {
+        discoveryStore.recordHomeVisit()
+        refreshHistoryHint()
+    }
+
+    func dismissHistoryHint() {
+        discoveryStore.dismissHistoryHint()
+        showsHistoryHint = false
     }
 
     var visibleBrowseGroups: [HomeBrowseGroup] {
@@ -230,6 +249,7 @@ final class HomeSession {
                 )
                 searchResults = []
                 hasMoreSearchResults = false
+                refreshHistoryHint()
             } else {
                 let results = try await repository.search(query, limit: Self.searchResultLimit + 1)
                 guard !Task.isCancelled, normalizedSearchQuery == query else { return }
@@ -250,6 +270,14 @@ final class HomeSession {
             loadErrorMessage = "Couldn't load notes."
             isLoading = false
         }
+    }
+
+    private func refreshHistoryHint() {
+        showsHistoryHint = FeatureDiscoveryPolicy.shouldShowHistoryHint(
+            noteCount: noteCount,
+            homeVisitCount: discoveryStore.homeVisitCount,
+            dismissed: discoveryStore.historyHintDismissed
+        )
     }
 
     private func reconcileSelection() {

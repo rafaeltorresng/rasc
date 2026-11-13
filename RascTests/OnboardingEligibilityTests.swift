@@ -32,6 +32,7 @@ struct OnboardingEligibilityTests {
 
         #expect(!OnboardingEligibility.shouldPresentOnboarding(context))
         #expect(store.isCompleted)
+        #expect(store.historyHintDismissed)
     }
 
     @Test

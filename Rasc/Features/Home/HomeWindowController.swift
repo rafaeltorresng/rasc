@@ -30,6 +30,7 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
     ) {
         let session = session ?? HomeSession(repository: repository, prepareForDuplicate: prepareForDuplicate)
         self.session = session
+        session.recordHomeVisit()
 
         let contentView = HomeView(
             session: session,
