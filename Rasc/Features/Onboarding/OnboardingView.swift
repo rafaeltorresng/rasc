@@ -10,8 +10,9 @@ private enum OnboardingLayout {
     static let actionClusterSpacing: CGFloat = 10
     static let ctaMinWidth: CGFloat = 168
     static let progressStepCount = 3
-    static let completionMaxWidth: CGFloat = 420
-    static let completionRowSpacing: CGFloat = 9
+    static let completionMaxWidth: CGFloat = 440
+    static let completionRowSpacing: CGFloat = 6
+    static let completionCommandWidth: CGFloat = 116
 }
 
 struct OnboardingView: View {
@@ -328,7 +329,7 @@ struct OnboardingView: View {
                 .font(.title2.weight(.medium))
                 .padding(.bottom, 6)
 
-            Text("Your thought is in Home. Esc hides it; Keep marks it.")
+            Text("Your thought is saved. Esc hides it; Keep finishes it.")
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -342,54 +343,65 @@ struct OnboardingView: View {
             .padding(.bottom, 18)
 
             VStack(spacing: OnboardingLayout.completionRowSpacing) {
-                completionFeatureRow(title: "Keep what matters", index: 0) {
+                completionCommandRow(
+                    title: "Keep",
+                    detail: "Finish this thought",
+                    index: 0
+                ) {
                     ShortcutKeycapView(
                         label: InternalShortcutStore.shared.displayString(for: .keep),
                         style: .compact
                     )
                 }
 
-                completionFeatureRow(title: "Find it again", index: 1) {
-                    HStack(spacing: 5) {
-                        ShortcutKeycapView(
-                            label: InternalShortcutStore.shared.displayString(for: .search),
-                            style: .compact
-                        )
-                        Text("Search")
-                        Text("·")
-                        ShortcutKeycapView(
-                            label: GlobalShortcutFormatting.currentHomeShortcutDisplay(),
-                            style: .compact
-                        )
-                        Text("Home")
-                    }
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(
-                        "Search, \(InternalShortcutStore.shared.displayString(for: .search)). Home, \(GlobalShortcutFormatting.currentHomeShortcutDisplay())."
+                completionCommandRow(
+                    title: "Search thoughts",
+                    detail: "Find any thought from anywhere",
+                    index: 1
+                ) {
+                    ShortcutKeycapView(
+                        label: InternalShortcutStore.shared.displayString(for: .search),
+                        style: .compact
                     )
                 }
 
-                completionFeatureRow(title: "All commands", index: 2) {
+                completionCommandRow(
+                    title: "Home",
+                    detail: "Browse all your thoughts",
+                    index: 2
+                ) {
+                    ShortcutKeycapView(
+                        label: GlobalShortcutFormatting.currentHomeShortcutDisplay(),
+                        style: .compact
+                    )
+                }
+
+                completionCommandRow(
+                    title: "Command Palette",
+                    detail: "Every action, without menus",
+                    index: 3
+                ) {
                     ShortcutKeycapView(
                         label: InternalShortcutStore.shared.displayString(for: .commandPalette),
                         style: .compact
                     )
                 }
 
-                completionFeatureRow(title: "Make it yours", index: 3) {
-                    HStack(spacing: 5) {
-                        ShortcutKeycapView(
-                            label: RascShortcutCatalog.settings.shortcut,
-                            style: .compact
-                        )
-                        Text("Settings")
-                    }
+                completionCommandRow(
+                    title: "Settings",
+                    detail: "Appearance and shortcuts",
+                    index: 4
+                ) {
+                    ShortcutKeycapView(
+                        label: RascShortcutCatalog.settings.shortcut,
+                        style: .compact
+                    )
                 }
             }
             .frame(maxWidth: OnboardingLayout.completionMaxWidth)
             .padding(.bottom, 12)
 
-            Text("Refine is optional. Capture, Keep, Home, and Search work without it.")
+            Text("Refine is optional. Everything above works without it.")
                 .font(.caption)
                 .foregroundStyle(onboardingSecondaryText)
                 .multilineTextAlignment(.center)
@@ -445,20 +457,29 @@ struct OnboardingView: View {
         .onAppear { completionRowsVisible = true }
     }
 
-    private func completionFeatureRow<Shortcuts: View>(
+    private func completionCommandRow<Shortcuts: View>(
         title: String,
+        detail: String,
         index: Int,
         @ViewBuilder shortcuts: () -> Shortcuts
     ) -> some View {
         HStack(spacing: 12) {
             Text(title)
-                .font(.system(size: 13, weight: .medium))
+                .font(.system(size: 12.5, weight: .semibold))
                 .foregroundStyle(.primary.opacity(0.9))
+                .frame(width: OnboardingLayout.completionCommandWidth, alignment: .leading)
+                .lineLimit(1)
 
-            Spacer(minLength: 12)
+            Text(detail)
+                .font(.system(size: 12))
+                .foregroundStyle(onboardingSecondaryText)
+                .lineLimit(1)
+
+            Spacer(minLength: 8)
 
             shortcuts()
         }
+        .accessibilityElement(children: .combine)
         .opacity(completionRowsVisible ? 1 : 0)
         .offset(y: completionRowsVisible || reduceMotion ? 0 : 5)
         .animation(revealAnimation(index: index), value: completionRowsVisible)

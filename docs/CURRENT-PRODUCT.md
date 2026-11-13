@@ -24,10 +24,10 @@ Private-beta access requests, checkout and licensing are not current priorities.
 ## First run
 
 First run teaches the loop in the real panel: shortcut, capture, optional Refine, Esc.
-The Ready screen summarizes Keep, Search/Home, Command Palette and Settings with live
-shortcuts, and states that Refine is optional. After at least three notes and a second
-Home visit, Home shows a one-time, dismissible Search tip. Established installs are
-migrated as onboarding-complete and never see a forced tour.
+The Ready screen lists Keep, Search thoughts, Home, Command Palette and Settings with
+one-line descriptions and live shortcuts, and states that Refine is optional. After at
+least three notes and a second Home visit, Home shows a one-time, dismissible Search tip.
+Established installs are migrated as onboarding-complete and never see a forced tour.
 
 ## Refine
 
