@@ -38,6 +38,25 @@ struct NoteRepositoryTests {
     }
 
     @Test
+    func meaningfulContentRequiresTextOrImages() {
+        func note(content: String, hasImages: Bool = false) -> Note {
+            Note(
+                id: UUID(),
+                content: content,
+                createdAt: .distantPast,
+                updatedAt: .distantPast,
+                deletedAt: nil,
+                keptAt: nil,
+                hasImages: hasImages
+            )
+        }
+
+        #expect(!note(content: "  \n\t ").hasMeaningfulContent)
+        #expect(note(content: "thought").hasMeaningfulContent)
+        #expect(note(content: "", hasImages: true).hasMeaningfulContent)
+    }
+
+    @Test
     func retrievalSnippetAvoidsRepeatingTitlePrefix() {
         let note = Note(
             id: UUID(),
@@ -129,6 +148,9 @@ struct NoteRepositoryTests {
         #expect(stored.isKept)
         await #expect(throws: NoteRepository.PersistenceError.emptyContent) {
             try await repository.keep(id: created.id)
+        }
+        await #expect(throws: NoteRepository.PersistenceError.emptyContent) {
+            try await repository.duplicate(id: created.id)
         }
     }
 
