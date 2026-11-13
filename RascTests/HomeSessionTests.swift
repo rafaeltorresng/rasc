@@ -385,3 +385,77 @@ struct HomeSessionTests {
         return try NoteRepository(databaseURL: databaseURL)
     }
 }
+
+@Suite
+struct NoteSnippetTests {
+    private func makeNote(_ content: String) -> Note {
+        Note(
+            id: UUID(),
+            content: content,
+            createdAt: Date(),
+            updatedAt: Date(),
+            deletedAt: nil,
+            keptAt: nil
+        )
+    }
+
+    @Test
+    func matchInViewAtWordBoundaryWhenTheCutLandsInsideAWord() {
+        let content = "alpha beta gamma delta epsilon zeta eta theta pricing tail"
+        let snippet = makeNote(content).retrievalSnippet(matching: "pricing")
+        #expect(snippet?.contains("pricing") == true)
+        #expect(snippet?.hasPrefix("…delta epsilon") == true)
+    }
+
+    @Test
+    func matchAtStartHasNoLeadingEllipsis() {
+        let content = "pricing is the note"
+        let snippet = makeNote(content).retrievalSnippet(matching: "pricing")
+        #expect(snippet?.hasPrefix("…") == false)
+        #expect(snippet == "pricing is the note")
+    }
+
+    @Test
+    func matchAtEndHasNoTrailingEllipsis() {
+        let content = "Alpha beta\nGamma delta\npricing"
+        let snippet = makeNote(content).retrievalSnippet(matching: "pricing")
+        #expect(snippet == "Alpha beta Gamma delta pricing")
+    }
+
+    @Test
+    func multibyteContentKeepsGraphemeClustersIntact() {
+        let content = "Draft the handoff\n" + String(repeating: "contexto ", count: 8)
+            + "👩🏽‍💻 pricing numbers for Marta and José"
+        let snippet = makeNote(content).retrievalSnippet(matching: "pricing")
+        #expect(snippet?.contains("pricing") == true)
+        #expect(snippet?.contains("👩🏽‍💻") == true)
+    }
+
+    @Test
+    func diacriticInsensitiveMatchKeepsAccentedWord() {
+        let content = "Assinatura do preço e da proposta e pricing final"
+        let snippet = makeNote(content).retrievalSnippet(matching: "preco")
+        #expect(snippet?.contains("preço") == true)
+    }
+
+    @Test
+    func wordWindowTrimsAtAWordBoundaryInsteadOfCuttingAWordInHalf() {
+        let filler = String(repeating: "context ", count: 34)
+        let content = filler + "pricing updates for everyone on the team and then some more words to push past the limit for sure yes indeed"
+        let snippet = makeNote(content).retrievalSnippet(matching: "pricing") ?? ""
+        #expect(snippet.contains("pricing") == true)
+        #expect(snippet.hasSuffix("…") == true)
+        let trimmed = String(snippet.dropLast(1))
+        #expect(trimmed.last?.isWhitespace == false)
+        let lastWord = trimmed.split(separator: " ").last.map(String.init) ?? ""
+        #expect(content.contains(lastWord) == true)
+    }
+
+    @Test
+    func unbrokenTokenStillKeepsTheMatchInView() {
+        let content = String(repeating: "a", count: 90) + " pricing " + String(repeating: "b", count: 20)
+        let snippet = makeNote(content).retrievalSnippet(matching: "pricing")
+        #expect(snippet?.contains("pricing") == true)
+        #expect(snippet?.hasPrefix("…") == true)
+    }
+}

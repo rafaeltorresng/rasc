@@ -141,6 +141,38 @@ struct OverlayStateTests {
     }
 
     @Test
+    func commandPaletteDefaultSelectionIsNeverDiscard() throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+
+        // Empty scratch, palette opened from the editor: no completion commands.
+        session.openCommandPalette()
+        #expect(session.filteredCommands.first == .newScratch)
+        #expect(session.selectedCommand() != .discardNote)
+        session.closeCommandPalette()
+
+        // Editor with persistable content: Keep is the first command, never Discard.
+        session.text = "unfinished thought"
+        session.openCommandPalette()
+        #expect(session.selectedCommand() == .keep)
+
+        // Explicit filter surfaces Discard Note; clearing the filter is back to Keep.
+        session.insertCommandPaletteText("discard")
+        #expect(session.filteredCommands == [.discardNote])
+        #expect(session.selectedCommandIndex == 0)
+
+        for _ in 0..<"discard".count {
+            session.deleteCommandPaletteText()
+        }
+        #expect(session.commandPaletteQuery.isEmpty)
+        #expect(session.selectedCommand() == .keep)
+    }
+
+    @Test
     func commandPaletteQueryFindsKeyboardShortcuts() throws {
         let fixture = try makeFixture()
         defer { fixture.remove() }
@@ -329,5 +361,147 @@ private struct ControlledRefinementProvider: RefinementProvider {
             kind: .messyText,
             text: "Refined \(request.inputText)"
         )
+    }
+}
+
+@MainActor
+@Suite
+struct CommandPaletteDestructiveGateTests {
+    private func makeFixture() throws -> Fixture {
+        let databaseURL = FileManager.default.temporaryDirectory
+            .appending(path: UUID().uuidString)
+            .appendingPathExtension("sqlite")
+        let suiteName = "RascTests.\(UUID().uuidString)"
+        let userDefaults = try #require(UserDefaults(suiteName: suiteName))
+        userDefaults.removePersistentDomain(forName: suiteName)
+        return Fixture(
+            databaseURL: databaseURL,
+            repository: try NoteRepository(databaseURL: databaseURL),
+            userDefaults: userDefaults,
+            suiteName: suiteName
+        )
+    }
+
+    @Test
+    func discardReachedByFilteringRequiresConfirmation() throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "unfinished thought"
+        session.openCommandPalette()
+
+        session.insertCommandPaletteText("discard")
+        #expect(session.filteredCommands == [.discardNote])
+        #expect(session.selectedCommand() == .discardNote)
+        #expect(!session.selectionWasDeliberate)
+
+        #expect(session.attemptSelectedCommandExecution() == .requiresConfirmation)
+        #expect(session.destructiveConfirmationRequested)
+
+        // The second Return executes.
+        #expect(session.attemptSelectedCommandExecution() == .allowed)
+        #expect(!session.destructiveConfirmationRequested)
+    }
+
+    @Test
+    func typingAgainResetsThePendingConfirmation() throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "unfinished thought"
+        session.openCommandPalette()
+
+        session.insertCommandPaletteText("discard")
+        #expect(session.attemptSelectedCommandExecution() == .requiresConfirmation)
+
+        session.deleteCommandPaletteText()
+        #expect(session.filteredCommands == [.discardNote])
+        #expect(!session.destructiveConfirmationRequested)
+        #expect(session.attemptSelectedCommandExecution() == .requiresConfirmation)
+    }
+
+    @Test
+    func deliberateNavigationExecutesDiscardInOneStep() throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "unfinished thought"
+        session.openCommandPalette()
+
+        session.insertCommandPaletteText("discard")
+        session.moveCommandSelection(by: 1)
+        #expect(session.selectionWasDeliberate)
+
+        #expect(session.attemptSelectedCommandExecution() == .allowed)
+    }
+
+    @Test
+    func pointerSelectionExecutesDiscardInOneStep() throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "unfinished thought"
+        session.openCommandPalette()
+
+        session.insertCommandPaletteText("discard")
+        session.selectCommand(at: 0)
+        #expect(session.attemptSelectedCommandExecution() == .allowed)
+    }
+
+    @Test
+    func navigationAlsoClearsTheConfirmation() throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "unfinished thought"
+        session.openCommandPalette()
+
+        session.insertCommandPaletteText("discard")
+        #expect(session.attemptSelectedCommandExecution() == .requiresConfirmation)
+        session.moveCommandSelection(by: 1)
+        #expect(session.selectionWasDeliberate)
+        #expect(!session.destructiveConfirmationRequested)
+    }
+
+    @Test
+    func closeAndReopenStartsWithoutPendingConfirmation() throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+
+        let session = ScratchpadSession(
+            repository: fixture.repository,
+            userDefaults: fixture.userDefaults
+        )
+        session.text = "unfinished thought"
+        session.openCommandPalette()
+
+        session.insertCommandPaletteText("discard")
+        #expect(session.attemptSelectedCommandExecution() == .requiresConfirmation)
+        session.closeCommandPalette()
+
+        session.openCommandPalette()
+        #expect(!session.destructiveConfirmationRequested)
+        #expect(!session.selectionWasDeliberate)
+        #expect(session.attemptSelectedCommandExecution() == .allowed)
     }
 }

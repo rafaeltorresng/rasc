@@ -91,20 +91,87 @@ struct Note: Codable, Equatable, FetchableRecord, PersistableRecord, Sendable {
     }
 
     /// A plain-text excerpt around a matched word, preserving the original spelling.
+    /// The window starts and ends on word boundaries, so the ellipses never land
+    /// mid-token, and the match is always kept in view.
     func retrievalSnippet(matching query: String) -> String? {
         let terms = query.split(whereSeparator: { $0.isWhitespace }).map(String.init)
         let matches = terms.compactMap { term in
             content.range(of: term, options: [.caseInsensitive, .diacriticInsensitive])
         }
         guard !matches.isEmpty else { return displayRetrievalSnippet ?? displayHomeExcerpt }
+
         let visibleTitleLength = displayTitle.hasSuffix("…") ? displayTitle.count - 1 : displayTitle.count
-        let match = matches.first { content.distance(from: content.startIndex, to: $0.lowerBound) >= visibleTitleLength }
-            ?? matches[0]
-        let offset = content.distance(from: content.startIndex, to: match.lowerBound)
-        let start = max(0, offset - 32)
-        let remaining = content.dropFirst(start)
-        let excerpt = String(remaining.prefix(120)).replacingOccurrences(of: "\n", with: " ")
-        return (start > 0 ? "…" : "") + excerpt + (remaining.count > 120 ? "…" : "")
+        let match = matches.first {
+            content.distance(from: content.startIndex, to: $0.lowerBound) >= visibleTitleLength
+        } ?? matches[0]
+
+        let start = wordWindowStart(at: match.lowerBound, offsetBeforeMatch: 32)
+        let end = wordWindowEnd(startingAt: start, includingMatchUpTo: match.upperBound, maxLength: 120)
+        let excerpt = String(content[start..<end])
+            .replacingOccurrences(of: "\n", with: " ")
+
+        return (start > content.startIndex ? "…" : "") + excerpt + (end < content.endIndex ? "…" : "")
+    }
+
+    /// Begins the excerpt at the start of the word after the cut point. Falls back
+    /// to the word containing the match when no word boundary separates the cut
+    /// from the match, so the match is never pushed out of view.
+    private func wordWindowStart(at lowerBound: String.Index, offsetBeforeMatch: Int) -> String.Index {
+        let rawStartOffset = max(0, content.distance(from: content.startIndex, to: lowerBound) - offsetBeforeMatch)
+        let rawStart = content.index(content.startIndex, offsetBy: rawStartOffset)
+
+        if rawStart == content.startIndex
+            || content[content.index(before: rawStart)].isWhitespace {
+            return rawStart
+        }
+
+        // Cut landed inside a token — skip the remainder of that token and the
+        // whitespace run that follows it.
+        var i = rawStart
+        while i < content.endIndex, !content[i].isWhitespace {
+            i = content.index(after: i)
+        }
+        while i < content.endIndex, content[i].isWhitespace {
+            i = content.index(after: i)
+        }
+
+        if i <= lowerBound {
+            return i
+        }
+        return wordStart(of: lowerBound)
+    }
+
+    /// Ends the excerpt at the last word boundary in the window that still
+    /// includes the match; falls back to a hard cut for one very long token.
+    private func wordWindowEnd(
+        startingAt start: String.Index,
+        includingMatchUpTo matchEnd: String.Index,
+        maxLength: Int
+    ) -> String.Index {
+        guard let hardEnd = content.index(start, offsetBy: maxLength, limitedBy: content.endIndex) else {
+            return content.endIndex
+        }
+        guard hardEnd < content.endIndex else { return content.endIndex }
+
+        var i = hardEnd
+        while i > start {
+            let previous = content.index(before: i)
+            if content[previous].isWhitespace, previous >= matchEnd {
+                return previous
+            }
+            i = previous
+        }
+        return hardEnd
+    }
+
+    private func wordStart(of position: String.Index) -> String.Index {
+        var i = position
+        while i > content.startIndex {
+            let previous = content.index(before: i)
+            if content[previous].isWhitespace { break }
+            i = previous
+        }
+        return i
     }
 
     private var meaningfulLines: [String] {

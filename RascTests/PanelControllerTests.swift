@@ -168,6 +168,30 @@ struct PanelControllerTests {
     }
 
     @Test
+    func transientPanelAutoSizesAtTheDefaultSizeAndRestoresItOnReturnToTheEditor() async throws {
+        let userDefaults = UserDefaults(suiteName: "RascTests.\(UUID().uuidString)")!
+        let store = WindowFrameStore.scratchpad(userDefaults: userDefaults)
+        let controller = try makeController(windowFrameStore: store)
+        defer { controller.panel.orderOut(nil) }
+
+        await controller.openCommandPalette()
+        let paletteHeight = controller.panel.frame.height
+        let expectedPalette = RascTransientPanelSizing.paletteHeight(commandCount: controller.scratchpadSession.filteredCommands.count)
+        #expect(paletteHeight == expectedPalette)
+        #expect(paletteHeight < RascWindowMetrics.scratchpadDefault.height)
+
+        controller.scratchpadSession.closeCommandPalette()
+        #expect(controller.panel.frame.height == RascWindowMetrics.scratchpadDefault.height)
+
+        try await controller.openSearch()
+        #expect(controller.panel.frame.height == RascTransientPanelSizing.searchHeight(resultCount: controller.scratchpadSession.searchResults.count))
+        #expect(controller.panel.frame.height <= RascWindowMetrics.scratchpadDefault.height)
+
+        controller.scratchpadSession.closeSearch()
+        #expect(controller.panel.frame.height == RascWindowMetrics.scratchpadDefault.height)
+    }
+
+    @Test
     func startNewScratchUsesTheSameEntryPointAsCommandN() async throws {
         let controller = try makeController()
         defer { controller.panel.orderOut(nil) }
@@ -202,12 +226,14 @@ struct PanelControllerTests {
     }
 
     @Test
-    func searchFieldRoutesNativeNavigationAndSubmitCommands() {
-        var commands: [HistorySearchCommand] = []
-        let searchField = HistorySearchTextField(
+    func transientInputFieldRoutesNativeNavigationAndSubmitCommands() {
+        var commands: [RascTransientFieldCommand] = []
+        let searchField = RascTransientInputTextField(
             text: .constant(""),
             isFocused: .constant(false),
             focusRequest: 0,
+            placeholder: "Search thoughts…",
+            accessibilityLabel: "Search thoughts",
             onCommand: { commands.append($0) }
         )
         let coordinator = searchField.makeCoordinator()
@@ -235,7 +261,7 @@ struct PanelControllerTests {
             doCommandBy: #selector(NSResponder.cancelOperation(_:))
         ))
 
-        #expect(commands == [.moveUp, .moveDown, .openSelection, .closeSearch])
+        #expect(commands == [.moveUp, .moveDown, .execute, .close])
     }
 
     @Test

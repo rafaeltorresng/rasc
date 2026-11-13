@@ -56,6 +56,13 @@ final class ScratchpadSession {
         case none
     }
 
+    /// Keyboard gate for executing the selected palette command.
+    enum PaletteSelectionGate: Equatable {
+        case allowed
+        /// Destructive command reached via filtering — press Return again to confirm.
+        case requiresConfirmation
+    }
+
     var text = "" {
         didSet {
             guard text != oldValue else { return }
@@ -86,6 +93,10 @@ final class ScratchpadSession {
     var onTextDidChange: ((String) -> Void)?
     var onSurfaceDidChange: ((Surface) -> Void)?
     var onMessageDidShow: ((RefinementMessage?) -> Void)?
+    /// Fired when the search surface refreshes its results; drives transient panel sizing.
+    var onSearchResultsDidChange: ((Int) -> Void)?
+    /// Fired when the palette refreshes its filtered commands; drives transient panel sizing.
+    var onPaletteResultsDidChange: ((Int) -> Void)?
 
     var surfaceDiagnosticLabel: String {
         switch surface {
@@ -112,7 +123,20 @@ final class ScratchpadSession {
         canPerformCompletion: true
     )
     private(set) var selectedCommandIndex = 0
-    private(set) var commandPaletteQuery = ""
+    /// True only after the user deliberately moves the palette selection (arrows or pointer).
+    /// Auto-selection after filtering doesn't count and gates destructive commands.
+    private(set) var selectionWasDeliberate = false
+    /// Set when a destructive command reached without deliberate selection asks for an explicit confirmation.
+    private(set) var destructiveConfirmationRequested = false
+    var commandPaletteQuery = "" {
+        didSet {
+            guard commandPaletteQuery != oldValue else { return }
+            refreshPaletteCommands()
+            selectedCommandIndex = 0
+            selectionWasDeliberate = false
+            destructiveConfirmationRequested = false
+        }
+    }
     private(set) var commandPaletteKeyFocusRequest = 0
     private(set) var saveErrorMessage: String?
     private(set) var completionFailure: CompletionFailure?
@@ -605,6 +629,8 @@ final class ScratchpadSession {
         commandPaletteQuery = ""
         refreshPaletteCommands()
         selectedCommandIndex = 0
+        selectionWasDeliberate = false
+        destructiveConfirmationRequested = false
         requestCommandPaletteKeyFocus()
     }
 
@@ -639,6 +665,8 @@ final class ScratchpadSession {
             return
         }
 
+        selectionWasDeliberate = true
+        destructiveConfirmationRequested = false
         selectedCommandIndex = min(
             max(selectedCommandIndex + offset, 0),
             filteredCommands.count - 1
@@ -647,12 +675,33 @@ final class ScratchpadSession {
 
     func selectCommand(at index: Int) {
         guard filteredCommands.indices.contains(index) else { return }
+        selectionWasDeliberate = true
+        destructiveConfirmationRequested = false
         selectedCommandIndex = index
     }
 
     func selectedCommand() -> PaletteCommand? {
         guard filteredCommands.indices.contains(selectedCommandIndex) else { return nil }
         return filteredCommands[selectedCommandIndex]
+    }
+
+    /// Keyboard gate: a destructive command reached by filtering — not by arrows
+    /// or pointer — requires a deliberate second Return before it runs.
+    @discardableResult
+    func attemptSelectedCommandExecution() -> PaletteSelectionGate {
+        guard let command = selectedCommand() else { return .allowed }
+
+        if command == .discardNote && !selectionWasDeliberate {
+            if destructiveConfirmationRequested {
+                destructiveConfirmationRequested = false
+                return .allowed
+            }
+            destructiveConfirmationRequested = true
+            return .requiresConfirmation
+        }
+
+        destructiveConfirmationRequested = false
+        return .allowed
     }
 
     func updateEditorSelection(
@@ -1315,6 +1364,7 @@ final class ScratchpadSession {
         searchResults = Array(results.prefix(12))
         selectedSearchIndex = 0
         searchErrorMessage = nil
+        onSearchResultsDidChange?(searchResults.count)
     }
 
     private func resetSearchState() {
@@ -1333,6 +1383,8 @@ final class ScratchpadSession {
         commandPaletteQuery = ""
         refreshPaletteCommands()
         selectedCommandIndex = 0
+        selectionWasDeliberate = false
+        destructiveConfirmationRequested = false
     }
 
     private func refreshPaletteCommands() {
@@ -1343,6 +1395,7 @@ final class ScratchpadSession {
         if !filteredCommands.indices.contains(selectedCommandIndex) {
             selectedCommandIndex = 0
         }
+        onPaletteResultsDidChange?(filteredCommands.count)
     }
 
     private func paletteCommandsForCurrentState() -> [PaletteCommand] {

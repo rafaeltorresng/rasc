@@ -525,3 +525,245 @@ struct ImageHandoffTests {
         #expect(payload.data == image)
     }
 }
+
+@Suite
+struct VisualTokenContrastTests {
+    private static let colorSchemes: [ColorScheme] = [.light, .dark]
+
+    @Test
+    func secondaryTextIsReadableOnOpaqueSurfaces() throws {
+        for colorScheme in Self.colorSchemes {
+            for surface in [
+                Surface("canvas", RascSurfacePalette.canvasNSColor(for: colorScheme)),
+                Surface("raised fill", RascSurfacePalette.raisedFillNSColor(for: colorScheme)),
+                Surface("Home card", RascSurfacePalette.homeCardFillNSColor(for: colorScheme)),
+            ] {
+                try expectContrast(
+                    RascSurfacePalette.secondaryTextNSColor(for: colorScheme),
+                    over: surface.color,
+                    atLeast: 4.5,
+                    "secondaryText on \(surface.name) (\(colorScheme))"
+                )
+            }
+        }
+    }
+
+    @Test
+    func metadataTextIsReadableOnOpaqueSurfaces() throws {
+        for colorScheme in Self.colorSchemes {
+            for surface in [
+                Surface("canvas", RascSurfacePalette.canvasNSColor(for: colorScheme)),
+                Surface("raised fill", RascSurfacePalette.raisedFillNSColor(for: colorScheme)),
+                Surface("Home card", RascSurfacePalette.homeCardFillNSColor(for: colorScheme)),
+            ] {
+                try expectContrast(
+                    RascSurfacePalette.metadataTextNSColor(for: colorScheme),
+                    over: surface.color,
+                    atLeast: 4.5,
+                    "metadataText on \(surface.name) (\(colorScheme))"
+                )
+            }
+        }
+    }
+
+    @Test
+    func secondaryAndMetadataTextStayReadableOnSelectionFill() throws {
+        for colorScheme in Self.colorSchemes {
+            for base in [
+                Surface("canvas", RascSurfacePalette.canvasNSColor(for: colorScheme)),
+                Surface("raised fill", RascSurfacePalette.raisedFillNSColor(for: colorScheme)),
+            ] {
+                let selection = try composite(
+                    RascSurfacePalette.selectionFillNSColor(for: colorScheme),
+                    over: base.color
+                )
+
+                for role in [
+                    TextRole("secondaryText", RascSurfacePalette.secondaryTextNSColor(for: colorScheme)),
+                    TextRole("metadataText", RascSurfacePalette.metadataTextNSColor(for: colorScheme)),
+                ] {
+                    try expectContrast(
+                        role.color,
+                        over: selection,
+                        atLeast: 4.5,
+                        "\(role.name) on selection over \(base.name) (\(colorScheme))"
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    func tertiaryTextMeetsTheLowerBoundForNonEssentialHints() throws {
+        for colorScheme in Self.colorSchemes {
+            for surface in [
+                Surface("canvas", RascSurfacePalette.canvasNSColor(for: colorScheme)),
+                Surface("raised fill", RascSurfacePalette.raisedFillNSColor(for: colorScheme)),
+                Surface("Home card", RascSurfacePalette.homeCardFillNSColor(for: colorScheme)),
+            ] {
+                try expectContrast(
+                    RascSurfacePalette.tertiaryTextNSColor(for: colorScheme),
+                    over: surface.color,
+                    atLeast: 3.0,
+                    "tertiaryText on \(surface.name) (\(colorScheme))"
+                )
+            }
+        }
+    }
+
+    @Test
+    func keepCopperIsReservedForTheKeepPair() throws {
+        for colorScheme in Self.colorSchemes {
+            let accent = RascSurfacePalette.keepAccentNSColor(for: colorScheme)
+
+            try expectContrast(accent, over: RascSurfacePalette.keepFillNSColor(for: colorScheme),
+                              atLeast: 4.5, "keepAccent on keepFill (\(colorScheme))")
+            try expectContrast(accent, over: RascSurfacePalette.canvasNSColor(for: colorScheme),
+                              atLeast: 4.5, "keepAccent on canvas (\(colorScheme))")
+            try expectContrast(accent, over: RascSurfacePalette.raisedFillNSColor(for: colorScheme),
+                              atLeast: 4.5, "keepAccent on raised fill (\(colorScheme))")
+        }
+    }
+
+    @Test
+    func destructiveTextStaysReadableOnWorkingSurfaces() throws {
+        for colorScheme in Self.colorSchemes {
+            for surface in [
+                Surface("canvas", RascSurfacePalette.canvasNSColor(for: colorScheme)),
+                Surface("raised fill", RascSurfacePalette.raisedFillNSColor(for: colorScheme)),
+                Surface("Home card", RascSurfacePalette.homeCardFillNSColor(for: colorScheme)),
+            ] {
+                try expectContrast(
+                    RascSurfacePalette.destructiveTextNSColor(for: colorScheme),
+                    over: surface.color,
+                    atLeast: 4.5,
+                    "destructiveText on \(surface.name) (\(colorScheme))"
+                )
+            }
+        }
+    }
+
+    @Test
+    func destructiveTextStaysReadableOnSelectionFill() throws {
+        for colorScheme in Self.colorSchemes {
+            for base in [
+                Surface("canvas", RascSurfacePalette.canvasNSColor(for: colorScheme)),
+                Surface("raised fill", RascSurfacePalette.raisedFillNSColor(for: colorScheme)),
+            ] {
+                let selection = try composite(
+                    RascSurfacePalette.selectionFillNSColor(for: colorScheme),
+                    over: base.color
+                )
+                try expectContrast(
+                    RascSurfacePalette.destructiveTextNSColor(for: colorScheme),
+                    over: selection,
+                    atLeast: 4.5,
+                    "destructiveText on selection over \(base.name) (\(colorScheme))"
+                )
+            }
+        }
+    }
+
+    @Test
+    func neutralPrimaryActionPairingIsReadable() throws {
+        for colorScheme in Self.colorSchemes {
+            try expectContrast(
+                RascSurfacePalette.actionPrimaryLabelNSColor(for: colorScheme),
+                over: RascSurfacePalette.actionPrimaryFillNSColor(for: colorScheme),
+                atLeast: 4.5,
+                "primary action label on primary fill (\(colorScheme))"
+            )
+        }
+    }
+
+    private struct Surface {
+        let name: String
+        let color: NSColor
+
+        init(_ name: String, _ color: NSColor) {
+            self.name = name
+            self.color = color
+        }
+    }
+
+    private struct TextRole {
+        let name: String
+        let color: NSColor
+
+        init(_ name: String, _ color: NSColor) {
+            self.name = name
+            self.color = color
+        }
+    }
+
+    private func expectContrast(
+        _ foreground: NSColor,
+        over background: NSColor,
+        atLeast minimum: Double,
+        _ label: String
+    ) throws {
+        let flattened = try composite(foreground, over: background)
+        let ratio = try contrastRatio(flattened, background)
+        #expect(ratio >= minimum, "\(label) measured \(String(format: "%.2f", ratio)):1")
+    }
+
+    private func composite(_ foreground: NSColor, over background: NSColor) throws -> NSColor {
+        let fg = try #require(foreground.usingColorSpace(.sRGB))
+        let bg = try #require(background.usingColorSpace(.sRGB))
+        let alpha = fg.alphaComponent
+
+        guard alpha < 0.999 else { return fg.withAlphaComponent(1) }
+
+        return NSColor(
+            srgbRed: fg.redComponent * alpha + bg.redComponent * (1 - alpha),
+            green: fg.greenComponent * alpha + bg.greenComponent * (1 - alpha),
+            blue: fg.blueComponent * alpha + bg.blueComponent * (1 - alpha),
+            alpha: 1
+        )
+    }
+
+    private func contrastRatio(_ first: NSColor, _ second: NSColor) throws -> Double {
+        let firstLuminance = try relativeLuminance(first)
+        let secondLuminance = try relativeLuminance(second)
+        return (max(firstLuminance, secondLuminance) + 0.05)
+            / (min(firstLuminance, secondLuminance) + 0.05)
+    }
+
+    private func relativeLuminance(_ color: NSColor) throws -> Double {
+        let color = try #require(color.usingColorSpace(.sRGB))
+        let components = [color.redComponent, color.greenComponent, color.blueComponent]
+            .map { component in
+                component <= 0.04045
+                    ? component / 12.92
+                    : pow((component + 0.055) / 1.055, 2.4)
+            }
+        return 0.2126 * components[0] + 0.7152 * components[1] + 0.0722 * components[2]
+    }
+}
+
+@Suite
+struct TransientPanelSizingTests {
+    @Test
+    func searchPanelIsCompactForOneOrTwoResults() {
+        #expect(RascTransientPanelSizing.searchHeight(resultCount: 0) == 132)
+        #expect(RascTransientPanelSizing.searchHeight(resultCount: 1) == 132)
+        #expect(RascTransientPanelSizing.searchHeight(resultCount: 2) == 171)
+        #expect(RascTransientPanelSizing.searchHeight(resultCount: 5) == 345)
+        #expect(RascTransientPanelSizing.searchHeight(resultCount: 10) == 440)
+        #expect(RascTransientPanelSizing.searchHeight(resultCount: 12) == 440)
+    }
+
+    @Test
+    func palettePanelGrowsToFitAllCommands() {
+        #expect(RascTransientPanelSizing.paletteHeight(commandCount: 0) == 132)
+        #expect(RascTransientPanelSizing.paletteHeight(commandCount: 6) == 367)
+        #expect(RascTransientPanelSizing.paletteHeight(commandCount: 10) == 575)
+        #expect(RascTransientPanelSizing.paletteHeight(commandCount: 20) == 700)
+    }
+
+    @Test
+    func paletteHeightLeavesRoomForEveryCommand() {
+        let all = PaletteCommand.availableCommands(isKept: false, hasPersistableContent: true, canPerformCompletion: true)
+        #expect(RascTransientPanelSizing.paletteHeight(commandCount: all.count) >= 45 + CGFloat(all.count) * 52)
+    }
+}

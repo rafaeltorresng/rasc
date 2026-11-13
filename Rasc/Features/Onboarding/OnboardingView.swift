@@ -72,7 +72,7 @@ struct OnboardingView: View {
             width: RascWindowMetrics.onboarding.width,
             height: RascWindowMetrics.onboarding.height
         )
-        .tint(RascSurfacePalette.actionAccent(for: colorScheme))
+        .tint(RascSurfacePalette.primaryText(for: colorScheme))
         .animation(RascMotion.surface(reduceMotion: reduceMotion), value: coordinator.presentedStep)
         .onAppear {
             focusCurrentStep()
@@ -109,15 +109,11 @@ struct OnboardingView: View {
     }
 
     private var onboardingSecondaryText: Color {
-        colorScheme == .dark
-            ? Color.secondary.opacity(0.94)
-            : Color.primary.opacity(0.58)
+        RascSurfacePalette.secondaryText(for: colorScheme)
     }
 
     private var onboardingProductLoopText: Color {
-        colorScheme == .dark
-            ? Color.secondary.opacity(0.98)
-            : Color.primary.opacity(0.64)
+        RascSurfacePalette.secondaryText(for: colorScheme)
     }
 
     private var welcomeContent: some View {
@@ -246,7 +242,7 @@ struct OnboardingView: View {
 
                 Text("Rasc appears wherever you're working.")
                     .font(.body)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(onboardingSecondaryText)
                     .multilineTextAlignment(.center)
             }
             .padding(.bottom, 28)
@@ -255,7 +251,7 @@ struct OnboardingView: View {
                 Text("YOUR SHORTCUT")
                     .font(.caption2.weight(.medium))
                     .tracking(0.8)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
 
                 ShortcutKeycapView(
                     label: GlobalShortcutFormatting.currentToggleShortcutDisplay(),
@@ -299,7 +295,7 @@ struct OnboardingView: View {
 
                 Text("Press your shortcut to open Rasc.")
                     .font(.body)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(onboardingSecondaryText)
                     .multilineTextAlignment(.center)
             }
             .padding(.bottom, 28)
@@ -331,7 +327,7 @@ struct OnboardingView: View {
 
             Text("Your thought is saved. Esc hides it; Keep finishes it.")
                 .font(.body)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(onboardingSecondaryText)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.bottom, 14)
@@ -415,7 +411,7 @@ struct OnboardingView: View {
                 if coordinator.loginItemState == .requiresApproval {
                     Text("Launch at Login needs approval in System Settings.")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(onboardingSecondaryText)
                         .multilineTextAlignment(.center)
                 }
 
@@ -439,7 +435,7 @@ struct OnboardingView: View {
 
                 Text("Optional. Rasc works without it.")
                     .font(.caption)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
                     .multilineTextAlignment(.center)
             }
             .padding(.bottom, 16)
@@ -535,18 +531,21 @@ private struct OnboardingProminentButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: 13, weight: .semibold))
-            .foregroundStyle(.white)
+            .foregroundStyle(RascSurfacePalette.actionPrimaryLabel(for: colorScheme))
             .frame(maxWidth: fullWidth ? .infinity : nil)
             .padding(.horizontal, fullWidth ? 0 : 24)
             .padding(.vertical, 9)
             .background {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(RascSurfacePalette.actionAccentFill(for: colorScheme))
+                    .fill(RascSurfacePalette.actionPrimaryFill(for: colorScheme))
                     .opacity(isEnabled ? 1 : 0.45)
             }
             .overlay {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .strokeBorder(Color.white.opacity(colorScheme == .dark ? 0.08 : 0.18), lineWidth: 1)
+                    .strokeBorder(
+                        RascSurfacePalette.actionPrimaryLabel(for: colorScheme).opacity(0.18),
+                        lineWidth: 1
+                    )
             }
             .opacity(configuration.isPressed ? 0.9 : 1)
             .scaleEffect(configuration.isPressed ? 0.985 : 1)

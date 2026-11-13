@@ -66,11 +66,19 @@ enum RascSurfacePalette {
     }
 
     static func canvas(for colorScheme: ColorScheme) -> Color {
-        Color(nsColor: colorScheme == .dark ? graphiteBackground : warmBackground)
+        Color(nsColor: canvasNSColor(for: colorScheme))
+    }
+
+    static func canvasNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark ? graphiteBackground : warmBackground
     }
 
     static func raisedFill(for colorScheme: ColorScheme) -> Color {
-        Color(nsColor: colorScheme == .dark ? darkElevated : lightElevated)
+        Color(nsColor: raisedFillNSColor(for: colorScheme))
+    }
+
+    static func raisedFillNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark ? darkElevated : lightElevated
     }
 
     static func subtleFill(for colorScheme: ColorScheme) -> Color {
@@ -89,14 +97,6 @@ enum RascSurfacePalette {
             : Color.white.opacity(0.72)
     }
 
-    static func accent(for colorScheme: ColorScheme) -> Color {
-        actionAccent(for: colorScheme)
-    }
-
-    static func accentNSColor(for colorScheme: ColorScheme) -> NSColor {
-        actionAccentNSColor(for: colorScheme)
-    }
-
     /// Scratchpad caret; mirrors the SwiftUI editor tint before the AppKit text surface.
     static let scratchpadInsertionPoint = NSColor(
         name: NSColor.Name("RascScratchpadInsertionPoint")
@@ -104,109 +104,138 @@ enum RascSurfacePalette {
         appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua ? darkViolet : lightViolet
     }
 
-    static func actionAccentNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark ? darkActionAccent : lightActionAccent
+    // MARK: Text roles
+
+    static func primaryText(for colorScheme: ColorScheme) -> Color {
+        .primary
     }
 
-    /// Filled primary CTAs with white labels use an independent contrast-safe tone.
-    static func actionAccentFill(for colorScheme: ColorScheme) -> Color {
-        Color(nsColor: actionAccentFillNSColor(for: colorScheme))
+    /// Functional supporting copy: snippets, descriptions and action labels.
+    static func secondaryText(for colorScheme: ColorScheme) -> Color {
+        Color(nsColor: secondaryTextNSColor(for: colorScheme))
     }
 
-    static func actionAccentFillNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark ? darkActionAccentFill : lightActionAccentFill
+    static func secondaryTextNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark
+            ? NSColor(srgbRed: 1, green: 1, blue: 1, alpha: 0.60)
+            : NSColor(srgbRed: 0, green: 0, blue: 0, alpha: 0.58)
     }
 
-    /// Text has its own contrast-safe tone; Orb and selection colors stay unchanged.
-    static func violetText(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? Color(nsColor: darkViolet) : Color(red: 0.380, green: 0.300, blue: 0.760)
+    /// Functional metadata: shortcuts, timestamps and section labels.
+    static func metadataText(for colorScheme: ColorScheme) -> Color {
+        Color(nsColor: metadataTextNSColor(for: colorScheme))
+    }
+
+    static func metadataTextNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark
+            ? NSColor(srgbRed: 1, green: 1, blue: 1, alpha: 0.55)
+            : NSColor(srgbRed: 0, green: 0, blue: 0, alpha: 0.57)
+    }
+
+    /// Non-essential hints only. Never use for shortcuts or functional labels.
+    static func tertiaryText(for colorScheme: ColorScheme) -> Color {
+        Color(nsColor: tertiaryTextNSColor(for: colorScheme))
+    }
+
+    static func tertiaryTextNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark
+            ? NSColor(srgbRed: 1, green: 1, blue: 1, alpha: 0.42)
+            : NSColor(srgbRed: 0, green: 0, blue: 0, alpha: 0.45)
+    }
+
+    /// Destructive actions. Text only, never a fill, never the default selection.
+    static func destructiveText(for colorScheme: ColorScheme) -> Color {
+        Color(nsColor: destructiveTextNSColor(for: colorScheme))
+    }
+
+    static func destructiveTextNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark
+            ? NSColor(srgbRed: 1.0, green: 0.541, blue: 0.502, alpha: 1)
+            : NSColor(srgbRed: 0.702, green: 0.149, blue: 0.118, alpha: 1)
+    }
+
+    // MARK: Actions
+
+    /// Neutral primary action. Keep is the only copper action in the app.
+    static func actionPrimaryFill(for colorScheme: ColorScheme) -> Color {
+        Color(nsColor: actionPrimaryFillNSColor(for: colorScheme))
+    }
+
+    static func actionPrimaryFillNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark ? darkActionPrimaryFill : lightActionPrimaryFill
+    }
+
+    static func actionPrimaryLabel(for colorScheme: ColorScheme) -> Color {
+        Color(nsColor: actionPrimaryLabelNSColor(for: colorScheme))
+    }
+
+    static func actionPrimaryLabelNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark ? graphiteBackground : warmBackground
+    }
+
+    /// Approved Keep pair: `#9C421F` on `#F5E5DA`, and `#F0A780` on `#382822`.
+    static func keepAccent(for colorScheme: ColorScheme) -> Color {
+        Color(nsColor: keepAccentNSColor(for: colorScheme))
+    }
+
+    static func keepAccentNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark ? darkKeepAccent : lightKeepAccent
+    }
+
+    static func keepFill(for colorScheme: ColorScheme) -> Color {
+        Color(nsColor: keepFillNSColor(for: colorScheme))
+    }
+
+    static func keepFillNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark ? darkKeepFill : lightKeepFill
     }
 
     static func violet(for colorScheme: ColorScheme) -> Color {
         Color(nsColor: colorScheme == .dark ? darkViolet : lightViolet)
     }
 
-    static func actionAccent(for colorScheme: ColorScheme) -> Color {
-        Color(nsColor: actionAccentNSColor(for: colorScheme))
-    }
+    // MARK: Selection
 
     static func selectionFill(for colorScheme: ColorScheme) -> Color {
-        violet(for: colorScheme).opacity(colorScheme == .dark ? 0.18 : 0.13)
+        Color(nsColor: selectionFillNSColor(for: colorScheme))
     }
 
-    /// Home card keyboard selection: border-forward, not a full violet plate.
-    static func homeCardSelectionFill(for colorScheme: ColorScheme) -> Color {
-        violet(for: colorScheme).opacity(colorScheme == .dark ? 0.05 : 0.035)
+    static func selectionFillNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark
+            ? NSColor(srgbRed: 1, green: 1, blue: 1, alpha: 0.12)
+            : NSColor(srgbRed: 0, green: 0, blue: 0, alpha: 0.10)
     }
 
     static func selectionStroke(for colorScheme: ColorScheme) -> Color {
-        violet(for: colorScheme).opacity(colorScheme == .dark ? 0.42 : 0.34)
+        Color(nsColor: selectionStrokeNSColor(for: colorScheme))
     }
 
-    static func homeCardSelectionStroke(for colorScheme: ColorScheme) -> Color {
-        violet(for: colorScheme).opacity(colorScheme == .dark ? 0.48 : 0.38)
+    static func selectionStrokeNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark
+            ? NSColor(srgbRed: 1, green: 1, blue: 1, alpha: 0.26)
+            : NSColor(srgbRed: 0, green: 0, blue: 0, alpha: 0.18)
     }
 
     static func focusedFieldBorder(for colorScheme: ColorScheme) -> Color {
-        violet(for: colorScheme).opacity(colorScheme == .dark ? 0.52 : 0.44)
+        Color.primary.opacity(colorScheme == .dark ? 0.36 : 0.30)
     }
 
     static func homeCardFill(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark
-            ? Color(nsColor: darkHomeCard)
-            : .white
+        Color(nsColor: homeCardFillNSColor(for: colorScheme))
+    }
+
+    static func homeCardFillNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark ? darkHomeCard : .white
     }
 
     static func homeCardBorder(
         for colorScheme: ColorScheme,
         isHovered: Bool,
-        isSelected: Bool,
         increasedContrast: Bool
     ) -> Color {
-        if isSelected {
-            return homeCardSelectionStroke(for: colorScheme)
-        }
-
         let opacities = homeCardBorderOpacities(for: colorScheme, increasedContrast: increasedContrast)
         return border(for: colorScheme)
             .opacity(isHovered ? opacities.hover : opacities.base)
-    }
-
-    static func homeCardVioletUndertone(
-        for colorScheme: ColorScheme,
-        isHovered: Bool,
-        isSelected: Bool
-    ) -> Color {
-        guard colorScheme == .dark, !isSelected else {
-            return .clear
-        }
-        return violet(for: colorScheme)
-            .opacity(isHovered ? 0.11 : 0.075)
-    }
-
-    static func homeCardShadowOpacity(
-        for colorScheme: ColorScheme,
-        isHovered: Bool,
-        isSelected: Bool
-    ) -> Double {
-        if isSelected {
-            return colorScheme == .dark ? 0.16 : 0.09
-        }
-        if isHovered {
-            return colorScheme == .dark ? 0.18 : 0.11
-        }
-        return colorScheme == .dark ? 0.14 : 0.10
-    }
-
-    static func homeCardShadowRadius(
-        for colorScheme: ColorScheme,
-        isHovered: Bool,
-        isSelected: Bool
-    ) -> CGFloat {
-        if isSelected || isHovered {
-            return colorScheme == .dark ? 10 : 9
-        }
-        return colorScheme == .dark ? 8 : 6
     }
 
     private static func homeCardBorderOpacities(
@@ -224,15 +253,11 @@ enum RascSurfacePalette {
     }
 
     static func homeSupportingText(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark
-            ? Color.secondary.opacity(0.9)
-            : Color.primary.opacity(0.54)
+        secondaryText(for: colorScheme)
     }
 
     static func homeSectionLabel(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark
-            ? Color.secondary
-            : Color.primary.opacity(0.58)
+        metadataText(for: colorScheme)
     }
 
     private static let warmBackground = NSColor(
@@ -299,31 +324,45 @@ enum RascSurfacePalette {
         alpha: 1
     )
 
-    private static let lightActionAccent = NSColor(
-        srgbRed: 0.700,
-        green: 0.235,
-        blue: 0.065,
+    private static let lightActionPrimaryFill = NSColor(
+        srgbRed: 0.149,
+        green: 0.141,
+        blue: 0.169,
         alpha: 1
     )
 
-    private static let darkActionAccent = NSColor(
-        srgbRed: 0.965,
-        green: 0.482,
-        blue: 0.208,
+    private static let darkActionPrimaryFill = NSColor(
+        srgbRed: 0.929,
+        green: 0.914,
+        blue: 0.941,
         alpha: 1
     )
 
-    private static let lightActionAccentFill = NSColor(
-        srgbRed: 0.780,
-        green: 0.290,
-        blue: 0.080,
+    private static let lightKeepAccent = NSColor(
+        srgbRed: 0.612,
+        green: 0.259,
+        blue: 0.122,
         alpha: 1
     )
 
-    private static let darkActionAccentFill = NSColor(
-        srgbRed: 0.690,
-        green: 0.247,
-        blue: 0.035,
+    private static let darkKeepAccent = NSColor(
+        srgbRed: 0.941,
+        green: 0.655,
+        blue: 0.502,
+        alpha: 1
+    )
+
+    private static let lightKeepFill = NSColor(
+        srgbRed: 0.961,
+        green: 0.898,
+        blue: 0.855,
+        alpha: 1
+    )
+
+    private static let darkKeepFill = NSColor(
+        srgbRed: 0.220,
+        green: 0.157,
+        blue: 0.133,
         alpha: 1
     )
 }
@@ -385,13 +424,11 @@ struct RascTransientSelectionBackground: View {
         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
             .fill(RascSurfacePalette.selectionFill(for: colorScheme))
             .overlay {
-                if colorSchemeContrast == .increased {
-                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .strokeBorder(
-                            RascSurfacePalette.selectionStroke(for: colorScheme),
-                            lineWidth: 1
-                        )
-                }
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .strokeBorder(
+                        RascSurfacePalette.selectionStroke(for: colorScheme),
+                        lineWidth: colorSchemeContrast == .increased ? 1.5 : 1
+                    )
             }
     }
 }
@@ -403,13 +440,14 @@ struct RascKeyboardActionHint: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        HStack(spacing: 4) {
-            Text(shortcut)
-                .font(.system(size: 11, weight: .medium))
+        HStack(spacing: 5) {
             Text(title)
                 .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+            Text(shortcut)
+                .font(.system(size: 10, weight: .medium, design: .monospaced))
+                .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
         }
-        .foregroundStyle(RascSurfacePalette.violetText(for: colorScheme))
     }
 }
 
@@ -449,7 +487,7 @@ struct RascTransientInputShell<Content: View>: View {
                 )
                 .strokeBorder(
                     isFocused
-                        ? (contrast == .increased ? RascSurfacePalette.violetText(for: colorScheme) : RascSurfacePalette.focusedFieldBorder(for: colorScheme))
+                        ? (contrast == .increased ? RascSurfacePalette.primaryText(for: colorScheme) : RascSurfacePalette.focusedFieldBorder(for: colorScheme))
                         : RascSurfacePalette.border(for: colorScheme).opacity(contrast == .increased ? 1 : 0.72),
                     lineWidth: contrast == .increased ? 1.5 : 1
                 )

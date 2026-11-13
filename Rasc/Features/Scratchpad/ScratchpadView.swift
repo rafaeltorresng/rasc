@@ -132,7 +132,7 @@ struct ScratchpadView: View {
             if let statusText {
                 Text(statusText)
                     .font(.caption.weight(.medium))
-                    .foregroundStyle(RascSurfacePalette.homeSupportingText(for: colorScheme))
+                    .foregroundStyle(statusColor(for: statusText))
                     .lineLimit(1)
             }
 
@@ -280,7 +280,8 @@ struct ScratchpadView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 12) {
                 Text(session.refinementPreview?.request.scope == .selection ? "Selection preview" : "Preview")
-                    .font(.caption.weight(.medium)).foregroundStyle(.secondary)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                 Spacer()
                 Picker("Compare refinement", selection: $showsOriginal) {
                     Text("Suggested").tag(false)
@@ -342,6 +343,12 @@ struct ScratchpadView: View {
         .accessibilityLabel("Refinement preview")
         .onChange(of: session.refinementPreview?.request.requestID, initial: true) { showsOriginal = false }
         .onExitCommand(perform: handleEscape)
+    }
+
+    private func statusColor(for text: String) -> Color {
+        text == "Kept"
+            ? RascSurfacePalette.keepAccent(for: colorScheme)
+            : RascSurfacePalette.secondaryText(for: colorScheme)
     }
 
     private var statusText: String? {
@@ -1130,14 +1137,11 @@ private struct ScratchpadEmptyState: View {
     }
 
     private var scratchpadPlaceholderText: Color {
-        colorScheme == .dark
-            ? Color.secondary.opacity(0.76)
-            : Color.primary.opacity(0.38)
+        RascSurfacePalette.secondaryText(for: colorScheme)
     }
 
     private var scratchpadSupportingText: Color {
-        RascSurfacePalette.homeSupportingText(for: colorScheme)
-            .opacity(colorScheme == .dark ? 0.86 : 0.88)
+        RascSurfacePalette.metadataText(for: colorScheme)
     }
 }
 
@@ -1152,7 +1156,7 @@ private struct ScratchpadChromeIconButton: View {
         Button(action: action) {
             Image(systemName: systemName)
                 .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                 .frame(width: 26, height: 26)
                 .background {
                     if isHovered {
@@ -1178,29 +1182,57 @@ private struct ScratchpadChromeButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 5) {
+            HStack(spacing: 6) {
+                Text(title)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(titleColor)
+
                 if let shortcut {
                     Text(shortcut)
                         .font(.system(size: 10, weight: .medium, design: .monospaced))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(shortcutColor)
                 }
-
-                Text(title)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(isPrimary ? RascSurfacePalette.actionAccent(for: colorScheme) : Color.secondary)
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 5)
             .background {
-                if isHovered || isPrimary {
+                RoundedRectangle(cornerRadius: 7, style: .continuous)
+                    .fill(backgroundFill)
+            }
+            .overlay {
+                if isPrimary {
                     RoundedRectangle(cornerRadius: 7, style: .continuous)
-                        .fill(isPrimary ? RascSurfacePalette.actionAccent(for: colorScheme).opacity(0.08) : RascSurfacePalette.subtleFill(for: colorScheme))
+                        .strokeBorder(
+                            RascSurfacePalette.keepAccent(for: colorScheme).opacity(0.20),
+                            lineWidth: 1
+                        )
                 }
             }
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .onHover { isHovered = $0 }
+    }
+
+    private var titleColor: Color {
+        isPrimary
+            ? RascSurfacePalette.keepAccent(for: colorScheme)
+            : RascSurfacePalette.secondaryText(for: colorScheme)
+    }
+
+    private var shortcutColor: Color {
+        isPrimary
+            ? RascSurfacePalette.keepAccent(for: colorScheme)
+            : RascSurfacePalette.metadataText(for: colorScheme)
+    }
+
+    private var backgroundFill: Color {
+        if isPrimary {
+            return RascSurfacePalette.keepFill(for: colorScheme)
+        }
+        return isHovered
+            ? RascSurfacePalette.subtleFill(for: colorScheme)
+            : .clear
     }
 }
 
@@ -1213,39 +1245,34 @@ private struct RefinementActionLabel: View {
 
     var body: some View {
         HStack(spacing: 7) {
-            Text(shortcut)
-                .font(.caption2.monospaced().weight(.medium))
-                .foregroundStyle(
-                    isPrimary
-                        ? RascSurfacePalette.actionAccent(for: colorScheme)
-                        : Color.secondary
-                )
-
             Text(title)
                 .font(.caption.weight(.medium))
-                .foregroundStyle(
-                    isPrimary
-                        ? RascSurfacePalette.actionAccent(for: colorScheme)
-                        : Color.secondary
-                )
+                .foregroundStyle(titleColor)
+
+            Text(shortcut)
+                .font(.caption2.monospaced().weight(.medium))
+                .foregroundStyle(shortcutColor)
         }
         .padding(.horizontal, 9)
         .padding(.vertical, 6)
         .background {
             if isPrimary {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(RascSurfacePalette.actionAccent(for: colorScheme).opacity(0.10))
-            }
-        }
-        .overlay {
-            if isPrimary {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .strokeBorder(
-                        RascSurfacePalette.actionAccent(for: colorScheme).opacity(0.22),
-                        lineWidth: 1
-                    )
+                    .fill(RascSurfacePalette.actionPrimaryFill(for: colorScheme))
             }
         }
         .contentShape(Rectangle())
+    }
+
+    private var titleColor: Color {
+        isPrimary
+            ? RascSurfacePalette.actionPrimaryLabel(for: colorScheme)
+            : RascSurfacePalette.secondaryText(for: colorScheme)
+    }
+
+    private var shortcutColor: Color {
+        isPrimary
+            ? RascSurfacePalette.actionPrimaryLabel(for: colorScheme).opacity(0.82)
+            : RascSurfacePalette.metadataText(for: colorScheme)
     }
 }
