@@ -1,17 +1,12 @@
 # Rasc Design System
 
-> Historical specification/milestone reference. For current behavior, launch direction and superseded decisions, start with [CURRENT-PRODUCT](CURRENT-PRODUCT.md) and the [documentation index](README.md).
-
+> Implemented reference, aligned with **0.1.6 (build 12)**. For behavioral truth, start with [CURRENT-PRODUCT](CURRENT-PRODUCT.md); for the recent visual decisions and the evidence behind them, see [the 2026-11-13 visual audit](audits/2026-11-13-visual-language.md).
 
 Rasc is a quiet macOS utility for unfinished thoughts.
 
-Its visual language is **Shaping**:
+The shipped visual language is **Warm precision** — warm paper/graphite neutrals, semantic text roles with contrast ≥4.5:1 for functional copy, copper reserved for Keep and its confirmation, neutral selection throughout, action typography in SF Pro, shortcuts in SF Mono.
 
-> raw → uncertain → shaping → settled → clear
-
-The interface should feel calm while idle and almost physical while transforming.
-
-The design must never compete with the user's text.
+The older **Shaping** vocabulary below (motion, orb, onboarding, landing) describes how Rasc behaves during transformation; it is correct and unchanged. Sections that described the pre-Warm-precision palette — especially § 4 Color — are rewritten below.
 
 ---
 
@@ -141,34 +136,36 @@ Branding should almost disappear inside the actual editor.
 
 # 4. Color
 
-Use a restrained neutral system.
-
-Do not build the identity around a fixed saturated brand color.
+Use a restrained warm neutral system. Color carries state; it never decorates.
 
 ## Semantic hierarchy
 
 ### Background
-System-derived near-white / near-black.
+Warm paper (`#FBFAFD`) / graphite (`#17151C`) — warm-tinted, flat, no gradients.
 
 ### Primary text
 Native primary foreground.
 
 ### Secondary text
-Native secondary foreground.
+Semantic `secondaryText` — 58% black / 60% white; ≥4.5:1 on every surface for functional copy (snippets, descriptions, action labels). Native secondary foreground may remain in vibrancy contexts (Settings Form).
+
+### Metadata text
+Semantic `metadataText` — 57% black / 55% white; ≥4.5:1 on every surface for shortcuts, timestamps and section labels. Used for all SF Mono cap labels and SF Pro timestamps.
 
 ### Tertiary text
-Used only for hints, timestamps, shortcut labels.
+`tertiaryText` — 45% black / 42% white; ≥3:1; non-essential hints only. Never for shortcuts or functional labels.
 
 ### Accent
-One restrained adaptive accent.
+Copper — the complete pair: `#9C421F` on `#F5E5DA` (light), `#F0A780` on `#382822` (dark), both ≥4.5:1. Used only on the Keep chip, the palette `Keep` confirmation, and the chrome `Kept` status. Nowhere else.
 
-It may carry a slightly cool metallic character, but must remain subtle.
+### Other colors
+Violet survives for the Orb, the editor caret and the key-window focus stroke only. Selection everywhere else is a neutral plate with a neutral 1 px border. Source on GitHub remains native blue.
 
 ### Success
-Use primarily for temporary confirmation.
+Use primarily for temporary confirmation — copper, only for Keep and its `Kept` confirmation.
 
 ### Error
-Use only where actionable.
+Use only where actionable. Destructive actions render as destructive red (`#B3261E` light / `#FF8A80` dark), never filled, never the default Return target.
 
 Never use color alone to communicate state.
 

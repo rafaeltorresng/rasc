@@ -139,9 +139,9 @@ The palette opens ready to type, but the header looks like a static label. Searc
 
 System blue links are native, but they break the violet/ember system in the one place where the user is configuring Rasc. Tinting links violet is a small, reversible alignment; keeping native blue is defensible if trust outweighs cohesion.
 
-### D9 — Copy drifts at the edges (low)
+### D9 — Copy drifts at the edges — **fixed in Slice 4**
 
-`Search from anywhere with ⌘P Search thoughts` repeats the same idea twice. `New` / `New Scratch`, `Open Home` / `Toggle Home`, and `Search thoughts` / `Search` are close but not governed by a rule. Decide which labels are contextual abbreviations and which are canonical.
+`Search from anywhere with ⌘P Search thoughts` repeated the idea twice. Fixed (13 Nov 2026): the banner is now `Search from anywhere` + `⌘P` keycap. `New` / `New Scratch`, `Open Home` / `Toggle Home`, and `Search thoughts` / `Search` remain close-but-not-governed; every label keeps its canonical meaning and contextual abbreviation.
 
 ### D10 — Selection semantics need one sentence (low)
 
@@ -300,7 +300,7 @@ Files: `Rasc/UI/TransientSurfaceStyle.swift`, `Rasc/UI/RascSurfaceShell.swift`, 
 - Selection in Search and the palette is a neutral plate with a neutral border; focused field border is neutral; the light `violetText` role is deleted.
 - Copper is the Keep-only accent (`#9C421F`/`#F5E5DA`, `#F0A780`/`#382822`): chrome `Keep` chip and `Kept` status/confirmation. The palette rows are all neutral by decision (13 Nov 2026). New Scratch, Refine, `Accept suggestion`, onboarding primaries and Home CTAs are neutral.
 - Shortcuts trail their label in mono `metadataText` across chrome, refinement footer, search hints and Home/Settings glyphs are `secondaryText`.
-- Settings stays native; secondary captions raised to `secondaryText`.
+- Settings stays native; secondary captions raised to `secondaryText`; editable shortcut rows pin to the trailing edge to share the value column with the monospaced fixed shortcuts; the per-shortcut `Restore Default` rows hide while at default.
 - Out of Slice 1 by decision: disabled `Restore Default` rows and Settings structural changes (→ Slice 3), the palette input shell (→ Slice 2, approved), Home card tuning (open comparison).
 
 **Acceptance:** met — no behavior or keyboard-flow change; contrast tests pass; renders re-captured in light and dark to [`2026-11-13-visual/slice1/`](2026-11-13-visual/slice1/) (1× and 2×) for the five surfaces.
@@ -349,7 +349,7 @@ Files: `Rasc/Features/Home/HomeView.swift`, `Rasc/Settings/SettingsView.swift`, 
 1. **Approve “Warm precision”** — *approved 13 Nov 2026*, with the adjustment: copper is `Keep`-only; `New Scratch` and `Refine` are neutral; Search/Palette selection is neutral.
 2. **Palette header:** adopt the Search input shell — *approved*; lands in Slice 2.
 3. **Home card height / structure:** decided — compact chronological list (kept section pinned at top, neutral selection, one layout).
-4. **Settings links:** violet or native blue — still open; native blue remains in place for now.
+4. **Settings links:** kept native blue. Violet is reserved for Orb, caret and key-window focus; native blue is the platform-standard link affordance in a utility Settings surface.
 
 ---
 

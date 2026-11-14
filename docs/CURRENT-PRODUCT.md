@@ -1,6 +1,6 @@
 # Current Rasc product
 
-**Source candidate:** 0.1.0, build 6 · 13 October 2026.
+**Source candidate:** 0.1.6, build 12 · 13 November 2026 (private-beta release candidate).
 This describes the implementation; public release still requires a signed, notarized DMG.
 
 Rasc is **a scratchpad for unfinished thoughts**: the place before the note.
@@ -46,12 +46,13 @@ or the user changes the thought. Save failures take precedence over onboarding h
 ## Retrieval and keyboard behavior
 
 Home separates Kept and temporal groups. Initially it shows the newest 12 Kept,
-with explicit Show all/Show fewer access to every remaining Kept. Cards reserve
-space for secondary actions to keep titles stable on hover.
+with explicit Show all/Show fewer access to every remaining Kept. Rows are compact:
+kept marker (kept rows only), single-line title, optional single-line excerpt,
+right-aligned timestamp.
 
-Grid arrows follow rendered columns and section rows. Left/Right do not wrap;
-Up/Down keep the column where possible. Search-field caret editing stays distinct
-from grid navigation; Down or Return transfers focus to results.
+Arrows move by row; there is no horizontal wrap or column flow. Search-field caret
+editing stays distinct from list navigation; Down or Return transfers focus to
+results.
 
 Both retrieval surfaces use local FTS, not AI. Snippets prefer context around an
 actual query term. Quick Search shows up to 12 results with a truncation hint;
@@ -62,7 +63,7 @@ Search thoughts (`⌘P`); legacy “find” remains a palette search alias.
 
 SF proportional text at 16 pt is the editor and preview default; shortcuts retain
 monospaced treatment. Shared surface metrics and motion stay centralized. Keep has
-a restrained action accent. Text-safe violet is separate from Orb/selection color.
+a restrained copper accent (`#9C421F` on `#F5E5DA`, dark: `#F0A780` on `#382822`) reserved for Keep and the Kept confirmation; selection is a neutral plate in lists; violet survives for the Orb, caret and key-window focus. Text roles (secondary/metadata/tertiary) keep ≥4.5:1 on every surface.
 
 Brand symbol belongs to app identity. Orb belongs to writing, retrieval and shaping
 states; see [brand contract](BRAND.md). Window geometry and the panel's fullscreen
