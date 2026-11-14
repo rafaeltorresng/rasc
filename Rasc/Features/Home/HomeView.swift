@@ -199,16 +199,15 @@ struct HomeView: View {
     private var historyHint: some View {
         HStack(spacing: 10) {
             HStack(spacing: 6) {
-                Text("Search from anywhere with")
+                Text("Search from anywhere")
                 ShortcutKeycapView(
                     label: internalShortcuts.displayString(for: .search),
                     style: .compact
                 )
-                Text("Search thoughts")
             }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(
-                "Search from anywhere with \(internalShortcuts.displayString(for: .search)). Search thoughts."
+                "Search from anywhere with \(internalShortcuts.displayString(for: .search))"
             )
 
             Spacer(minLength: 8)
