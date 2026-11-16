@@ -276,12 +276,19 @@ struct ScratchpadView: View {
             .onExitCommand(perform: handleEscape)
     }
 
+    private var refinementPreviewHeading: String {
+        session.refinementPreview?.request.scope == .selection
+            ? "Refine selection preview"
+            : "Refine preview"
+    }
+
     private var refinementPreviewSurface: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 12) {
-                Text(session.refinementPreview?.request.scope == .selection ? "Selection preview" : "Preview")
+                Text(refinementPreviewHeading)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .accessibilityLabel(refinementPreviewHeading)
                 Spacer()
                 Picker("Compare refinement", selection: $showsOriginal) {
                     Text("Suggested").tag(false)
@@ -317,11 +324,11 @@ struct ScratchpadView: View {
                 Button {
                     _ = session.handleEscape()
                 } label: {
-                    RefinementActionLabel(title: "Keep original", shortcut: RascShortcutCatalog.keepOriginal.shortcut)
+                    RefinementActionLabel(title: "Use original", shortcut: RascShortcutCatalog.keepOriginal.shortcut)
                 }
                 .buttonStyle(.plain)
                 .keyboardShortcut(.cancelAction)
-                .accessibilityLabel("Cancel refinement")
+                .accessibilityLabel("Use original")
 
                 Spacer()
 
@@ -334,13 +341,12 @@ struct ScratchpadView: View {
                 }
                 .buttonStyle(.plain)
                 .keyboardShortcut(.defaultAction)
-                .accessibilityLabel("Accept refinement")
+                .accessibilityLabel("Accept suggestion")
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 11)
         }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Refinement preview")
         .onChange(of: session.refinementPreview?.request.requestID, initial: true) { showsOriginal = false }
         .onExitCommand(perform: handleEscape)
     }
@@ -356,7 +362,7 @@ struct ScratchpadView: View {
         case .refining:
             "Refining…"
         case .refinementPreview:
-            "Preview"
+            nil
         case .message:
             session.message == .alreadyUseful ? "Already useful" : (session.message?.isTransient == true ? session.message?.text : nil)
         case .editor, .search, .commandPalette:
