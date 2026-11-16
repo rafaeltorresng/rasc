@@ -34,6 +34,19 @@ Run the **Rasc** scheme (Debug is fine for personal use). See the repository REA
 
 5. Later launches work normally from the menu bar.
 
+## Updates in unsigned builds
+
+Ad-hoc signed builds cannot load Sparkle because Hardened Runtime and Library
+Validation require a matching Apple Team ID. **Check for Updates…** therefore
+reports that updates are unavailable. See
+[SPARKLE-UPDATES.md](SPARKLE-UPDATES.md).
+
+To upgrade, quit Rasc, download the new DMG from the official release page,
+verify its SHA256, open the DMG, and drag **Rasc** to Applications when Finder
+offers to replace the existing copy. Notes, preferences, and shortcuts are kept
+in your user data and survive the replacement. If macOS blocks the first launch
+of the new build, use **Open Anyway** as described above.
+
 ## Privacy
 
 Rasc does not require an account. Notes stay on your Mac. See [Data and privacy](DATA-AND-PRIVACY.md).
