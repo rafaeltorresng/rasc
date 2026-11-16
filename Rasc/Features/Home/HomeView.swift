@@ -70,6 +70,9 @@ struct HomeView: View {
                         }
                     }
                     .focusable()
+                    // Clicking empty space focuses the scroll view; without this,
+                    // its focus ring draws two stray accent-colored lines across the window.
+                    .focusEffectDisabled()
                     .focused($listIsFocused)
                     .onChange(of: session.selectedNoteID) { _, noteID in
                         guard let noteID else { return }
