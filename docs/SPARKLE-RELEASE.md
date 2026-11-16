@@ -286,13 +286,17 @@ cost and can remain as belt-and-braces.
 
 ## Current status (2026-11-16)
 
-- **Path A (staging-only source below 12 → final shipping DMG) passed** on the
-  M4 Air (macOS 26.5.1, reported by the maintainer): Sparkle **rejected a
-  tampered DMG**, installed the genuine 0.1.7 in place, and preserved the test
-  note. **Path B (public v0.1.5 manually replaced by the final DMG in a Finder
-  drag-and-drop) also passed**, but in that path Sparkle is **not** involved
-  and no signature check runs — attribution of tamper rejection applies only
-  to Path A. Both install paths preserved notes, preferences and shortcuts.
+- **Historical**: Path A (staging source below build 12 → updater DMG, Sparkle
+  offered the update, rejected a tampered DMG, installed in place, preserved the
+  test note) and Path B (public v0.1.5 replaced manually in a Finder drag-and-drop)
+  both passed on the M4 Air, macOS 26.5.1. Path B involves no Sparkle and no
+  signature check. Those runs predate the shipping artifact.
+- **The exact v0.1.7 shipping artifact (build 13) has NOT yet completed the
+  focused Air upgrade test.** Build provenance: commit
+  `635ec7ac39b3cbe062602fb501645882361af390`, DMG SHA-256
+  `10648b0e532266b1180dfbeb99a1868d92f4e6d8bf5330c62f0b13ca72bfb36`.
+  The staging feed serves those exact bytes for the test; publish stays gated
+  on it.
 - **macOS 14–25 remain unverified**; only macOS 26.5.1 has been exercised.
 - `xcodebuild test`: 464 tests in 42 suites pass.
 - **Production feed `https://rasc.app/appcast.xml` currently returns HTTP 404**
