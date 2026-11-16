@@ -14,7 +14,7 @@
 # embeds nothing, and is untouched by this script.
 #
 # Usage:
-#   ./Scripts/release/build-updater-rc.sh                      # current project version (0.1.6, build 12)
+#   ./Scripts/release/build-updater-rc.sh                      # current project version (0.1.8, build 14)
 #   RASC_RC_VERSION=0.1.7 RASC_RC_BUILD=13 ./Scripts/release/build-updater-rc.sh
 #
 # Environment overrides:

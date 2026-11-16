@@ -1,9 +1,9 @@
 # Production runbook: Sparkle updates via Library Load Constraint (ad-hoc signed)
 
-Status: **release-prep for the next ad-hoc Sparkle release.** The default Release
-build is unchanged and cannot update itself. This document is the canonical
-procedure for the updater-enabled build. Nothing here is published; please read
-fully before publishing.
+Status: **v0.1.7/build 13 is published; v0.1.8 is in preparation.** The default
+Release build is unchanged and cannot update itself. This document is the
+canonical procedure for the updater-enabled build. Please read fully before
+publishing.
 
 Audience: the maintainer preparing the next public release.
 
@@ -30,12 +30,12 @@ stage).
 
 ## The development feed (staging, HTTPS, locally served)
 
-Until the first public updater release passes its clean-machine checklist, the
-feed is a local directory served over HTTPS via a publicly-trusted tunnel such as
-Cloudflare quick tunnel (`cloudflared tunnel --url …`) or any static HTTPS host.
-This was used both on this Mac and on the maintainer's Air M4. The host name is
-disposable; the feed is never the production one and never served from
-`rasc.app`.
+For candidate verification, the feed is a local directory served over HTTPS via
+a publicly-trusted tunnel such as Cloudflare quick tunnel (`cloudflared tunnel
+--url …`) or any static HTTPS host. This was used both on this Mac and on the
+maintainer's Air M4. The host name is disposable; the feed is never the
+production one and never served from `rasc.app`. The production feed at
+`https://rasc.app/appcast.xml` is live and serves the published v0.1.7 entry.
 
 ## RC build pipeline (what `build-updater-rc.sh` does)
 
@@ -71,7 +71,7 @@ Environment overrides:
 
 ```bash
 ./Scripts/release/build-updater-rc.sh                     # uses keychain account rasc-sparkle
-RASC_RC_VERSION=0.1.7 RASC_RC_BUILD=13 ./Scripts/release/build-updater-rc.sh
+RASC_RC_VERSION=0.1.8 RASC_RC_BUILD=14 ./Scripts/release/build-updater-rc.sh
 ```
 
 `build/updater-rc/<version>/` is gitignored.
@@ -80,9 +80,9 @@ RASC_RC_VERSION=0.1.7 RASC_RC_BUILD=13 ./Scripts/release/build-updater-rc.sh
 
 ```bash
 ./Scripts/release/generate-release-appcast.sh \
-  --version 0.1.7 \
-  --prefix https://github.com/rafaeltorresng/rasc/releases/download/v0.1.7/ \
-  --dmg build/updater-rc/0.1.7/Rasc-0.1.7-updater.dmg \
+  --version 0.1.8 \
+  --prefix https://github.com/rafaeltorresng/rasc/releases/download/v0.1.8/ \
+  --dmg build/updater-rc/0.1.8/Rasc-0.1.8-updater.dmg \
   --account rasc-sparkle
 ```
 
@@ -99,13 +99,12 @@ Key properties of `generate-release-appcast.sh`:
 - Uploads nothing. Publishing remains a maintainer step.
 
 `--prefix` used above is a **versioned GitHub Release asset** base URL. The DMG
-in that URL is exactly the DMG you attach to release `v0.1.7`, so Sparkle's
+in that URL is exactly the DMG you attach to release `v0.1.8`, so Sparkle's
 EdDSA verification and the GitHub download URL agree by construction.
 
-The first updater release does not ship a delta: there is exactly one DMG in the
-archives folder, so `generate_appcast` emits no delta section. Subsequent
-releases accumulate in the same `feed/` folder, so a v0.1.7 → v0.1.8 delta is
-produced automatically next time.
+The first updater release (v0.1.7) shipped no delta: there was exactly one DMG
+in the archives folder, so `generate_appcast` emitted no delta section. The
+accumulated `feed/` folder now yields a v0.1.7 → v0.1.8 delta for v0.1.8.
 
 ## Update flow a user exercises
 
@@ -172,9 +171,22 @@ strict order:
 2. Replace the app manually (drag `Rasc.app` from the shipping DMG into
    `/Applications`, choosing Replace). Relaunch; confirm notes/preferences/short.
 
+**Path C — v0.1.7 → v0.1.8 in-app (required for v0.1.8):** the first updater
+release is now public, so the normal upgrade path must be exercised too.
+
+1. On the same fresh user account, install the published v0.1.7/build 13 DMG
+   from the GitHub Release (browser download → `/Applications` → Open Anyway).
+2. Create a few notes, keep one, change theme and scratchpad shortcut; record
+   `activeNoteID`.
+3. Serve the v0.1.8 shipping DMG from a staging feed and run **Check for
+   Updates…**; expect v0.1.8 (build 14 > 13) to be offered.
+4. Install and relaunch; confirm notes, preferences, shortcuts and the visible
+   active note are unchanged. Repeat the tamper-rejection check from Path A.
+5. Click empty space in the home list and confirm no focus-ring lines appear.
+
 Any failure here is a release blocker.
 
-## Production key ceremony (before the first public updater release)
+## Production key ceremony (one-time; completed for v0.1.7)
 
 Use Sparkle's official tools only. Do not generate the key with OpenSSL, and do
 **not** hand-carry any PEM or raw key file.
@@ -273,6 +285,9 @@ cost and can remain as belt-and-braces.
 
 ## Decision checklist before publishing
 
+The v0.1.7 publication completed the asset → feed → download-link sequence; for
+v0.1.8 every item below is pending except the keychain key, which already exists.
+
 - [ ] `xcodebuild test` green; `RELEASE_NOTES-v<version>.md` written (Open-Anyway note present)
 - [ ] Clean-machine pass of every step in the checklist above, on macOS 14.x as well as the deployment target if accessible
 - [ ] Production key generated with named account (`rasc-sparkle`), held in the
@@ -286,24 +301,22 @@ cost and can remain as belt-and-braces.
 
 ## Current status (2026-11-16)
 
-- **Historical**: Path A (staging source below build 12 → updater DMG, Sparkle
+- **Published:** v0.1.7/build 13, built from commit
+  `635ec7ac39b3cbe062602fb501645882361af390`, DMG SHA-256
+  `10648b0e532266b1180dfbeb99a1868d92f4e6d8bf5330c62f0b13ca72bfb36`. The
+  GitHub Release carries the DMG and `.sha256` sidecar; the production feed
+  `https://rasc.app/appcast.xml` is live (HTTP 200) with the matching v0.1.7
+  enclosure.
+- **Historical:** Path A (staging source below build 12 → updater DMG, Sparkle
   offered the update, rejected a tampered DMG, installed in place, preserved the
   test note) and Path B (public v0.1.5 replaced manually in a Finder drag-and-drop)
   both passed on the M4 Air, macOS 26.5.1. Path B involves no Sparkle and no
-  signature check. Those runs predate the shipping artifact.
-- **The exact v0.1.7 shipping artifact (build 13) has NOT yet completed the
-  focused Air upgrade test.** Build provenance: commit
-  `635ec7ac39b3cbe062602fb501645882361af390`, DMG SHA-256
-  `10648b0e532266b1180dfbeb99a1868d92f4e6d8bf5330c62f0b13ca72bfb36`.
-  The staging feed serves those exact bytes for the test; publish stays gated
-  on it.
+  signature check. Those runs predate the shipping artifact, and the docs did
+  not record completion of the focused Air upgrade test on the exact v0.1.7
+  artifact before publication — treat that sign-off as unresolved in the record.
+- **Next release:** v0.1.8/build 14 is in preparation (version bump done). No
+  artifact is built or published. Required verification is Path C above.
 - **macOS 14–25 remain unverified**; only macOS 26.5.1 has been exercised.
 - `xcodebuild test`: 464 tests in 42 suites pass.
-- **Production feed `https://rasc.app/appcast.xml` currently returns HTTP 404**
-  (GitHub Pages "Page not found"). The 0.1.7 DMG's baked URL is correct; the
-  expected Check‑for‑Updates outcome today is "An error occurred in retrieving
-  update information.", which is the **correct** pre‑deploy state. Do not
-  rebuild or re-sign the DMG to paper over it.
-- **Release status:** production-shaped candidate builds; v0.1.7/build 13 is the
-  first updater release. The keychain key is not backed up offline and none is
-  scheduled; losing it would force all users to download v0.1.7 once.
+- The keychain key is not backed up offline and none is scheduled; losing it
+  would force all users to download a fresh DMG once.
