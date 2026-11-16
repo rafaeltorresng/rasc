@@ -14,13 +14,23 @@ Version: 0.1.6 · build 12 · Apple silicon · macOS 14+
 - **Settings shortcuts** align to the same right edge, and the disabled per-shortcut `Restore Default` rows are hidden.
 - **Search tip banner** simplified to `Search from anywhere` plus the `⌘P` keycap (no more repeated “Search thoughts”).
 
-Upgrading preserves notes, settings and shortcuts. Onboarding does not reappear for existing installs.
+## Updating from 0.1.5
 
-This release is ad-hoc signed and **not notarized**. Follow
-[the unsigned install guide](INSTALL-UNSIGNED.md) for the first launch.
+0.1.5 has no updater. **Download the 0.1.6 DMG once** from the GitHub Releases page; later releases will be delivered in-app.
 
-## Relverification
+- This build (and all 0.1.x builds) is ad-hoc signed and **not notarized**. The first launch may require **Open Anyway** (System Settings → Privacy & Security → Security, after a blocked attempt) or right‑click → **Open**.
+- Once installed, updates are delivered inside the app. After launching 0.1.6, choose **Rasc → Check for Updates…**. Sparkle (2.9.4, pinned, loaded via a pinned Library Load Constraint) verifies the downloaded DMG against an Ed25519 signature and a SHA‑256 checksum **before** unpacking it. Updates are always manual — nothing is downloaded silently and nothing installs without your confirmation.
+- A failed signature check rejects the whole DMG and leaves the running build untouched; updates are always reversible by reinstalling the previous DMG.
+- Updating preserves your notes, shortcuts and preferences. Onboarding does not reappear for existing installs.
 
-DMG SHA-256: recorded on the GitHub Release for `v0.1.6`.
-The `v0.1.6` tag identifies the source revision used for this artifact.
+## Platform support for the updater
+
+Rasc supports **macOS 14 or later**. The updater integration has been exercised end‑to‑end on **macOS 26.5.1** on two Apple silicon machines. The updater has **not** yet been exercised on macOS 14; the app itself still launches and works there, but an in‑place update on macOS 14 has not been verified and should be treated as beta until then.
+
+## Verification
+
+Final candidate SHA-256 (this artifact is approved for release assets): `8467c3611c3c2c55701dd0b7d8a8f070d417573b6f8ca81846098b177719ea5b`.
+The `v0.1.6` tag identifies the source revision used for this artifact. The tag
+must point at a commit whose tree is byte‑identical to the working tree used to
+produce it; see `docs/SPARKLE-RELEASE.md` for the publish sequence.
 Prior 0.1.x releases are retained unchanged.
