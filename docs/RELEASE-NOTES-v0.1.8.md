@@ -2,8 +2,8 @@
 
 Version: 0.1.8 · build 14 · Apple silicon · macOS 14+
 
-Status: **in preparation — not published.** Fill in the build provenance below
-from the final updater DMG before attaching it to the GitHub Release.
+Status: **build provenance below is final; publication follows the checklist in
+`docs/SPARKLE-RELEASE.md`.**
 
 ## What changed
 
@@ -34,13 +34,14 @@ right‑click → **Open**. See `docs/INSTALL-UNSIGNED.md`.
 
 ## Build provenance
 
-_To be completed after `Scripts/release/build-updater-rc.sh` produces the final
-DMG; do not publish these notes with placeholder values._
-
-- Source commit: `TBD`
-- DMG: `Rasc-0.1.8-updater.dmg`, SHA-256 `TBD` (build 14, Apple silicon,
-  ad-hoc signed, not notarized)
-- Sparkle `2.9.4`; LLC cdhash pin: `TBD`
-- Appcast enclosure signature produced with the login-keychain `rasc-sparkle`
+- Source commit: `9da2e91` (merge of the 0.1.8 version-bump prep and the home
+  focus-ring fix), working tree clean.
+- DMG: `Rasc-0.1.8-updater.dmg`, SHA-256
+  `a25035c27a9db86e55d7f1dfe9e4e071124b8d5d7c722ba4edca7d447255912c`
+  (build 14, Apple silicon, ad-hoc signed, not notarized).
+- Sparkle `2.9.4`; LLC cdhash pin: `0e66f4ed0b19cb8b52fd8063740ba80e1481366a`
+  (same framework pin as v0.1.7).
+- A `Rasc14-13.delta` from v0.1.7 is published alongside the DMG.
+- Appcast enclosure signatures produced with the login-keychain `rasc-sparkle`
   account. Keep the DMG and its `.sha256` sidecar byte-identical everywhere they
   are hosted.
