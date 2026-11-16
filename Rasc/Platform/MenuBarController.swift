@@ -8,6 +8,7 @@ protocol MenuBarControllerDelegate: AnyObject {
     func menuBarNewScratch()
     func menuBarOpenSearch()
     func menuBarOpenSettings()
+    func menuBarCheckForUpdates()
     func menuBarSendFeedback()
     func menuBarQuit()
     #if DEBUG
@@ -72,6 +73,11 @@ final class MenuBarController: NSObject, NSMenuDelegate {
             action: #selector(openSettings),
             keyEquivalent: ",",
             modifierMask: .command
+        ))
+        menu.addItem(makeItem(
+            title: "Check for Updates…",
+            action: #selector(checkForUpdates),
+            keyEquivalent: ""
         ))
         menu.addItem(makeItem(
             title: "Send Feedback…",
@@ -158,6 +164,10 @@ final class MenuBarController: NSObject, NSMenuDelegate {
 
     @objc private func openSettings() {
         delegate?.menuBarOpenSettings()
+    }
+
+    @objc private func checkForUpdates() {
+        delegate?.menuBarCheckForUpdates()
     }
 
     @objc private func sendFeedback() {

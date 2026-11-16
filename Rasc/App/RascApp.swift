@@ -72,6 +72,12 @@ struct RascApp: App {
                 }
             }
 
+            CommandGroup(after: .appInfo) {
+                Button("Check for Updates…") {
+                    appDelegate.checkForUpdates()
+                }
+            }
+
             CommandGroup(replacing: .appSettings) {
                 Button("Settings…") {
                     appDelegate.openSettings()
