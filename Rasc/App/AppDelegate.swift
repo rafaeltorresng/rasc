@@ -1,5 +1,40 @@
 import AppKit
 import KeyboardShortcuts
+#if RASC_SPARKLE
+import Sparkle
+#endif
+
+struct SparkleUpdaterConfiguration: Equatable {
+    static let placeholderPublicKey = "REPLACE_WITH_ED25519_PUBLIC_KEY"
+
+    let feedURL: URL
+    let publicKey: String
+
+    static func validate(feedURLString: String?, publicKey: String?) -> SparkleUpdaterConfiguration? {
+        guard
+            let feedURLString,
+            let publicKey,
+            !publicKey.isEmpty,
+            publicKey != placeholderPublicKey,
+            let keyData = Data(base64Encoded: publicKey),
+            keyData.count == 32,
+            let feedURL = URL(string: feedURLString),
+            feedURL.scheme == "https",
+            feedURL.host?.isEmpty == false
+        else {
+            return nil
+        }
+
+        return SparkleUpdaterConfiguration(feedURL: feedURL, publicKey: publicKey)
+    }
+
+    static func current(bundle: Bundle = .main) -> SparkleUpdaterConfiguration? {
+        validate(
+            feedURLString: bundle.object(forInfoDictionaryKey: "SUFeedURL") as? String,
+            publicKey: bundle.object(forInfoDictionaryKey: "SUPublicEDKey") as? String
+        )
+    }
+}
 
 extension KeyboardShortcuts.Name {
     static let toggleScratchpad = Self(
@@ -17,6 +52,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
     private let bootstrap = AppBootstrap()
     private let onboardingCoordinator = OnboardingCoordinator()
     private var menuBarController: MenuBarController?
+#if RASC_SPARKLE
+    private var updaterController: SPUStandardUpdaterController?
+#endif
 
     override init() {
         #if DEBUG
@@ -45,6 +83,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
             await self?.bootstrap.prepareForSettingsPresentation()
         }
         menuBarController = MenuBarController(delegate: self)
+        #if RASC_SPARKLE
+        if SparkleUpdaterConfiguration.current() != nil,
+           NSClassFromString("SPUStandardUpdaterController") != nil {
+            updaterController = SPUStandardUpdaterController(
+                startingUpdater: true,
+                updaterDelegate: nil,
+                userDriverDelegate: nil
+            )
+        }
+        #endif
         InternalShortcutStore.shared.applyToMainMenu()
         bootstrap.start()
 
@@ -194,6 +242,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
 
     func menuBarOpenSettings() {
         openSettings()
+    }
+
+    func menuBarCheckForUpdates() {
+        checkForUpdates()
+    }
+
+    func checkForUpdates() {
+        #if RASC_SPARKLE
+        if let updaterController {
+            updaterController.checkForUpdates(nil)
+            return
+        }
+        #endif
+        let alert = NSAlert()
+        alert.messageText = "Updates are not available in this build."
+        alert.informativeText = "This build was not packaged with the Sparkle updater. Download the latest version from rasc.app."
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
     }
 
     func menuBarSendFeedback() {
