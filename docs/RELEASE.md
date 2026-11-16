@@ -1,11 +1,21 @@
 # Rasc Release Workflow
 
-> Current release: **0.1.6, build 12** (candidate, unreleased). The published v0.1.5/build 11, v0.1.4/build 10, v0.1.2/build 8, v0.1.1/build 7, and v0.1.0/build 6 artifacts are retained unchanged. The frozen beta.3/build 4 artifact predates these changes and must not be overwritten or renamed as 0.1.0. **v0.1 public release** can ship as **open source + unsigned DMG** ([PUBLISH-0.1.md](PUBLISH-0.1.md), [INSTALL-UNSIGNED.md](INSTALL-UNSIGNED.md)). **Developer ID + notarization** below is optional and improves Gatekeeper UX for download-only users.
+> Current release: **0.1.7, build 13** (first updater release, candidate). The published v0.1.6/build 12 artefact on GitHub (unrelated pre-release build) is retained untouched; v0.1.5/build 11, v0.1.4/build 10, v0.1.2/build 8, v0.1.1/build 7, and v0.1.0/build 6 artifacts are retained unchanged. The frozen beta.3/build 4 artifact predates these changes and must not be overwritten or renamed as 0.1.0. **v0.1 public release** can ship as **open source + unsigned DMG** ([PUBLISH-0.1.md](PUBLISH-0.1.md), [INSTALL-UNSIGNED.md](INSTALL-UNSIGNED.md)). **Developer ID + notarization** below is optional and improves Gatekeeper UX for download-only users.
 
 
 This document describes how to produce a signed, sandboxed, notarized direct-distribution build of Rasc outside Xcode.
 
-Sparkle and automatic updates are intentionally out of scope for this milestone.
+Sparkle 2.9.4 is integrated as the updater for this release. The default
+Release build weak-links Sparkle and embeds it via the Library Load Constraint;
+it can be updated in place. The ad-hoc Sparkle build is produced by
+[SPARKLE-RELEASE.md](SPARKLE-RELEASE.md) via `Scripts/release/build-updater-rc.sh`
+(Library Load Constraint pinning, Hardened Runtime, App Sandbox intact). Both
+Path A (below-12 staging source → shipping DMG) and Path B (public v0.1.5 →
+shipping DMG via manual replacement) passed on a MacBook Air (macOS 26.5.1)
+in November 2026. See [SPARKLE-RELEASE.md](SPARKLE-RELEASE.md) for the current
+state; the production feed at `https://rasc.app/appcast.xml` is not deployed
+yet. Publishes should happen only under that document's checklist, never by
+change-of-force; update checks remain manual.
 
 ## Current release configuration
 
@@ -23,6 +33,7 @@ Sparkle and automatic updates are intentionally out of scope for this milestone.
 | Release signing identity | `Developer ID Application` |
 | Debug signing | Ad hoc (`-`) for convenient local Xcode runs |
 | Swift package dependencies | GRDB 7.11.1, KeyboardShortcuts 3.0.1 |
+| Sparkle | 2.9.4 vendored; Release weak link; not embedded by default |
 
 ### Entitlements
 
@@ -32,6 +43,11 @@ Release builds use `Rasc/Rasc.entitlements` with only:
 - `com.apple.security.files.user-selected.read-only` (for explicit copy/share handoff)
 
 No Accessibility, Contacts, Calendar, Location, Camera, Microphone, outgoing network, file-provider, or temporary exception entitlements are enabled.
+
+A future build that actually embeds Sparkle must use
+`Rasc/Rasc.sparkle.entitlements` instead. It adds only the two mach-lookup
+exceptions for Sparkle's sandboxed Installer and Downloader XPC services
+(`-spks` and `-spki`). The default Release does not need or use them.
 
 ## Prerequisites
 
@@ -170,6 +186,7 @@ workflow verifies the distributed DMG and its ticket.
 
 Before distributing, confirm the exported app does **not** include:
 
+- `Contents/Frameworks/Sparkle.framework` unless this is a deliberately signed Sparkle-enabled build
 - debug entitlements (`get-task-allow`)
 - development API credentials
 - signing private keys or notarization credentials
