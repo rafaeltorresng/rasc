@@ -61,6 +61,7 @@
 		010000000000000000000033 /* RascOrb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000033 /* RascOrb.swift */; };
 		010000000000000000000039 /* ThinkingOrbsKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0D0000000000000000000003 /* ThinkingOrbsKit */; };
 		010000000000000000000034 /* OnboardingStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000034 /* OnboardingStoreTests.swift */; };
+		010000000000000000000084 /* SparkleUpdaterConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000084 /* SparkleUpdaterConfigurationTests.swift */; };
 		010000000000000000000035 /* OnboardingEligibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000035 /* OnboardingEligibilityTests.swift */; };
 		010000000000000000000036 /* OnboardingBehaviorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000036 /* OnboardingBehaviorTests.swift */; };
 		010000000000000000000037 /* RascMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000037 /* RascMotion.swift */; };
@@ -186,6 +187,7 @@
 		020000000000000000000029 /* WindowFrameStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrameStoreTests.swift; sourceTree = "<group>"; };
 		02000000000000000000002A /* Rasc.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Rasc/Rasc.entitlements; sourceTree = SOURCE_ROOT; };
 		A20000000000000000000002 /* Rasc.debug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Rasc/Rasc.debug.entitlements; sourceTree = SOURCE_ROOT; };
+		A2000000000000000000000E /* Rasc.sparkle.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Rasc/Rasc.sparkle.entitlements; sourceTree = SOURCE_ROOT; };
 		02000000000000000000002B /* OnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Onboarding/OnboardingStep.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000002C /* OnboardingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Onboarding/OnboardingStore.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000002D /* OnboardingEligibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Onboarding/OnboardingEligibility.swift; sourceTree = SOURCE_ROOT; };
@@ -196,6 +198,7 @@
 		020000000000000000000032 /* GlobalShortcutFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/GlobalShortcutFormatting.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000033 /* RascOrb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/UI/RascOrb.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000034 /* OnboardingStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStoreTests.swift; sourceTree = "<group>"; };
+		020000000000000000000084 /* SparkleUpdaterConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparkleUpdaterConfigurationTests.swift; sourceTree = "<group>"; };
 		020000000000000000000035 /* OnboardingEligibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingEligibilityTests.swift; sourceTree = "<group>"; };
 		020000000000000000000036 /* OnboardingBehaviorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingBehaviorTests.swift; sourceTree = "<group>"; };
 		020000000000000000000037 /* RascMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/UI/RascMotion.swift; sourceTree = SOURCE_ROOT; };
@@ -301,6 +304,7 @@
 			isa = PBXGroup;
 			children = (
 				02000000000000000000002A /* Rasc.entitlements */,
+				A2000000000000000000000E /* Rasc.sparkle.entitlements */,
 				A20000000000000000000002 /* Rasc.debug.entitlements */,
 				020000000000000000000001 /* RascApp.swift */,
 				020000000000000000000005 /* AppDelegate.swift */,
@@ -426,6 +430,7 @@
 				020000000000000000000079 /* AppReliabilityScaleTests.swift */,
 				02000000000000000000007F /* ThoughtCompletionTests.swift */,
 				020000000000000000000083 /* QualitySprintTests.swift */,
+				020000000000000000000084 /* SparkleUpdaterConfigurationTests.swift */,
 				020000000000000000000067 /* RefineAdjudicationTests.swift */,
 			);
 			path = RascTests;
@@ -672,6 +677,7 @@
 				01000000000000000000007C /* AppReliabilityScaleTests.swift in Sources */,
 				01000000000000000000007F /* ThoughtCompletionTests.swift in Sources */,
 				010000000000000000000083 /* QualitySprintTests.swift in Sources */,
+				010000000000000000000084 /* SparkleUpdaterConfigurationTests.swift in Sources */,
 				010000000000000000000067 /* RefineAdjudicationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -805,7 +811,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Rasc/Info.plist;
@@ -813,7 +819,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.6;
+				MARKETING_VERSION = 0.1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rafaeltorres.rasc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -830,17 +836,27 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Vendor/Sparkle/Sparkle.xcframework/macos-arm64_x86_64",
+				);
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Rasc/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.6;
+				MARKETING_VERSION = 0.1.7;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-weak_framework",
+					Sparkle,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.rafaeltorres.rasc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) RASC_SPARKLE";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;
