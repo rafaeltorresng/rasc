@@ -1,21 +1,8 @@
 # Rasc Release Workflow
 
-> Current release: **0.1.7, build 13** (first updater release, published 2026-11-16). Next release in prep: **0.1.8, build 14**. The published v0.1.6/build 12 artefact on GitHub (unrelated pre-release build) is retained untouched; v0.1.5/build 11, v0.1.4/build 10, v0.1.2/build 8, v0.1.1/build 7, and v0.1.0/build 6 artifacts are retained unchanged. The frozen beta.3/build 4 artifact predates these changes and must not be overwritten or renamed as 0.1.0. **v0.1 public release** can ship as **open source + unsigned DMG** ([PUBLISH-0.1.md](PUBLISH-0.1.md), [INSTALL-UNSIGNED.md](INSTALL-UNSIGNED.md)). **Developer ID + notarization** below is optional and improves Gatekeeper UX for download-only users.
+> Latest published release: [0.1.8, build 14](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.8), ad-hoc signed and unnotarized. The source may contain later, unreleased changes. Preserve published artifacts and verify each candidate independently.
 
-
-This document describes how to produce a signed, sandboxed, notarized direct-distribution build of Rasc outside Xcode.
-
-Sparkle 2.9.4 is the updater. The updater-enabled build is produced by
-[SPARKLE-RELEASE.md](SPARKLE-RELEASE.md) via `Scripts/release/build-updater-rc.sh`
-(Library Load Constraint pinning, Hardened Runtime, App Sandbox intact), while
-the default Release build weak-links Sparkle and does not embed it. v0.1.7/build 13
-is published as the first updater release; its DMG, SHA-256 sidecar and appcast
-entry at `https://rasc.app/appcast.xml` are live. Both Path A (below-12 staging
-source → shipping DMG) and Path B (public v0.1.5 → shipping DMG via manual
-replacement) passed on a MacBook Air (macOS 26.5.1) in November 2026. For v0.1.8
-the critical verification is the **in-app v0.1.7 → v0.1.8 upgrade**. See
-[SPARKLE-RELEASE.md](SPARKLE-RELEASE.md) for the full checklist; publishes should
-happen only under it, never by change-of-force; update checks remain manual.
+The current ad-hoc updater release path is documented in [SPARKLE-RELEASE.md](SPARKLE-RELEASE.md); update checks are manual. The Developer ID and notarization steps below describe an optional signed distribution path, not a requirement for the published ad-hoc release. See [installation](INSTALL-UNSIGNED.md) and [v0.1.8 provenance](RELEASE-NOTES-v0.1.8.md).
 
 ## Current release configuration
 
@@ -23,17 +10,17 @@ happen only under it, never by change-of-force; update checks remain manual.
 | --- | --- |
 | Product name | Rasc |
 | Bundle identifier | `com.rafaeltorres.rasc` |
-| Marketing version | `0.1.8` (next release; v0.1.7/build 13 is published) |
-| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`14` for the next release) |
+| Marketing version | `0.1.8` (current source and latest published; increment for the next candidate) |
+| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`14` for v0.1.8) |
 | Deployment target | macOS 14.0 |
 | First public artifact | Apple silicon (`arm64`); `archive.sh` fixes the architecture |
 | Hardened Runtime | Enabled for Debug and Release |
-| App Sandbox | Enabled |
+| App Sandbox | Enabled for Release; Debug is unsandboxed for local evaluation |
 | LSUIElement | `true` (menu bar utility, no Dock icon) |
-| Release signing identity | `Developer ID Application` |
+| Release signing identity | `Developer ID Application` in the project, for the optional notarized path; published ad-hoc builds are re-signed with `-` |
 | Debug signing | Ad hoc (`-`) for convenient local Xcode runs |
 | Swift package dependencies | GRDB 7.11.1, KeyboardShortcuts 3.0.1 |
-| Sparkle | 2.9.4 vendored; Release weak link; not embedded by default |
+| Sparkle | 2.9.4 vendored; default Release weak-links and does not embed it. The updater DMG embeds, signs and pins it |
 
 ### Entitlements
 
@@ -42,14 +29,39 @@ Release builds use `Rasc/Rasc.entitlements` with only:
 - `com.apple.security.app-sandbox`
 - `com.apple.security.files.user-selected.read-only` (for explicit copy/share handoff)
 
-No Accessibility, Contacts, Calendar, Location, Camera, Microphone, outgoing network, file-provider, or temporary exception entitlements are enabled.
+No Accessibility, Contacts, Calendar, Location, Camera, Microphone, outgoing network, file-provider, or temporary exception entitlements are enabled in the default Release build.
 
-A future build that actually embeds Sparkle must use
-`Rasc/Rasc.sparkle.entitlements` instead. It adds only the two mach-lookup
-exceptions for Sparkle's sandboxed Installer and Downloader XPC services
-(`-spks` and `-spki`). The default Release does not need or use them.
+An updater-enabled build that embeds Sparkle uses
+`Rasc/Rasc.sparkle.entitlements` instead. It adds the two mach-lookup exceptions
+for Sparkle's sandboxed Installer and Downloader XPC services (`-spks` and
+`-spki`) plus `com.apple.security.cs.disable-library-validation`, paired with a
+Library Load Constraint that pins the signed Sparkle framework. The default Release
+does not need or use them.
+
+## Published release
+
+The latest published artifact is **v0.1.8 / build 14** (2026-11-16): ad-hoc signed,
+unnotarized, Apple silicon, macOS 14+, with manual Sparkle updates. The GitHub
+Release contains:
+
+| Asset | Value |
+| --- | --- |
+| DMG | `Rasc-0.1.8-updater.dmg` |
+| SHA-256 | `a25035c27a9db86e55d7f1dfe9e4e071124b8d5d7c722ba4edca7d447255912c` |
+| Checksum sidecar | `Rasc-0.1.8-updater.dmg.sha256` |
+| Delta | `Rasc14-13.delta` (v0.1.7/build 13 → v0.1.8/build 14) |
+
+The release notes record source commit `9da2e91`; tag `v0.1.8` adds the provenance
+commit. The production appcast at `https://rasc.app/appcast.xml` serves the matching
+v0.1.8 enclosure. Preserve these exact bytes and see
+[RELEASE-NOTES-v0.1.8.md](RELEASE-NOTES-v0.1.8.md). Current source still reports
+0.1.8/build 14; version fields alone do not prove that a build was published.
 
 ## Prerequisites
+
+The prerequisites below apply to the optional Developer ID/notarization path. The
+published ad-hoc updater path needs no paid Apple program; follow
+[SPARKLE-RELEASE.md](SPARKLE-RELEASE.md).
 
 1. Xcode with the Rasc project opened at least once so Swift packages resolve.
 2. An Apple Developer account with a **Developer ID Application** certificate installed in your login keychain.
@@ -81,6 +93,10 @@ Do not put passwords on command lines, in shell history or in source control.
 The profile is stored in Keychain. Team IDs identify the signing team, not a password.
 
 ## Release artifact flow
+
+These steps produce the optional Developer ID-signed DMG. The published ad-hoc
+updater DMG is produced by `Scripts/release/build-updater-rc.sh`; see
+[SPARKLE-RELEASE.md](SPARKLE-RELEASE.md).
 
 All scripts live in `Scripts/release/` and write artifacts to `build/`.
 
@@ -161,7 +177,8 @@ xcrun notarytool log <submission-id> --keychain-profile RASC_NOTARY
 
 ## Verification commands
 
-Verify the actual distributed artifact (prefer the stapled DMG):
+For a notarized build, verify the actual distributed artifact (prefer the stapled
+DMG):
 
 ```bash
 ./Scripts/release/verify-release.sh build/Rasc.dmg
@@ -176,11 +193,13 @@ spctl --assess --type execute --verbose=4 /path/to/Rasc.app
 xcrun stapler validate build/Rasc.dmg
 ```
 
-The verification script requires Developer ID, a Team ID, hardened runtime,
-sandbox without network entitlements, matching bundle/version/build, Gatekeeper
-acceptance and a stapled ticket. It rejects debug/test/database artifacts and
-`get-task-allow`. For an `.app` argument, staple the app ticket first; the normal
-workflow verifies the distributed DMG and its ticket.
+The verification script covers the Developer ID/notarization path: it requires
+Developer ID, a Team ID, hardened runtime, sandbox without network entitlements,
+matching bundle/version/build, Gatekeeper acceptance and a stapled ticket. It
+rejects debug/test/database artifacts and `get-task-allow`. For an `.app` argument,
+staple the app ticket first; the normal workflow verifies the distributed DMG and
+its ticket. `verify-release.sh` is not an ad-hoc release gate; verify those with the
+checksum and signing/sandbox status instead.
 
 ## Bundle audit checklist
 
@@ -214,14 +233,14 @@ Ad-hoc Xcode builds may include `get-task-allow` and Xcode can disable hardened
 runtime with ad-hoc signing. They are build evidence, not public artifacts.
 Developer ID exports must satisfy `verify-release.sh`.
 
-## Clean-machine beta verification
+## Clean-machine release verification
 
 Do not treat “Run from Xcode” as proof of distribution behavior.
 
 1. Copy `build/Rasc.dmg` to another Mac as if downloaded externally (AirDrop, browser download, or shared drive).
 2. Open the DMG in Finder and drag `Rasc.app` to `/Applications`.
 3. Launch Rasc from Finder (not Xcode).
-4. Confirm Gatekeeper accepts the app on first launch.
+4. Confirm the documented first-launch path for the artifact's signing model: **Open Anyway** for ad-hoc builds, or Gatekeeper acceptance for a notarized build.
 5. Verify the global shortcut opens the scratchpad.
 6. Create a note, quit Rasc, relaunch, and confirm persistence.
 7. Open History/Search and recover the note.
@@ -285,15 +304,9 @@ Output directory: `build/rc/`.
 - User-visible version: update `MARKETING_VERSION` (for example `0.1.0`, `0.1.1`).
 - Build number: increment `CURRENT_PROJECT_VERSION` for each distributable build.
 
-For the first public release, use **0.1.0/build 6 or later**, after acceptance.
-Do not rename the frozen beta.3 binary as 0.1.0. Build the new source, sign, notarize,
-then compute the checksum **after stapling**, because stapling changes the artifact.
-Retain `build/Rasc.dmg` as `build/releases/Rasc-0.1.0.dmg` with its SHA256 sidecar
-and source revision. Publish those exact bytes and update the web launch metadata.
+For each release, build from the intended source, run the applicable acceptance checks and retain the exact artifact, checksum and provenance. For a notarized build, calculate the final checksum after stapling, which changes the artifact. Do not rename historical binaries. A version/build pair in the project does not by itself prove a published artifact; confirm the GitHub Release, its assets and the checksum.
 
-The local audit/checklist is [RELEASE_READINESS](../RELEASE_READINESS.md).
-Step-by-step publication gates are in [PUBLISH-0.1.md](PUBLISH-0.1.md).
-Developer ID/notarization must be verified on the machine that produces the public DMG.
+Follow [SPARKLE-RELEASE.md](SPARKLE-RELEASE.md) for the updater-enabled ad-hoc path; [PUBLISH-0.1.md](PUBLISH-0.1.md) records the original v0.1.0 publication checklist. Verify any claimed signing or notarization on the machine that produces the DMG.
 
 ## CI note
 

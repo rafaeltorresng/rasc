@@ -1,6 +1,7 @@
 # Production runbook: Sparkle updates via Library Load Constraint (ad-hoc signed)
 
-Status: **v0.1.7/build 13 is published; v0.1.8 is in preparation.** The default
+Status: **v0.1.8/build 14 is published (2026-11-16); v0.1.7/build 13 was the
+first updater release.** The production feed serves the v0.1.8 entry. The default
 Release build is unchanged and cannot update itself. This document is the
 canonical procedure for the updater-enabled build. Please read fully before
 publishing.
@@ -35,7 +36,8 @@ a publicly-trusted tunnel such as Cloudflare quick tunnel (`cloudflared tunnel
 --url …`) or any static HTTPS host. This was used both on this Mac and on the
 maintainer's Air M4. The host name is disposable; the feed is never the
 production one and never served from `rasc.app`. The production feed at
-`https://rasc.app/appcast.xml` is live and serves the published v0.1.7 entry.
+`https://rasc.app/appcast.xml` is live and serves the published v0.1.8 entry
+(build 14), with the v0.1.7 entry retained for updates from build 13.
 
 ## RC build pipeline (what `build-updater-rc.sh` does)
 
@@ -106,7 +108,8 @@ EdDSA verification and the GitHub download URL agree by construction.
 
 The first updater release (v0.1.7) shipped no delta: there was exactly one DMG
 in the archives folder, so `generate_appcast` emitted no delta section. The
-accumulated `feed/` folder now yields a v0.1.7 → v0.1.8 delta for v0.1.8.
+accumulated `feed/` folder yielded the published v0.1.7 → v0.1.8 delta
+(`Rasc14-13.delta`).
 
 ## Update flow a user exercises
 
@@ -173,8 +176,9 @@ strict order:
 2. Replace the app manually (drag `Rasc.app` from the shipping DMG into
    `/Applications`, choosing Replace). Relaunch; confirm notes/preferences/short.
 
-**Path C — v0.1.7 → v0.1.8 in-app (required for v0.1.8):** the first updater
-release is now public, so the normal upgrade path must be exercised too.
+**Path C — v0.1.7 → v0.1.8 in-app (critical check for v0.1.8):** the first updater
+release is public, so the normal upgrade path must be exercised too. Completion of
+this check on the published v0.1.8 artifact is not recorded in these notes.
 
 1. On the same fresh user account, install the published v0.1.7/build 13 DMG
    from the GitHub Release (browser download → `/Applications` → Open Anyway).
@@ -254,7 +258,7 @@ and do not change the website download link until a clean smoke succeeds.
 
 ## Why not Developer ID + notarization (yet)
 
-Developer ID Application + notarization removes every Gatekeeper prompt and is
+Developer ID Application + notarization can reduce Gatekeeper friction and is
 the preferred path if the maintainer joins the Apple Developer Program. None of
 these ad-hoc artefacts are required if that path is taken; the LLC work is zero
 cost and can remain as belt-and-braces.
@@ -287,8 +291,8 @@ cost and can remain as belt-and-braces.
 
 ## Decision checklist before publishing
 
-The v0.1.7 publication completed the asset → feed → download-link sequence; for
-v0.1.8 every item below is pending except the keychain key, which already exists.
+The v0.1.8 release is published. The checklist below remains the publication gate
+for each next candidate; completed run records belong in the release notes.
 
 - [ ] `xcodebuild test` green; `RELEASE_NOTES-v<version>.md` written (Open-Anyway note present)
 - [ ] Clean-machine pass of every step in the checklist above, on macOS 14.x as well as the deployment target if accessible
@@ -303,22 +307,24 @@ v0.1.8 every item below is pending except the keychain key, which already exists
 
 ## Current status (2026-11-16)
 
-- **Published:** v0.1.7/build 13, built from commit
+- **Published:** v0.1.8/build 14, built from source commit `9da2e91`, DMG
+  `Rasc-0.1.8-updater.dmg`, SHA-256
+  `a25035c27a9db86e55d7f1dfe9e4e071124b8d5d7c722ba4edca7d447255912c`. The
+  GitHub Release carries the DMG, `.sha256` sidecar and `Rasc14-13.delta`; the
+  production feed serves the matching v0.1.8 enclosure (build 14).
+- **Previous:** v0.1.7/build 13, built from commit
   `635ec7ac39b3cbe062602fb501645882361af390`, DMG SHA-256
-  `10648b0e532266b1180dfbeb99a1868d92f4e6d8bf5330c62f0b13ca72bfb36`. The
-  GitHub Release carries the DMG and `.sha256` sidecar; the production feed
-  `https://rasc.app/appcast.xml` is live (HTTP 200) with the matching v0.1.7
-  enclosure.
+  `10648b0e532266b1180dfbeb99a1868d92f4e6d8bf5330c62f0b13ca72bfb36`. The feed
+  retains its entry for updates from build 13.
 - **Historical:** Path A (staging source below build 12 → updater DMG, Sparkle
   offered the update, rejected a tampered DMG, installed in place, preserved the
   test note) and Path B (public v0.1.5 replaced manually in a Finder drag-and-drop)
   both passed on the M4 Air, macOS 26.5.1. Path B involves no Sparkle and no
-  signature check. Those runs predate the shipping artifact, and the docs did
-  not record completion of the focused Air upgrade test on the exact v0.1.7
-  artifact before publication — treat that sign-off as unresolved in the record.
-- **Next release:** v0.1.8/build 14 is in preparation (version bump done). No
-  artifact is built or published. Required verification is Path C above.
+  signature check.
+- **Open verification:** the notes do not record completion of the focused in-app
+  v0.1.7 → v0.1.8 upgrade (Path C) on the exact published artifact. Do not infer
+  it from publication; record it for the next candidate.
 - **macOS 14–25 remain unverified**; only macOS 26.5.1 has been exercised.
-- `xcodebuild test`: 464 tests in 42 suites pass.
+- For v0.1.8, `xcodebuild test` recorded 464 tests in 42 suites passing.
 - The keychain key is not backed up offline and none is scheduled; losing it
   would force all users to download a fresh DMG once.
