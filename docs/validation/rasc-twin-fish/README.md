@@ -48,5 +48,11 @@ unchanged. The installed app passed `codesign --verify --deep --strict`, carried
 a valid Library Load Constraint, and had Sparkle mapped. The local feed override
 was removed after the check.
 
+After publication, the live production feed was checked from the installed
+0.1.10 app: **Check for Updates…** reported “You're up to date! Rasc 0.1.10 is
+currently the newest version available.” (`live-updater-smoke.png`). The deployed
+feed was byte-identical to the verified local appcast and the public release
+asset resolved with the expected checksum.
+
 Not verified in this pass: VoiceOver, Reduce Motion, clean install from the
 public DMG by a second account, and macOS 14–25.

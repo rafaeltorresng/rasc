@@ -58,6 +58,12 @@ Capture, autosave, Keep and retrieval work without Refine.
   LaunchServices restriction; the documented non-window fallback passed
   **434 tests in 37 suites** plus the separate scale benchmark. CI runs the
   full native suite on the release PR.
+- Post-deploy smoke test passed on the installed 0.1.10: **Check for Updates…**
+  reported “You're up to date! Rasc 0.1.10 is currently the newest version
+  available.” with no feed error. The deployed feed is byte-identical to the
+  verified local appcast, and the public download resolves to a 6,134,601-byte
+  asset with the expected filename. Website release checks (browser, webkit,
+  film) passed on PR #28.
 - Not verified locally: VoiceOver, Reduce Motion, clean install through a second
   account, and updater behavior on macOS 14–25.
 
