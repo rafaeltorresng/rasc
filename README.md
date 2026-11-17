@@ -8,6 +8,23 @@ No account, folders, prompts, or organization required.
 
 <p><img src="Rasc/Resources/Assets.xcassets/AppIcon.appiconset/icon_128x128@2x.png" width="96" alt="Rasc app icon"></p>
 
+## Start here
+
+- **Install the app:** [download the latest release](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.8) and follow the [installation guide](docs/INSTALL-UNSIGNED.md), including the checksum and first-launch steps.
+- **Build from source:** follow [Build and test](#build-and-test). This requires Xcode 26.2 or later, Swift 6 and the macOS 26 SDK.
+- **Contribute:** start with [Contributing](CONTRIBUTING.md).
+
+## Your first thought
+
+On first launch, choose **Get started**. You can follow the short walkthrough or skip it from a later step. Then, using the default shortcuts:
+
+1. Press `⌥\` to open the Scratchpad and type a thought. Rasc saves locally as you type.
+2. Press `Esc` to hide it; press `⌥\` again to continue the same thought.
+3. Press `⇧⌘K` to **Keep** it. Rasc clears the scratch and returns you to work.
+4. Press `⌘⌥\` to open Home and find the thought.
+
+**Refine** is optional. Press `⌘J` with a thought or passage, compare Suggested and Original, then explicitly accept or use the original.
+
 ## Using Rasc
 
 | Action | Default shortcut |
@@ -22,12 +39,12 @@ No account, folders, prompts, or organization required.
 
 Capture, autosave, Keep, Home and Search work independently of Refine.
 Refine offers a conservative edit. Compare Suggested and Original before accepting;
-Keep original dismisses the proposal without changing your text.
+In the current source, **Use original** dismisses the proposal without changing your text (older releases may use a different label).
 Discard has Undo while Rasc remains running; it does not introduce a Trash system.
 
 ![Empty Rasc scratchpad in light mode](docs/images/scratchpad.png)
 
-Rasc 0.1.3. Refine is optional; screenshots are not certification of a notarized release artifact.
+This historical screenshot may differ from the current interface and is not evidence of a published or notarized build.
 
 ## Requirements and installation
 
@@ -36,19 +53,12 @@ Rasc 0.1.3. Refine is optional; screenshots are not certification of a notarized
   enabled, and its on-device model ready. Rasc remains useful when Refine is unavailable.
 - **Development:** Xcode 26.2 or later, Swift 6, and the macOS 26 SDK.
 
-This source revision is **0.1.3, build 9**. Public distribution is **open
-source first**, with an optional **unsigned** Release DMG on GitHub (not notarized;
-macOS will ask you to allow the app on first open). See
-[installing the unsigned DMG](docs/INSTALL-UNSIGNED.md).
-
-Developer ID signing and notarization are optional later improvements; they are
-documented in [release workflow](docs/RELEASE.md). Publication steps without a paid
-Apple program are in [Publish 0.1](docs/PUBLISH-0.1.md).
+The latest published release is [Rasc 0.1.8, build 14](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.8): an ad-hoc signed, unnotarized Apple silicon DMG for macOS 14 or later. The repository may contain unreleased changes; version fields alone do not prove a published artifact. See [installation](docs/INSTALL-UNSIGNED.md), the [v0.1.8 notes](docs/RELEASE-NOTES-v0.1.8.md) and the [release runbook](docs/RELEASE.md). Updates are checked manually.
 
 ## Build and test
 
 Open `Rasc.xcodeproj`, select the shared **Rasc** scheme and run. Swift packages
-are pinned in `Package.resolved`; ThinkingOrbsKit is vendored locally.
+are pinned in `Package.resolved`; ThinkingOrbsKit and Sparkle are vendored locally.
 
 ```sh
 xcodebuild -project Rasc.xcodeproj -scheme Rasc -configuration Debug \
@@ -77,7 +87,9 @@ Thoughts live in a local SQLite database under Rasc's Application Support direct
 (in the app sandbox for packaged builds). No backend, account, telemetry, sync,
 cloud inference, or semantic search is required. Refine uses Apple's local
 Foundation Models provider, with a fresh request for each operation.
-The Release app has sandbox entitlement only and no outgoing network entitlement.
+The published Release app is sandboxed and has no outgoing network entitlement. Debug builds are unsandboxed and use a separate local store. The updater build adds
+Sparkle's local mach-lookup exceptions and a library-validation exception constrained
+by a Library Load Constraint pin.
 
 Refine can still make mistakes. It preserves the original until you accept and
 checks revisions, language and protected literals. Review the proposal before

@@ -1,11 +1,10 @@
 # Current Rasc product
 
-**Source candidate:** 0.1.6, build 12 · 13 November 2026 (private-beta release candidate).
-This describes the implementation; public release still requires a signed, notarized DMG.
+This describes the current source. The latest published build and its installation requirements are listed in the [repository README](../README.md); source changes after that release are not yet shipped.
 
 Rasc is **a scratchpad for unfinished thoughts**: the place before the note.
 The core flow is Invoke → Capture → optional Refine → Keep → return to work.
-The project is intended to be open source under MIT. GitHub is source/transparency;
+The project is open source under MIT. GitHub is source/transparency;
 download remains the primary product action when a verified artifact is available.
 Private-beta access requests, checkout and licensing are not current priorities.
 
@@ -37,7 +36,7 @@ retrieval do not depend on Refine availability.
 
 Each request is isolated. A suggestion remains pending, with Suggested/Original
 comparison. Selection previews show the whole note with only the selected passage
-replaced. Keep original/Esc leaves the original intact. Accept suggestion persists
+replaced. Use original/Esc leaves the original intact. Accept suggestion persists
 only after revision/snapshot validation and supports Undo.
 
 Neutral confirmations can disappear; errors and instructions remain until dismissed
@@ -61,13 +60,7 @@ Search thoughts (`⌘P`); legacy “find” remains a palette search alias.
 
 ## Presentation
 
-SF proportional text at 16 pt is the editor and preview default; shortcuts retain
-monospaced treatment. Shared surface metrics and motion stay centralized. Keep has
-a restrained copper accent (`#9C421F` on `#F5E5DA`, dark: `#F0A780` on `#382822`) reserved for Keep and the Kept confirmation; selection is a neutral plate in lists; violet survives for the Orb, caret and key-window focus. Text roles (secondary/metadata/tertiary) keep ≥4.5:1 on every surface.
-
-Brand symbol belongs to app identity. Orb belongs to writing, retrieval and shaping
-states; see [brand contract](BRAND.md). Window geometry and the panel's fullscreen
-level are retained until native evidence supports a change.
+The interface uses Graphite Paper: warm paper and neutral graphite surfaces, neutral selection and focus, and copper reserved for Keep and Kept. The brand symbol remains separate from the writing surface. The Thinking Orb has been removed from the interface. See the [design system](DESIGN-SYSTEM.md) and [brand](BRAND.md).
 
 ## Validation boundaries
 

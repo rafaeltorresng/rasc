@@ -20,7 +20,7 @@ not verified. Persistence, search, lifecycle and Refine changes need meaningful
 regression tests. Changes involving focus or windows need native verification.
 
 Keep SwiftUI presentation separate from sessions and persistence. Keep the existing
-brand symbol distinct from the Thinking Orb. [Brand exports](docs/BRAND.md) must
+brand symbol and app icon separate from any character exploration. The Thinking Orb has been removed from the interface. [Brand exports](docs/BRAND.md) must
 remain reproducible from the existing master.
 
 ## User data and errors
