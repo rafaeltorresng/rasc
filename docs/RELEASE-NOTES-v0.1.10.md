@@ -2,8 +2,10 @@
 
 Version: 0.1.10 · build 16 · Apple silicon · macOS 14+
 
-Status: **release candidate in preparation; not published.** Publication evidence
-will be added for the exact artifact before announcement.
+Status: **published 2026-11-17** as an ad-hoc signed, unnotarized
+[GitHub Release](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.10).
+Build provenance is final. See [SPARKLE-RELEASE.md](SPARKLE-RELEASE.md) for the
+publication checklist and feed details.
 
 ## What's new
 
@@ -35,7 +37,8 @@ Capture, autosave, Keep and retrieval work without Refine.
   the main app, with a Library Load Constraint pinning the shipped
   `Sparkle.framework` cdhash. Not notarized; first manual installs use Open
   Anyway.
-- Source commit will be recorded in the final provenance update.
+- Source: `6873641` on `main` (preparation commit for PR #83); merged as
+  `f693f0b`. Tag `v0.1.10` adds the provenance commit.
 
 ## Release verification
 

@@ -1,10 +1,10 @@
 # Production runbook: Sparkle updates via Library Load Constraint (ad-hoc signed)
 
-Status: **v0.1.9/build 15 is published (2026-11-17); v0.1.7/build 13 was the
-first updater release.** v0.1.10/build 16 is the next candidate. The production
-feed serves the v0.1.9 entry until v0.1.10 is published. The default Release
-build is unchanged and cannot update itself. This document is the canonical
-procedure for the updater-enabled build. Please read fully before publishing.
+Status: **v0.1.10/build 16 is published (2026-11-17); v0.1.7/build 13 was the
+first updater release.** The production feed serves the v0.1.10 entry. The
+default Release build is unchanged and cannot update itself. This document is
+the canonical procedure for the updater-enabled build. Please read fully before
+publishing.
 
 Audience: the maintainer preparing the next public release.
 
@@ -36,8 +36,9 @@ a publicly-trusted tunnel such as Cloudflare quick tunnel (`cloudflared tunnel
 --url …`) or any static HTTPS host. This was used both on this Mac and on the
 maintainer's Air M4. The host name is disposable; the feed is never the
 production one and never served from `rasc.app`. The production feed at
-`https://rasc.app/appcast.xml` is live and serves the published v0.1.9 entry
-(build 15), with the v0.1.8 and v0.1.7 entries retained for older upgrades.
+`https://rasc.app/appcast.xml` is live and serves the published v0.1.10 entry
+(build 16), with the v0.1.9, v0.1.8 and v0.1.7 entries retained for older
+upgrades.
 
 ## RC build pipeline (what `build-updater-rc.sh` does)
 
@@ -307,29 +308,32 @@ for each next candidate; completed run records belong in the release notes.
 
 ## Current status (2026-11-17)
 
-- **Published:** v0.1.9/build 15, built from source commit `8fae4fd`, DMG
-  `Rasc-0.1.9-updater.dmg`, SHA-256
-  `97c0527a20c8da0faab58885c38af41683cb90c3debba1cdd791b09d00a9912d`. The
-  GitHub Release carries the DMG, `.sha256` sidecar, `Rasc15-14.delta` and
-  `Rasc15-13.delta`; the production feed serves versioned GitHub Release
-  enclosures. Final appcast signatures and tamper rejection passed
-  `verify-appcast.py`.
-- **Previous:** v0.1.8/build 14, built from source commit `9da2e91`, DMG SHA-256
-  `a25035c27a9db86e55d7f1dfe9e4e071124b8d5d7c722ba4edca7d447255912c`, with
-  `Rasc14-13.delta`. v0.1.7/build 13 remains in the feed for older upgrades.
+- **Published:** v0.1.10/build 16, built from source commit `6873641`, DMG
+  `Rasc-0.1.10-updater.dmg`, SHA-256
+  `7519ab01ebe7aa50af8a5656f80f2ebca81ec0bc706f75335a22a45b1d22ce22`. The
+  GitHub Release carries the DMG, `.sha256` sidecar, `Rasc16-15.delta`,
+  `Rasc16-14.delta` and `Rasc16-13.delta`; the production feed serves versioned
+  GitHub Release enclosures. Final appcast signatures and tamper rejection
+  passed `verify-appcast.py`.
+- **Previous:** v0.1.9/build 15, built from source commit `8fae4fd`, DMG SHA-256
+  `97c0527a20c8da0faab58885c38af41683cb90c3debba1cdd791b09d00a9912d`, with
+  `Rasc15-14.delta` and `Rasc15-13.delta`. v0.1.8/build 14 and v0.1.7/build 13
+  remain in the feed for older upgrades.
 - **Historical:** Path A (staging source below build 12 → updater DMG, Sparkle
   offered the update, rejected a tampered DMG, installed in place, preserved the
   test note) and Path B (public v0.1.5 replaced manually in a Finder drag-and-drop)
   both passed on the M4 Air, macOS 26.5.1. Path B involves no Sparkle and no
   signature check.
-- **Native update evidence:** an installed v0.1.8 was upgraded in-app to v0.1.9
-  using a local feed; Sparkle offered the update, downloaded `Rasc15-14.delta`,
-  installed and relaunched, and preserved notes, theme and shortcuts. The final
-  published artifact feed was verified statically, not through a live update.
+- **Native update evidence:** an installed v0.1.9 with synthetic data was upgraded
+  in-app to v0.1.10 using `Rasc16-15.delta` and a local feed; Sparkle installed
+  and relaunched, preserving notes, theme and shortcuts. Native screenshots of
+  Home, onboarding, Finder icon and menu bar are in
+  `docs/validation/rasc-twin-fish/`.
 - **Open verification:** clean install from the published DMG and tamper rejection
   through the live UI remain unverified for this release.
 - **macOS 14–25 remain unverified**; only macOS 26.5.1 has been exercised.
-- For v0.1.9, `xcodebuild test` recorded 477 tests in 44 suites passing, and CI
-  passed the `macos` check on the release PR.
+- For v0.1.10, the local `xcodebuild test` runner was blocked by LaunchServices;
+  the documented fallback passed 434 domain tests plus the scale benchmark. CI
+  passed both `macos` checks on PR #83.
 - The keychain key is not backed up offline and none is scheduled; losing it
   would force all users to download a fresh DMG once.
