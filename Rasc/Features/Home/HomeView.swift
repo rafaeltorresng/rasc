@@ -3,6 +3,7 @@ import SwiftUI
 
 private enum HomeLayout {
     static let contentMaxWidth: CGFloat = 1_200
+    static let readingColumnMaxWidth: CGFloat = 760
     static let horizontalPadding: CGFloat = 32
     static let actionZoneTopPadding: CGFloat = 18
     static let actionZoneBottomPadding: CGFloat = 14
@@ -64,6 +65,8 @@ struct HomeView: View {
                                 }
 
                                 contentBody
+                                    .frame(maxWidth: HomeLayout.readingColumnMaxWidth, alignment: .leading)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.top, HomeLayout.contentTopPadding)
                                     .padding(.bottom, HomeLayout.contentBottomPadding)
                             }
