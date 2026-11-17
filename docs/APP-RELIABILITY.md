@@ -1,5 +1,8 @@
 # App reliability (M13A)
 
+> Historical reference: this document records a past design, experiment, or acceptance at the time. For current behavior and guidance, see [current product](CURRENT-PRODUCT.md), the [documentation index](README.md), and [native validation](NATIVE-UI-VALIDATION.md). Do not treat historical results as current verification.
+
+
 App-wide reliability audit for Rasc before RC. Scope: full product lifecycle, not Refine eval corpora alone.
 
 **Audit date:** 2026-09-22  

@@ -1,5 +1,8 @@
 # Thought completion — manual acceptance (~10 min)
 
+> Historical reference: this document records a past design, experiment, or acceptance at the time. For current behavior and guidance, see [current product](CURRENT-PRODUCT.md), the [documentation index](README.md), and [native validation](NATIVE-UI-VALIDATION.md). Do not treat historical results as current verification.
+
+
 **Build:** 0.1.0-beta.3 (4) or later dev build  
 **Prerequisite:** Clean launch or known test database
 

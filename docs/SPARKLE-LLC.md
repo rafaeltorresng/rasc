@@ -1,5 +1,8 @@
 # Sparkle 2 + Library Load Constraint: proof results
 
+> Historical reference: this document records a past design, experiment, or acceptance at the time. For current behavior and guidance, see [current product](CURRENT-PRODUCT.md), the [documentation index](README.md), and [native validation](NATIVE-UI-VALIDATION.md). Do not treat historical results as current verification.
+
+
 Status: **proof-only, not shippable.** The default Release target, the production
 feed, existing GitHub Releases, and the public download were not changed. All
 changes are uncommitted. macOS 26.5.1 (25F80), Apple Silicon.

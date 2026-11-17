@@ -1,5 +1,8 @@
 # RC manual test checklist
 
+> Historical reference: this document records a past design, experiment, or acceptance at the time. For current behavior and guidance, see [current product](CURRENT-PRODUCT.md), the [documentation index](README.md), and [native validation](NATIVE-UI-VALIDATION.md). Do not treat historical results as current verification.
+
+
 ~15–20 minutes. Run against the **frozen packaged RC** (`build/rc/Rasc-<version>.dmg`), not Xcode.
 
 Mark each item **PASS** or **FAIL**. Any **FAIL** on a bold item blocks acceptance.

@@ -1,6 +1,9 @@
 # Refine v2
 
-Canonical production Refine stack after M12B reliability work. Frozen at M12B closeout (M12B-008).
+> Historical reference: this document records a past design, experiment, or acceptance at the time. For current behavior and guidance, see [current product](CURRENT-PRODUCT.md), the [documentation index](README.md), and [native validation](NATIVE-UI-VALIDATION.md). Do not treat historical results as current verification.
+
+
+This records the production Refine stack at M12B closeout (M12B-008); consult current code and the active reliability track for subsequent changes.
 
 Implementation baseline identifier: **`refine-v2`** (`RefinementImplementationBaseline.identifier`).
 

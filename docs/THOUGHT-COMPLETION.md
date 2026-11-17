@@ -1,5 +1,8 @@
 # Thought completion (M16)
 
+> Historical reference: this document records a past design, experiment, or acceptance at the time. For current behavior and guidance, see [current product](CURRENT-PRODUCT.md), the [documentation index](README.md), and [native validation](NATIVE-UI-VALIDATION.md). Do not treat historical results as current verification.
+
+
 **Version:** 0.1.0-beta.3 (build 4)  
 **Status:** Shipped in development line only. Frozen beta.2 artifact unchanged.
 

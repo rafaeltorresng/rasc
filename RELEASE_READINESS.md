@@ -1,5 +1,8 @@
 # Rasc — Release Readiness
 
+> Historical readiness assessment for an earlier beta. Current release and distribution guidance: [docs/RELEASE.md](docs/RELEASE.md) and [docs/README.md](docs/README.md). Its historical blockers and acceptance are not current release status.
+
+
 Auditoria de 8 de outubro de 2026. Repositórios: `rasc` e `../rasc-web`.
 Base local: Rasc `d7cfd69`, Web `87450ed`, mais as alterações não commitadas desta
 auditoria. Ambiente: Apple silicon, macOS 26.5.1, Xcode 26.2/SDK 26.2, Swift 6;

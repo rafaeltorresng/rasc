@@ -1,5 +1,8 @@
 # M3B Foundation Models Refine
 
+> Historical reference: this document records a past design, experiment, or acceptance at the time. For current behavior and guidance, see [current product](CURRENT-PRODUCT.md), the [documentation index](README.md), and [native validation](NATIVE-UI-VALIDATION.md). Do not treat historical results as current verification.
+
+
 M3B implements Rasc's first interactive Refine flow with Apple's on-device system language model only. It is the sole shipping Refine provider in V1: there is no OpenRouter, BYOK, cloud fallback, backend, or external AI provider. Capture, editing, autosave, history, and lexical search continue to work when the model or framework is unavailable.
 
 ## Foundation Models APIs used
