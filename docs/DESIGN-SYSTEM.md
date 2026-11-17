@@ -155,7 +155,7 @@ Semantic `metadataText` — 57% black / 55% white; ≥4.5:1 on every surface for
 Copper — the complete pair: `#9C421F` on `#F5E5DA` (light), `#F0A780` on `#382822` (dark), both ≥4.5:1. Used only on the Keep chip, the palette `Keep` confirmation, and the chrome `Kept` status. Nowhere else.
 
 ### Other colors
-Graphite focus (`#666662` light / `#A5A5A0` dark) is used for the caret and custom focus tint. Selection is a neutral plate with a neutral 1 px border. Source on GitHub remains native blue.
+The Rasc Twin Fish brand mark uses graphite `#242423` on light surfaces and warm paper `#F7F5F0` on dark surfaces. It is not a state accent. Graphite focus (`#666662` light / `#A5A5A0` dark) is used for the caret and custom focus tint. Selection is a neutral plate with a neutral 1 px border. Source on GitHub remains native blue.
 
 ### Success
 Use primarily for temporary confirmation — copper, only for Keep and its `Kept` confirmation.

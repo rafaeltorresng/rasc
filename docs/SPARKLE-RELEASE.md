@@ -1,10 +1,10 @@
 # Production runbook: Sparkle updates via Library Load Constraint (ad-hoc signed)
 
-Status: **v0.1.8/build 14 is published (2026-11-16); v0.1.7/build 13 was the
-first updater release.** The production feed serves the v0.1.8 entry. The default
-Release build is unchanged and cannot update itself. This document is the
-canonical procedure for the updater-enabled build. Please read fully before
-publishing.
+Status: **v0.1.9/build 15 is published (2026-11-17); v0.1.7/build 13 was the
+first updater release.** v0.1.10/build 16 is the next candidate. The production
+feed serves the v0.1.9 entry until v0.1.10 is published. The default Release
+build is unchanged and cannot update itself. This document is the canonical
+procedure for the updater-enabled build. Please read fully before publishing.
 
 Audience: the maintainer preparing the next public release.
 
@@ -36,8 +36,8 @@ a publicly-trusted tunnel such as Cloudflare quick tunnel (`cloudflared tunnel
 --url …`) or any static HTTPS host. This was used both on this Mac and on the
 maintainer's Air M4. The host name is disposable; the feed is never the
 production one and never served from `rasc.app`. The production feed at
-`https://rasc.app/appcast.xml` is live and serves the published v0.1.8 entry
-(build 14), with the v0.1.7 entry retained for updates from build 13.
+`https://rasc.app/appcast.xml` is live and serves the published v0.1.9 entry
+(build 15), with the v0.1.8 and v0.1.7 entries retained for older upgrades.
 
 ## RC build pipeline (what `build-updater-rc.sh` does)
 
@@ -176,9 +176,9 @@ strict order:
 2. Replace the app manually (drag `Rasc.app` from the shipping DMG into
    `/Applications`, choosing Replace). Relaunch; confirm notes/preferences/short.
 
-**Path C — v0.1.7 → v0.1.8 in-app (critical check for v0.1.8):** the first updater
-release is public, so the normal upgrade path must be exercised too. Completion of
-this check on the published v0.1.8 artifact is not recorded in these notes.
+**Path C — public build → next build in-app:** the updater is public, so the
+normal upgrade path must be exercised for every release. Record the exact source
+and target builds in the release notes; do not infer completion from publication.
 
 1. On the same fresh user account, install the published v0.1.7/build 13 DMG
    from the GitHub Release (browser download → `/Applications` → Open Anyway).
@@ -274,7 +274,7 @@ cost and can remain as belt-and-braces.
   history must be re-verified.
 - Always keep `SUVerifyUpdateBeforeExtraction=true`.
 
-## Known limitations and honest status (as of 2026-11-16)
+## Known limitations and honest status (as of 2026-11-17)
 
 - The updater has been exercised on two Apple silicon machines, both running
   macOS 26.5.1 (`MACOSX_DEPLOYMENT_TARGET=14.0` remains supported). No other

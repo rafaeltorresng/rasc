@@ -1,100 +1,88 @@
-// Reproducible asset exports from the existing Rasc symbol, never a new shape.
+// Reproducible asset exports from the approved Rasc Twin Fish master.
+// The master is a faithful raster of candidate 02; this script only trims
+// transparent padding, recolors the silhouette, and places it at asset sizes.
+// It never redraws, simplifies, forces an R, or adds texture.
 import AppKit
 import ImageIO
 import UniformTypeIdentifiers
 
 let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-let masterURL = root.appendingPathComponent("Rasc/Resources/Brand/rasc-symbol-master.png")
+let masterURL = root.appendingPathComponent("Rasc/Resources/Brand/rasc-twin-fish-master.png")
 guard let source = CGImageSourceCreateWithURL(masterURL as CFURL, nil),
-      let master = CGImageSourceCreateImageAtIndex(source, 0, nil) else { fatalError("Missing canonical symbol") }
+      let master = CGImageSourceCreateImageAtIndex(source, 0, nil) else {
+    fatalError("Missing approved Rasc Twin Fish master")
+}
 let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
+
 func context(_ size: Int) -> CGContext {
     CGContext(data: nil, width: size, height: size, bitsPerComponent: 8, bytesPerRow: size * 4,
               space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
 }
+
+// Trim transparent padding only; the silhouette pixels are retained unchanged.
 let scan = context(master.width)
 scan.draw(master, in: CGRect(x: 0, y: 0, width: master.width, height: master.height))
 let bytes = scan.data!.assumingMemoryBound(to: UInt8.self)
-// The legacy raster contains faint, detached export debris. Keep the two actual
-// connected symbol forms, retaining their original anti-aliased edge pixels.
-let width = master.width, height = master.height
-var visited = [Bool](repeating: false, count: width * height)
-var components: [[Int]] = []
-for pixel in 0..<(width * height) where !visited[pixel] && bytes[pixel * 4 + 3] >= 32 {
-    var component = [pixel], cursor = 0
-    visited[pixel] = true
-    while cursor < component.count {
-        let current = component[cursor]; cursor += 1
-        let x = current % width, y = current / width
-        for dy in -1...1 {
-            for dx in -1...1 {
-                let nx = x + dx, ny = y + dy
-                guard nx >= 0, nx < width, ny >= 0, ny < height else { continue }
-                let next = ny * width + nx
-                if !visited[next] && bytes[next * 4 + 3] >= 32 {
-                    visited[next] = true; component.append(next)
-                }
-            }
-        }
-    }
-    components.append(component)
-}
-let forms = components.sorted { $0.count > $1.count }.prefix(2)
-precondition(forms.count == 2 && forms.allSatisfy { $0.count > 10_000 }, "Canonical symbol must have two substantial forms")
-var retained = [Bool](repeating: false, count: width * height)
-for form in forms {
-    for pixel in form {
-        let x = pixel % width, y = pixel / width
-        for dy in -1...1 {
-            for dx in -1...1 {
-                let nx = x + dx, ny = y + dy
-                if nx >= 0, nx < width, ny >= 0, ny < height { retained[ny * width + nx] = true }
-            }
+var minX = master.width, minY = master.height, maxX = 0, maxY = 0
+for y in 0..<master.height {
+    for x in 0..<master.width {
+        let i = (y * master.width + x) * 4
+        if bytes[i + 3] > 8 {
+            minX = min(minX, x); maxX = max(maxX, x)
+            minY = min(minY, y); maxY = max(maxY, y)
         }
     }
 }
-var minX = width, minY = height, maxX = 0, maxY = 0
-for pixel in 0..<(width * height) {
-    if !retained[pixel] {
-        for channel in 0..<4 { bytes[pixel * 4 + channel] = 0 }
-    } else if bytes[pixel * 4 + 3] > 0 {
-        let x = pixel % width, y = pixel / width
-        minX = min(minX, x); maxX = max(maxX, x)
-        minY = min(minY, y); maxY = max(maxY, y)
-    }
-}
-let bounds = CGRect(x: minX, y: height - maxY - 1, width: maxX - minX + 1, height: maxY - minY + 1)
-let symbol = scan.makeImage()!.cropping(to: bounds)!
-let graphite = CGColor(srgbRed: 0.16, green: 0.15, blue: 0.18, alpha: 1)
-let white = CGColor(srgbRed: 1, green: 1, blue: 1, alpha: 1)
+precondition(maxX > minX && maxY > minY, "Master must contain a silhouette")
+let bounds = CGRect(x: minX, y: master.height - maxY - 1,
+                    width: maxX - minX + 1, height: maxY - minY + 1)
+let symbol = master.cropping(to: bounds)!
+
+let graphite = CGColor(srgbRed: 0.141, green: 0.141, blue: 0.137, alpha: 1) // #242423
+let warmPaper = CGColor(srgbRed: 0.969, green: 0.961, blue: 0.941, alpha: 1) // #F7F5F0
+let templateWhite = CGColor(srgbRed: 1, green: 1, blue: 1, alpha: 1)
+
+/// Aspect-fits the unchanged silhouette inside `rect` and recolors its alpha.
 func drawSymbol(in output: CGContext, rect: CGRect, color: CGColor) {
+    let scale = min(rect.width / CGFloat(symbol.width), rect.height / CGFloat(symbol.height))
+    let w = CGFloat(symbol.width) * scale
+    let h = CGFloat(symbol.height) * scale
+    let dest = CGRect(x: rect.midX - w / 2, y: rect.midY - h / 2, width: w, height: h)
     output.saveGState()
     output.beginTransparencyLayer(auxiliaryInfo: nil)
     output.interpolationQuality = .high
-    output.draw(symbol, in: rect)
+    output.draw(symbol, in: dest)
     output.setBlendMode(.sourceIn)
     output.setFillColor(color)
-    output.fill(rect)
+    output.fill(dest)
     output.endTransparencyLayer()
     output.restoreGState()
 }
+
 func export(_ image: CGImage, to path: String) {
     let url = root.appendingPathComponent(path)
-    guard let output = CGImageDestinationCreateWithURL(url as CFURL, UTType.png.identifier as CFString, 1, nil) else { fatalError("Cannot export \(path)") }
+    guard let output = CGImageDestinationCreateWithURL(url as CFURL, UTType.png.identifier as CFString, 1, nil) else {
+        fatalError("Cannot export \(path)")
+    }
     CGImageDestinationAddImage(output, image, nil)
     precondition(CGImageDestinationFinalize(output))
 }
+
 let assets = "Rasc/Resources/Assets.xcassets"
-for (name, color) in [("rasc-dark", graphite), ("rasc-light", white)] {
+
+// Large identity: graphite on light surfaces, warm paper on dark surfaces.
+for (name, color) in [("rasc-dark", graphite), ("rasc-light", warmPaper)] {
     let output = context(512)
     drawSymbol(in: output, rect: CGRect(x: 16, y: 16, width: 480, height: 480), color: color)
     export(output.makeImage()!, to: "\(assets)/RascLogo.imageset/\(name).png")
-    // Home renders the identity at 24 pt. Export its exact backing sizes directly
-    // from the retained source alpha, avoiding a second runtime reduction of 512 px.
+
+    // Home renders the identity at 24 pt; export its exact backing sizes directly.
     for scale in [1, 2] {
         let edge = 24 * scale
         let compact = context(edge)
-        let inset = CGFloat(edge) / 32
+        // 1.5 px of physical headroom at both scales keeps the thin upper tail
+        // clear of the 24 px asset bounds.
+        let inset: CGFloat = scale == 1 ? 1.5 : 3
         drawSymbol(in: compact,
                    rect: CGRect(x: inset, y: inset,
                                 width: CGFloat(edge) - inset * 2,
@@ -104,23 +92,56 @@ for (name, color) in [("rasc-dark", graphite), ("rasc-light", white)] {
         export(compact.makeImage()!, to: "\(assets)/RascLogoCompact.imageset/\(name)\(suffix).png")
     }
 }
+
+// Menu bar stays a monochrome template, now using the approved mark.
+for scale in [1, 2] {
+    let edge = 32 * scale
+    let output = context(edge)
+    let inset = CGFloat(edge) / 16
+    drawSymbol(in: output,
+               rect: CGRect(x: inset, y: inset,
+                            width: CGFloat(edge) - inset * 2,
+                            height: CGFloat(edge) - inset * 2),
+               color: templateWhite)
+    let suffix = scale == 2 ? "@2x" : ""
+    export(output.makeImage()!, to: "\(assets)/MenuBarIcon.imageset/menubar\(suffix).png")
+}
+
+// App icon keeps the existing native plate. The fish gets its own composed
+// scale/optical centering; standalone Home and the Dock are different uses.
+func renderAppIcon(_ size: Int) -> CGImage {
+    let output = context(size)
+    let edge = CGFloat(size)
+    let plate = CGRect(x: edge * 0.06, y: edge * 0.06, width: edge * 0.88, height: edge * 0.88)
+    output.setFillColor(CGColor(srgbRed: 0.976, green: 0.965, blue: 0.980, alpha: 1))
+    output.addPath(CGPath(roundedRect: plate, cornerWidth: edge * 0.19, cornerHeight: edge * 0.19, transform: nil))
+    output.fillPath()
+    output.setStrokeColor(CGColor(srgbRed: 0.83, green: 0.80, blue: 0.85, alpha: 0.7))
+    output.setLineWidth(max(0.5, edge / 1024))
+    output.addPath(CGPath(roundedRect: plate, cornerWidth: edge * 0.19, cornerHeight: edge * 0.19, transform: nil))
+    output.strokePath()
+    // Slightly larger and optically high compared with the old standalone mark.
+    drawSymbol(in: output,
+               rect: CGRect(x: edge * 0.20, y: edge * 0.18,
+                            width: edge * 0.60, height: edge * 0.60),
+               color: graphite)
+    return output.makeImage()!
+}
+
 for points in [16, 32, 128, 256, 512] {
     for scale in [1, 2] {
         let size = points * scale
-        let output = context(size)
-        let edge = CGFloat(size)
-        // A quiet native icon plate keeps the unchanged symbol legible in Finder.
-        let plate = CGRect(x: edge * 0.06, y: edge * 0.06, width: edge * 0.88, height: edge * 0.88)
-        output.setFillColor(CGColor(srgbRed: 0.976, green: 0.965, blue: 0.980, alpha: 1))
-        output.addPath(CGPath(roundedRect: plate, cornerWidth: edge * 0.19, cornerHeight: edge * 0.19, transform: nil))
-        output.fillPath()
-        output.setStrokeColor(CGColor(srgbRed: 0.83, green: 0.80, blue: 0.85, alpha: 0.7))
-        output.setLineWidth(max(0.5, edge / 1024))
-        output.addPath(CGPath(roundedRect: plate, cornerWidth: edge * 0.19, cornerHeight: edge * 0.19, transform: nil))
-        output.strokePath()
-        drawSymbol(in: output, rect: CGRect(x: edge * 0.23, y: edge * 0.23, width: edge * 0.54, height: edge * 0.54), color: graphite)
+        var icon = renderAppIcon(size)
+        // The 16 px 1x tile needs a 2x render downsampled once; drawing the
+        // silhouette directly at 16 px leaves it too faint to read.
+        if points == 16 && scale == 1 {
+            let downsampled = context(size)
+            downsampled.interpolationQuality = .high
+            downsampled.draw(renderAppIcon(size * 2), in: CGRect(x: 0, y: 0, width: CGFloat(size), height: CGFloat(size)))
+            icon = downsampled.makeImage()!
+        }
         let suffix = scale == 2 ? "@2x" : ""
-        export(output.makeImage()!, to: "\(assets)/AppIcon.appiconset/icon_\(points)x\(points)\(suffix).png")
+        export(icon, to: "\(assets)/AppIcon.appiconset/icon_\(points)x\(points)\(suffix).png")
     }
 }
-print("Exported logo appearances, compact 1x/2x logos and 10 AppIcon sizes from the canonical symbol alpha.")
+print("Exported Twin Fish logo appearances, 24 pt compact logos, menu-bar template and 10 AppIcon sizes from the approved master.")

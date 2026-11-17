@@ -10,7 +10,7 @@ No account, folders, prompts, or organization required.
 
 ## Start here
 
-- **Install the app:** [download the latest release](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.8) and follow the [installation guide](docs/INSTALL-UNSIGNED.md), including the checksum and first-launch steps.
+- **Install the app:** [download the latest release](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.10) and follow the [installation guide](docs/INSTALL-UNSIGNED.md), including the checksum and first-launch steps.
 - **Build from source:** follow [Build and test](#build-and-test). This requires Xcode 26.2 or later, Swift 6 and the macOS 26 SDK.
 - **Contribute:** start with [Contributing](CONTRIBUTING.md).
 
@@ -53,7 +53,7 @@ This historical screenshot may differ from the current interface and is not evid
   enabled, and its on-device model ready. Rasc remains useful when Refine is unavailable.
 - **Development:** Xcode 26.2 or later, Swift 6, and the macOS 26 SDK.
 
-The latest published release is [Rasc 0.1.8, build 14](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.8): an ad-hoc signed, unnotarized Apple silicon DMG for macOS 14 or later. The repository may contain unreleased changes; version fields alone do not prove a published artifact. See [installation](docs/INSTALL-UNSIGNED.md), the [v0.1.8 notes](docs/RELEASE-NOTES-v0.1.8.md) and the [release runbook](docs/RELEASE.md). Updates are checked manually.
+The latest published release is [Rasc 0.1.10, build 16](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.10): an ad-hoc signed, unnotarized Apple silicon DMG for macOS 14 or later. The repository may contain unreleased changes; version fields alone do not prove a published artifact. See [installation](docs/INSTALL-UNSIGNED.md), the [v0.1.10 notes](docs/RELEASE-NOTES-v0.1.10.md) and the [release runbook](docs/RELEASE.md). Updates are checked manually.
 
 ## Build and test
 

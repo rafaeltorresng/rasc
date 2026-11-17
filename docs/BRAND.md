@@ -1,17 +1,26 @@
 # Rasc brand and state contract
 
-The **symbol is Rasc's identity**. The Thinking Orb has been removed from the interface; the symbol and app icon remain separate from any future character exploration.
+The **symbol is Rasc's identity**. The approved mark is **Rasc Twin Fish**,
+candidate 02 from the 2026-11-17 comparison. The Thinking Orb has been removed
+from the interface; the symbol and app icon remain separate from any future
+character exploration.
 
 ## Symbol and exports
 
-`Rasc/Resources/Brand/rasc-symbol-master.png` preserves the existing dark raster
-source unchanged. It is a raster master, not a claimed vector asset.
+`Rasc/Resources/Brand/rasc-twin-fish-master.png` is the production master. It is
+a faithful raster of the approved silhouette, with a transparent background, and
+retains the two fish, their uneven scale, the open curve and the gap between
+them. It is not a claimed vector asset; no redraw was substituted for fidelity.
+The previous `rasc-symbol-master.png` is retained for historical reference only
+and is no longer used by the export pipeline.
 
-`Scripts/assets/export-brand.swift` isolates its two connected symbol forms,
-removes detached export residue while retaining edge pixels, normalizes optical
-bounds and exports both logo appearances and all 10 macOS AppIcon sizes. The app
-icon places the same symbol on a quiet light native plate for Finder legibility.
-No new symbol geometry is drawn.
+`Scripts/assets/export-brand.swift` trims transparent padding, recolors the same
+silhouette to graphite (`#242423`) on light surfaces and warm paper (`#F7F5F0`)
+on dark surfaces, then exports both logo appearances, the 24 pt compact
+representations, the menu-bar template and all 10 macOS AppIcon sizes. The app
+icon keeps the existing light native plate and uses a composed scale and optical
+centering appropriate for the Dock. No new geometry, hidden R, texture or copper
+is introduced; copper remains exclusive to Keep and Kept.
 
 From the repository root:
 
@@ -20,8 +29,11 @@ swift Scripts/assets/export-brand.swift
 ```
 
 Review the 16/32 px exports and both appearances before accepting an asset change.
-The menu-bar icon stays a monochrome template. Welcome and Home identity use the
-symbol; the editor has no persistent character or state indicator.
+The only size-specific optical corrections are a 2x render downsampled for the
+16 px 1x Dock tile and 1.5 px of physical headroom in the 24 px 1x Home export;
+neither changes the silhouette. The menu-bar icon is a monochrome template using
+the same mark. Welcome and Home identity use the symbol; the editor has no
+persistent character or state indicator.
 
 ## Orb (historical)
 
@@ -53,18 +65,14 @@ not merely the presence of a modifier.
 
 ## Home identity at native small sizes
 
-Home uses `RascLogoCompact` at 24 pt instead of reducing the 512px logo to
-20 pt. The compact imageset supplies 24px (1x) and 48px (Retina 2x) representations
-for both appearances. They are exported directly from the same retained source
-alpha by `Scripts/assets/export-brand.swift`; no new silhouette, colors or
-Thinking Orb behavior is introduced. The existing large logo and AppIcon exports
-are unchanged. Onboarding continues using the large representation.
+Home uses `RascLogoCompact` at 24 pt instead of reducing the large logo to a
+smaller rendered size. The compact imageset supplies 24px (1x) and 48px (Retina
+2x) representations for both appearances, exported directly from the approved
+master alpha by `Scripts/assets/export-brand.swift`. Onboarding continues using
+the large representation. The Dock icon uses the same silhouette at a composed
+scale and optical position; it is intentionally not the standalone Home crop.
 
-Debug and Release builds succeeded. The compiled asset catalog contains all four expected
-appearance/scale combinations. Native SwiftUI ImageRenderer checks used the real
-`RascLogo` component and compiled catalog in light/dark at 1x/2x. PNG comparisons
-and asset checks are in `docs/validation/home-logo/`. The 1x perimeter has faint
-anti-aliasing coverage (maximum 59/255); no opaque silhouette reaches the edge.
-Retina perimeters are fully transparent. The Home, theme selection and search
-focus were also checked in the isolated native Release app. VoiceOver and the
-full native window suite were not revalidated locally. The 0.1.1/build 7 installation and retained artifact were recorded at the time in `docs/validation/home-logo/README.md`; this is historical evidence, not a claim about the current installation.
+Validation of the Twin Fish rollout, including native Home and onboarding
+captures in light and dark, the Dock/Finder icon and small placements, is in
+`docs/validation/rasc-twin-fish/`. The older `docs/validation/home-logo/`
+evidence is historical and describes the previous symbol, not the current mark.
