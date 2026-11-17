@@ -125,11 +125,14 @@ struct ScratchpadView: View {
     }
 
     private var scratchpadChrome: some View {
-        HStack(alignment: .center, spacing: RascSurfaceLayout.orbToAccessoryGap) {
-            RascOrb(state: resolvedOrbState, size: .inline, decorative: true)
-                .frame(width: RascSurfaceLayout.orbSize, height: RascSurfaceLayout.orbSize)
-
-            if let statusText {
+        HStack(alignment: .center, spacing: 8) {
+            if session.surface == .refinementPreview {
+                Text(refinementPreviewHeading)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .accessibilityAddTraits(.isHeader)
+                    .lineLimit(1)
+            } else if let statusText {
                 Text(statusText)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(statusColor(for: statusText))
@@ -138,12 +141,19 @@ struct ScratchpadView: View {
 
             Spacer(minLength: 8)
 
-            scratchpadTrailingActions
-                .layoutPriority(1)
+            if session.surface == .refinementPreview {
+                refinementComparisonPicker
+                    .layoutPriority(1)
+            } else if showsHomeAffordance {
+                scratchpadTrailingActions
+                    .layoutPriority(1)
+            }
         }
+        // Keep the writing origin fixed as the controls change between editor and preview.
+        .frame(minHeight: 26)
         .padding(.horizontal, RascSurfaceLayout.horizontalInset)
         .padding(.top, RascSurfaceLayout.topInset)
-        .padding(.bottom, RascSurfaceLayout.scratchpadChromeBottomPadding)
+        .padding(.bottom, 4)
         .accessibilityElement(children: .contain)
     }
 
@@ -179,9 +189,6 @@ struct ScratchpadView: View {
             .accessibilityLabel(session.isActiveNoteKept ? "Unkeep" : "Keep")
 
             scratchpadHomeButton
-                .opacity(showsHomeAffordance ? 1 : 0)
-                .allowsHitTesting(showsHomeAffordance)
-                .accessibilityHidden(!showsHomeAffordance)
         }
         .animation(RascMotion.micro(reduceMotion: reduceMotion), value: showsRefineAction)
         .animation(RascMotion.micro(reduceMotion: reduceMotion), value: showsThoughtCompletionAction)
@@ -236,10 +243,6 @@ struct ScratchpadView: View {
         }
     }
 
-    private var resolvedOrbState: RascOrbState {
-        session.surface == .refining ? .refining : .composing
-    }
-
     @ViewBuilder
     private var editorSurface: some View {
         ZStack(alignment: .topLeading) {
@@ -282,25 +285,21 @@ struct ScratchpadView: View {
             : "Refine preview"
     }
 
+    private var refinementComparisonPicker: some View {
+        Picker("Compare refinement", selection: $showsOriginal) {
+            Text("Suggested").tag(false)
+            Text("Original").tag(true)
+        }
+        .pickerStyle(.segmented)
+        .labelsHidden()
+        .frame(width: 190)
+        .controlSize(.small)
+        .tint(RascSurfacePalette.secondaryText(for: colorScheme))
+        .onExitCommand(perform: handleEscape)
+    }
+
     private var refinementPreviewSurface: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 12) {
-                Text(refinementPreviewHeading)
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
-                    .accessibilityLabel(refinementPreviewHeading)
-                Spacer()
-                Picker("Compare refinement", selection: $showsOriginal) {
-                    Text("Suggested").tag(false)
-                    Text("Original").tag(true)
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .frame(width: 190)
-                .controlSize(.small)
-            }
-            .padding(.horizontal, RascSurfaceLayout.horizontalInset)
-            .padding(.vertical, 8)
             ScrollView {
                 Text(showsOriginal ? (session.refinementPreview?.request.snapshot.text ?? "") : (session.refinementPreview?.proposedNoteText ?? ""))
                     .font(.system(
@@ -311,7 +310,7 @@ struct ScratchpadView: View {
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .topLeading)
                     .padding(.horizontal, RascSurfaceLayout.noteTextLeadingInset)
-                    .padding(.top, RascSurfaceMetrics.editorTopPadding)
+                    .padding(.top, RascSurfaceMetrics.editorTopPadding + RascSurfaceLayout.scratchpadEditorCaretTopInset)
                     .padding(.bottom, 20)
             }
             .accessibilityLabel("Refined preview")
@@ -1127,27 +1126,13 @@ private struct ScratchpadEmptyState: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        VStack(alignment: .leading, spacing: RascSurfaceMetrics.scratchpadEmptySupportingGap) {
-            Text("Write something unfinished…")
-                .font(.system(size: RascSurfaceMetrics.scratchpadPlaceholderFontSize, weight: .regular))
-                .foregroundStyle(scratchpadPlaceholderText)
-
-            Text("Thoughts, ideas, or images. Type “- ” to start a list.")
-                .font(.system(size: 13.5, weight: .regular))
-                .foregroundStyle(scratchpadSupportingText)
-        }
-        .padding(.leading, RascSurfaceLayout.textContainerHorizontalInset)
-        .padding(.top, RascSurfaceLayout.scratchpadEditorCaretTopInset)
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
-    }
-
-    private var scratchpadPlaceholderText: Color {
-        RascSurfacePalette.secondaryText(for: colorScheme)
-    }
-
-    private var scratchpadSupportingText: Color {
-        RascSurfacePalette.metadataText(for: colorScheme)
+        Text("Write something unfinished…")
+            .font(.system(size: RascSurfaceMetrics.scratchpadPlaceholderFontSize, weight: .regular))
+            .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+            .padding(.leading, RascSurfaceLayout.textContainerHorizontalInset)
+            .padding(.top, RascSurfaceLayout.scratchpadEditorCaretTopInset)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
     }
 }
 
