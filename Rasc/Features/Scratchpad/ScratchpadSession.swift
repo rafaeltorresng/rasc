@@ -988,7 +988,8 @@ final class ScratchpadSession {
             let exactLiteralResult = RefineProtectedLiteralValidator.finalize(providerResult, for: request)
             let moneyResult = RefineMoneyLiteralValidator.finalize(exactLiteralResult, for: request)
             let percentageResult = RefinePercentageLiteralValidator.finalize(moneyResult, for: request)
-            let result = RefineTimeLiteralValidator.finalize(percentageResult, for: request)
+            let timeResult = RefineTimeLiteralValidator.finalize(percentageResult, for: request)
+            let result = RefineUncertaintyLossGuard.finalize(timeResult, for: request)
 
             switch result.decision {
             case .noChange:

@@ -31,6 +31,9 @@
 		010000000000000000000017 /* FoundationModelsProviderContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000016 /* FoundationModelsProviderContractTests.swift */; };
 		010000000000000000000018 /* RefinementPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000017 /* RefinementPrompt.swift */; };
 		010000000000000000000019 /* FoundationModelsRefinementProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000018 /* FoundationModelsRefinementProvider.swift */; };
+		010000000000000000000143 /* RefineUncertaintyLossGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000243 /* RefineUncertaintyLossGuard.swift */; };
+		010000000000000000000144 /* RefineUncertaintyLossGuardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000244 /* RefineUncertaintyLossGuardTests.swift */; };
+		010000000000000000000145 /* RefineUncertaintyLossGuardLiveSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000245 /* RefineUncertaintyLossGuardLiveSmokeTests.swift */; };
 		01000000000000000000001A /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000019 /* MenuBarController.swift */; };
 		01000000000000000000001B /* LoginItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001A /* LoginItemController.swift */; };
 		01000000000000000000001C /* WindowFrameStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001B /* WindowFrameStore.swift */; };
@@ -166,6 +169,9 @@
 		020000000000000000000016 /* FoundationModelsProviderContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationModelsProviderContractTests.swift; sourceTree = "<group>"; };
 		020000000000000000000017 /* RefinementPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefinementPrompt.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000018 /* FoundationModelsRefinementProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/FoundationModelsRefinementProvider.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000243 /* RefineUncertaintyLossGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineUncertaintyLossGuard.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000244 /* RefineUncertaintyLossGuardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefineUncertaintyLossGuardTests.swift; sourceTree = "<group>"; };
+		020000000000000000000245 /* RefineUncertaintyLossGuardLiveSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefineUncertaintyLossGuardLiveSmokeTests.swift; sourceTree = "<group>"; };
 		020000000000000000000019 /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/MenuBarController.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000001A /* LoginItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/LoginItemController.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000001B /* WindowFrameStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/WindowFrameStore.swift; sourceTree = SOURCE_ROOT; };
@@ -349,6 +355,7 @@
 				020000000000000000000074 /* RefinementImplementationBaseline.swift */,
 				020000000000000000000076 /* RefineSupportedLocales.swift */,
 				020000000000000000000018 /* FoundationModelsRefinementProvider.swift */,
+				020000000000000000000243 /* RefineUncertaintyLossGuard.swift */,
 				020000000000000000000069 /* RefineProtectedLiteralValidator.swift */,
 				02000000000000000000002B /* OnboardingStep.swift */,
 				02000000000000000000002C /* OnboardingStore.swift */,
@@ -408,6 +415,8 @@
 				020000000000000000000012 /* RefinementContractTests.swift */,
 				020000000000000000000013 /* RefinementEvals.v1.json */,
 				020000000000000000000015 /* RefinementSessionTests.swift */,
+				020000000000000000000244 /* RefineUncertaintyLossGuardTests.swift */,
+				020000000000000000000245 /* RefineUncertaintyLossGuardLiveSmokeTests.swift */,
 				020000000000000000000016 /* FoundationModelsProviderContractTests.swift */,
 				020000000000000000000020 /* OverlayStateTests.swift */,
 				020000000000000000000021 /* LoginItemControllerTests.swift */,
@@ -590,6 +599,7 @@
 				010000000000000000000015 /* RefinementRevision.swift in Sources */,
 				010000000000000000000018 /* RefinementPrompt.swift in Sources */,
 				010000000000000000000019 /* FoundationModelsRefinementProvider.swift in Sources */,
+				010000000000000000000143 /* RefineUncertaintyLossGuard.swift in Sources */,
 				010000000000000000000069 /* RefineProtectedLiteralValidator.swift in Sources */,
 				01000000000000000000002B /* OnboardingStep.swift in Sources */,
 				01000000000000000000002C /* OnboardingStore.swift in Sources */,
@@ -655,6 +665,8 @@
 				01000000000000000000000E /* ScratchpadSessionTests.swift in Sources */,
 				010000000000000000000013 /* RefinementContractTests.swift in Sources */,
 				010000000000000000000016 /* RefinementSessionTests.swift in Sources */,
+				010000000000000000000144 /* RefineUncertaintyLossGuardTests.swift in Sources */,
+				010000000000000000000145 /* RefineUncertaintyLossGuardLiveSmokeTests.swift in Sources */,
 				010000000000000000000017 /* FoundationModelsProviderContractTests.swift in Sources */,
 				010000000000000000000021 /* OverlayStateTests.swift in Sources */,
 				010000000000000000000022 /* LoginItemControllerTests.swift in Sources */,
