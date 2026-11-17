@@ -352,7 +352,7 @@ struct OnboardingView: View {
 
                 completionCommandRow(
                     title: "Search thoughts",
-                    detail: "Find any thought from anywhere",
+                    detail: "Find a thought in Rasc",
                     index: 1
                 ) {
                     ShortcutKeycapView(
