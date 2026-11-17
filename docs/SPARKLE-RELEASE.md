@@ -1,7 +1,7 @@
 # Production runbook: Sparkle updates via Library Load Constraint (ad-hoc signed)
 
 Status: **v0.1.11/build 17 is published (2026-11-17); v0.1.7/build 13 was the
-first updater release.** The production feed serves the v0.1.10 entry. The
+first updater release.** The production feed serves the v0.1.11 entry. The
 default Release build is unchanged and cannot update itself. This document is
 the canonical procedure for the updater-enabled build. Please read fully before
 publishing.
@@ -308,14 +308,14 @@ for each next candidate; completed run records belong in the release notes.
 
 ## Current status (2026-11-17)
 
-- **Published:** v0.1.10/build 16, built from source commit `6873641`, DMG
-  `Rasc-0.1.10-updater.dmg`, SHA-256
-  `7519ab01ebe7aa50af8a5656f80f2ebca81ec0bc706f75335a22a45b1d22ce22`. The
-  GitHub Release carries the DMG, `.sha256` sidecar, `Rasc16-15.delta`,
-  `Rasc16-14.delta` and `Rasc16-13.delta`; the production feed serves versioned
-  GitHub Release enclosures. Final appcast signatures and tamper rejection
-  passed `verify-appcast.py`.
-- **Previous:** v0.1.9/build 15, built from source commit `8fae4fd`, DMG SHA-256
+- **Published:** v0.1.11/build 17, built from source commit `0e7aa69`, DMG
+  `Rasc-0.1.11-updater.dmg`, SHA-256
+  `baf11bd0cc4e2774987910d48eba8bc63e986a27acd0e1eac2bddf0db1f54067`. The
+  GitHub Release carries the DMG, `.sha256` sidecar and the four `Rasc17-*`
+  deltas; the production feed serves versioned GitHub Release enclosures. Final
+  appcast signatures and tamper rejection passed `verify-appcast.py`.
+- **Previous:** v0.1.10/build 16, built from source commit `6873641`, DMG SHA-256
+  `7519ab01ebe7aa50af8a5656f80f2ebca81ec0bc706f75335a22a45b1d22ce22`. v0.1.9/build 15, built from source commit `8fae4fd`, DMG SHA-256
   `97c0527a20c8da0faab58885c38af41683cb90c3debba1cdd791b09d00a9912d`, with
   `Rasc15-14.delta` and `Rasc15-13.delta`. v0.1.8/build 14 and v0.1.7/build 13
   remain in the feed for older upgrades.
@@ -332,8 +332,8 @@ for each next candidate; completed run records belong in the release notes.
 - **Open verification:** clean install from the published DMG and tamper rejection
   through the live UI remain unverified for this release.
 - **macOS 14–25 remain unverified**; only macOS 26.5.1 has been exercised.
-- For v0.1.10, the local `xcodebuild test` runner was blocked by LaunchServices;
+- For v0.1.11, the local `xcodebuild test` runner was blocked by LaunchServices;
   the documented fallback passed 434 domain tests plus the scale benchmark. CI
-  passed both `macos` checks on PR #83.
+  passed both `macos` checks on PR #84.
 - The keychain key is not backed up offline and none is scheduled; losing it
   would force all users to download a fresh DMG once.

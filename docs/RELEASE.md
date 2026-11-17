@@ -51,7 +51,7 @@ GitHub Release contains:
 | Checksum sidecar | `Rasc-0.1.11-updater.dmg.sha256` |
 | Deltas | `Rasc17-16.delta`, `Rasc17-15.delta`, `Rasc17-14.delta`, `Rasc17-13.delta` |
 
-The release notes record the release PR commit; tag `v0.1.11` adds the
+The release notes record source commit `0e7aa69`; tag `v0.1.11` adds the
 provenance commit. The production appcast at `https://rasc.app/appcast.xml`
 serves matching versioned GitHub Release enclosures. Preserve these exact bytes
 and see [RELEASE-NOTES-v0.1.11.md](RELEASE-NOTES-v0.1.11.md). Earlier published artifacts remain unchanged.

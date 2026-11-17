@@ -4,6 +4,7 @@ Version: 0.1.11 · build 17 · Apple silicon · macOS 14+
 
 Status: **published 2026-11-17** as an ad-hoc signed, unnotarized
 [GitHub Release](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.11).
+Source commit `0e7aa69`; merged as `6aa837c`. Tag `v0.1.11` adds provenance.
 
 ## What's new
 
