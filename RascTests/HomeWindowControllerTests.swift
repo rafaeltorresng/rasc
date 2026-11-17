@@ -56,6 +56,25 @@ struct HomeWindowControllerTests {
     }
 
     @Test
+    func reopeningHomeFocusesTheSearchField() async throws {
+        let defaults = UserDefaults(suiteName: "RascTests.HomeFocus.\(UUID().uuidString)")!
+        let panel = try makePanelController(windowFrameStore: .scratchpad(userDefaults: defaults))
+        let home = HomeWindowController(windowFrameStore: .home(userDefaults: defaults))
+        defer { home.close() }
+
+        home.show(repository: panel.repository, onOpenNote: { _ in }, onNewScratch: {})
+        try await Task.sleep(for: .milliseconds(100))
+        let window = try #require(NSApp.keyWindow)
+        window.makeFirstResponder(nil)
+
+        home.show(repository: panel.repository, onOpenNote: { _ in }, onNewScratch: {})
+        try await Task.sleep(for: .milliseconds(100))
+        let editor = window.firstResponder as? NSTextView
+        let field = editor?.delegate as? NSTextField
+        #expect(field?.placeholderString == "Search thoughts…")
+    }
+
+    @Test
     func toggleHomeOpensAndClosesHome() async throws {
         let bootstrap = AppBootstrap()
         bootstrap.start()
