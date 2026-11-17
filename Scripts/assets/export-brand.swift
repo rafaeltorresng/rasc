@@ -97,7 +97,9 @@ for (name, color) in [("rasc-dark", graphite), ("rasc-light", warmPaper)] {
 for scale in [1, 2] {
     let edge = 32 * scale
     let output = context(edge)
-    let inset = CGFloat(edge) / 16
+    // Match the visual weight of standard macOS status items: the mark occupies
+    // roughly 24 pt inside the 32 pt template instead of nearly filling it.
+    let inset = CGFloat(edge) / 5
     drawSymbol(in: output,
                rect: CGRect(x: inset, y: inset,
                             width: CGFloat(edge) - inset * 2,

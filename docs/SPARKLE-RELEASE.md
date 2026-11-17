@@ -1,6 +1,6 @@
 # Production runbook: Sparkle updates via Library Load Constraint (ad-hoc signed)
 
-Status: **v0.1.10/build 16 is published (2026-11-17); v0.1.7/build 13 was the
+Status: **v0.1.11/build 17 is published (2026-11-17); v0.1.7/build 13 was the
 first updater release.** The production feed serves the v0.1.10 entry. The
 default Release build is unchanged and cannot update itself. This document is
 the canonical procedure for the updater-enabled build. Please read fully before
@@ -36,8 +36,8 @@ a publicly-trusted tunnel such as Cloudflare quick tunnel (`cloudflared tunnel
 --url …`) or any static HTTPS host. This was used both on this Mac and on the
 maintainer's Air M4. The host name is disposable; the feed is never the
 production one and never served from `rasc.app`. The production feed at
-`https://rasc.app/appcast.xml` is live and serves the published v0.1.10 entry
-(build 16), with the v0.1.9, v0.1.8 and v0.1.7 entries retained for older
+`https://rasc.app/appcast.xml` is live and serves the published v0.1.11 entry
+(build 17), with earlier entries retained for older
 upgrades.
 
 ## RC build pipeline (what `build-updater-rc.sh` does)

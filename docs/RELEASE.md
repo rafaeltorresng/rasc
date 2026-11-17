@@ -1,8 +1,8 @@
 # Rasc Release Workflow
 
-> Latest published release: [0.1.10, build 16](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.10), ad-hoc signed and unnotarized. Earlier published artifacts remain untouched. Preserve published artifacts and verify each candidate independently.
+> Latest published release: [0.1.11, build 17](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.11), ad-hoc signed and unnotarized. Earlier published artifacts remain untouched. Preserve published artifacts and verify each candidate independently.
 
-The current ad-hoc updater release path is documented in [SPARKLE-RELEASE.md](SPARKLE-RELEASE.md); update checks are manual. The Developer ID and notarization steps below describe an optional signed distribution path, not a requirement for the published ad-hoc release. See [installation](INSTALL-UNSIGNED.md) and [v0.1.10 provenance](RELEASE-NOTES-v0.1.10.md).
+The current ad-hoc updater release path is documented in [SPARKLE-RELEASE.md](SPARKLE-RELEASE.md); update checks are manual. The Developer ID and notarization steps below describe an optional signed distribution path, not a requirement for the published ad-hoc release. See [installation](INSTALL-UNSIGNED.md) and [v0.1.11 provenance](RELEASE-NOTES-v0.1.11.md).
 
 ## Current release configuration
 
@@ -10,8 +10,8 @@ The current ad-hoc updater release path is documented in [SPARKLE-RELEASE.md](SP
 | --- | --- |
 | Product name | Rasc |
 | Bundle identifier | `com.rafaeltorres.rasc` |
-| Marketing version | `0.1.10` (published 2026-11-17) |
-| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`16` for v0.1.10) |
+| Marketing version | `0.1.11` (published 2026-11-17) |
+| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`17` for v0.1.11) |
 | Deployment target | macOS 14.0 |
 | First public artifact | Apple silicon (`arm64`); `archive.sh` fixes the architecture |
 | Hardened Runtime | Enabled for Debug and Release |
@@ -40,22 +40,21 @@ does not need or use them.
 
 ## Published release
 
-The latest published artifact is **v0.1.10 / build 16** (2026-11-17): ad-hoc
+The latest published artifact is **v0.1.11 / build 17** (2026-11-17): ad-hoc
 signed, unnotarized, Apple silicon, macOS 14+, with manual Sparkle updates. The
 GitHub Release contains:
 
 | Asset | Value |
 | --- | --- |
-| DMG | `Rasc-0.1.10-updater.dmg` |
-| SHA-256 | `7519ab01ebe7aa50af8a5656f80f2ebca81ec0bc706f75335a22a45b1d22ce22` |
-| Checksum sidecar | `Rasc-0.1.10-updater.dmg.sha256` |
-| Deltas | `Rasc16-15.delta`, `Rasc16-14.delta`, `Rasc16-13.delta` |
+| DMG | `Rasc-0.1.11-updater.dmg` |
+| SHA-256 | `baf11bd0cc4e2774987910d48eba8bc63e986a27acd0e1eac2bddf0db1f54067` |
+| Checksum sidecar | `Rasc-0.1.11-updater.dmg.sha256` |
+| Deltas | `Rasc17-16.delta`, `Rasc17-15.delta`, `Rasc17-14.delta`, `Rasc17-13.delta` |
 
-The release notes record source commit `6873641`; tag `v0.1.10` adds the
+The release notes record the release PR commit; tag `v0.1.11` adds the
 provenance commit. The production appcast at `https://rasc.app/appcast.xml`
 serves matching versioned GitHub Release enclosures. Preserve these exact bytes
-and see [RELEASE-NOTES-v0.1.10.md](RELEASE-NOTES-v0.1.10.md). Published
-v0.1.9/build 15, v0.1.8/build 14 and v0.1.7/build 13 artifacts remain unchanged.
+and see [RELEASE-NOTES-v0.1.11.md](RELEASE-NOTES-v0.1.11.md). Earlier published artifacts remain unchanged.
 
 ## Prerequisites
 
