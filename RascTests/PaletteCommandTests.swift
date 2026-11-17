@@ -57,7 +57,7 @@ struct PaletteCommandTests {
             "Command Palette",
             "Settings",
             "Hide Scratchpad",
-            "Keep original",
+            "Use original",
             "Accept suggestion",
             "Quit Rasc"
         ])
