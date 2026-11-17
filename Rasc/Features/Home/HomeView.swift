@@ -202,7 +202,7 @@ struct HomeView: View {
     private var historyHint: some View {
         HStack(spacing: 10) {
             HStack(spacing: 6) {
-                Text("Search from anywhere")
+                Text("Search thoughts in Rasc")
                 ShortcutKeycapView(
                     label: internalShortcuts.displayString(for: .search),
                     style: .compact
@@ -210,7 +210,7 @@ struct HomeView: View {
             }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(
-                "Search from anywhere with \(internalShortcuts.displayString(for: .search))"
+                "Search thoughts in Rasc with \(internalShortcuts.displayString(for: .search))"
             )
 
             Spacer(minLength: 8)
