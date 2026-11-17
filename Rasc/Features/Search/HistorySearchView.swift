@@ -7,14 +7,22 @@ struct HistorySearchInputField: View {
 
     var body: some View {
         RascTransientInputShell(isFocused: isFocused) {
-            RascTransientInputTextField(
-                text: $session.searchQuery,
-                isFocused: $isFocused,
-                focusRequest: session.searchFocusRequest,
-                placeholder: "Search thoughts…",
-                accessibilityLabel: "Search thoughts",
-                onCommand: handleSearchCommand
-            )
+            HStack(spacing: 8) {
+                RascTransientInputTextField(
+                    text: $session.searchQuery,
+                    isFocused: $isFocused,
+                    focusRequest: session.searchFocusRequest,
+                    placeholder: "Search thoughts…",
+                    accessibilityLabel: "Search thoughts",
+                    onCommand: handleSearchCommand
+                )
+                if !session.searchQuery.isEmpty {
+                    RascClearInputButton(label: "Clear search") {
+                        session.searchQuery = ""
+                        session.requestSearchFocus()
+                    }
+                }
+            }
         }
         .onChange(of: session.searchQuery) {
             session.scheduleSearch()
