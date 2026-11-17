@@ -116,6 +116,7 @@ struct HomeView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .rascWindowSurface()
+        .onAppear { DispatchQueue.main.async { searchIsFocused = true } }
         .animation(RascMotion.surface(reduceMotion: reduceMotion), value: session.showsHistoryHint)
         .onChange(of: session.actionErrorMessage) { _, message in
             if let message { RascAccessibility.announce(message) }
