@@ -101,7 +101,7 @@ enum RascSurfacePalette {
     static let scratchpadInsertionPoint = NSColor(
         name: NSColor.Name("RascScratchpadInsertionPoint")
     ) { appearance in
-        appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua ? darkViolet : lightViolet
+        appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua ? darkFocus : lightFocus
     }
 
     // MARK: Text roles
@@ -190,8 +190,8 @@ enum RascSurfacePalette {
         colorScheme == .dark ? darkKeepFill : lightKeepFill
     }
 
-    static func violet(for colorScheme: ColorScheme) -> Color {
-        Color(nsColor: colorScheme == .dark ? darkViolet : lightViolet)
+    static func focus(for colorScheme: ColorScheme) -> Color {
+        Color(nsColor: colorScheme == .dark ? darkFocus : lightFocus)
     }
 
     // MARK: Selection
@@ -202,8 +202,8 @@ enum RascSurfacePalette {
 
     static func selectionFillNSColor(for colorScheme: ColorScheme) -> NSColor {
         colorScheme == .dark
-            ? NSColor(srgbRed: 1, green: 1, blue: 1, alpha: 0.12)
-            : NSColor(srgbRed: 0, green: 0, blue: 0, alpha: 0.10)
+            ? NSColor(srgbRed: 1, green: 1, blue: 1, alpha: 0.08)
+            : NSColor(srgbRed: 0, green: 0, blue: 0, alpha: 0.07)
     }
 
     static func selectionStroke(for colorScheme: ColorScheme) -> Color {
@@ -261,80 +261,80 @@ enum RascSurfacePalette {
     }
 
     private static let warmBackground = NSColor(
-        srgbRed: 0.984,
-        green: 0.980,
-        blue: 0.992,
+        srgbRed: 0.968627,
+        green: 0.960784,
+        blue: 0.941176,
         alpha: 1
     )
 
     private static let graphiteBackground = NSColor(
-        srgbRed: 0.090,
-        green: 0.082,
-        blue: 0.110,
+        srgbRed: 0.117647,
+        green: 0.117647,
+        blue: 0.113725,
         alpha: 1
     )
 
     private static let lightElevated = NSColor(
-        srgbRed: 0.969,
-        green: 0.957,
-        blue: 0.980,
+        srgbRed: 0.937255,
+        green: 0.929412,
+        blue: 0.909804,
         alpha: 1
     )
 
     private static let darkElevated = NSColor(
-        srgbRed: 0.110,
-        green: 0.098,
-        blue: 0.133,
+        srgbRed: 0.156863,
+        green: 0.156863,
+        blue: 0.152941,
         alpha: 1
     )
 
-    /// Home cards in dark mode: lifted graphite with a restrained violet undertone.
+    /// Home cards in dark mode: lifted neutral graphite.
     private static let darkHomeCard = NSColor(
-        srgbRed: 0.128,
-        green: 0.114,
-        blue: 0.152,
+        srgbRed: 0.188235,
+        green: 0.188235,
+        blue: 0.184314,
         alpha: 1
     )
 
     private static let lightBorder = NSColor(
-        srgbRed: 0.886,
-        green: 0.867,
-        blue: 0.906,
+        srgbRed: 0.831373,
+        green: 0.823529,
+        blue: 0.800000,
         alpha: 1
     )
 
     private static let darkBorder = NSColor(
-        srgbRed: 0.204,
-        green: 0.180,
-        blue: 0.235,
+        srgbRed: 0.266667,
+        green: 0.266667,
+        blue: 0.250980,
         alpha: 1
     )
 
-    private static let lightViolet = NSColor(
-        srgbRed: 0.459,
-        green: 0.392,
-        blue: 0.847,
+    private static let lightFocus = NSColor(
+        srgbRed: 0.400000,
+        green: 0.400000,
+        blue: 0.384314,
         alpha: 1
     )
 
-    private static let darkViolet = NSColor(
-        srgbRed: 0.604,
-        green: 0.537,
-        blue: 0.933,
+    private static let darkFocus = NSColor(
+        srgbRed: 0.647059,
+        green: 0.647059,
+        blue: 0.627451,
         alpha: 1
     )
 
     private static let lightActionPrimaryFill = NSColor(
-        srgbRed: 0.149,
-        green: 0.141,
-        blue: 0.169,
+        srgbRed: 0.141176,
+        green: 0.141176,
+        blue: 0.137255,
         alpha: 1
     )
 
     private static let darkActionPrimaryFill = NSColor(
-        srgbRed: 0.929,
-        green: 0.914,
-        blue: 0.941,
+        srgbRed: 0.933333,
+        green: 0.925490,
+        blue: 0.905882,
         alpha: 1
     )
 
@@ -519,14 +519,14 @@ private struct RascWindowSurfaceModifier: ViewModifier {
         if #available(macOS 15.0, *) {
             content
                 .containerBackground(RascSurfacePalette.canvas(for: colorScheme), for: .window)
-                .tint(RascSurfacePalette.violet(for: colorScheme))
+                .tint(RascSurfacePalette.focus(for: colorScheme))
         } else {
             content
                 .background {
                     RascSurfacePalette.canvas(for: colorScheme)
                         .ignoresSafeArea()
                 }
-                .tint(RascSurfacePalette.violet(for: colorScheme))
+                .tint(RascSurfacePalette.focus(for: colorScheme))
         }
     }
 }
@@ -556,14 +556,14 @@ private struct ScratchpadCanvasModifier: ViewModifier {
                 ContainerRelativeShape()
                     .strokeBorder(
                         controlActiveState == .key
-                            ? RascSurfacePalette.violet(for: colorScheme).opacity(0.34)
+                            ? RascSurfacePalette.focus(for: colorScheme).opacity(0.34)
                             : RascSurfacePalette.border(for: colorScheme).opacity(0.62),
                         lineWidth: 1
                     )
                     .ignoresSafeArea()
                     .allowsHitTesting(false)
             }
-            .tint(RascSurfacePalette.violet(for: colorScheme))
+            .tint(RascSurfacePalette.focus(for: colorScheme))
     }
 }
 

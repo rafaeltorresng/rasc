@@ -24,7 +24,9 @@ Review the 16/32 px exports and both appearances before accepting an asset chang
 The menu-bar icon stays a monochrome template. Welcome and Home identity use the
 symbol; the editor's state indicator remains the Orb.
 
-## Orb
+## Orb (historical)
+
+The Orb is no longer used in the interface. The following describes the retained historical asset.
 
 Rasc wraps the vendored engine in `RascOrb`; product views do not depend directly
 on engine vocabulary. Preserve the violet-led / warm-accent identity in `RascOrbPalette`:
@@ -44,9 +46,8 @@ by the native UI quality work.
 
 ## Colors and motion
 
-Orange communicates action. Violet communicates focus, selection and state.
-`violetText` uses a darker light-mode tone for small text; it does not replace the
-Orb gradient or selection token. Use shared RascSurfacePalette/metrics/motion.
+Copper marks Keep and Kept. Neutral graphite communicates focus and selection.
+Use shared RascSurfacePalette/metrics/motion.
 Keep the editor solid. Materials must respect Reduce Transparency; borders and
 focus must remain readable with Increase Contrast. Validate the rendered result,
 not merely the presence of a modifier.
