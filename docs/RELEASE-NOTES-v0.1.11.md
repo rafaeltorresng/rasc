@@ -44,9 +44,15 @@ builds without an updater require a one-time manual replacement.
 - The menu-bar size change is documented with a labeled mock comparison in
   `docs/validation/rasc-twin-fish/menubar-size-comparison.png`. No other brand
   asset changed.
-- Not verified locally: VoiceOver, Reduce Motion, a live production-feed check
-  at publication time, clean install through a second account, and updater
-  behavior on macOS 14–25.
+- Post-deploy check: a live **Check for Updates…** was initiated from the
+  installed 0.1.11 app; Sparkle showed the checking window and completed without
+  a feed error (`live-updater-check-011.png`), and `SULastCheckTime` advanced.
+  The deployed feed is byte-identical to the verified local appcast, and the
+  public download resolved to a 6,134,119-byte asset with the expected
+  filename and checksum. The up-to-date dialog was not captured because focus
+  moved before the alert could be recorded.
+- Not verified locally: VoiceOver, Reduce Motion, clean install through a second
+  account, and updater behavior on macOS 14–25.
 
 Follow [SPARKLE-RELEASE.md](SPARKLE-RELEASE.md) and
 [NATIVE-UI-VALIDATION.md](NATIVE-UI-VALIDATION.md). Do not interpret an unchecked
