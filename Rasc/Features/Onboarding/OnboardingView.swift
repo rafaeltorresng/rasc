@@ -172,7 +172,7 @@ struct OnboardingView: View {
     private var welcomeProductLoopCopy: some View {
         VStack(spacing: 3) {
             welcomeLoopLine("Capture without thinking.", index: 0)
-            welcomeLoopLine("Refine without prompting.", index: 1)
+            welcomeLoopLine("Refine when you want.", index: 1)
             welcomeLoopLine("Keep what matters.", index: 2)
         }
         .font(.system(size: 14))
@@ -180,7 +180,7 @@ struct OnboardingView: View {
         .multilineTextAlignment(.center)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(
-            "Capture without thinking. Refine without prompting. Keep what matters."
+            "Capture without thinking. Refine when you want. Keep what matters."
         )
         .onAppear { welcomeLinesVisible = true }
     }
