@@ -10,8 +10,8 @@ The current ad-hoc updater release path is documented in [SPARKLE-RELEASE.md](SP
 | --- | --- |
 | Product name | Rasc |
 | Bundle identifier | `com.rafaeltorres.rasc` |
-| Marketing version | `0.1.8` (current source and latest published; increment for the next candidate) |
-| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`14` for v0.1.8) |
+| Marketing version | `0.1.9` (candidate source; latest published is 0.1.8) |
+| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`15` for the 0.1.9 candidate; `14` for v0.1.8) |
 | Deployment target | macOS 14.0 |
 | First public artifact | Apple silicon (`arm64`); `archive.sh` fixes the architecture |
 | Hardened Runtime | Enabled for Debug and Release |
@@ -54,8 +54,7 @@ Release contains:
 The release notes record source commit `9da2e91`; tag `v0.1.8` adds the provenance
 commit. The production appcast at `https://rasc.app/appcast.xml` serves the matching
 v0.1.8 enclosure. Preserve these exact bytes and see
-[RELEASE-NOTES-v0.1.8.md](RELEASE-NOTES-v0.1.8.md). Current source still reports
-0.1.8/build 14; version fields alone do not prove that a build was published.
+[RELEASE-NOTES-v0.1.8.md](RELEASE-NOTES-v0.1.8.md). The 0.1.9/build 15 candidate is not published; version fields alone do not prove that a build was published.
 
 ## Prerequisites
 
