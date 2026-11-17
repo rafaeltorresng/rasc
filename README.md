@@ -44,7 +44,7 @@ Discard has Undo while Rasc remains running; it does not introduce a Trash syste
 
 ![Empty Rasc scratchpad in light mode](docs/images/scratchpad.png)
 
-This historical screenshot may differ from the current interface and is not evidence of a published or notarized build.
+Screenshot from Rasc 0.1.10/build 16 in light mode, using the current Twin Fish mark.
 
 ## Requirements and installation
 
