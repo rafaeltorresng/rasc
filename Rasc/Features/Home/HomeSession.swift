@@ -52,10 +52,6 @@ final class HomeSession {
         !normalizedSearchQuery.isEmpty
     }
 
-    var emptyStateOrbState: RascOrbState {
-        .connecting
-    }
-
     var hasNotes: Bool {
         !browseGroups.isEmpty || !searchResults.isEmpty
     }

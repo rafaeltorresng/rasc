@@ -256,9 +256,6 @@ struct HomeView: View {
             Spacer(minLength: 0)
 
             VStack(spacing: HomeLayout.emptyStateSpacing) {
-                RascOrb(state: session.emptyStateOrbState, size: .hero, decorative: true)
-                    .padding(.bottom, 2)
-
                 Text("Your thoughts")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(RascSurfacePalette.homeSectionLabel(for: colorScheme))
