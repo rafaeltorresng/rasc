@@ -54,6 +54,11 @@ Intelligence.
   `codesign --verify --deep --strict`, had Sparkle mapped, and was
   Gatekeeper-rejected as expected for an ad-hoc build. The local feed override
   was removed after the check.
+- Post-deploy smoke test passed on the installed 0.1.9: **Check for Updates…**
+  reported “You're up to date! Rasc 0.1.9 is currently the newest version
+  available.” with no feed error. The deployed feed is byte-identical to the
+  verified local appcast. The website release PR passed all browser, webkit and
+  film checks.
 - **Not verified in this pass:** clean install from the published DMG, tamper
   rejection through the live UI, light mode and narrow-window checks, VoiceOver,
   Reduce Motion, and updater behavior on macOS 14–25. These are recorded as
