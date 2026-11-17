@@ -32,8 +32,9 @@ Review the 16/32 px exports and both appearances before accepting an asset chang
 The only size-specific optical corrections are a 2x render downsampled for the
 16 px 1x Dock tile and 1.5 px of physical headroom in the 24 px 1x Home export;
 neither changes the silhouette. The menu-bar icon is a monochrome template using
-the same mark. Welcome and Home identity use the symbol; the editor has no
-persistent character or state indicator.
+the same mark, drawn at roughly 24 pt inside the 32 pt template so its visual
+weight matches standard macOS status items. Welcome and Home identity use the
+symbol; the editor has no persistent character or state indicator.
 
 ## Orb (historical)
 

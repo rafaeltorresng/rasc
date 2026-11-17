@@ -2,7 +2,7 @@
 
 Start with the [repository README](../README.md) and [current product](CURRENT-PRODUCT.md).
 The current guides below describe the source or an explicitly named release; installation and release notes describe
-the published **v0.1.10, build 16** artifact. Historical snapshots below are reference
+the published **v0.1.11, build 17** artifact. Historical snapshots below are reference
 only; they are not proof of current behavior.
 
 ## Current guides
@@ -13,7 +13,7 @@ only; they are not proof of current behavior.
 | [Design system](DESIGN-SYSTEM.md) and [Brand](BRAND.md) | Current visual roles, symbol and asset exports |
 | [Native validation](NATIVE-UI-VALIDATION.md) | Manual platform and accessibility checks |
 | [Install release](INSTALL-UNSIGNED.md) | Published DMG, checksum and first-launch steps |
-| [Release notes](RELEASE-NOTES-v0.1.10.md) | Published v0.1.10 changes, provenance and updates |
+| [Release notes](RELEASE-NOTES-v0.1.11.md) | Published v0.1.11 changes, provenance and updates |
 | [Release](RELEASE.md) | Versioning, packaging, signing and optional notarization |
 | [Sparkle release](SPARKLE-RELEASE.md) | Ad-hoc updater build and publication runbook |
 | [Data and privacy](DATA-AND-PRIVACY.md) | Storage, retention and safe manual backups |
@@ -37,7 +37,7 @@ reuse their acceptance records for a new artifact.
 
 [PUBLISH-0.1.md](PUBLISH-0.1.md) documents the original v0.1.0 first-publication
 checklist; current publication follows [SPARKLE-RELEASE.md](SPARKLE-RELEASE.md) and
-[RELEASE.md](RELEASE.md). Release notes before v0.1.10, [SPARKLE-UPDATES.md](SPARKLE-UPDATES.md)
+[RELEASE.md](RELEASE.md). Release notes before v0.1.11, [SPARKLE-UPDATES.md](SPARKLE-UPDATES.md)
 and [SPARKLE-LLC.md](SPARKLE-LLC.md) record past milestones, proofs and acceptance.
 
 [Evals](../Evals/README.md) and Scripts include historical research and engineering

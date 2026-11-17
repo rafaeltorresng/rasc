@@ -54,5 +54,10 @@ currently the newest version available.” (`live-updater-smoke.png`). The deplo
 feed was byte-identical to the verified local appcast and the public release
 asset resolved with the expected checksum.
 
+In 0.1.11/build 17 the menu-bar template was reduced from a 28 pt to a 24 pt mark
+inside the 32 pt template to match standard status items. The before/after asset
+comparison is `menubar-size-comparison.png`; neighboring glyphs there are
+placeholders, so that sheet is labeled as a mock.
+
 Not verified in this pass: VoiceOver, Reduce Motion, clean install from the
 public DMG by a second account, and macOS 14–25.
