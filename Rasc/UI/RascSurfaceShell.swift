@@ -211,7 +211,11 @@ enum RascTransientPanelSizing {
     static let searchMaximumHeight: CGFloat = 440
 
     static func searchHeight(resultCount: Int) -> CGFloat {
-        clamp(rowCount: resultCount, rowHeight: RascSurfaceLayout.searchRowMinHeight, maximum: searchMaximumHeight)
+        // Search rows can contain a snippet, kept status, and an Open hint.
+        // Reserve room for the Recent heading and the panel’s top content inset.
+        let rows = CGFloat(max(resultCount, 0)) * (76 + RascSurfaceLayout.listRowSpacing)
+        let rowsHeight = resultCount > 0 ? rows - RascSurfaceLayout.listRowSpacing + 46 : 0
+        return min(max(headerHeight + rowsHeight + bottomInset, transientMinimumHeight), searchMaximumHeight)
     }
 
     static func paletteHeight(commandCount: Int) -> CGFloat {

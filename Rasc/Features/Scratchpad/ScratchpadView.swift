@@ -455,10 +455,7 @@ private struct ScratchEditor: NSViewRepresentable {
         }
         if context.coordinator.focusRequest != session.focusRequest {
             context.coordinator.focusRequest = session.focusRequest
-            DispatchQueue.main.async { [weak editor] in
-                guard let editor, let window = editor.window else { return }
-                window.makeFirstResponder(editor)
-            }
+            editor.requestFocusWhenAttached()
         }
     }
 
@@ -560,6 +557,27 @@ final class ListTextView: NSTextView {
     var imageCopySuccess: ((NoteDocument) -> Void)?
     private var previewWindow: NSWindow?
     private let marker = "• "
+    private var focusWhenAttached = false
+
+    func requestFocusWhenAttached() {
+        focusWhenAttached = true
+        fulfillFocusRequest()
+    }
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        fulfillFocusRequest()
+    }
+
+    private func fulfillFocusRequest() {
+        guard focusWhenAttached, window != nil else { return }
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.focusWhenAttached, let window = self.window else { return }
+            if window.makeFirstResponder(self) {
+                self.focusWhenAttached = false
+            }
+        }
+    }
 
     override func cancelOperation(_ sender: Any?) { escapeAction?() }
 
