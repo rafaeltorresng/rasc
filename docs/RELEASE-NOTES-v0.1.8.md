@@ -2,8 +2,10 @@
 
 Version: 0.1.8 · build 14 · Apple silicon · macOS 14+
 
-Status: **build provenance below is final; publication follows the checklist in
-`docs/SPARKLE-RELEASE.md`.**
+Status: **published 2026-11-16 as an ad-hoc signed, unnotarized GitHub Release.**
+Build provenance below is final. See the [v0.1.8 release](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.8)
+for the published assets and [SPARKLE-RELEASE.md](SPARKLE-RELEASE.md) for the
+publication checklist.
 
 ## What changed
 

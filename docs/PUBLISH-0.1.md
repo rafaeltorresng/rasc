@@ -1,5 +1,8 @@
 # Publish Rasc 0.1.0 (without Developer ID)
 
+> Historical reference: this document records a past design, experiment, or acceptance at the time. For current behavior and guidance, see [current product](CURRENT-PRODUCT.md), the [documentation index](README.md), and [native validation](NATIVE-UI-VALIDATION.md). Do not treat historical results as current verification.
+
+
 First public release **without** Apple Developer Program, Developer ID, or notarization.
 Users get **open source + optional unsigned DMG**; macOS will show Gatekeeper warnings
 until they explicitly allow the app the first time.

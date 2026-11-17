@@ -15,10 +15,10 @@ Use synthetic thoughts and a temporary test account/profile when exercising fail
 
 ## Home and recovery
 
-- [ ] Grid arrows follow 1–4 columns, short rows and Kept/temporal section boundaries.
+- [ ] Arrow keys move selection through the chronological note list, including across Kept/temporal section boundaries; there is no horizontal grid flow.
 - [ ] Search field keeps normal caret editing; Down/Return transfers to results.
 - [ ] With 13 and 50 Kept thoughts, Show all and Show fewer provide access without a search term.
-- [ ] Hover does not reflow card titles; selected cards stay visible without gratuitous scrolling.
+- [ ] Selected rows stay visible without gratuitous scrolling; clicking blank list space does not draw stray focus-ring lines.
 - [ ] Discard/Undo restores text, Kept and dates in Home and Scratchpad.
 - [ ] Undo while writing a new thought leaves the new text intact.
 - [ ] A failed write gives actionable feedback, preserves content and can be retried.
@@ -26,7 +26,7 @@ Use synthetic thoughts and a temporary test account/profile when exercising fail
 ## Refine and retrieval
 
 - [ ] Whole-note/selection preview: compare Suggested and Original; selection context is preserved.
-- [ ] Keep original/Esc preserves original; Accept and Undo persist the expected content.
+- [ ] Use original/Esc preserves original; Accept and Undo persist the expected content.
 - [ ] Late/cancelled/stale results cannot replace edited text.
 - [ ] Long/unsupported/disabled/preparing/error messages fit at 560 px and stay readable.
 - [ ] Save errors remain visible during onboarding.
@@ -37,18 +37,19 @@ Use synthetic thoughts and a temporary test account/profile when exercising fail
 
 - [ ] Light/dark: inspect typography, actions, borders, icon and menu-bar symbol.
 - [ ] VoiceOver announces preview/errors and can complete Capture → Accept/Keep → retrieval.
-- [ ] Full Keyboard Access reaches cards, action menus, Undo, comparison and Settings.
+- [ ] Full Keyboard Access reaches note rows, action menus, Undo, comparison and Settings.
 - [ ] Reduce Motion preserves state without loops; Reduce Transparency preserves readable surfaces.
 - [ ] Increase Contrast strengthens focus/borders; larger text/display scaling has no clipped essential copy.
 - [ ] Onboarding explains Keep versus Esc without requiring Refine.
 
 ## Distribution and energy
 
-- [ ] Packaged app matches source/version; original beta.3 artifact is unchanged.
-- [ ] Verify checksum, sandbox, signing and notarization status; test ordinary first-install and upgrade paths.
+- [ ] Packaged app matches the source revision, version and build; previously published artifacts remain unchanged.
+- [ ] Verify the published checksum, sandbox and signing status; record notarization only when a notarized build is claimed. Test ordinary first-install and upgrade paths.
 - [ ] Inspect icon at Finder/DMG sizes and bundled dependency notices.
-- [ ] Profile idle/hidden windows and multiple visible Orbs for CPU/energy; record actual measurements.
+- [ ] Profile idle/hidden windows and visible windows for CPU/energy; record actual measurements.
 
 Domain tests, headless layout captures and successful builds do not mark these native
-interaction checks as passed. Developer ID/notarization and maintainer review of
-historical corpus provenance remain gates before public distribution/publication.
+interaction checks as passed. Record the actual signing and notarization status of each
+candidate. Ad-hoc builds use the documented **Open Anyway** path in
+[INSTALL-UNSIGNED.md](INSTALL-UNSIGNED.md); notarization is not required for them.

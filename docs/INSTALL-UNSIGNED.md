@@ -1,30 +1,33 @@
 # Installing Rasc without notarization
 
-Some Rasc releases are distributed as an **ad-hoc signed DMG**, not a **notarized**
-Developer ID build. The app is still built from the open-source project; macOS simply
-cannot tie it to a registered Apple developer.
+The published Rasc release is distributed as an **ad-hoc signed DMG**, not a
+**notarized** Developer ID build. The app is still built from the open-source
+project; macOS simply cannot tie it to a registered Apple developer.
 
-## Recommended: build from source
+## Before you start
 
-If you have Xcode, this avoids Gatekeeper friction and matches the MIT license:
+- **App:** the published release is **v0.1.8, build 14**, an Apple silicon DMG for
+  macOS 14 or later. It is ad-hoc signed and not notarized.
+- **Refine:** additionally requires macOS 26 or later, an Apple Intelligence-capable
+  Mac, Apple Intelligence enabled, and its on-device model ready. Capture, Keep,
+  Home and Search work without it.
+- **Building from source:** requires Xcode 26.2 or later, Swift 6 and the macOS 26
+  SDK. See [Build and test](../README.md#build-and-test).
 
-```sh
-git clone https://github.com/rafaeltorresng/rasc.git
-cd rasc
-open Rasc.xcodeproj
-```
+## Install the published DMG
 
-Run the **Rasc** scheme (Debug is fine for personal use). See the repository README for tests.
-
-## Install the unsigned DMG
-
-1. Download `Rasc-0.1.3-unsigned.dmg` and `Rasc-0.1.3-unsigned.dmg.sha256` from the
-   GitHub Release for the version you trust.
+1. Download `Rasc-0.1.8-updater.dmg` and `Rasc-0.1.8-updater.dmg.sha256` from the
+   [official v0.1.8 release](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.8).
+   Keep both files in the same folder.
 2. Verify the checksum:
 
    ```sh
-   shasum -a 256 -c Rasc-0.1.3-unsigned.dmg.sha256
+   shasum -a 256 -c Rasc-0.1.8-updater.dmg.sha256
    ```
+
+   The command should report `Rasc-0.1.8-updater.dmg: OK`. The published SHA-256 is
+   `a25035c27a9db86e55d7f1dfe9e4e071124b8d5d7c722ba4edca7d447255912c`.
+   Download both files again if it does not match.
 
 3. Open the DMG and drag **Rasc** to Applications.
 4. **First launch:** Finder may say the app cannot be opened because the developer
@@ -34,18 +37,35 @@ Run the **Rasc** scheme (Debug is fine for personal use). See the repository REA
 
 5. Later launches work normally from the menu bar.
 
-## Updates in unsigned builds
+## Updates in ad-hoc builds
 
-Ad-hoc signed builds cannot load Sparkle because Hardened Runtime and Library
-Validation require a matching Apple Team ID. **Check for Updates…** therefore
-reports that updates are unavailable. See
-[SPARKLE-UPDATES.md](SPARKLE-UPDATES.md).
+Rasc 0.1.7 and 0.1.8 include Sparkle for **manual** Check for Updates. Nothing
+downloads or installs silently. The v0.1.5 release and the v0.1.6 pre-release
+have no updater: download the v0.1.8 DMG once and install it by hand. To replace
+an older build by hand, quit Rasc, verify the new DMG, drag **Rasc** to Applications
+when Finder offers to replace it, and reopen; notes, preferences and shortcuts are
+preserved. The updater has been exercised on macOS 26.5.1; behavior on macOS 14–25
+remains unverified. See [SPARKLE-RELEASE.md](SPARKLE-RELEASE.md) and the
+[v0.1.8 release notes](RELEASE-NOTES-v0.1.8.md).
 
-To upgrade, quit Rasc, download the new DMG from the official release page,
-verify its SHA256, open the DMG, and drag **Rasc** to Applications when Finder
-offers to replace the existing copy. Notes, preferences, and shortcuts are kept
-in your user data and survive the replacement. If macOS blocks the first launch
-of the new build, use **Open Anyway** as described above.
+A matching checksum verifies the file against the published checksum; it does not
+establish notarization or independently prove authenticity. See [Apple’s guidance
+on opening an app from an unidentified developer](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac).
+
+## Build from source
+
+If you prefer to build the app yourself, use Xcode 26.2 or later:
+
+```sh
+git clone https://github.com/rafaeltorresng/rasc.git
+cd rasc
+open Rasc.xcodeproj
+```
+
+Run the **Rasc** scheme (Debug is fine for personal use). See
+[Build and test](../README.md#build-and-test) for command-line builds and tests.
+Debug builds and the packaged app use separate note stores; see
+[Data and privacy](DATA-AND-PRIVACY.md) before switching between them.
 
 ## Privacy
 

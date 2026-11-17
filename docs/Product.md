@@ -1,5 +1,8 @@
 # Documento-base de Produto
 
+> Historical reference: this document records a past design, experiment, or acceptance at the time. For current behavior and guidance, see [current product](CURRENT-PRODUCT.md), the [documentation index](README.md), and [native validation](NATIVE-UI-VALIDATION.md). Do not treat historical results as current verification.
+
+
 ## Scratchpad inteligente para pensamentos ainda não terminados
 
 **Status:** tese de produto / documento de contexto

@@ -1,12 +1,8 @@
 # Rasc Design System
 
-> Implemented reference, aligned with **0.1.6 (build 12)**. For behavioral truth, start with [CURRENT-PRODUCT](CURRENT-PRODUCT.md); for the recent visual decisions and the evidence behind them, see [the 2026-11-13 visual audit](audits/2026-11-13-visual-language.md).
+This document combines current visual principles with historical design explorations. For implemented behavior, use [CURRENT-PRODUCT](CURRENT-PRODUCT.md) and the shared palette in `Rasc/UI/TransientSurfaceStyle.swift`. Graphite Paper is the current direction: paper and graphite surfaces, neutral focus and selection, and copper for Keep and Kept. The Thinking Orb is no longer used in the interface.
 
-Rasc is a quiet macOS utility for unfinished thoughts.
-
-The shipped visual language is **Warm precision** — warm paper/graphite neutrals, semantic text roles with contrast ≥4.5:1 for functional copy, copper reserved for Keep and its confirmation, neutral selection throughout, action typography in SF Pro, shortcuts in SF Mono.
-
-The older **Shaping** vocabulary below (motion, orb, onboarding, landing) describes how Rasc behaves during transformation; it is correct and unchanged. Sections that described the pre-Warm-precision palette — especially § 4 Color — are rewritten below.
+The earlier motion, onboarding and website concepts below are historical proposals, not an implementation checklist. In particular, descriptions of an Orb, ambient animation and web effects are superseded; do not reintroduce them without a new decision. See [native validation](NATIVE-UI-VALIDATION.md) for current acceptance.
 
 ---
 
@@ -411,6 +407,8 @@ Never remove feedback entirely.
 
 # 13. Signature element: Shaping Orb
 
+> Historical concept, not current interface guidance; the Orb was removed and these motions or web proposals are not approved implementation requirements.
+
 The Shaping Orb represents computation only when Rasc is actively transforming something.
 
 It is not a mascot.
@@ -630,6 +628,8 @@ Do not add visible noise over editor content.
 
 # 20. App interaction motion
 
+> Historical concept, not current interface guidance; the Orb was removed and these motions or web proposals are not approved implementation requirements.
+
 ## Open Rasc
 
 Duration:
@@ -702,6 +702,8 @@ Use:
 
 # 21. Onboarding motion system
 
+> Historical concept, not current interface guidance; the Orb was removed and these motions or web proposals are not approved implementation requirements.
+
 The onboarding is the most expressive product surface.
 
 Still, each step gets only one primary motion.
@@ -751,6 +753,8 @@ The calm after the interaction reinforces:
 ---
 
 # 22. Landing page motion system
+
+> Historical concept, not current interface guidance; the Orb was removed and these motions or web proposals are not approved implementation requirements.
 
 Marketing may be more expressive than the app, but must use the same vocabulary.
 
@@ -809,6 +813,8 @@ One focal motion only.
 ---
 
 # 23. Web implementation stack
+
+> Historical concept, not current interface guidance; the Orb was removed and these motions or web proposals are not approved implementation requirements.
 
 Preferred:
 
@@ -1164,6 +1170,8 @@ Before merging visual work:
 ---
 
 # 38. Rasc signature
+
+> Historical concept, not current interface guidance; the Orb was removed and these motions or web proposals are not approved implementation requirements.
 
 If only five visual ideas survive, keep these:
 
