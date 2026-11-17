@@ -291,7 +291,7 @@ cost and can remain as belt-and-braces.
 
 ## Decision checklist before publishing
 
-The v0.1.8 release is published. The checklist below remains the publication gate
+The v0.1.9 release is published. The checklist below remains the publication gate
 for each next candidate; completed run records belong in the release notes.
 
 - [ ] `xcodebuild test` green; `RELEASE_NOTES-v<version>.md` written (Open-Anyway note present)
@@ -305,26 +305,31 @@ for each next candidate; completed run records belong in the release notes.
 - [ ] Website download link changed only after the feed is live and verified
 - [ ] `git status --porcelain` shows only the intended files; no `build/`
 
-## Current status (2026-11-16)
+## Current status (2026-11-17)
 
-- **Published:** v0.1.8/build 14, built from source commit `9da2e91`, DMG
-  `Rasc-0.1.8-updater.dmg`, SHA-256
-  `a25035c27a9db86e55d7f1dfe9e4e071124b8d5d7c722ba4edca7d447255912c`. The
-  GitHub Release carries the DMG, `.sha256` sidecar and `Rasc14-13.delta`; the
-  production feed serves the matching v0.1.8 enclosure (build 14).
-- **Previous:** v0.1.7/build 13, built from commit
-  `635ec7ac39b3cbe062602fb501645882361af390`, DMG SHA-256
-  `10648b0e532266b1180dfbeb99a1868d92f4e6d8bf5330c62f0b13ca72bfb36`. The feed
-  retains its entry for updates from build 13.
+- **Published:** v0.1.9/build 15, built from source commit `8fae4fd`, DMG
+  `Rasc-0.1.9-updater.dmg`, SHA-256
+  `97c0527a20c8da0faab58885c38af41683cb90c3debba1cdd791b09d00a9912d`. The
+  GitHub Release carries the DMG, `.sha256` sidecar, `Rasc15-14.delta` and
+  `Rasc15-13.delta`; the production feed serves versioned GitHub Release
+  enclosures. Final appcast signatures and tamper rejection passed
+  `verify-appcast.py`.
+- **Previous:** v0.1.8/build 14, built from source commit `9da2e91`, DMG SHA-256
+  `a25035c27a9db86e55d7f1dfe9e4e071124b8d5d7c722ba4edca7d447255912c`, with
+  `Rasc14-13.delta`. v0.1.7/build 13 remains in the feed for older upgrades.
 - **Historical:** Path A (staging source below build 12 → updater DMG, Sparkle
   offered the update, rejected a tampered DMG, installed in place, preserved the
   test note) and Path B (public v0.1.5 replaced manually in a Finder drag-and-drop)
   both passed on the M4 Air, macOS 26.5.1. Path B involves no Sparkle and no
   signature check.
-- **Open verification:** the notes do not record completion of the focused in-app
-  v0.1.7 → v0.1.8 upgrade (Path C) on the exact published artifact. Do not infer
-  it from publication; record it for the next candidate.
+- **Native update evidence:** an installed v0.1.8 was upgraded in-app to v0.1.9
+  using a local feed; Sparkle offered the update, downloaded `Rasc15-14.delta`,
+  installed and relaunched, and preserved notes, theme and shortcuts. The final
+  published artifact feed was verified statically, not through a live update.
+- **Open verification:** clean install from the published DMG and tamper rejection
+  through the live UI remain unverified for this release.
 - **macOS 14–25 remain unverified**; only macOS 26.5.1 has been exercised.
-- For v0.1.8, `xcodebuild test` recorded 464 tests in 42 suites passing.
+- For v0.1.9, `xcodebuild test` recorded 477 tests in 44 suites passing, and CI
+  passed the `macos` check on the release PR.
 - The keychain key is not backed up offline and none is scheduled; losing it
   would force all users to download a fresh DMG once.
