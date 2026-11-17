@@ -270,7 +270,7 @@ struct HomeView: View {
                         .font(.system(size: 17, weight: .medium))
                         .foregroundStyle(.primary.opacity(0.9))
 
-                    Text("Your thoughts will appear here as you use Rasc.")
+                    Text("Your thoughts appear here as you write.")
                         .font(.system(size: 13))
                         .foregroundStyle(RascSurfacePalette.homeSupportingText(for: colorScheme))
                         .multilineTextAlignment(.center)
@@ -290,7 +290,7 @@ struct HomeView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         .padding(.bottom, HomeLayout.actionZoneTopPadding)
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Nothing here yet. Your thoughts will appear here as you use Rasc.")
+        .accessibilityLabel("Nothing here yet. Your thoughts appear here as you write.")
     }
 
     private var chronologicalList: some View {
@@ -497,6 +497,19 @@ private struct HomeSearchField: View {
                 .textFieldStyle(.plain)
                 .font(.system(size: 13.5))
                 .focused(isFocused)
+
+                if !text.isEmpty {
+                    Button {
+                        text = ""
+                        isFocused.wrappedValue = true
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Clear search")
+                    .help("Clear search")
+                }
             }
         }
         .accessibilityElement(children: .contain)
