@@ -203,9 +203,8 @@ private struct HistorySearchHeader: View {
     @Bindable var session: ScratchpadSession
 
     var body: some View {
-        RascSurfaceOrbHeaderRow(orbState: .searching) {
+        RascSurfaceInputHeader {
             HistorySearchInputField(session: session)
-                .offset(y: -RascSurfaceLayout.searchFieldOrbVerticalOffset)
         }
         .padding(.bottom, RascSurfaceLayout.transientHeaderBodyGap)
     }

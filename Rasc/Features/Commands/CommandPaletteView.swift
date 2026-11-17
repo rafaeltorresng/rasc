@@ -31,7 +31,7 @@ struct CommandPaletteView: View {
     }
 
     private var paletteHeader: some View {
-        RascSurfaceOrbHeaderRow(orbState: .note) {
+        RascSurfaceInputHeader {
             RascTransientInputShell(isFocused: isFocused) {
                 RascTransientInputTextField(
                     text: $session.commandPaletteQuery,
@@ -42,7 +42,6 @@ struct CommandPaletteView: View {
                     onCommand: handlePaletteCommand
                 )
             }
-            .offset(y: -RascSurfaceLayout.searchFieldOrbVerticalOffset)
         }
         .padding(.bottom, RascSurfaceLayout.transientHeaderBodyGap)
     }

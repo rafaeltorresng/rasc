@@ -49,25 +49,14 @@ enum RascSurfaceLayout {
     }
 }
 
-/// Top-anchored header row: orb at `orbLeading`/`orbTop`, accessory beside it.
-struct RascSurfaceOrbHeaderRow<Accessory: View>: View {
-    let orbState: RascOrbState
-    @ViewBuilder var accessory: () -> Accessory
+/// Shared header for the Search and Command Palette input fields.
+struct RascSurfaceInputHeader<Content: View>: View {
+    @ViewBuilder var content: () -> Content
 
     var body: some View {
-        HStack(alignment: .top, spacing: RascSurfaceLayout.orbToAccessoryGap) {
-            RascOrb(state: orbState, size: .inline, decorative: true)
-                .frame(
-                    width: RascSurfaceLayout.orbSize,
-                    height: RascSurfaceLayout.orbSize,
-                    alignment: .topLeading
-                )
-
-            accessory()
-        }
-        .padding(.leading, RascSurfaceLayout.orbLeading)
-        .padding(.trailing, RascSurfaceLayout.horizontalInset)
-        .padding(.top, RascSurfaceLayout.orbTop)
+        content()
+            .padding(.horizontal, RascSurfaceLayout.horizontalInset)
+            .padding(.top, RascSurfaceLayout.topInset)
     }
 }
 
@@ -213,8 +202,8 @@ struct RascTransientInputTextField: NSViewRepresentable {
 /// large empty panel behind. Transient modes may go below the editor's
 /// minimum height; the window `minSize` follows the active surface.
 enum RascTransientPanelSizing {
-    /// Orb row plus the trailing gap below it.
-    static let headerHeight: CGFloat = 45
+    /// Input row plus the trailing gap below it.
+    static let headerHeight: CGFloat = 48
     static let bottomInset: CGFloat = 12
     static let transientMinimumHeight: CGFloat = 132
     static let maximumHeight: CGFloat = 700

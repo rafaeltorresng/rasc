@@ -747,8 +747,8 @@ struct TransientPanelSizingTests {
     func searchPanelIsCompactForOneOrTwoResults() {
         #expect(RascTransientPanelSizing.searchHeight(resultCount: 0) == 132)
         #expect(RascTransientPanelSizing.searchHeight(resultCount: 1) == 132)
-        #expect(RascTransientPanelSizing.searchHeight(resultCount: 2) == 171)
-        #expect(RascTransientPanelSizing.searchHeight(resultCount: 5) == 345)
+        #expect(RascTransientPanelSizing.searchHeight(resultCount: 2) == 174)
+        #expect(RascTransientPanelSizing.searchHeight(resultCount: 5) == 348)
         #expect(RascTransientPanelSizing.searchHeight(resultCount: 10) == 440)
         #expect(RascTransientPanelSizing.searchHeight(resultCount: 12) == 440)
     }
@@ -756,14 +756,14 @@ struct TransientPanelSizingTests {
     @Test
     func palettePanelGrowsToFitAllCommands() {
         #expect(RascTransientPanelSizing.paletteHeight(commandCount: 0) == 132)
-        #expect(RascTransientPanelSizing.paletteHeight(commandCount: 6) == 367)
-        #expect(RascTransientPanelSizing.paletteHeight(commandCount: 10) == 575)
+        #expect(RascTransientPanelSizing.paletteHeight(commandCount: 6) == 370)
+        #expect(RascTransientPanelSizing.paletteHeight(commandCount: 10) == 578)
         #expect(RascTransientPanelSizing.paletteHeight(commandCount: 20) == 700)
     }
 
     @Test
     func paletteHeightLeavesRoomForEveryCommand() {
         let all = PaletteCommand.availableCommands(isKept: false, hasPersistableContent: true, canPerformCompletion: true)
-        #expect(RascTransientPanelSizing.paletteHeight(commandCount: all.count) >= 45 + CGFloat(all.count) * 52)
+        #expect(RascTransientPanelSizing.paletteHeight(commandCount: all.count) >= 48 + CGFloat(all.count) * 52)
     }
 }
