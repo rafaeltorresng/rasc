@@ -462,6 +462,22 @@ enum RascAccessibility {
     }
 }
 
+struct RascClearInputButton: View {
+    let label: String
+    let action: () -> Void
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "xmark.circle.fill")
+                .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
+        .help(label)
+    }
+}
+
 struct RascTransientInputShell<Content: View>: View {
     let isFocused: Bool
     @Environment(\.colorSchemeContrast) private var contrast

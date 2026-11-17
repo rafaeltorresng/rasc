@@ -33,14 +33,22 @@ struct CommandPaletteView: View {
     private var paletteHeader: some View {
         RascSurfaceInputHeader {
             RascTransientInputShell(isFocused: isFocused) {
-                RascTransientInputTextField(
-                    text: $session.commandPaletteQuery,
-                    isFocused: $isFocused,
-                    focusRequest: session.commandPaletteKeyFocusRequest,
-                    placeholder: "Type a command…",
-                    accessibilityLabel: "Commands",
-                    onCommand: handlePaletteCommand
-                )
+                HStack(spacing: 8) {
+                    RascTransientInputTextField(
+                        text: $session.commandPaletteQuery,
+                        isFocused: $isFocused,
+                        focusRequest: session.commandPaletteKeyFocusRequest,
+                        placeholder: "Type a command…",
+                        accessibilityLabel: "Commands",
+                        onCommand: handlePaletteCommand
+                    )
+                    if !session.commandPaletteQuery.isEmpty {
+                        RascClearInputButton(label: "Clear commands") {
+                            session.commandPaletteQuery = ""
+                            session.requestCommandPaletteKeyFocus()
+                        }
+                    }
+                }
             }
         }
         .padding(.bottom, RascSurfaceLayout.transientHeaderBodyGap)
