@@ -114,7 +114,7 @@ enum RascShortcutCatalog {
     )
     static let keepOriginal = RascShortcutEntry(
         id: "keep-original",
-        title: "Keep original",
+        title: "Use original",
         shortcut: "Esc",
         detail: "Refinement preview"
     )

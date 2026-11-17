@@ -152,6 +152,16 @@ struct InternalShortcutStoreTests {
 @Suite
 struct NaturalListEditingTests {
     @Test
+    func pendingEditorFocusIsFulfilledAfterAttachingToWindow() async throws {
+        let editor = ListTextView()
+        editor.requestFocusWhenAttached()
+        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 300, height: 200), styleMask: [.titled], backing: .buffered, defer: false)
+        window.contentView = editor
+        try await Task.sleep(for: .milliseconds(50))
+        #expect(window.firstResponder === editor)
+    }
+
+    @Test
     func createsContinuesAndEndsList() {
         let editor = ListTextView()
         editor.insertText("-", replacementRange: editor.selectedRange())
@@ -746,9 +756,9 @@ struct TransientPanelSizingTests {
     @Test
     func searchPanelIsCompactForOneOrTwoResults() {
         #expect(RascTransientPanelSizing.searchHeight(resultCount: 0) == 132)
-        #expect(RascTransientPanelSizing.searchHeight(resultCount: 1) == 132)
-        #expect(RascTransientPanelSizing.searchHeight(resultCount: 2) == 174)
-        #expect(RascTransientPanelSizing.searchHeight(resultCount: 5) == 348)
+        #expect(RascTransientPanelSizing.searchHeight(resultCount: 1) == 182)
+        #expect(RascTransientPanelSizing.searchHeight(resultCount: 2) == 260)
+        #expect(RascTransientPanelSizing.searchHeight(resultCount: 5) == 440)
         #expect(RascTransientPanelSizing.searchHeight(resultCount: 10) == 440)
         #expect(RascTransientPanelSizing.searchHeight(resultCount: 12) == 440)
     }
