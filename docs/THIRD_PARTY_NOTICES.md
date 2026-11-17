@@ -2,7 +2,7 @@
 
 ## ThinkingOrbsKit
 
-Rasc vendors a local copy of **ThinkingOrbsKit** from the Libraries.dev monorepo for dotted thought-orb loading indicators.
+Rasc vendors a local copy of **ThinkingOrbsKit** from the Libraries.dev monorepo as a retained dependency. The Orb is no longer displayed in the interface.
 
 | Field | Value |
 |---|---|
@@ -28,7 +28,7 @@ The upstream package declares support for iOS 15+ and macOS 12+. Rasc targets ma
 Rasc consumes ThinkingOrbsKit through a local Swift package reference (`Vendor/ThinkingOrbsKit`) and wraps it in `RascOrb` (`Rasc/UI/RascOrb.swift`) so product code does not depend on third-party state vocabulary directly.
 
 Local presentation extension (4 October 2026): `ThinkingOrb` accepts an optional
-SwiftUI `Gradient`. Rasc supplies its violet/orange tint; depth is preserved
+SwiftUI `Gradient`. The historical wrapper supplies its violet/orange tint; depth is preserved
 through per-element opacity. Default monochrome rendering, engine geometry,
 state mapping, speeds and reduced-motion behavior are unchanged. MIT notices
 remain intact.
