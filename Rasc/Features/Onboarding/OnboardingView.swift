@@ -509,7 +509,7 @@ private struct OnboardingBackground: View {
 
             RadialGradient(
                 colors: [
-                    RascSurfacePalette.violet(for: colorScheme)
+                    RascSurfacePalette.focus(for: colorScheme)
                         .opacity(colorScheme == .dark ? 0.07 : 0.04),
                     .clear,
                 ],
