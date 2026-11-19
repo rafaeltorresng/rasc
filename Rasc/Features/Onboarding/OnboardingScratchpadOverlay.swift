@@ -164,7 +164,7 @@ struct OnboardingScratchpadOverlay: View {
         emptyHintTask = Task { @MainActor in
             try? await Task.sleep(for: .milliseconds(400))
             guard !Task.isCancelled, guidance.showEmptyHint, editorText.isEmpty else { return }
-            withAnimation(RascMotion.surface(reduceMotion: false)) {
+            withAnimation(RascMotion.surface(reduceMotion: reduceMotion)) {
                 showDelayedEmptyHint = true
             }
         }

@@ -126,7 +126,7 @@ struct OnboardingView: View {
 
                     VStack(spacing: OnboardingLayout.headlineToSupportSpacing) {
                         Text("A scratchpad for unfinished thoughts.")
-                            .font(.system(size: 22, weight: .medium))
+                            .font(.system(size: 24, weight: .medium))
                             .tracking(-0.35)
                             .foregroundStyle(.primary.opacity(0.94))
                             .multilineTextAlignment(.center)
@@ -237,8 +237,8 @@ struct OnboardingView: View {
 
             VStack(spacing: 10) {
                 Text("One shortcut away.")
-                    .font(.system(size: 28, weight: .medium))
-                    .tracking(-0.2)
+                    .font(.system(size: 24, weight: .medium))
+                    .tracking(-0.35)
 
                 Text("Rasc appears wherever you're working.")
                     .font(.body)
@@ -290,8 +290,8 @@ struct OnboardingView: View {
         VStack(spacing: 0) {
             VStack(spacing: 10) {
                 Text("Try it.")
-                    .font(.system(size: 28, weight: .medium))
-                    .tracking(-0.2)
+                    .font(.system(size: 24, weight: .medium))
+                    .tracking(-0.35)
 
                 Text("Press your shortcut to open Rasc.")
                     .font(.body)
@@ -322,7 +322,8 @@ struct OnboardingView: View {
     private var completionContent: some View {
         VStack(spacing: 0) {
             Text("You're ready.")
-                .font(.title2.weight(.medium))
+                .font(.system(size: 24, weight: .medium))
+                .tracking(-0.35)
                 .padding(.bottom, 6)
 
             Text("Your thought is saved. Esc hides it; Keep finishes it.")
@@ -418,7 +419,7 @@ struct OnboardingView: View {
                 if let loginError = coordinator.loginItemError {
                     Text(loginError)
                         .font(.caption)
-                        .foregroundStyle(.red)
+                        .foregroundStyle(RascSurfacePalette.destructiveText(for: colorScheme))
                         .multilineTextAlignment(.center)
                 }
 
@@ -527,6 +528,7 @@ private struct OnboardingProminentButtonStyle: ButtonStyle {
 
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -548,6 +550,6 @@ private struct OnboardingProminentButtonStyle: ButtonStyle {
                     )
             }
             .opacity(configuration.isPressed ? 0.9 : 1)
-            .scaleEffect(configuration.isPressed ? 0.985 : 1)
+            .scaleEffect(configuration.isPressed && !reduceMotion ? 0.985 : 1)
     }
 }

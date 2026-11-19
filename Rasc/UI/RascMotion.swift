@@ -14,8 +14,8 @@ enum RascMotion {
     static let surface = Animation.easeOut(duration: surfaceDuration)
     static let morph = Animation.spring(response: 0.32, dampingFraction: 0.86)
     static let heroSettle = Animation.easeOut(duration: heroSettleDuration)
-    static let keycapPress = Animation.spring(response: 0.18, dampingFraction: 0.78)
-    static let keycapRelease = Animation.spring(response: 0.26, dampingFraction: 0.84)
+    /// Press feedback: a short, well-damped spring with no visible overshoot.
+    static let keycapPress = Animation.spring(response: 0.22, dampingFraction: 0.92)
 
     static func micro(reduceMotion: Bool) -> Animation? {
         reduceMotion ? .easeOut(duration: 0.1) : micro
