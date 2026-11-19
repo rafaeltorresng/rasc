@@ -28,7 +28,7 @@ Use synthetic thoughts and a temporary test account/profile when exercising fail
 ## Refine and retrieval
 
 - [ ] Whole-note/selection preview: Suggested, Changes (word-level strike/underline) and Original all render; selection context is preserved; Esc/Return grammar is unchanged; Reduce Motion falls back to instant transitions.
-- [ ] Home opens with the list focused (arrows move selection; reopening Home behaves the same); typing in the search field keeps caret arrows, Down moves to results.
+- [ ] Home opens with the search field focused (typing works immediately); Down or Return transfers to results; arrows move selection in both views; reopening Home behaves the same.
 - [ ] Refine preview: Left/Right cycles Suggested → Changes → Original (clamped); Return accepts; Esc uses the original; the editor's arrow keys are unaffected.
 - [ ] Use original/Esc preserves original; Accept and Undo persist the expected content.
 - [ ] Late/cancelled/stale results cannot replace edited text.

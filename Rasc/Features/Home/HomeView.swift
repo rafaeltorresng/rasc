@@ -20,6 +20,12 @@ private enum HomeLayout {
     static let emptyStateMaxWidth: CGFloat = 360
     static let emptyStateSpacing: CGFloat = 14
     static let emptyStateCTACornerRadius: CGFloat = 10
+    static let gridItemMinWidth: CGFloat = 300
+    static let gridSpacing: CGFloat = 12
+    static let gridItemCornerRadius: CGFloat = 10
+    static let cardExcerptLineLimit = 4
+    static let cardTitleFontSize: CGFloat = 15
+    static let cardExcerptFontSize: CGFloat = 12.5
 }
 
 struct HomeView: View {
@@ -34,9 +40,27 @@ struct HomeView: View {
     @ObservedObject private var internalShortcuts = InternalShortcutStore.shared
     @FocusState private var searchIsFocused: Bool
     @FocusState private var listIsFocused: Bool
+    private var activeGridColumns: Int {
+        viewMode == .cards ? max(1, gridColumns) : 1
+    }
+
+    /// Fixed column set derived solely from `gridColumns`, so keyboard navigation
+    /// and rendering can never disagree — one formula, one source of truth. The
+    /// flexible cells fill the width the window gives the grid.
+    private var cardGridItems: [GridItem] {
+        Array(
+            repeating: GridItem(.flexible(), spacing: HomeLayout.gridSpacing),
+            count: activeGridColumns
+        )
+    }
     @State private var retryAction: (() -> Void)?
     @State private var copyFeedback: String?
     @State private var copyFeedbackTask: Task<Void, Never>?
+    @State private var viewMode: HomeViewMode = HomeViewModeStore().load()
+    /// Column count for cards mode, measured from the content width (see the
+    /// zero-height GeometryReader in the content column). Also drives keyboard
+    /// navigation, so grid rendering and arrow keys always agree.
+    @State private var gridColumns: Int = 3
 
     var body: some View {
         VStack(spacing: 0) {
@@ -56,6 +80,20 @@ struct HomeView: View {
                     ScrollView {
                         homeContentColumn {
                             VStack(spacing: 0) {
+                                GeometryReader { proxy in
+                                    Color.clear
+                                        .onChange(of: proxy.size.width, initial: true) { _, width in
+                                            let columns = max(
+                                                1,
+                                                Int((width + HomeLayout.gridSpacing) / (HomeLayout.gridItemMinWidth + HomeLayout.gridSpacing))
+                                            )
+                                            if columns != gridColumns {
+                                                gridColumns = columns
+                                            }
+                                        }
+                                }
+                                .frame(height: 0)
+
                                 if session.showsHistoryHint, !session.isSearching {
                                     historyHint
                                         .padding(.top, HomeLayout.contentTopPadding)
@@ -65,7 +103,10 @@ struct HomeView: View {
                                 }
 
                                 contentBody
-                                    .frame(maxWidth: HomeLayout.readingColumnMaxWidth, alignment: .leading)
+                                    .frame(
+                                        maxWidth: viewMode == .cards ? HomeLayout.contentMaxWidth : HomeLayout.readingColumnMaxWidth,
+                                        alignment: .leading
+                                    )
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.top, HomeLayout.contentTopPadding)
                                     .padding(.bottom, HomeLayout.contentBottomPadding)
@@ -117,6 +158,9 @@ struct HomeView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .rascWindowSurface()
         .onAppear { DispatchQueue.main.async { searchIsFocused = true } }
+        .onChange(of: viewMode) { _, mode in
+            HomeViewModeStore().save(mode)
+        }
         .animation(RascMotion.surface(reduceMotion: reduceMotion), value: session.showsHistoryHint)
         .onChange(of: session.actionErrorMessage) { _, message in
             if let message { RascAccessibility.announce(message) }
@@ -130,25 +174,25 @@ struct HomeView: View {
         .onKeyPress(.upArrow) {
             guard !searchIsFocused else { return .ignored }
             listIsFocused = true
-            session.moveSelection(.up, columns: 1)
+            session.moveSelection(.up, columns: activeGridColumns)
             return .handled
         }
         .onKeyPress(.downArrow) {
             guard !searchIsFocused else { return .ignored }
             listIsFocused = true
-            session.moveSelection(.down, columns: 1)
+            session.moveSelection(.down, columns: activeGridColumns)
             return .handled
         }
         .onKeyPress(.leftArrow) {
             guard !searchIsFocused else { return .ignored }
             listIsFocused = true
-            session.moveSelection(.left, columns: 1)
+            session.moveSelection(.left, columns: activeGridColumns)
             return .handled
         }
         .onKeyPress(.rightArrow) {
             guard !searchIsFocused else { return .ignored }
             listIsFocused = true
-            session.moveSelection(.right, columns: 1)
+            session.moveSelection(.right, columns: activeGridColumns)
             return .handled
         }
         .onKeyPress(.return) {
@@ -189,6 +233,8 @@ struct HomeView: View {
 
             Spacer(minLength: 12)
 
+            HomeViewModeToggle(mode: $viewMode)
+
             HomeNewScratchButton(style: .header, action: onNewScratch)
 
             RascSettingsLink {
@@ -225,8 +271,8 @@ struct HomeView: View {
                 Image(systemName: "xmark")
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
-                    .frame(width: 22, height: 22)
-                    .contentShape(Rectangle())
+                    .frame(width: 26, height: 26)
+                    .contentShape(Rectangle().inset(by: -3))
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Dismiss search tip")
@@ -299,13 +345,20 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: HomeLayout.temporalLabelSpacing) {
                     sectionTitle(for: group)
 
-                    noteList(
+                    notesBody(
                         for: group.notes,
                         showsKeptIndicator: !isKeptSection(group)
                     )
                     if isKeptSection(group), session.keptCount > HomeLifecycleGrouping.keptSectionLimit {
-                        Button(session.showsAllKept ? "Show fewer" : "Show all \(session.keptCount) kept thoughts") {
+                        Button {
                             session.toggleKeptVisibility()
+                        } label: {
+                            if session.showsAllKept {
+                                Text("Show fewer")
+                            } else {
+                                Text("Show all \(session.keptCount) kept thoughts")
+                                    .monospacedDigit()
+                            }
                         }
                         .buttonStyle(.link)
                         .padding(.top, 4)
@@ -319,7 +372,7 @@ struct HomeView: View {
 
     private var searchResultsList: some View {
         VStack(alignment: .leading, spacing: 12) {
-            noteList(for: session.searchResults)
+            notesBody(for: session.searchResults)
             if session.hasMoreSearchResults {
                 Text("Showing the first 500 matches. Narrow your search to find more.")
                     .font(.callout)
@@ -327,6 +380,46 @@ struct HomeView: View {
             }
         }
             .animation(RascMotion.bodyContentAnimation(reduceMotion: reduceMotion), value: session.searchResults.map(\.id))
+    }
+
+    @ViewBuilder
+    private func notesBody(
+        for notes: [Note],
+        showsKeptIndicator: Bool = true
+    ) -> some View {
+        if viewMode == .cards {
+            noteCardGrid(for: notes, showsKeptIndicator: showsKeptIndicator)
+        } else {
+            noteList(for: notes, showsKeptIndicator: showsKeptIndicator)
+        }
+    }
+
+    private func noteCardGrid(
+        for notes: [Note],
+        showsKeptIndicator: Bool = true
+    ) -> some View {
+        LazyVGrid(
+            columns: cardGridItems,
+            alignment: .leading,
+            spacing: HomeLayout.gridSpacing
+        ) {
+            ForEach(Array(notes.enumerated()), id: \.element.id) { _, note in
+                HomeNoteCardView(
+                    note: note,
+                    isSelected: session.selectedNoteID == note.id,
+                    showsKeptIndicator: showsKeptIndicator,
+                    timestamp: session.formattedTimestamp(for: note),
+                    searchQuery: session.searchQuery,
+                    onOpen: { onOpenNote(note.id) },
+                    onSelect: { session.selectNote(note.id) },
+                    onCopy: { copyNote(note.id) },
+                    onDuplicate: { duplicateNote(note.id) },
+                    onUnkeep: { unkeepNote(note.id) },
+                    onDiscard: { discardNote(note.id) }
+                )
+                .id(note.id)
+            }
+        }
     }
 
     private func noteList(
@@ -504,7 +597,10 @@ private struct HomeSearchField: View {
                         isFocused.wrappedValue = true
                     } label: {
                         Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 15, weight: .medium))
                             .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                            .frame(width: 26, height: 26)
+                            .contentShape(Rectangle().inset(by: -3))
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Clear search")
@@ -531,6 +627,7 @@ private struct HomeNoteRowView: View {
     let onDiscard: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorSchemeContrast) private var colorSchemeContrast
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isHovered = false
     @FocusState private var rowIsFocused: Bool
@@ -545,6 +642,10 @@ private struct HomeNoteRowView: View {
             return note.displayHomeExcerpt
         }
         return note.retrievalSnippet(matching: searchQuery)
+    }
+
+    private var matchMark: Color {
+        RascSurfacePalette.searchMark(for: colorScheme, increasedContrast: colorSchemeContrast == .increased)
     }
 
     var body: some View {
@@ -579,7 +680,7 @@ private struct HomeNoteRowView: View {
                 .frame(width: 14)
 
             VStack(alignment: .leading, spacing: 1) {
-                Text(note.displayTitle)
+                Text(RascSearchMatch.highlighted(note.displayTitle, query: searchQuery, mark: matchMark, tokenStartOnly: true))
                     .font(.system(size: 13.5, weight: .medium))
                     .foregroundStyle(.primary.opacity(0.92))
                     .lineLimit(1)
@@ -587,7 +688,7 @@ private struct HomeNoteRowView: View {
                     .truncationMode(.tail)
 
                 if let excerpt = rowExcerpt {
-                    Text(excerpt)
+                    Text(RascSearchMatch.highlighted(excerpt, query: searchQuery, mark: matchMark, tokenStartOnly: true))
                         .font(.system(size: 12))
                         .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                         .lineLimit(1)
@@ -631,14 +732,14 @@ private struct HomeNoteRowView: View {
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                 .symbolRenderingMode(.monochrome)
-                .frame(width: 22, height: 22)
+                .frame(width: 26, height: 26, alignment: .trailing)
+                .contentShape(Rectangle().inset(by: -3))
                 .background {
                     if isHovered {
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
                             .fill(RascSurfacePalette.subtleFill(for: colorScheme))
                     }
                 }
-                .contentShape(Rectangle())
         }
         .menuStyle(.borderlessButton)
         .menuIndicator(.hidden)
@@ -782,5 +883,241 @@ private struct HomeNewScratchButton: View {
                 lineWidth: 0.85
             )
         }
+    }
+}
+
+/// Two-option Home view switch. Neutral selection on a quiet capsule, never copper;
+/// SF Symbols keep it instantly scannable without adding chrome.
+private struct HomeViewModeToggle: View {
+    @Binding var mode: HomeViewMode
+
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorSchemeContrast) private var contrast
+
+    var body: some View {
+        HStack(spacing: 2) {
+            ForEach(HomeViewMode.allCases) { option in
+                let isSelected = mode == option
+                Button {
+                    mode = option
+                } label: {
+                    Image(systemName: option == .list ? "list.bullet" : "square.grid.2x2")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(
+                            isSelected
+                                ? RascSurfacePalette.primaryText(for: colorScheme)
+                                : RascSurfacePalette.metadataText(for: colorScheme)
+                        )
+                        .frame(width: 26, height: 26)
+                        .background {
+                            if isSelected {
+                                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                    .fill(RascSurfacePalette.selectionFill(for: colorScheme))
+                                    .overlay {
+                                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                            .strokeBorder(
+                                                RascSurfacePalette.selectionStroke(for: colorScheme),
+                                                lineWidth: contrast == .increased ? 1.5 : 1
+                                            )
+                                    }
+                            }
+                        }
+                        .contentShape(RoundedRectangle(cornerRadius: 6, style: .continuous).inset(by: -3))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(option.accessibilityLabel)
+                .accessibilityHint("Switch Home between list and card rendering")
+                .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : .isButton)
+                .help(option == .list ? "List view" : "Card view")
+            }
+        }
+        .padding(2)
+        .background {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(RascSurfacePalette.subtleFill(for: colorScheme))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .strokeBorder(RascSurfacePalette.border(for: colorScheme).opacity(contrast == .increased ? 1 : 0.66), lineWidth: 1)
+        }
+        .accessibilityElement(children: .contain)
+    }
+}
+
+/// Home card: the same note, same actions and same selection semantics as the list
+/// row, rendered as a stable solid surface that shows a multi-line excerpt.
+private struct HomeNoteCardView: View {
+    let note: Note
+    let isSelected: Bool
+    let showsKeptIndicator: Bool
+    let timestamp: String
+    let searchQuery: String
+    let onOpen: () -> Void
+    let onSelect: () -> Void
+    let onCopy: () -> Void
+    let onDuplicate: () -> Void
+    let onUnkeep: () -> Void
+    let onDiscard: () -> Void
+
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorSchemeContrast) private var colorSchemeContrast
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var isHovered = false
+
+    private var matchMark: Color {
+        RascSurfacePalette.searchMark(for: colorScheme, increasedContrast: colorSchemeContrast == .increased)
+    }
+
+    private var cardExcerpt: String? {
+        let trimmed = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            return note.displayHomeExcerpt
+        }
+        return note.retrievalSnippet(matching: searchQuery)
+    }
+
+    private var showsTrailingActions: Bool {
+        isHovered || isSelected
+    }
+
+    var body: some View {
+        Button {
+            onSelect()
+            onOpen()
+        } label: {
+            cardContent
+        }
+        .buttonStyle(.plain)
+        .contextMenu {
+            noteActionsMenuContent
+        }
+        .onHover { isHovered = $0 }
+        .animation(RascMotion.micro(reduceMotion: reduceMotion), value: isHovered)
+        .animation(RascMotion.selection(reduceMotion: reduceMotion), value: isSelected)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilityLabel)
+        .accessibilityHint("Press Return to open")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    private var cardContent: some View {
+        HStack(alignment: .top, spacing: 9) {
+            Image(systemName: "bookmark.fill")
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                .opacity(note.isKept && showsKeptIndicator ? 1 : 0)
+                .frame(width: 14)
+                .padding(.top, 3.5)
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(RascSearchMatch.highlighted(note.displayTitle, query: searchQuery, mark: matchMark, tokenStartOnly: true))
+                    .font(.system(size: HomeLayout.cardTitleFontSize, weight: .semibold))
+                    .foregroundStyle(.primary.opacity(0.92))
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                    .truncationMode(.tail)
+
+                if let excerpt = cardExcerpt {
+                    Text(RascSearchMatch.highlighted(excerpt, query: searchQuery, mark: matchMark, tokenStartOnly: true))
+                        .font(.system(size: HomeLayout.cardExcerptFontSize))
+                        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                        .lineLimit(HomeLayout.cardExcerptLineLimit)
+                        .multilineTextAlignment(.leading)
+                        .truncationMode(.tail)
+                }
+            }
+
+            Spacer(minLength: 8)
+
+            VStack(alignment: .trailing, spacing: 4) {
+                Text(timestamp)
+                    .font(.system(size: 11, weight: .medium))
+                    .monospacedDigit()
+                    .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                    .lineLimit(1)
+
+                noteActionsMenu
+                    .opacity(showsTrailingActions ? 1 : 0)
+                    .allowsHitTesting(showsTrailingActions)
+                    .disabled(!showsTrailingActions)
+                    .accessibilityHidden(!showsTrailingActions)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .contentShape(RoundedRectangle(cornerRadius: HomeLayout.gridItemCornerRadius, style: .continuous))
+        .background {
+            ZStack {
+                RoundedRectangle(cornerRadius: HomeLayout.gridItemCornerRadius, style: .continuous)
+                    .fill(RascSurfacePalette.homeCardFill(for: colorScheme))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: HomeLayout.gridItemCornerRadius, style: .continuous)
+                            .strokeBorder(
+                                RascSurfacePalette.homeCardBorder(
+                                    for: colorScheme,
+                                    isHovered: isHovered,
+                                    increasedContrast: colorSchemeContrast == .increased
+                                ),
+                                lineWidth: 0.85
+                            )
+                    }
+
+                if isSelected {
+                    // Behind the content, matching the row rendering; this is
+                    // decoration and must never intercept touches.
+                    RascTransientSelectionBackground(cornerRadius: HomeLayout.gridItemCornerRadius)
+                        .allowsHitTesting(false)
+                }
+            }
+        }
+    }
+
+    private var noteActionsMenu: some View {
+        Menu {
+            noteActionsMenuContent
+        } label: {
+            Image(systemName: "ellipsis")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                .symbolRenderingMode(.monochrome)
+                .frame(width: 26, height: 26, alignment: .trailing)
+                .contentShape(Rectangle().inset(by: -3))
+                .background {
+                    if isHovered {
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .fill(RascSurfacePalette.subtleFill(for: colorScheme))
+                    }
+                }
+        }
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .tint(.secondary)
+        .accessibilityLabel("Note actions")
+        .help("Note actions")
+    }
+
+    @ViewBuilder
+    private var noteActionsMenuContent: some View {
+        if note.isKept {
+            Button("Unkeep", action: onUnkeep)
+        }
+        Button("Copy content", action: onCopy)
+        Button("Duplicate", action: onDuplicate)
+            .disabled(!note.hasMeaningfulContent)
+        Button("Discard Note", role: .destructive, action: onDiscard)
+    }
+
+    private var accessibilityLabel: String {
+        var components = [note.displayTitle]
+        if note.isKept {
+            components.append("Kept")
+        }
+        if let excerpt = cardExcerpt {
+            components.append(excerpt)
+        }
+        components.append(timestamp)
+        return components.joined(separator: ", ")
     }
 }
