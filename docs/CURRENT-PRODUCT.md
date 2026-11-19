@@ -34,9 +34,11 @@ Foundation Models operates on-device on macOS 26+ when Apple Intelligence and it
 model are available. The application itself supports macOS 14+. Capture, Keep and
 retrieval do not depend on Refine availability.
 
-Each request is isolated. A suggestion remains pending, with Suggested/Original
-comparison. Selection previews show the whole note with only the selected passage
-replaced. Use original/Esc leaves the original intact. Accept suggestion persists
+Each request is isolated. A suggestion remains pending, with three comparison views:
+Suggested (the proposed text), Changes (a word-level strike/underline diff) and
+Original. Left and Right arrows cycle them; Return accepts, Esc uses the original.
+Selection previews show the whole note with only the selected passage replaced.
+Use original/Esc leaves the original intact. Accept suggestion persists
 only after revision/snapshot validation and supports Undo.
 
 Neutral confirmations can disappear; errors and instructions remain until dismissed
@@ -45,13 +47,15 @@ or the user changes the thought. Save failures take precedence over onboarding h
 ## Retrieval and keyboard behavior
 
 Home separates Kept and temporal groups. Initially it shows the newest 12 Kept,
-with explicit Show all/Show fewer access to every remaining Kept. Rows are compact:
-kept marker (kept rows only), single-line title, optional single-line excerpt,
-right-aligned timestamp.
+with explicit Show all/Show fewer access to every remaining Kept. The default view
+is the compact list: kept marker (kept rows only), single-line title, optional
+single-line excerpt, right-aligned timestamp. A toggle in the header switches to a
+card view that shows a multi-line excerpt of each note; ordering, search, selection
+and keyboard navigation are identical in both views, and the choice is remembered.
 
-Arrows move by row; there is no horizontal wrap or column flow. Search-field caret
-editing stays distinct from list navigation; Down or Return transfers focus to
-results.
+Arrows move within the visible order in both views — by row in the list, by cell in
+the card view; there is no horizontal wrap. Search-field caret editing stays
+distinct from list navigation; Down or Return transfers focus to results.
 
 Both retrieval surfaces use local FTS, not AI. Snippets prefer context around an
 actual query term. Quick Search shows up to 12 results with a truncation hint;
@@ -60,7 +64,7 @@ Search thoughts (`⌘P`); legacy “find” remains a palette search alias.
 
 ## Presentation
 
-The interface uses Graphite Paper: warm paper and neutral graphite surfaces, neutral selection and focus, and copper reserved for Keep and Kept. The brand symbol remains separate from the writing surface. The Thinking Orb has been removed from the interface. See the [design system](DESIGN-SYSTEM.md) and [brand](BRAND.md).
+The interface uses Graphite Paper: warm paper and neutral graphite surfaces, neutral selection and focus, and copper reserved for Keep and Kept. Settings → Theme Style adds curated presets (Graphite Paper default, Slate, Porcelain) without changing the default or copper's role; reset restores System + Graphite Paper. The brand symbol remains separate from the writing surface. The Thinking Orb has been removed from the interface. See the [design system](DESIGN-SYSTEM.md) and [brand](BRAND.md).
 
 ## Validation boundaries
 
