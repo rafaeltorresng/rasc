@@ -21,7 +21,7 @@ struct ShortcutKeycapView: View {
                 singleKeycap(token)
             }
         }
-        .animation(RascMotion.keycapPress, value: isPressed)
+        .animation(reduceMotion ? nil : RascMotion.keycapPress, value: isPressed)
         .animation(RascMotion.micro(reduceMotion: reduceMotion), value: isHovered)
         .onHover { isHovered = $0 }
         .accessibilityElement(children: .ignore)
