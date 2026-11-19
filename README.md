@@ -23,7 +23,7 @@ On first launch, choose **Get started**. You can follow the short walkthrough or
 3. Press `⇧⌘K` to **Keep** it. Rasc clears the scratch and returns you to work.
 4. Press `⌘⌥\` to open Home and find the thought.
 
-**Refine** is optional. Press `⌘J` with a thought or passage, compare Suggested and Original, then explicitly accept or use the original.
+**Refine** is optional. Press `⌘J` with a thought or passage, review it in Suggested, Changes (a word-level diff) or Original — Left and Right arrows cycle them — then explicitly accept or use the original.
 
 ## Using Rasc
 
@@ -38,7 +38,7 @@ On first launch, choose **Get started**. You can follow the short walkthrough or
 | Hide and continue the same thought later | `Esc` |
 
 Capture, autosave, Keep, Home and Search work independently of Refine.
-Refine offers a conservative edit. Compare Suggested and Original before accepting;
+Refine offers a conservative edit. Review Suggested, Changes (word-level diff) or Original before accepting;
 In the current source, **Use original** dismisses the proposal without changing your text (older releases may use a different label).
 Discard has Undo while Rasc remains running; it does not introduce a Trash system.
 

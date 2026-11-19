@@ -5,11 +5,14 @@ import UniformTypeIdentifiers
 
 struct ScratchpadView: View {
     @Bindable var session: ScratchpadSession
-    @State private var showsOriginal = false
     @Environment(\.undoManager) private var undoManager
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var globalShortcutRevision = 0
+    /// Caches the refinement word-diff across body re-evaluation so the preview
+    /// doesn't redo the LCS for the header label, the body and VoiceOver on every
+    /// frame. Keyed by the refinement request ID.
+    @State private var diffMemo = RefinementDiffMemo()
 
     let onEscape: () -> Void
     let onPaletteCommand: (PaletteCommand) -> Void
@@ -131,6 +134,12 @@ struct ScratchpadView: View {
                     .font(.caption.weight(.medium))
                     .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                     .accessibilityAddTraits(.isHeader)
+                    .lineLimit(1)
+
+                Text(refinementChangeCountLabel)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                    .monospacedDigit()
                     .lineLimit(1)
             } else if let statusText {
                 Text(statusText)
@@ -286,13 +295,17 @@ struct ScratchpadView: View {
     }
 
     private var refinementComparisonPicker: some View {
-        Picker("Compare refinement", selection: $showsOriginal) {
-            Text("Suggested").tag(false)
-            Text("Original").tag(true)
+        Picker("Compare refinement", selection: Binding(
+            get: { session.previewMode },
+            set: { session.previewMode = $0 }
+        )) {
+            ForEach(ScratchpadSession.RefinePreviewMode.allCases) { mode in
+                Text(mode.rawValue).tag(mode)
+            }
         }
         .pickerStyle(.segmented)
         .labelsHidden()
-        .frame(width: 190)
+        .frame(width: 216)
         .controlSize(.small)
         .tint(RascSurfacePalette.secondaryText(for: colorScheme))
         .onExitCommand(perform: handleEscape)
@@ -301,19 +314,9 @@ struct ScratchpadView: View {
     private var refinementPreviewSurface: some View {
         VStack(alignment: .leading, spacing: 0) {
             ScrollView {
-                Text(showsOriginal ? (session.refinementPreview?.request.snapshot.text ?? "") : (session.refinementPreview?.proposedNoteText ?? ""))
-                    .font(.system(
-                        size: RascSurfaceMetrics.noteFontSize,
-                        weight: .regular
-                    ))
-                    .lineSpacing(RascSurfaceMetrics.noteLineSpacing)
-                    .textSelection(.enabled)
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                    .padding(.horizontal, RascSurfaceLayout.noteTextLeadingInset)
-                    .padding(.top, RascSurfaceMetrics.editorTopPadding + RascSurfaceLayout.scratchpadEditorCaretTopInset)
-                    .padding(.bottom, 20)
+                refinementScrollBody
             }
-            .accessibilityLabel("Refined preview")
+            .accessibilityLabel(refinementPreviewAccessibilityLabel)
 
             Rectangle()
                 .fill(.primary.opacity(0.07))
@@ -346,8 +349,83 @@ struct ScratchpadView: View {
             .padding(.vertical, 11)
         }
         .accessibilityElement(children: .contain)
-        .onChange(of: session.refinementPreview?.request.requestID, initial: true) { showsOriginal = false }
         .onExitCommand(perform: handleEscape)
+    }
+
+    /// The scroll content of the preview. Text selection is disabled for the
+    /// diff: it would copy struck removed text concatenated with the suggestion,
+    /// plus seam characters that exist in neither input. Suggested and Original
+    /// stay selectable. (The two selectability types don't unify in a ternary,
+    /// so the modifier is applied in a conditional branch.)
+    @ViewBuilder
+    private var refinementScrollBody: some View {
+        let content = refinementPreviewBody
+            .font(.system(
+                size: RascSurfaceMetrics.noteFontSize,
+                weight: .regular
+            ))
+            .lineSpacing(RascSurfaceMetrics.noteLineSpacing)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+            .padding(.horizontal, RascSurfaceLayout.noteTextLeadingInset)
+            .padding(.top, RascSurfaceMetrics.editorTopPadding + RascSurfaceLayout.scratchpadEditorCaretTopInset)
+            .padding(.bottom, 20)
+        if session.previewMode == .changes {
+            content.textSelection(.disabled)
+        } else {
+            content.textSelection(.enabled)
+        }
+    }
+
+    @ViewBuilder
+    private var refinementPreviewBody: some View {
+        switch session.previewMode {
+        case .suggested:
+            Text(session.refinementPreview?.proposedNoteText ?? "")
+                .foregroundStyle(.primary)
+        case .original:
+            Text(session.refinementPreview?.request.snapshot.text ?? "")
+                .foregroundStyle(.primary)
+        case .changes:
+            Text(refinementChangesAttributed)
+        }
+    }
+
+    private var refinementDiff: RefinementDiffMemo.Result {
+        diffMemo.load(session.refinementPreview)
+    }
+
+    private var refinementChangesAttributed: AttributedString {
+        WordDiff.attributed(
+            from: refinementDiff.runs,
+            textColor: .primary,
+            removedColor: RascSurfacePalette.secondaryText(for: colorScheme)
+        )
+    }
+
+    private var refinementChangeCount: Int {
+        refinementDiff.changeCount
+    }
+
+    private var refinementChangeCountLabel: String {
+        switch refinementChangeCount {
+        case 0:
+            "· No changes"
+        case 1:
+            "· 1 change"
+        case let count:
+            "· \(count) changes"
+        }
+    }
+
+    private var refinementPreviewAccessibilityLabel: String {
+        switch session.previewMode {
+        case .suggested:
+            "Refine preview, suggested refinement"
+        case .original:
+            "Refine preview, original note"
+        case .changes:
+            "Refine preview, changes diff, \(refinementChangeCount) changes. Removed words struck through, added words bold and underlined"
+        }
     }
 
     private func statusColor(for text: String) -> Color {
@@ -940,7 +1018,7 @@ final class ListTextView: NSTextView {
             let size = NSSize(width: imageWidth, height: imageWidth * CGFloat(preview.height) / CGFloat(preview.width))
             let image = NSImage(cgImage: preview, size: size)
             image.accessibilityDescription = "Image. Select it and press Space to open a larger preview."
-            attachment.attachmentCell = NSTextAttachmentCell(imageCell: image)
+            attachment.attachmentCell = RascImageAttachmentCell(imageCell: image)
             return
         }
         let placeholderSize = NSSize(width: min(200, width), height: 120)
@@ -949,7 +1027,7 @@ final class ListTextView: NSTextView {
         NSColor.quaternaryLabelColor.setFill()
         NSBezierPath(rect: NSRect(origin: .zero, size: placeholderSize)).fill()
         placeholder.unlockFocus()
-        attachment.attachmentCell = NSTextAttachmentCell(imageCell: placeholder)
+        attachment.attachmentCell = RascImageAttachmentCell(imageCell: placeholder)
     }
 
     private static func thumbnail(for data: Data, maxPixelSize: Int) -> CGImage? {
@@ -969,7 +1047,7 @@ final class ListTextView: NSTextView {
             let size = NSSize(width: width, height: width * CGFloat(preview.height) / CGFloat(preview.width))
             let image = NSImage(cgImage: preview, size: size)
             image.accessibilityDescription = "Image. Select it and press Space to open a larger preview."
-            attachment.attachmentCell = NSTextAttachmentCell(imageCell: image)
+            attachment.attachmentCell = RascImageAttachmentCell(imageCell: image)
         }
         layoutManager?.invalidateLayout(forCharacterRange: NSRange(location: 0, length: storage.length), actualCharacterRange: nil)
         needsDisplay = true
@@ -1140,6 +1218,24 @@ private final class RascImageAttachment: NSTextAttachment {
     required init?(coder: NSCoder) { nil }
 }
 
+/// Draws the image cell, then a 1 px pure-black (light) / pure-white (dark) hairline
+/// outline at 10 % alpha. The outline is a neutral separator, never a themed element.
+private final class RascImageAttachmentCell: NSTextAttachmentCell {
+    override func draw(withFrame cellFrame: NSRect, in controlView: NSView?) {
+        super.draw(withFrame: cellFrame, in: controlView)
+
+        let dark = controlView?.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+        let color: NSColor = dark ? .white : .black
+        let width = max(0, cellFrame.width - 1)
+        let height = max(0, cellFrame.height - 1)
+        guard width > 0, height > 0 else { return }
+        color.withAlphaComponent(0.1).setStroke()
+        let path = NSBezierPath(rect: NSRect(x: cellFrame.minX + 0.5, y: cellFrame.minY + 0.5, width: width, height: height))
+        path.lineWidth = 1
+        path.stroke()
+    }
+}
+
 private struct ScratchpadEmptyState: View {
     @Environment(\.colorScheme) private var colorScheme
 
@@ -1173,7 +1269,7 @@ private struct ScratchpadChromeIconButton: View {
                             .fill(RascSurfacePalette.subtleFill(for: colorScheme))
                     }
                 }
-                .contentShape(Rectangle())
+                .contentShape(Rectangle().inset(by: -3))
         }
         .buttonStyle(.plain)
         .onHover { isHovered = $0 }
@@ -1283,5 +1379,36 @@ private struct RefinementActionLabel: View {
         isPrimary
             ? RascSurfacePalette.actionPrimaryLabel(for: colorScheme).opacity(0.82)
             : RascSurfacePalette.metadataText(for: colorScheme)
+    }
+}
+
+/// Computes the refinement word-diff at most once per refinement request. The
+/// runs and change count are cached together; the preview only assembles the
+/// attributed string on demand, and body re-evaluation stays off the LCS path.
+private final class RefinementDiffMemo {
+    struct Result {
+        let runs: [WordDiff.Run]
+        let changeCount: Int
+    }
+
+    private static let empty = Result(runs: [], changeCount: 0)
+
+    private var requestID: UUID?
+    private var result: Result = .init(runs: [], changeCount: 0)
+
+    func load(_ preview: RefinementPreview?) -> Result {
+        guard let preview else {
+            requestID = nil
+            result = Self.empty
+            return result
+        }
+        if requestID == preview.request.requestID { return result }
+        let runs = WordDiff.diff(
+            from: preview.request.snapshot.text,
+            to: preview.proposedNoteText
+        )
+        result = Result(runs: runs, changeCount: WordDiff.changeCount(of: runs))
+        requestID = preview.request.requestID
+        return result
     }
 }

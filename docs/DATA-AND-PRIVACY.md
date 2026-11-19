@@ -44,6 +44,7 @@ There is no built-in export, automatic backup or sync. Copy and Share are explic
 user handoffs to other applications. Feedback opens an email draft with version
 information; it neither attaches notes nor sends the message automatically.
 
-Refine proposals may still change meaning or uncertainty. Compare Suggested with
-Original before accepting. Automated language/literal checks do not prove semantic
-equivalence. Cancellation and failed acceptance keep the original intact.
+Refine proposals may still change meaning or uncertainty. Review Suggested, or the
+word-level Changes diff, against Original before accepting. Automated language/literal
+checks do not prove semantic equivalence. Cancellation and failed acceptance keep the
+original intact.

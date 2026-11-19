@@ -16,6 +16,8 @@ Use synthetic thoughts and a temporary test account/profile when exercising fail
 ## Home and recovery
 
 - [ ] Arrow keys move selection through the chronological note list, including across Kept/temporal section boundaries; there is no horizontal grid flow.
+- [ ] In the card view, arrow keys move by cell across columns and rows, clamp at edges, and there is no wrap; the toggle keeps search, ordering and selection consistent with the list.
+- [ ] The view chosen in Home persists across relaunches; rows/cards keep identical actions, context menu and Kept affordances.
 - [ ] Search field keeps normal caret editing; Down/Return transfers to results.
 - [ ] With 13 and 50 Kept thoughts, Show all and Show fewer provide access without a search term.
 - [ ] Selected rows stay visible without gratuitous scrolling; clicking blank list space does not draw stray focus-ring lines.
@@ -25,7 +27,9 @@ Use synthetic thoughts and a temporary test account/profile when exercising fail
 
 ## Refine and retrieval
 
-- [ ] Whole-note/selection preview: compare Suggested and Original; selection context is preserved.
+- [ ] Whole-note/selection preview: Suggested, Changes (word-level strike/underline) and Original all render; selection context is preserved; Esc/Return grammar is unchanged; Reduce Motion falls back to instant transitions.
+- [ ] Home opens with the list focused (arrows move selection; reopening Home behaves the same); typing in the search field keeps caret arrows, Down moves to results.
+- [ ] Refine preview: Left/Right cycles Suggested → Changes → Original (clamped); Return accepts; Esc uses the original; the editor's arrow keys are unaffected.
 - [ ] Use original/Esc preserves original; Accept and Undo persist the expected content.
 - [ ] Late/cancelled/stale results cannot replace edited text.
 - [ ] Long/unsupported/disabled/preparing/error messages fit at 560 px and stay readable.
@@ -36,6 +40,8 @@ Use synthetic thoughts and a temporary test account/profile when exercising fail
 ## Accessibility and appearance
 
 - [ ] Light/dark: inspect typography, actions, borders, icon and menu-bar symbol.
+- [ ] Theme presets (Graphite Paper / Slate / Porcelain) repaint Home, Scratchpad and Settings immediately and uniformly, preserve copper-for-Keep and readable contrast, and Reset restores System + Graphite Paper.
+- [ ] Each preset under Increase Contrast renders with the strengthened borders, and the unmodified copper pair still reads correctly.
 - [ ] VoiceOver announces preview/errors and can complete Capture → Accept/Keep → retrieval.
 - [ ] Full Keyboard Access reaches note rows, action menus, Undo, comparison and Settings.
 - [ ] Reduce Motion preserves state without loops; Reduce Transparency preserves readable surfaces.
