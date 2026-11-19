@@ -397,6 +397,51 @@ struct PanelControllerTests {
     }
 
     @Test
+    func plainArrowKeysCycleTheRefinementPreviewModes() async throws {
+        let controller = try makeController(refinementProvider: PreviewArrowRefinementProvider())
+        defer { controller.panel.orderOut(nil) }
+        let session = controller.scratchpadSession
+        session.text = "draft the memo on friday please"
+        session.startRefinement()
+        let reached = await waitUntil { session.surface == .refinementPreview }
+        #expect(reached)
+        #expect(session.previewMode == .suggested)
+
+        controller.panel.setFrame(NSRect(x: 240, y: 260, width: 640, height: 420), display: false)
+        controller.panel.orderFrontRegardless()
+        controller.panel.makeKey()
+
+        func pressArrow(_ character: String, keyCode: UInt16, modifierFlags: NSEvent.ModifierFlags = [.function]) {
+            guard let event = NSEvent.keyEvent(
+                with: .keyDown,
+                location: .zero,
+                modifierFlags: modifierFlags,
+                timestamp: ProcessInfo.processInfo.systemUptime,
+                windowNumber: controller.panel.windowNumber,
+                context: nil,
+                characters: character,
+                charactersIgnoringModifiers: character,
+                isARepeat: false,
+                keyCode: keyCode
+            ) else { return }
+            NSApp.sendEvent(event)
+        }
+
+        // Arrows report the Function flag, so the interception must not require
+        // an empty modifier set (regression: plain arrows did nothing).
+        pressArrow("\u{F703}", keyCode: 124) // right
+        #expect(session.previewMode == .changes)
+        pressArrow("\u{F703}", keyCode: 124) // right
+        #expect(session.previewMode == .original)
+        pressArrow("\u{F703}", keyCode: 124) // right, clamped at Original
+        #expect(session.previewMode == .original)
+        pressArrow("\u{F702}", keyCode: 123) // left
+        #expect(session.previewMode == .changes)
+        pressArrow("\u{F702}", keyCode: 123, modifierFlags: [.function, .command]) // ⌘→ passes through
+        #expect(session.previewMode == .changes)
+    }
+
+    @Test
     func commandWHidesTheKeyPanelWithoutDiscarding() async throws {
         let controller = try makeController()
         defer { controller.panel.orderOut(nil) }
@@ -468,14 +513,36 @@ struct PanelControllerTests {
     }
 
     private func makeController(
-        windowFrameStore: WindowFrameStore = WindowFrameStore()
+        windowFrameStore: WindowFrameStore = WindowFrameStore(),
+        refinementProvider: (any RefinementProvider)? = nil
     ) throws -> PanelController {
         let databaseURL = FileManager.default.temporaryDirectory
             .appending(path: UUID().uuidString)
             .appendingPathExtension("sqlite")
         return PanelController(
             repository: try NoteRepository(databaseURL: databaseURL),
+            refinementProvider: refinementProvider ?? FoundationModelsRefinementProvider(),
             windowFrameStore: windowFrameStore
+        )
+    }
+}
+
+private struct PreviewArrowRefinementProvider: RefinementProvider {
+    let metadata = RefinementMetadata(
+        provider: "panel-test",
+        modelIdentifier: "panel-test",
+        promptVersion: "panel-test"
+    )
+
+    func availability(for _: RefinementRequest) async -> RefinementAvailability {
+        .available
+    }
+
+    func refine(_ request: RefinementRequest) async throws -> RefinementResult {
+        RefinementResult(
+            decision: .changed,
+            kind: .messyText,
+            text: "Suggested rewrite of the memo"
         )
     }
 }
