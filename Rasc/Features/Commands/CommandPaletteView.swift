@@ -4,6 +4,7 @@ struct CommandPaletteView: View {
     @Bindable var session: ScratchpadSession
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorSchemeContrast) private var colorSchemeContrast
     @State private var isFocused = false
     @State private var globalShortcutRevision = 0
     let onExecute: (PaletteCommand) -> Void
@@ -89,9 +90,13 @@ struct CommandPaletteView: View {
         )
     }
 
+    private var matchMark: Color {
+        RascSurfacePalette.searchMark(for: colorScheme, increasedContrast: colorSchemeContrast == .increased)
+    }
+
     private func commandRow(_ command: PaletteCommand, isSelected: Bool) -> some View {
         HStack(spacing: 12) {
-            Text(command.title)
+            Text(RascSearchMatch.highlighted(command.title, query: session.commandPaletteQuery, mark: matchMark, tokenStartOnly: false))
                 .font(.system(size: RascSurfaceMetrics.searchTitleFontSize, weight: .medium))
                 .foregroundStyle(
                     command == .discardNote

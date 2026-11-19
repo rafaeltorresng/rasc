@@ -51,6 +51,7 @@ struct HistorySearchView: View {
     @Bindable var session: ScratchpadSession
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorSchemeContrast) private var colorSchemeContrast
 
     var body: some View {
         VStack(spacing: 0) {
@@ -59,7 +60,7 @@ struct HistorySearchView: View {
             searchBody
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             if session.hasMoreSearchResults {
-                Text("Showing 12 recent thoughts. Search more specifically, or browse Home.")
+                Text("Search more specifically, or browse Home.")
                     .font(.caption)
                     .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -144,17 +145,21 @@ struct HistorySearchView: View {
         }
     }
 
+    private var matchMark: Color {
+        RascSurfacePalette.searchMark(for: colorScheme, increasedContrast: colorSchemeContrast == .increased)
+    }
+
     private func resultRow(_ note: Note, isSelected: Bool) -> some View {
         HStack(alignment: .top, spacing: 8) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(note.displayTitle)
+                Text(RascSearchMatch.highlighted(note.displayTitle, query: session.searchQuery, mark: matchMark, tokenStartOnly: true))
                     .font(.system(size: RascSurfaceMetrics.searchTitleFontSize, weight: .medium))
                     .foregroundStyle(.primary)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
 
                 if let snippet = note.retrievalSnippet(matching: session.searchQuery) {
-                    Text(snippet)
+                    Text(RascSearchMatch.highlighted(snippet, query: session.searchQuery, mark: matchMark, tokenStartOnly: true))
                         .font(.system(size: RascSurfaceMetrics.searchSnippetFontSize))
                         .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
                         .lineLimit(2)
@@ -171,8 +176,9 @@ struct HistorySearchView: View {
                         .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
                 }
 
-                Text(note.updatedAt, style: .relative)
+                Text(HomeNoteTimestampFormatter.format(note.updatedAt, calendar: .current, now: .now))
                     .font(.system(size: RascSurfaceMetrics.searchTimestampFontSize))
+                    .monospacedDigit()
                     .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
                     .lineLimit(1)
 
@@ -196,7 +202,7 @@ struct HistorySearchView: View {
         if let snippet = note.retrievalSnippet(matching: session.searchQuery) {
             components.append(snippet)
         }
-        components.append(note.updatedAt.formatted(.relative(presentation: .named)))
+        components.append(HomeNoteTimestampFormatter.format(note.updatedAt, calendar: .current, now: .now))
         return components.joined(separator: ", ")
     }
 
