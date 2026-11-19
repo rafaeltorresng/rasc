@@ -29,6 +29,26 @@ final class ScratchpadSession {
         case message
     }
 
+    /// Which slice of a refinement the preview is showing. Lives here (not on the
+    /// view) so the panel's key-event interception can drive it without depending
+    /// on SwiftUI focus, which never engages while the scratchpad is shown.
+    enum RefinePreviewMode: String, CaseIterable, Identifiable, Sendable {
+        case suggested = "Suggested"
+        case changes = "Changes"
+        case original = "Original"
+
+        var id: String { rawValue }
+
+        /// Steps one position within the Suggested → Changes → Original order,
+        /// clamped at the boundaries; it never wraps.
+        func stepped(by offset: Int) -> RefinePreviewMode {
+            let ordered = Self.allCases
+            guard let index = ordered.firstIndex(of: self) else { return self }
+            let next = min(max(index + offset, 0), ordered.count - 1)
+            return ordered[next]
+        }
+    }
+
     enum CompletionFailure: Equatable {
         case keep, unkeep, discard, copy, share
         var text: String {
@@ -87,6 +107,15 @@ final class ScratchpadSession {
             guard oldValue != surface else { return }
             onSurfaceDidChange?(surface)
         }
+    }
+
+    /// Which slice of the refinement preview is showing. Owned here (not by the
+    /// view) so the panel's key-event interception can drive it without depending
+    /// on SwiftUI focus, which never engages while the scratchpad is shown.
+    var previewMode: RefinePreviewMode = .suggested
+
+    func cyclePreviewMode(by offset: Int) {
+        previewMode = previewMode.stepped(by: offset)
     }
 
     var scratchpadGuidance = OnboardingScratchpadGuidance.inactive
@@ -1022,6 +1051,7 @@ final class ScratchpadSession {
                     result: result,
                     metadata: refinementProvider.metadata
                 )
+                previewMode = .suggested
                 surface = .refinementPreview
                 refinementTask = nil
             }
