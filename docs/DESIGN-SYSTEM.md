@@ -163,6 +163,9 @@ Use primarily for temporary confirmation — copper, only for Keep and its `Kept
 ### Error
 Use only where actionable. Destructive actions render as destructive red (`#B3261E` light / `#FF8A80` dark), never filled, never the default Return target.
 
+### Theme presets
+Settings → Theme Style offers curated presets on top of the three native appearances (System, Rasc Light, Rasc Dark): **Graphite Paper** (the default — exactly the palette above), **Slate** (cool blue-gray neutrals) and **Porcelain** (true neutral, crisper contrast). Presets only vary canvases, fills, borders, focus and neutral text opacities; **copper stays exclusive to Keep and Kept in every preset**, and destructive red keeps its existing role. Reset in the same section restores System appearance with Graphite Paper. Implementation: `Rasc/Settings/ThemeSettings.swift` (preset catalog, store, reset) parameterized into `RascSurfacePalette`; the active theme rebuilds the Home, Scratchpad and Settings subtrees. Rebuilding is deliberate — it guarantees every surface reads fresh tokens, but it drops transient state in rebuilt surfaces (the Scratchpad editor loses its undo stack and scroll position).
+
 Never use color alone to communicate state.
 
 ---
