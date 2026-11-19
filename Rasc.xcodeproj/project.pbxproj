@@ -136,6 +136,7 @@
 		010000000000000000000090 /* ThemeSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000090 /* ThemeSettings.swift */; };
 		010000000000000000000091 /* SearchMatchHighlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000091 /* SearchMatchHighlight.swift */; };
 		010000000000000000000092 /* WordDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000092 /* WordDiff.swift */; };
+		010000000000000000000093 /* SearchMatchHighlightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000093 /* SearchMatchHighlightTests.swift */; };
 		010000000000000000000094 /* WordDiffTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000094 /* WordDiffTests.swift */; };
 		010000000000000000000095 /* ThemeSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000095 /* ThemeSettingsTests.swift */; };
 		010000000000000000000096 /* HomeViewModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000096 /* HomeViewModeTests.swift */; };
@@ -284,6 +285,7 @@
 		020000000000000000000090 /* ThemeSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Settings/ThemeSettings.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000091 /* SearchMatchHighlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/UI/SearchMatchHighlight.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000092 /* WordDiff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/UI/WordDiff.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000093 /* SearchMatchHighlightTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchMatchHighlightTests.swift; sourceTree = "<group>"; };
 		020000000000000000000094 /* WordDiffTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordDiffTests.swift; sourceTree = "<group>"; };
 		020000000000000000000095 /* ThemeSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettingsTests.swift; sourceTree = "<group>"; };
 		020000000000000000000096 /* HomeViewModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModeTests.swift; sourceTree = "<group>"; };
@@ -449,6 +451,7 @@
 				020000000000000000000047 /* HomeTemporalGroupingTests.swift */,
 				020000000000000000000048 /* HomeWindowControllerTests.swift */,
 				020000000000000000000049 /* HomeSessionTests.swift */,
+				020000000000000000000093 /* SearchMatchHighlightTests.swift */,
 				020000000000000000000094 /* WordDiffTests.swift */,
 				020000000000000000000095 /* ThemeSettingsTests.swift */,
 				020000000000000000000096 /* HomeViewModeTests.swift */,
@@ -713,6 +716,7 @@
 				01000000000000000000005D /* RefineLanguageContractTests.swift in Sources */,
 				01000000000000000000007A /* RefineLanguagePreferenceTests.swift in Sources */,
 				010000000000000000000080 /* AppThemeSettingsTests.swift in Sources */,
+				010000000000000000000093 /* SearchMatchHighlightTests.swift in Sources */,
 				010000000000000000000094 /* WordDiffTests.swift in Sources */,
 				010000000000000000000095 /* ThemeSettingsTests.swift in Sources */,
 				010000000000000000000096 /* HomeViewModeTests.swift in Sources */,
