@@ -54,9 +54,10 @@ struct SettingsView: View {
     private let themeSettings: AppThemeSettingsStore
     private let supportedLocales: any RefineSupportedLocaleDiscovering
 
+    @ObservedObject private var themeStore = ThemeStore.shared
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var selectedTheme: AppTheme = .system
+    @State private var selectedTheme: AppTheme = AppThemeSettingsStore().load()
     @State private var launchAtLogin = false
     @State private var loginItemState = LoginItemState.disabled
     @State private var launchAtLoginError: String?
@@ -140,7 +141,39 @@ struct SettingsView: View {
                 if let launchAtLoginError {
                     Text(launchAtLoginError)
                         .font(.caption)
-                        .foregroundStyle(.red)
+                        .foregroundStyle(RascSurfacePalette.destructiveText(for: colorScheme))
+                }
+            }
+            .listRowBackground(settingsSectionBackground)
+
+            Section("Theme Style") {
+                HStack(spacing: 16) {
+                    ForEach(ThemePreset.allCases) { preset in
+                        ThemePresetSwatch(
+                            preset: preset,
+                            isSelected: themeStore.preset == preset
+                        ) {
+                            themeStore.selectPreset(preset)
+                        }
+                    }
+                    Spacer(minLength: 0)
+                }
+                .padding(.vertical, 4)
+                .accessibilityElement(children: .contain)
+
+                Text(themeStore.preset.caption)
+                    .font(.caption)
+                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .accessibilityHidden(true)
+
+                if themeStore.isCustomized {
+                    Button("Reset theme to Graphite Paper") {
+                        themeStore.reset()
+                        themeSettings.save(.system)
+                        AppThemeApplicator.apply(.system)
+                        selectedTheme = .system
+                    }
+                    .help("Restore the out-of-the-box look: Graphite Paper with System appearance")
                 }
             }
             .listRowBackground(settingsSectionBackground)
@@ -208,7 +241,6 @@ struct SettingsView: View {
         .rascWindowSurface()
         .registersSettingsOpenAction()
         .task {
-            selectedTheme = themeSettings.load()
             refreshLaunchAtLoginState()
             refreshLanguageSettings()
             await refreshRefineStatus()
@@ -520,5 +552,78 @@ private struct InternalShortcutCapture: NSViewRepresentable {
             }
             onCapture?(event)
         }
+    }
+}
+
+/// Circular preview of one curated preset: the preset's canvas with a quiet ink
+/// bar, captioned with its name. The selected preset carries the neutral focus
+/// ring, never copper.
+private struct ThemePresetSwatch: View {
+    let preset: ThemePreset
+    let isSelected: Bool
+    let onSelect: () -> Void
+
+    @ObservedObject private var theme = ThemeStore.shared
+    @Environment(\.colorScheme) private var environmentScheme
+    @Environment(\.colorSchemeContrast) private var contrast
+
+    private var preview: ThemePalette {
+        ThemeCatalog.resolve(preset: preset, scheme: environmentScheme)
+    }
+
+    var body: some View {
+        Button(action: onSelect) {
+            VStack(spacing: 6) {
+                // A miniature page: canvas, raised sheet, two lines of ink — the three
+                // things that distinguish the presets.
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(Color(nsColor: preview.canvas))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .strokeBorder(Color(nsColor: preview.border), lineWidth: 1)
+                        }
+
+                    RoundedRectangle(cornerRadius: 4.5, style: .continuous)
+                        .fill(Color(nsColor: preview.raisedFill))
+                        .frame(width: 22, height: 17)
+                        .overlay {
+                            VStack(spacing: 2.5) {
+                                RoundedRectangle(cornerRadius: 0.75, style: .continuous)
+                                    .fill(Color(nsColor: preview.secondaryText))
+                                    .frame(width: 12, height: 2)
+                                RoundedRectangle(cornerRadius: 0.75, style: .continuous)
+                                    .fill(Color(nsColor: preview.metadataText))
+                                    .frame(width: 8, height: 2)
+                            }
+                        }
+                }
+                .overlay {
+                    if isSelected {
+                        RoundedRectangle(cornerRadius: 11, style: .continuous)
+                            .strokeBorder(
+                                RascSurfacePalette.focus(for: environmentScheme),
+                                lineWidth: contrast == .increased ? 2.5 : 1.5
+                            )
+                            .padding(-3)
+                    }
+                }
+                .frame(width: 40, height: 40)
+
+                Text(preset.displayName)
+                    .font(.system(size: 10.5, weight: .medium))
+                    .foregroundStyle(
+                        isSelected
+                            ? RascSurfacePalette.primaryText(for: environmentScheme)
+                            : RascSurfacePalette.metadataText(for: environmentScheme)
+                    )
+            }
+            .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(preset.displayName) theme")
+        .accessibilityHint(preset.caption)
+        .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : .isButton)
+        .help(preset.caption)
     }
 }

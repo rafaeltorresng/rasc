@@ -31,15 +31,7 @@ enum RascSurfaceMetrics {
     static let searchSnippetFontSize: CGFloat = 13
     static let searchTimestampFontSize: CGFloat = 11.5
 
-    static func commandPaletteHeight(commandCount: Int) -> CGFloat {
-        let clampedCount = max(commandCount, 1)
-        let rowsHeight = CGFloat(clampedCount) * RascSurfaceLayout.commandRowMinHeight
-            + CGFloat(clampedCount - 1) * RascSurfaceLayout.listRowSpacing
-        let headerHeight = RascSurfaceLayout.topInset
-            + RascSurfaceLayout.orbSize
-            + RascSurfaceLayout.transientHeaderBodyGap
-        return headerHeight + rowsHeight + RascSurfaceLayout.bottomInset
-    }
+
     static let noteFontSize: CGFloat = 16
     /// Matches `noteFontSize` so the caret lines up with the empty-state prompt.
     static let scratchpadPlaceholderFontSize: CGFloat = noteFontSize
@@ -58,11 +50,8 @@ enum RascSurfacePalette {
     static let panelBackground = NSColor(
         name: NSColor.Name("RascPanelBackground")
     ) { appearance in
-        if appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua {
-            graphiteBackground
-        } else {
-            warmBackground
-        }
+        let dark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+        return ThemePalette.current(for: dark ? .dark : .light).canvas
     }
 
     static func canvas(for colorScheme: ColorScheme) -> Color {
@@ -70,7 +59,7 @@ enum RascSurfacePalette {
     }
 
     static func canvasNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark ? graphiteBackground : warmBackground
+        ThemePalette.current(for: colorScheme).canvas
     }
 
     static func raisedFill(for colorScheme: ColorScheme) -> Color {
@@ -78,7 +67,7 @@ enum RascSurfacePalette {
     }
 
     static func raisedFillNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark ? darkElevated : lightElevated
+        ThemePalette.current(for: colorScheme).raisedFill
     }
 
     static func subtleFill(for colorScheme: ColorScheme) -> Color {
@@ -88,7 +77,7 @@ enum RascSurfacePalette {
     }
 
     static func border(for colorScheme: ColorScheme) -> Color {
-        Color(nsColor: colorScheme == .dark ? darkBorder : lightBorder)
+        Color(nsColor: ThemePalette.current(for: colorScheme).border)
     }
 
     static func innerHighlight(for colorScheme: ColorScheme) -> Color {
@@ -101,7 +90,8 @@ enum RascSurfacePalette {
     static let scratchpadInsertionPoint = NSColor(
         name: NSColor.Name("RascScratchpadInsertionPoint")
     ) { appearance in
-        appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua ? darkFocus : lightFocus
+        let dark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+        return ThemePalette.current(for: dark ? .dark : .light).focus
     }
 
     // MARK: Text roles
@@ -116,9 +106,7 @@ enum RascSurfacePalette {
     }
 
     static func secondaryTextNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark
-            ? NSColor(srgbRed: 1, green: 1, blue: 1, alpha: 0.60)
-            : NSColor(srgbRed: 0, green: 0, blue: 0, alpha: 0.58)
+        ThemePalette.current(for: colorScheme).secondaryText
     }
 
     /// Functional metadata: shortcuts, timestamps and section labels.
@@ -127,9 +115,7 @@ enum RascSurfacePalette {
     }
 
     static func metadataTextNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark
-            ? NSColor(srgbRed: 1, green: 1, blue: 1, alpha: 0.55)
-            : NSColor(srgbRed: 0, green: 0, blue: 0, alpha: 0.57)
+        ThemePalette.current(for: colorScheme).metadataText
     }
 
     /// Non-essential hints only. Never use for shortcuts or functional labels.
@@ -138,9 +124,7 @@ enum RascSurfacePalette {
     }
 
     static func tertiaryTextNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark
-            ? NSColor(srgbRed: 1, green: 1, blue: 1, alpha: 0.42)
-            : NSColor(srgbRed: 0, green: 0, blue: 0, alpha: 0.45)
+        ThemePalette.current(for: colorScheme).tertiaryText
     }
 
     /// Destructive actions. Text only, never a fill, never the default selection.
@@ -162,7 +146,7 @@ enum RascSurfacePalette {
     }
 
     static func actionPrimaryFillNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark ? darkActionPrimaryFill : lightActionPrimaryFill
+        ThemePalette.current(for: colorScheme).actionPrimaryFill
     }
 
     static func actionPrimaryLabel(for colorScheme: ColorScheme) -> Color {
@@ -170,7 +154,7 @@ enum RascSurfacePalette {
     }
 
     static func actionPrimaryLabelNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark ? graphiteBackground : warmBackground
+        ThemePalette.current(for: colorScheme).actionPrimaryLabel
     }
 
     /// Approved Keep pair: `#9C421F` on `#F5E5DA`, and `#F0A780` on `#382822`.
@@ -191,7 +175,7 @@ enum RascSurfacePalette {
     }
 
     static func focus(for colorScheme: ColorScheme) -> Color {
-        Color(nsColor: colorScheme == .dark ? darkFocus : lightFocus)
+        Color(nsColor: ThemePalette.current(for: colorScheme).focus)
     }
 
     // MARK: Selection
@@ -211,13 +195,18 @@ enum RascSurfacePalette {
     }
 
     static func selectionStrokeNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark
-            ? NSColor(srgbRed: 1, green: 1, blue: 1, alpha: 0.26)
-            : NSColor(srgbRed: 0, green: 0, blue: 0, alpha: 0.18)
+        ThemePalette.current(for: colorScheme).selectionStroke
     }
 
     static func focusedFieldBorder(for colorScheme: ColorScheme) -> Color {
         Color.primary.opacity(colorScheme == .dark ? 0.36 : 0.30)
+    }
+
+    /// Neutral backdrop painted behind search matches. Never a brand color; the
+    /// text on top keeps its own color so contrast is preserved everywhere.
+    static func searchMark(for colorScheme: ColorScheme, increasedContrast: Bool) -> Color {
+        let values = ThemePalette.current(for: colorScheme)
+        return Color(nsColor: increasedContrast ? values.searchMarkContrast : values.searchMark)
     }
 
     static func homeCardFill(for colorScheme: ColorScheme) -> Color {
@@ -225,7 +214,7 @@ enum RascSurfacePalette {
     }
 
     static func homeCardFillNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark ? darkHomeCard : .white
+        ThemePalette.current(for: colorScheme).homeCardFill
     }
 
     static func homeCardBorder(
@@ -259,84 +248,6 @@ enum RascSurfacePalette {
     static func homeSectionLabel(for colorScheme: ColorScheme) -> Color {
         metadataText(for: colorScheme)
     }
-
-    private static let warmBackground = NSColor(
-        srgbRed: 0.968627,
-        green: 0.960784,
-        blue: 0.941176,
-        alpha: 1
-    )
-
-    private static let graphiteBackground = NSColor(
-        srgbRed: 0.117647,
-        green: 0.117647,
-        blue: 0.113725,
-        alpha: 1
-    )
-
-    private static let lightElevated = NSColor(
-        srgbRed: 0.937255,
-        green: 0.929412,
-        blue: 0.909804,
-        alpha: 1
-    )
-
-    private static let darkElevated = NSColor(
-        srgbRed: 0.156863,
-        green: 0.156863,
-        blue: 0.152941,
-        alpha: 1
-    )
-
-    /// Home cards in dark mode: lifted neutral graphite.
-    private static let darkHomeCard = NSColor(
-        srgbRed: 0.188235,
-        green: 0.188235,
-        blue: 0.184314,
-        alpha: 1
-    )
-
-    private static let lightBorder = NSColor(
-        srgbRed: 0.831373,
-        green: 0.823529,
-        blue: 0.800000,
-        alpha: 1
-    )
-
-    private static let darkBorder = NSColor(
-        srgbRed: 0.266667,
-        green: 0.266667,
-        blue: 0.250980,
-        alpha: 1
-    )
-
-    private static let lightFocus = NSColor(
-        srgbRed: 0.400000,
-        green: 0.400000,
-        blue: 0.384314,
-        alpha: 1
-    )
-
-    private static let darkFocus = NSColor(
-        srgbRed: 0.647059,
-        green: 0.647059,
-        blue: 0.627451,
-        alpha: 1
-    )
-
-    private static let lightActionPrimaryFill = NSColor(
-        srgbRed: 0.141176,
-        green: 0.141176,
-        blue: 0.137255,
-        alpha: 1
-    )
-
-    private static let darkActionPrimaryFill = NSColor(
-        srgbRed: 0.933333,
-        green: 0.925490,
-        blue: 0.905882,
-        alpha: 1
-    )
 
     private static let lightKeepAccent = NSColor(
         srgbRed: 0.612,
@@ -470,9 +381,12 @@ struct RascClearInputButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "xmark.circle.fill")
+                .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                .frame(width: 26, height: 26)
         }
         .buttonStyle(.plain)
+        .contentShape(Rectangle().inset(by: -3))
         .accessibilityLabel(label)
         .help(label)
     }
