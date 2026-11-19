@@ -141,6 +141,7 @@
 		010000000000000000000095 /* ThemeSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000095 /* ThemeSettingsTests.swift */; };
 		010000000000000000000096 /* HomeViewModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000096 /* HomeViewModeTests.swift */; };
 		010000000000000000000097 /* HomeViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000097 /* HomeViewMode.swift */; };
+		010000000000000000000098 /* HomeSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000098 /* HomeSnapshotTests.swift */; };
 		010000000000000000000099 /* RefinePreviewModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000099 /* RefinePreviewModeTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -290,6 +291,7 @@
 		020000000000000000000095 /* ThemeSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettingsTests.swift; sourceTree = "<group>"; };
 		020000000000000000000096 /* HomeViewModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModeTests.swift; sourceTree = "<group>"; };
 		020000000000000000000097 /* HomeViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Home/HomeViewMode.swift; sourceTree = SOURCE_ROOT; };
+		020000000000000000000098 /* HomeSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSnapshotTests.swift; sourceTree = "<group>"; };
 		020000000000000000000099 /* RefinePreviewModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefinePreviewModeTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -456,6 +458,7 @@
 				020000000000000000000095 /* ThemeSettingsTests.swift */,
 				020000000000000000000096 /* HomeViewModeTests.swift */,
 				020000000000000000000099 /* RefinePreviewModeTests.swift */,
+				020000000000000000000098 /* HomeSnapshotTests.swift */,
 				02000000000000000000004B /* SettingsWindowPresentationTests.swift */,
 				02000000000000000000004D /* BetaFeedbackTests.swift */,
 				020000000000000000000058 /* RefineReliabilityTests.swift */,
@@ -721,6 +724,7 @@
 				010000000000000000000095 /* ThemeSettingsTests.swift in Sources */,
 				010000000000000000000096 /* HomeViewModeTests.swift in Sources */,
 				010000000000000000000099 /* RefinePreviewModeTests.swift in Sources */,
+				010000000000000000000098 /* HomeSnapshotTests.swift in Sources */,
 				01000000000000000000007B /* AppReliabilityLifecycleTests.swift in Sources */,
 				01000000000000000000007C /* AppReliabilityScaleTests.swift in Sources */,
 				01000000000000000000007F /* ThoughtCompletionTests.swift in Sources */,
