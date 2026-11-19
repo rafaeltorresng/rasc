@@ -32,13 +32,15 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
         self.session = session
         session.recordHomeVisit()
 
-        let contentView = HomeView(
-            session: session,
-            onOpenNote: onOpenNote,
-            onNewScratch: onNewScratch,
-            onNoteDiscarded: onNoteDiscarded,
-            onNoteUnkept: onNoteUnkept
-        )
+        let contentView = ThemeRebuildView {
+            HomeView(
+                session: session,
+                onOpenNote: onOpenNote,
+                onNewScratch: onNewScratch,
+                onNoteDiscarded: onNoteDiscarded,
+                onNoteUnkept: onNoteUnkept
+            )
+        }
 
         let hostingController = NSHostingController(rootView: contentView)
         let window = self.window ?? makeWindow()

@@ -7,7 +7,9 @@ struct RascApp: App {
 
     var body: some Scene {
         Settings {
-            SettingsView()
+            ThemeRebuildView {
+                SettingsView()
+            }
         }
         .commands {
             CommandGroup(replacing: .newItem) {
