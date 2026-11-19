@@ -54,7 +54,7 @@ private struct PanelKeySnapshot: Sendable {
 
 @MainActor
 final class PanelController: NSObject, NSWindowDelegate {
-    let panel: NSPanel
+    let panel: ScratchpadPanel
     let repository: NoteRepository
 
     private let session: ScratchpadSession
@@ -102,28 +102,32 @@ final class PanelController: NSObject, NSWindowDelegate {
         observeDisplayChanges()
         observeActivation()
         installKeyMonitor()
-        let rootView = ScratchpadView(
-            session: session,
-            onEscape: { [weak self] in
-                Task {
-                    await self?.hide()
+        let session = self.session
+        let onboardingActions = self.onboardingScratchpadActions()
+        let rootView = ThemeRebuildView {
+            ScratchpadView(
+                session: session,
+                onEscape: { [weak self] in
+                    Task {
+                        await self?.hide()
+                    }
+                },
+                onPaletteCommand: { [weak self] command in
+                    self?.handlePaletteCommand(command)
+                },
+                onOpenHome: { [weak self] in
+                    self?.onOpenHome?()
+                },
+                onKeep: { [weak self] in
+                    Task { await self?.keepActiveNote() }
+                },
+                onUnkeep: { [weak self] in
+                    Task { await self?.unkeepActiveNote() }
                 }
-            },
-            onPaletteCommand: { [weak self] command in
-                self?.handlePaletteCommand(command)
-            },
-            onOpenHome: { [weak self] in
-                self?.onOpenHome?()
-            },
-            onKeep: { [weak self] in
-                Task { await self?.keepActiveNote() }
-            },
-            onUnkeep: { [weak self] in
-                Task { await self?.unkeepActiveNote() }
-            }
-        )
-        .environment(\.onboardingScratchpadActions, onboardingScratchpadActions())
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+            )
+            .environment(\.onboardingScratchpadActions, onboardingActions)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
 
         hostingController = NSHostingController(rootView: AnyView(rootView))
         hostingController.sizingOptions = [.minSize]
@@ -476,6 +480,15 @@ final class PanelController: NSObject, NSWindowDelegate {
     }
 
     private func installKeyMonitor() {
+        // Preview Left/Right cycles Suggested → Changes → Original. Intercepted
+        // before the responder chain because the preview's comparison picker
+        // (an NSSegmentedControl) accepts first responder and would otherwise
+        // consume the arrows. The editor keeps its own arrows.
+        panel.keyDownHandler = { [weak self] event in
+            MainActor.assumeIsolated {
+                self?.handlePreviewArrowKey(event) ?? false
+            }
+        }
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
             let snapshot = PanelKeySnapshot(
@@ -487,6 +500,25 @@ final class PanelController: NSObject, NSWindowDelegate {
             }
             return handled ? nil : event
         }
+    }
+
+    private func handlePreviewArrowKey(_ event: NSEvent) -> Bool {
+        guard panel.isKeyWindow else { return false }
+        let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        // Arrow keys are "special keys" and carry the Function flag (numpad
+        // arrows carry numericPad), so "plain" means none of the four
+        // command-like modifiers — not an empty flag set.
+        guard flags.intersection([.command, .option, .control, .shift]).isEmpty,
+              let specialKey = event.specialKey else { return false }
+        let offset: Int
+        switch specialKey {
+        case .leftArrow: offset = -1
+        case .rightArrow: offset = 1
+        default: return false
+        }
+        guard session.surface == .refinementPreview else { return false }
+        session.cyclePreviewMode(by: offset)
+        return true
     }
 
     private func handleKeySnapshot(_ snapshot: PanelKeySnapshot) -> Bool {
