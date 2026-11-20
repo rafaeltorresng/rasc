@@ -509,6 +509,8 @@ private struct ScratchEditor: NSViewRepresentable {
         if editor.string != session.text || context.coordinator.renderedDocument != session.document {
             let selection = session.editorSelection
             let previousSelection = editor.selectedRange()
+            let isInitialRender = !context.coordinator.hasRenderedInitialText
+            context.coordinator.hasRenderedInitialText = true
             context.coordinator.renderedDocument = session.document
             if let document = session.document {
                 editor.render(document)
@@ -520,6 +522,11 @@ private struct ScratchEditor: NSViewRepresentable {
                 context.coordinator.pendingCaret = nil
             } else if let selection {
                 editor.setSelectedRange(NSRange(selection, in: session.text))
+            } else if isInitialRender {
+                // A fresh editor showing an already-written note (opened from Home
+                // or restored): continue typing at the end, not at the default (0,0).
+                let length = (editor.string as NSString).length
+                editor.setSelectedRange(NSRange(location: length, length: 0))
             } else {
                 let length = (editor.string as NSString).length
                 let location = min(previousSelection.location, length)
@@ -542,6 +549,7 @@ private struct ScratchEditor: NSViewRepresentable {
         weak var editor: ListTextView?
         var focusRequest = -1
         var renderedDocument: NoteDocument?
+        var hasRenderedInitialText = false
         var pendingCaret: Int?
 
         init(session: ScratchpadSession) { self.session = session }

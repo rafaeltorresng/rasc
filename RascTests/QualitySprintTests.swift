@@ -777,3 +777,92 @@ struct TransientPanelSizingTests {
         #expect(RascTransientPanelSizing.paletteHeight(commandCount: all.count) >= 48 + CGFloat(all.count) * 52)
     }
 }
+
+@MainActor
+@Suite
+struct ScratchpadEditorCaretTests {
+    @Test
+    func openingAnExistingNotePlacesCaretAtTheEnd() async throws {
+        let fixture = try makeSession(text: "already written thought")
+        defer { fixture.cleanup() }
+        let (host, editor, window) = try await hostedEditor(for: fixture.session)
+        defer { window.close() }
+
+        let expected = NSRange(location: ("already written thought" as NSString).length, length: 0)
+        for _ in 0..<100 where editor.selectedRange() != expected {
+            host.layoutSubtreeIfNeeded()
+            try await Task.sleep(for: .milliseconds(20))
+        }
+        #expect(editor.string == "already written thought")
+        #expect(editor.selectedRange() == expected)
+    }
+
+    @Test
+    func initialRenderStillHonorsAnExplicitSelection() async throws {
+        let text = "already written thought"
+        let fixture = try makeSession(text: text)
+        defer { fixture.cleanup() }
+        let start = text.index(text.startIndex, offsetBy: 8)
+        let end = text.index(start, offsetBy: 5)
+        fixture.session.updateEditorSelection(start..<end)
+        let (host, editor, window) = try await hostedEditor(for: fixture.session)
+        defer { window.close() }
+
+        let expected = NSRange(location: 8, length: 5)
+        for _ in 0..<100 where editor.selectedRange() != expected {
+            host.layoutSubtreeIfNeeded()
+            try await Task.sleep(for: .milliseconds(20))
+        }
+        #expect(editor.selectedRange() == expected)
+    }
+
+    private func makeSession(text: String) throws -> (session: ScratchpadSession, cleanup: () -> Void) {
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RascCaret-\(UUID().uuidString).sqlite")
+        let repository = try NoteRepository(databaseURL: url)
+        let suite = "RascCaret.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defaults.removePersistentDomain(forName: suite)
+        let session = ScratchpadSession(repository: repository, userDefaults: defaults)
+        session.text = text
+        return (session, {
+            defaults.removePersistentDomain(forName: suite)
+            try? FileManager.default.removeItem(at: url)
+        })
+    }
+
+    private func hostedEditor(
+        for session: ScratchpadSession
+    ) async throws -> (NSHostingView<AnyView>, ListTextView, NSWindow) {
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 600, height: 400),
+            styleMask: [.titled],
+            backing: .buffered,
+            defer: false
+        )
+        window.isReleasedWhenClosed = false
+        let host = NSHostingView(rootView: AnyView(
+            ScratchpadView(
+                session: session,
+                onEscape: {},
+                onPaletteCommand: { _ in },
+                onOpenHome: {},
+                onKeep: {},
+                onUnkeep: {}
+            )
+        ))
+        window.contentView = host
+        host.layoutSubtreeIfNeeded()
+        var found: ListTextView?
+        for _ in 0..<100 where found == nil {
+            found = findEditor(host)
+            try await Task.sleep(for: .milliseconds(20))
+        }
+        return (host, try #require(found), window)
+    }
+
+    private func findEditor(_ view: NSView) -> ListTextView? {
+        if let editor = view as? ListTextView { return editor }
+        return view.subviews.lazy.compactMap { findEditor($0) }.first
+    }
+}
