@@ -2,8 +2,9 @@
 
 Start with the [repository README](../README.md) and [current product](CURRENT-PRODUCT.md).
 The current guides below describe the source or an explicitly named release; installation and release notes describe
-the published **v0.1.11, build 17** artifact. Historical snapshots below are reference
-only; they are not proof of current behavior.
+the published **v0.1.11, build 17** artifact. The v0.1.12 notes cover a pending,
+unpublished candidate. Historical snapshots below are reference only; they are
+not proof of current behavior.
 
 ## Current guides
 
@@ -14,6 +15,7 @@ only; they are not proof of current behavior.
 | [Native validation](NATIVE-UI-VALIDATION.md) | Manual platform and accessibility checks |
 | [Install release](INSTALL-UNSIGNED.md) | Published DMG, checksum and first-launch steps |
 | [Release notes](RELEASE-NOTES-v0.1.11.md) | Published v0.1.11 changes, provenance and updates |
+| [Next release notes](RELEASE-NOTES-v0.1.12.md) | Pending 0.1.12/build 18 candidate (not published) |
 | [Release](RELEASE.md) | Versioning, packaging, signing and optional notarization |
 | [Sparkle release](SPARKLE-RELEASE.md) | Ad-hoc updater build and publication runbook |
 | [Data and privacy](DATA-AND-PRIVACY.md) | Storage, retention and safe manual backups |
