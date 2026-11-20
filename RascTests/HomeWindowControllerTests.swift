@@ -68,10 +68,13 @@ struct HomeWindowControllerTests {
         window.makeFirstResponder(nil)
 
         home.show(repository: panel.repository, onOpenNote: { _ in }, onNewScratch: {})
-        try await Task.sleep(for: .milliseconds(100))
-        let editor = window.firstResponder as? NSTextView
-        let field = editor?.delegate as? NSTextField
-        #expect(field?.placeholderString == "Search thoughts…")
+        // The focus lands asynchronously after the hosting controller is rebuilt;
+        // poll instead of assuming a fixed delay (fixed delays flake on busy runners).
+        let focused = await waitUntil {
+            guard let editor = window.firstResponder as? NSTextView else { return false }
+            return (editor.delegate as? NSTextField)?.placeholderString == "Search thoughts…"
+        }
+        #expect(focused)
     }
 
     @Test
@@ -171,5 +174,14 @@ struct HomeWindowControllerTests {
             repository: try NoteRepository(databaseURL: databaseURL),
             windowFrameStore: windowFrameStore
         )
+    }
+
+    /// Polls until the predicate holds, up to ~3s; returns the final value.
+    private func waitUntil(_ predicate: @MainActor () -> Bool, timeout: TimeInterval = 3) async -> Bool {
+        for _ in 0..<30 {
+            if predicate() { return true }
+            try? await Task.sleep(for: .milliseconds(100))
+        }
+        return predicate()
     }
 }
