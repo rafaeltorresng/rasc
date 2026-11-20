@@ -53,7 +53,7 @@ Screenshot from Rasc 0.1.10/build 16 in light mode, using the current Twin Fish 
   enabled, and its on-device model ready. Rasc remains useful when Refine is unavailable.
 - **Development:** Xcode 26.2 or later, Swift 6, and the macOS 26 SDK.
 
-The latest published release is [Rasc 0.1.11, build 17](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.11): an ad-hoc signed, unnotarized Apple silicon DMG for macOS 14 or later. The repository may contain unreleased changes; version fields alone do not prove a published artifact. See [installation](docs/INSTALL-UNSIGNED.md), the [v0.1.11 notes](docs/RELEASE-NOTES-v0.1.11.md) and the [release runbook](docs/RELEASE.md). Updates are checked manually. The next candidate, **0.1.12/build 18**, is in preparation only — see its [release notes](docs/RELEASE-NOTES-v0.1.12.md); no artifact is published yet.
+The latest published release is [Rasc 0.1.12, build 18](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.12): an ad-hoc signed, unnotarized Apple silicon DMG for macOS 14 or later. The repository may contain unreleased changes; version fields alone do not prove a published artifact. See [installation](docs/INSTALL-UNSIGNED.md), the [v0.1.12 notes](docs/RELEASE-NOTES-v0.1.12.md) and the [release runbook](docs/RELEASE.md). Updates are checked manually. The [v0.1.11 notes](docs/RELEASE-NOTES-v0.1.11.md) remain in the archive.
 
 ## Build and test
 

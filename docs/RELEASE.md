@@ -1,8 +1,8 @@
 # Rasc Release Workflow
 
-> Latest published release: [0.1.11, build 17](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.11), ad-hoc signed and unnotarized. Earlier published artifacts remain untouched. Preserve published artifacts and verify each candidate independently.
+> Latest published release: [0.1.12, build 18](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.12), ad-hoc signed and unnotarized. Earlier published artifacts remain untouched. Preserve published artifacts and verify each candidate independently.
 
-The current ad-hoc updater release path is documented in [SPARKLE-RELEASE.md](SPARKLE-RELEASE.md); update checks are manual. The Developer ID and notarization steps below describe an optional signed distribution path, not a requirement for the published ad-hoc release. See [installation](INSTALL-UNSIGNED.md), [v0.1.11 provenance](RELEASE-NOTES-v0.1.11.md) and the [pending v0.1.12 notes](RELEASE-NOTES-v0.1.12.md).
+The current ad-hoc updater release path is documented in [SPARKLE-RELEASE.md](SPARKLE-RELEASE.md); update checks are manual. The Developer ID and notarization steps below describe an optional signed distribution path, not a requirement for the published ad-hoc release. See [installation](INSTALL-UNSIGNED.md) and [v0.1.12 provenance](RELEASE-NOTES-v0.1.12.md).
 
 ## Current release configuration
 
@@ -10,8 +10,8 @@ The current ad-hoc updater release path is documented in [SPARKLE-RELEASE.md](SP
 | --- | --- |
 | Product name | Rasc |
 | Bundle identifier | `com.rafaeltorres.rasc` |
-| Marketing version | `0.1.12` (candidate, unpublished; source tip `6bdd410`) |
-| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`18` for the 0.1.12 candidate; `17` for published v0.1.11) |
+| Marketing version | `0.1.12` (published 2026-11-20) |
+| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`18` for v0.1.12; `17` for archived v0.1.11) |
 | Deployment target | macOS 14.0 |
 | First public artifact | Apple silicon (`arm64`); `archive.sh` fixes the architecture |
 | Hardened Runtime | Enabled for Debug and Release |
@@ -38,31 +38,25 @@ for Sparkle's sandboxed Installer and Downloader XPC services (`-spks` and
 Library Load Constraint that pins the signed Sparkle framework. The default Release
 does not need or use them.
 
-## Next release (in preparation, not published)
-
-Version **0.1.12 / build 18** is being prepared from behavioral source tip
-`6bdd410` (PRs #85–#91). See [RELEASE-NOTES-v0.1.12.md](RELEASE-NOTES-v0.1.12.md)
-for the changes, verification status and the publication checklist. No DMG,
-checksum, tag, GitHub Release, or appcast entry exists for it yet. The version
-fields in `project.pbxproj` are bumped; published artifacts are not changed.
-
 ## Published release
 
-The latest published artifact is **v0.1.11 / build 17** (2026-11-17): ad-hoc
+The latest published artifact is **v0.1.12 / build 18** (2026-11-20): ad-hoc
 signed, unnotarized, Apple silicon, macOS 14+, with manual Sparkle updates. The
 GitHub Release contains:
 
 | Asset | Value |
 | --- | --- |
-| DMG | `Rasc-0.1.11-updater.dmg` |
-| SHA-256 | `baf11bd0cc4e2774987910d48eba8bc63e986a27acd0e1eac2bddf0db1f54067` |
-| Checksum sidecar | `Rasc-0.1.11-updater.dmg.sha256` |
-| Deltas | `Rasc17-16.delta`, `Rasc17-15.delta`, `Rasc17-14.delta`, `Rasc17-13.delta` |
+| DMG | `Rasc-0.1.12-updater.dmg` |
+| SHA-256 | `64637dc077e9f882a2154ea3d710bf76ab23687738fef6f2e2c7148ccfa0805c` |
+| Checksum sidecar | `Rasc-0.1.12-updater.dmg.sha256` |
+| Deltas | `Rasc18-17.delta`, `Rasc18-16.delta`, `Rasc18-15.delta`, `Rasc18-14.delta`, `Rasc18-13.delta` |
 
-The release notes record source commit `0e7aa69`; tag `v0.1.11` adds the
-provenance commit. The production appcast at `https://rasc.app/appcast.xml`
-serves matching versioned GitHub Release enclosures. Preserve these exact bytes
-and see [RELEASE-NOTES-v0.1.11.md](RELEASE-NOTES-v0.1.11.md). Earlier published artifacts remain unchanged.
+The release notes record behavioral source commit `6bdd410`; tag `v0.1.12` adds
+the provenance commit. The production appcast at `https://rasc.app/appcast.xml`
+serves matching versioned GitHub Release enclosures for 0.1.7–0.1.12. Preserve
+these exact bytes and see [RELEASE-NOTES-v0.1.12.md](RELEASE-NOTES-v0.1.12.md).
+Earlier published artifacts remain unchanged; see the archived
+[v0.1.11 notes](RELEASE-NOTES-v0.1.11.md).
 
 ## Prerequisites
 

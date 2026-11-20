@@ -1,9 +1,9 @@
 # Production runbook: Sparkle updates via Library Load Constraint (ad-hoc signed)
 
-Status: **v0.1.11/build 17 is published (2026-11-17); v0.1.7/build 13 was the
-first updater release.** The production feed serves the v0.1.11 entry. A v0.1.12/build 18
-candidate is in preparation (PRs #85–#91); it has no DMG, checksum, tag, or feed entry yet.
-The default Release build is unchanged and cannot update itself. This document is
+Status: **v0.1.12/build 18 is published (2026-11-20); v0.1.7/build 13 was the
+first updater release.** The production feed serves the v0.1.12 entry with
+v0.1.7–v0.1.11 retained. The default Release build is unchanged and cannot
+update itself. This document is
 the canonical procedure for the updater-enabled build. Please read fully before
 publishing.
 
@@ -307,13 +307,15 @@ for each next candidate; completed run records belong in the release notes.
 - [ ] Website download link changed only after the feed is live and verified
 - [ ] `git status --porcelain` shows only the intended files; no `build/`
 
-## Current status (2026-11-17, plus pending 0.1.12 candidate)
+## Current status (2026-11-20)
 
-- **In preparation:** v0.1.12/build 18, behavioral source tip `6bdd410` (PRs
-  #85–#91). No artifact, checksum, tag, GitHub Release, or appcast entry exists;
-  see [RELEASE-NOTES-v0.1.12.md](RELEASE-NOTES-v0.1.12.md). Do not build feed
-  entries or publish until the publication checklist there is complete.
-- **Published:** v0.1.11/build 17, built from source commit `0e7aa69`, DMG
+- **Published:** v0.1.12/build 18, behavioral source tip `6bdd410`, DMG
+  `Rasc-0.1.12-updater.dmg`, SHA-256
+  `64637dc077e9f882a2154ea3d710bf76ab23687738fef6f2e2c7148ccfa0805c`, with
+  `Rasc18-*` deltas and five retained earlier entries in the production feed.
+  See [RELEASE-NOTES-v0.1.12.md](RELEASE-NOTES-v0.1.12.md) for provenance and
+  the explicit list of checks not performed.
+- **Previous:** v0.1.11/build 17, built from source commit `0e7aa69`, DMG
   `Rasc-0.1.11-updater.dmg`, SHA-256
   `baf11bd0cc4e2774987910d48eba8bc63e986a27acd0e1eac2bddf0db1f54067`. The
   GitHub Release carries the DMG, `.sha256` sidecar and the four `Rasc17-*`

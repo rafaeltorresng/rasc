@@ -2,14 +2,11 @@
 
 Version: 0.1.12 · build 18 · Apple silicon · macOS 14+
 
-Status: **in preparation, not published.** No DMG, checksum, tag, GitHub Release,
-or appcast entry exists for this version yet. The published release remains
-[v0.1.11, build 17](RELEASE-NOTES-v0.1.11.md). Do not treat the version fields in
-`project.pbxproj` as proof of a published artifact.
-
-Behavioral source tip for this candidate: `6bdd410` (merge of PR #91, including
-the main-branch test-hardening commit `65228f6`). The release-preparation commits
-that follow only bump the version and update documentation.
+Status: **published 2026-11-20** as an ad-hoc signed, unnotarized
+[GitHub Release](https://github.com/rafaeltorresng/rasc/releases/tag/v0.1.12).
+Behavioral source tip: `6bdd410` (merge of PR #91, including the main-branch
+test-hardening commit `65228f6`); merged release-preparation commit: `bded574`.
+The previous published release is [v0.1.11, build 17](RELEASE-NOTES-v0.1.11.md).
 
 ## What's new since 0.1.11
 
@@ -74,10 +71,10 @@ that follow only bump the version and update documentation.
 
 ## Updating
 
-Once published, v0.1.7 through v0.1.11 users will be able to use **Check for
-Updates…** in the Rasc or app menu. Updates are manual; nothing is downloaded
-silently. Earlier builds without an updater require a one-time manual
-replacement. Until publication, no feed entry or download exists.
+v0.1.7 through v0.1.11 users can use **Check for Updates…** in the Rasc or app
+menu. Updates are manual; nothing is downloaded silently. Earlier builds without
+an updater require a one-time manual replacement. First-time manual installs of
+the ad-hoc build use **Open Anyway** in Finder.
 
 ## Verification so far
 
@@ -86,30 +83,45 @@ replacement. Until publication, no feed entry or download exists.
   passed plus the separate scale benchmark; this includes the new caret,
   word-diff, search-highlight, theme, Home-view-mode and preview-mode suites.
 - CI full native test suite: passed on the main tree `65228f6` (523 tests) and
-  on the merged candidate tip `6bdd410` — GitHub Actions run `44660349934`,
-  both `macos` checks green. Record the run URL in the publication provenance.
+  on the merged candidate tip `6bdd410` (GitHub Actions run `44660349934`,
+  both `macos` checks green). PR #92 (release prep) passed both `macos` checks
+  (runs `44661382700` and `44661417344`).
 - Snapshot harness renders reviewed: Home list/cards in light and dark, search
   highlighting, command palette, Settings theme section, Refine Suggested and
   Changes tabs in light and dark, and the image attachment outline.
 
-## Before publishing (do not skip)
+## Build provenance
 
-- Confirm CI run `44660349934` above is green (it is at the time of writing);
-  record its URL in the publication provenance.
-- Follow [SPARKLE-RELEASE.md](SPARKLE-RELEASE.md) and [RELEASE.md](RELEASE.md)
-  to build and verify the ad-hoc updater DMG with a valid Library Load
-  Constraint, then retain artifact, checksum and manifest.
-- Add the exact DMG name, SHA-256 and delta list, source commit, tag, and
-  appcast verification to this file *after* producing them. Do not invent or
-  reuse v0.1.11 provenance.
-- Run the clean-machine and upgrade checks from the runbook, including an
-  upgrade from v0.1.11 with a representative database.
-- Complete the manual platform checks in [NATIVE-UI-VALIDATION.md](NATIVE-UI-VALIDATION.md):
-  window focus and Spaces/fullscreen, VoiceOver, Increase Contrast, Reduce Motion
-  and Reduce Transparency. None of these are claimed as verified here.
+- DMG: `Rasc-0.1.12-updater.dmg`, SHA-256
+  `64637dc077e9f882a2154ea3d710bf76ab23687738fef6f2e2c7148ccfa0805c`
+  (6,293,028 bytes). The `.sha256` sidecar is attached to the GitHub Release.
+- Deltas: `Rasc18-17.delta`, `Rasc18-16.delta`, `Rasc18-15.delta`,
+  `Rasc18-14.delta`, `Rasc18-13.delta` — all attached to the release.
+- Signature: ad-hoc, Hardened Runtime, App Sandbox, no network entitlement on
+  the main app, with a Library Load Constraint pinning the final signed
+  Sparkle binary (`CDHash=4607d4484fb9c9302f729a9b328318f9e19f8d90`, arm64).
+  `codesign --verify --deep --strict` passed and the app reported
+  `Has Library Load Constraints`; `spctl --assess` rejects it as expected for
+  an ad-hoc build (first manual installs use Open Anyway). Not notarized.
+- The packaged `SUPublicEDKey` matches the value from the `rasc-sparkle`
+  login-keychain account.
+- Sparkle appcast: all six entries (0.1.7–0.1.12) were verified for lengths and
+  Ed25519 signatures with `verify-appcast.py --account rasc-sparkle`, including
+  a tamper-rejection check (one byte flipped at offset 1024) that passed. The
+  existing v0.1.7–v0.1.11 entries keep their original URLs and signatures.
+
+## Release verification
+
+- Appcast verification re-run against assets re-downloaded from the public
+  v0.1.12 GitHub Release; record result and live-feed check here after deploy.
+- The live production appcast and download link were updated after the release
+  assets were verified (see `rasc-web` commit recorded in the publication log).
 
 ## Not verified
 
 VoiceOver, Full Keyboard Access, Reduce Motion/Transparency, Spaces/fullscreen,
-macOS 14–25, clean install and in-app upgrade for this candidate remain
-unverified until the release build and manual pass are complete.
+macOS 14–25, clean-machine install and the in-app upgrade from v0.1.11 with a
+representative database have **not** been performed by the publishing agent.
+The runbook's clean-machine pass remains a maintainer action; publication was
+completed at the maintainer's explicit instruction. Do not interpret this
+release as certified on those axes.
