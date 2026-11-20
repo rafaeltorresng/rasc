@@ -110,12 +110,23 @@ the ad-hoc build use **Open Anyway** in Finder.
   a tamper-rejection check (one byte flipped at offset 1024) that passed. The
   existing v0.1.7–v0.1.11 entries keep their original URLs and signatures.
 
-## Release verification
+## Post-deploy check (2026-11-20)
 
-- Appcast verification re-run against assets re-downloaded from the public
-  v0.1.12 GitHub Release; record result and live-feed check here after deploy.
-- The live production appcast and download link were updated after the release
-  assets were verified (see `rasc-web` commit recorded in the publication log).
+- The GitHub Release assets were re-downloaded from their public URLs and the
+  final appcast was verified against those bytes: all six entries passed length
+  and Ed25519 signature checks (`RESULT: PASS`).
+- The live production feed at `https://rasc.app/appcast.xml` is byte-identical to
+  the verified file and lists 0.1.7–0.1.12 (newest first).
+- The live website bundle serves release tag `v0.1.12`, the
+  `Rasc-0.1.12-updater.dmg` filename and SHA-256
+  `64637dc077e9f882a2154ea3d710bf76ab23687738fef6f2e2c7148ccfa0805c`.
+- Web deploy: `rafaeltorresng/rasc-web` commit `0ad9db0`, GitHub Pages workflow
+  run `44664714646` (success). Release commit `3c905cc`, annotated tag `v0.1.12`.
+- **Not performed:** the runbook's mandatory post-deploy GUI smoke test
+  ("Check for Updates…" from an installed build on a clean account, expecting
+  "Already up to date") — no graphical session or clean account is available to
+  the publishing agent. A maintainer must run it before announcing the release;
+  if it reports a feed error, revert the web deploy.
 
 ## Not verified
 
