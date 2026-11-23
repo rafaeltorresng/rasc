@@ -93,10 +93,11 @@ RASC_RC_VERSION=0.1.8 RASC_RC_BUILD=14 ./Scripts/release/build-updater-rc.sh
 Key properties of `generate-release-appcast.sh`:
 
 - Accumulates `build/updater-rc/feed/{*.dmg,appcast.xml}` across releases —
-  re-running for the next release keeps existing entries and appends the new
-  one. `generate_appcast --download-url-prefix` rewrites **every** enclosure URL
-  to the current prefix, so restore previous releases' enclosure URLs before
-  publishing (signatures and lengths are unaffected).
+  re-running for the next release keeps every existing entry and appends the
+  new one. `generate-release-appcast.sh` asks Sparkle to preserve all appcast
+  versions and generate deltas for the six supported prior builds. It also
+  restores each existing enclosure's original versioned GitHub URL after
+  Sparkle applies the current prefix to every archive.
 - Signs enclosures with the login-keychain `rasc-sparkle` account via
   `generate_appcast --account` — no raw key file.
 - Immediately verifies with `verify-appcast.py` (Ed25519 signatures + lengths,

@@ -7,15 +7,15 @@ character exploration.
 
 ## Symbol and exports
 
-`Rasc/Resources/Brand/rasc-twin-fish-master.png` is the production master. It is
-a faithful raster of the approved silhouette, with a transparent background, and
-retains the two fish, their uneven scale, the open curve and the gap between
-them. It is not a claimed vector asset; no redraw was substituted for fidelity.
-The previous `rasc-symbol-master.png` is retained for historical reference only
-and is no longer used by the export pipeline.
+`Rasc/Resources/Brand/rasc-twin-fish-master.png` is the production master: the
+approved Twin Fish with its upper-left tail completed and transparent padding.
+The continuation was inferred from the visible tail and accepted as a full-mark
+simulation on 2026-11-23. The source is raster, not an editable vector. The
+previous `rasc-symbol-master.png` is retained for historical reference only and
+is no longer used by the export pipeline.
 
-`Scripts/assets/export-brand.swift` trims transparent padding, recolors the same
-silhouette to graphite (`#242423`) on light surfaces and warm paper (`#F7F5F0`)
+`Scripts/assets/export-brand.swift` trims transparent padding, recolors the
+accepted master to graphite (`#242423`) on light surfaces and warm paper (`#F7F5F0`)
 on dark surfaces, then exports both logo appearances, the 24 pt compact
 representations, the menu-bar template and all 10 macOS AppIcon sizes. The app
 icon keeps the existing light native plate and uses a composed scale and optical

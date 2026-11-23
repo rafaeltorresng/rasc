@@ -1,5 +1,6 @@
-// Reproducible asset exports from the approved Rasc Twin Fish master.
-// The master is a faithful raster of candidate 02; this script only trims
+// Reproducible asset exports from the accepted corrected Rasc Twin Fish master.
+// The master contains the approved Twin Fish with an inferred upper-left tail
+// completion accepted on 2026-11-23; this script only trims
 // transparent padding, recolors the silhouette, and places it at asset sizes.
 // It never redraws, simplifies, forces an R, or adds texture.
 import AppKit

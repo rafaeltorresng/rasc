@@ -4,12 +4,14 @@
 # Routine signing reads the private key directly from the login keychain via
 # Sparkle's official tools (generate_appcast --account). No raw key file is
 # required. For a headless/CI fallback, pass --ed-key-file explicitly.
+# Preserve the complete updater history and the six known prior public builds
+# in each release's delta set; Sparkle's defaults silently drop supported paths.
 #
 # Debian-style archives layout (build/updater-rc/feed) accumulates DMGs and one
 # appcast.xml across releases. Re-running for a new version appends a new entry;
 # entries for previous releases keep their original GitHub download URLs and
-# signatures, because appcast entries record the full download URL at creation
-# time.
+# signatures. The wrapper restores old enclosure URLs after Sparkle regenerates
+# the feed, since Sparkle applies the current prefix to every archive.
 #
 # Usage:
 #   Scripts/release/generate-release-appcast.sh \
@@ -111,13 +113,63 @@ if [[ "${DRY_RUN}" == "1" ]]; then
   exit 0
 fi
 
+URL_MAP_FILE="$(mktemp "${TMPDIR:-/tmp}/rasc-appcast-urls.XXXXXX")"
+if [[ -f "${FEED_DIR}/appcast.xml" ]]; then
+  python3 - "${FEED_DIR}/appcast.xml" "${URL_MAP_FILE}" <<'PY'
+import json
+import sys
+import xml.etree.ElementTree as ET
+from pathlib import Path
+from urllib.parse import unquote, urlparse
+
+feed_path, output_path = map(Path, sys.argv[1:])
+root = ET.parse(feed_path).getroot()
+urls = {}
+for enclosure in root.iter("enclosure"):
+    url = enclosure.get("url")
+    if url:
+        urls[unquote(urlparse(url).path.rsplit("/", 1)[-1])] = url
+output_path.write_text(json.dumps(urls))
+PY
+else
+  printf '{}' > "${URL_MAP_FILE}"
+fi
+
 echo "==> Generating appcast fragment in ${FEED_DIR}"
 if [[ -n "${ED_KEY_FILE}" ]]; then
   echo "warning: using --ed-key-file (raw private key). Routine signing should use --account instead." >&2
-  "${GEN}" --ed-key-file "${ED_KEY_FILE}" --download-url-prefix "${PREFIX}" "${FEED_DIR}"
+  "${GEN}" --ed-key-file "${ED_KEY_FILE}" --download-url-prefix "${PREFIX}" \
+    --maximum-versions 0 --maximum-deltas 6 "${FEED_DIR}"
 else
-  "${GEN}" --account "${ACCOUNT}" --download-url-prefix "${PREFIX}" "${FEED_DIR}"
+  "${GEN}" --account "${ACCOUNT}" --download-url-prefix "${PREFIX}" \
+    --maximum-versions 0 --maximum-deltas 6 "${FEED_DIR}"
 fi
+
+python3 - "${FEED_DIR}/appcast.xml" "${URL_MAP_FILE}" <<'PY'
+import json
+import re
+import sys
+from pathlib import Path
+from urllib.parse import unquote, urlparse
+
+feed_path, map_path = map(Path, sys.argv[1:])
+old_urls = json.loads(map_path.read_text())
+feed = feed_path.read_text()
+
+def restore_url(match):
+    tag = match.group(0)
+    url_match = re.search(r'\burl="([^"]+)"', tag)
+    if not url_match:
+        return tag
+    filename = unquote(urlparse(url_match.group(1)).path.rsplit("/", 1)[-1])
+    old_url = old_urls.get(filename)
+    if old_url:
+        return tag[:url_match.start(1)] + old_url + tag[url_match.end(1):]
+    return tag
+
+feed_path.write_text(re.sub(r"<enclosure\b[^>]*>", restore_url, feed))
+map_path.unlink(missing_ok=True)
+PY
 
 echo "==> Verifying appcast signatures..."
 VERIFY_ARGS=( --feed "${FEED_DIR}" --account "${ACCOUNT}" --sparkle-tools-path "${ROOT_DIR}/build/sparkle-tools/bin" )
