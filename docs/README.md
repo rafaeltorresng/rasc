@@ -2,7 +2,7 @@
 
 Start with the [repository README](../README.md) and [current product](CURRENT-PRODUCT.md).
 The current guides below describe the source or an explicitly named release; installation and release notes describe
-the published **v0.1.12, build 18** artifact; v0.1.11 remains in the archive.
+the published **v0.1.13, build 19** artifact; earlier releases remain in the archive.
 Historical snapshots below are reference only; they are not proof of current
 behavior.
 
@@ -14,7 +14,7 @@ behavior.
 | [Design system](DESIGN-SYSTEM.md) and [Brand](BRAND.md) | Current visual roles, symbol and asset exports |
 | [Native validation](NATIVE-UI-VALIDATION.md) | Manual platform and accessibility checks |
 | [Install release](INSTALL-UNSIGNED.md) | Published DMG, checksum and first-launch steps |
-| [Release notes](RELEASE-NOTES-v0.1.12.md) | Published v0.1.12 changes, provenance and updates |
+| [Release notes](RELEASE-NOTES-v0.1.13.md) | Published v0.1.13 changes, provenance and updates |
 | [Previous release notes](RELEASE-NOTES-v0.1.11.md) | Archived v0.1.11 changes and provenance |
 | [Release](RELEASE.md) | Versioning, packaging, signing and optional notarization |
 | [Sparkle release](SPARKLE-RELEASE.md) | Ad-hoc updater build and publication runbook |

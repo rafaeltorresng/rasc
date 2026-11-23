@@ -1,8 +1,8 @@
 # Production runbook: Sparkle updates via Library Load Constraint (ad-hoc signed)
 
-Status: **v0.1.12/build 18 is published (2026-11-20); v0.1.7/build 13 was the
-first updater release.** The production feed serves the v0.1.12 entry with
-v0.1.7–v0.1.11 retained. The default Release build is unchanged and cannot
+Status: **v0.1.13/build 19 is published (2026-11-23); v0.1.7/build 13 was the
+first updater release.** The production feed serves the v0.1.13 entry with
+v0.1.7–v0.1.12 retained. The default Release build is unchanged and cannot
 update itself. This document is
 the canonical procedure for the updater-enabled build. Please read fully before
 publishing.
@@ -37,9 +37,8 @@ a publicly-trusted tunnel such as Cloudflare quick tunnel (`cloudflared tunnel
 --url …`) or any static HTTPS host. This was used both on this Mac and on the
 maintainer's Air M4. The host name is disposable; the feed is never the
 production one and never served from `rasc.app`. The production feed at
-`https://rasc.app/appcast.xml` is live and serves the published v0.1.11 entry
-(build 17), with earlier entries retained for older
-upgrades.
+`https://rasc.app/appcast.xml` is live and serves the published v0.1.13 entry
+(build 19), with earlier entries retained for older upgrades.
 
 ## RC build pipeline (what `build-updater-rc.sh` does)
 
@@ -294,7 +293,7 @@ cost and can remain as belt-and-braces.
 
 ## Decision checklist before publishing
 
-The v0.1.9 release is published. The checklist below remains the publication gate
+The v0.1.13 release is published. The checklist below remains the publication gate
 for each next candidate; completed run records belong in the release notes.
 
 - [ ] `xcodebuild test` green; `RELEASE_NOTES-v<version>.md` written (Open-Anyway note present)
@@ -308,14 +307,27 @@ for each next candidate; completed run records belong in the release notes.
 - [ ] Website download link changed only after the feed is live and verified
 - [ ] `git status --porcelain` shows only the intended files; no `build/`
 
-## Current status (2026-11-20)
+## Current status (2026-11-23)
 
-- **Published:** v0.1.12/build 18, behavioral source tip `6bdd410`, DMG
+- **Published:** v0.1.13/build 19, source commit `c3ce2a1`, DMG
+  `Rasc-0.1.13-updater.dmg`, SHA-256
+  `bf324171fc1fe535c9615f56d4083300ea72f45279e8b5327d1ea3b993fa2cae`, with
+  six `Rasc19-*` deltas. GitHub Actions run `45246536033` passed. The appcast
+  retains v0.1.7–v0.1.12 with their original versioned URLs; signatures,
+  lengths, and tamper rejection passed. The public release assets were
+  downloaded and byte-matched. See
+  [RELEASE-NOTES-v0.1.13.md](RELEASE-NOTES-v0.1.13.md).
+- GitHub Pages runs `45248619505` (brand and appcast) and `45249191060`
+  (current release facts) passed. The live appcast is byte-identical to the
+  verified seven-entry file and all enclosure URLs retain their original
+  versioned GitHub releases.
+- **Not performed for v0.1.13:** the live in-app update and clean-account
+  post-deploy “Already up to date” smoke; the publishing environment had no
+  usable interactive display. The appcast and download link were checked
+  directly over HTTPS. macOS 14–25 remain unverified.
+- **Previous:** v0.1.12/build 18, behavioral source tip `6bdd410`, DMG
   `Rasc-0.1.12-updater.dmg`, SHA-256
-  `64637dc077e9f882a2154ea3d710bf76ab23687738fef6f2e2c7148ccfa0805c`, with
-  `Rasc18-*` deltas and five retained earlier entries in the production feed.
-  See [RELEASE-NOTES-v0.1.12.md](RELEASE-NOTES-v0.1.12.md) for provenance and
-  the explicit list of checks not performed.
+  `64637dc077e9f882a2154ea3d710bf76ab23687738fef6f2e2c7148ccfa0805c`.
 - **Previous:** v0.1.11/build 17, built from source commit `0e7aa69`, DMG
   `Rasc-0.1.11-updater.dmg`, SHA-256
   `baf11bd0cc4e2774987910d48eba8bc63e986a27acd0e1eac2bddf0db1f54067`. The
