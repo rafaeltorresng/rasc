@@ -104,7 +104,7 @@ final class PanelController: NSObject, NSWindowDelegate {
         installKeyMonitor()
         let session = self.session
         let onboardingActions = self.onboardingScratchpadActions()
-        let rootView = ThemeRebuildView {
+        let rootView = RascAppearanceView {
             ScratchpadView(
                 session: session,
                 onEscape: { [weak self] in
