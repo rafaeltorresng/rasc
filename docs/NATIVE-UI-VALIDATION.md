@@ -40,7 +40,9 @@ Use synthetic thoughts and a temporary test account/profile when exercising fail
 ## Accessibility and appearance
 
 - [ ] Light/dark: inspect typography, actions, borders, icon and menu-bar symbol.
-- [ ] Theme presets (Graphite Paper / Slate / Porcelain) repaint Home, Scratchpad and Settings immediately and uniformly, preserve copper-for-Keep and readable contrast, and Reset restores System + Graphite Paper.
+- [ ] Theme presets (Graphite Paper / Slate / Porcelain) repaint Home, Scratchpad and Settings immediately and uniformly, preserve copper-for-Keep and readable contrast, and Restore Default Theme selects System and Graphite Paper.
+- [ ] Custom at minimum Settings width: edit and preview both variants with the native color panel, reject insufficient contrast with a visible explanation, then apply and relaunch. Switching presets and restoring the default theme preserves the saved Custom colors. Reset Palette restores both variants.
+- [ ] Apply themes and change Note Text Size with a note open, preserving undo, selection, and scroll context. At minimum Home and Scratchpad sizes, check Small and Large with long notes, lists, Search matches, and all Refine comparison modes.
 - [ ] Each preset under Increase Contrast renders with the strengthened borders, and the unmodified copper pair still reads correctly.
 - [ ] VoiceOver announces preview/errors and can complete Capture → Accept/Keep → retrieval.
 - [ ] Full Keyboard Access reaches note rows, action menus, Undo, comparison and Settings.
