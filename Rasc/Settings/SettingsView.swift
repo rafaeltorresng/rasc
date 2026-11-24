@@ -54,10 +54,14 @@ struct SettingsView: View {
     private let themeSettings: AppThemeSettingsStore
     private let supportedLocales: any RefineSupportedLocaleDiscovering
 
-    @ObservedObject private var themeStore = ThemeStore.shared
+    @ObservedObject private var themeStore: ThemeStore
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var selectedTheme: AppTheme = AppThemeSettingsStore().load()
+    @AppStorage(NoteTextSize.preferenceKey) private var noteTextSize: NoteTextSize = .standard
+    @State private var customDraft: CustomTheme
+    @State private var customEditingScheme: ColorScheme?
+    @State private var selectedTheme: AppTheme
     @State private var launchAtLogin = false
     @State private var loginItemState = LoginItemState.disabled
     @State private var launchAtLoginError: String?
@@ -81,12 +85,16 @@ struct SettingsView: View {
         loginItemController: LoginItemController = LoginItemController(),
         languageSettings: RefineLanguageSettingsStore = RefineLanguageSettingsStore(),
         themeSettings: AppThemeSettingsStore = AppThemeSettingsStore(),
+        themeStore: ThemeStore = .shared,
         supportedLocales: any RefineSupportedLocaleDiscovering = RefineSupportedLocales()
     ) {
         self.refinementProvider = refinementProvider
         self.loginItemController = loginItemController
         self.languageSettings = languageSettings
         self.themeSettings = themeSettings
+        _selectedTheme = State(initialValue: themeSettings.load())
+        self.themeStore = themeStore
+        _customDraft = State(initialValue: themeStore.custom)
         self.supportedLocales = supportedLocales
     }
 
@@ -109,18 +117,61 @@ struct SettingsView: View {
 
     private var settingsForm: some View {
         Form {
-            Section("General") {
-                Picker("Theme", selection: $selectedTheme) {
+            Section("Appearance") {
+                Picker("Mode", selection: Binding(
+                    get: { selectedTheme },
+                    set: { selectMode($0) }
+                )) {
                     ForEach(AppTheme.allCases) { theme in
                         Text(theme.displayName).tag(theme)
                     }
                 }
                 .pickerStyle(.menu)
-                .onChange(of: selectedTheme) { _, theme in
-                    themeSettings.save(theme)
-                    AppThemeApplicator.apply(theme)
+
+                LabeledContent("Note Text Size") {
+                    Picker("Note Text Size", selection: $noteTextSize) {
+                        ForEach(NoteTextSize.allCases) { size in
+                            Text(size.title).tag(size)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .frame(width: 194)
                 }
 
+                HStack(spacing: 16) {
+                    ForEach(ThemePreset.allCases) { preset in
+                        ThemePresetSwatch(
+                            preset: preset,
+                            preview: ThemeCatalog.resolve(
+                                preset: preset, scheme: colorScheme, custom: themeStore.custom
+                            ),
+                            isSelected: themeStore.preset == preset
+                        ) {
+                            themeStore.selectPreset(preset)
+                        }
+                    }
+                    Spacer(minLength: 0)
+                }
+                .padding(.vertical, 4)
+                .accessibilityElement(children: .contain)
+                .accessibilityLabel("Theme Style")
+
+                if themeStore.preset == .custom {
+                    customThemeEditor
+                }
+
+                if themeStore.isCustomized || selectedTheme != .system {
+                    Button("Restore Default Theme") {
+                        themeStore.reset()
+                        selectMode(.system)
+                    }
+                    .help("Restore System appearance and Graphite Paper")
+                }
+            }
+            .listRowBackground(settingsSectionBackground)
+
+            Section("General") {
                 Toggle("Launch at Login", isOn: $launchAtLogin)
                     .onChange(of: launchAtLogin) { _, isEnabled in
                         updateLaunchAtLogin(isEnabled)
@@ -130,7 +181,7 @@ struct SettingsView: View {
                     HStack {
                         Text("Launch at Login needs approval in System Settings.")
                             .font(.caption)
-                            .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                            .foregroundStyle(palette.secondaryText(for: colorScheme))
                         Spacer()
                         Button("Open Login Items Settings") {
                             loginItemController.openSystemSettings()
@@ -141,39 +192,7 @@ struct SettingsView: View {
                 if let launchAtLoginError {
                     Text(launchAtLoginError)
                         .font(.caption)
-                        .foregroundStyle(RascSurfacePalette.destructiveText(for: colorScheme))
-                }
-            }
-            .listRowBackground(settingsSectionBackground)
-
-            Section("Theme Style") {
-                HStack(spacing: 16) {
-                    ForEach(ThemePreset.allCases) { preset in
-                        ThemePresetSwatch(
-                            preset: preset,
-                            isSelected: themeStore.preset == preset
-                        ) {
-                            themeStore.selectPreset(preset)
-                        }
-                    }
-                    Spacer(minLength: 0)
-                }
-                .padding(.vertical, 4)
-                .accessibilityElement(children: .contain)
-
-                Text(themeStore.preset.caption)
-                    .font(.caption)
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
-                    .accessibilityHidden(true)
-
-                if themeStore.isCustomized {
-                    Button("Reset theme to Graphite Paper") {
-                        themeStore.reset()
-                        themeSettings.save(.system)
-                        AppThemeApplicator.apply(.system)
-                        selectedTheme = .system
-                    }
-                    .help("Restore the out-of-the-box look: Graphite Paper with System appearance")
+                        .foregroundStyle(palette.destructiveText(for: colorScheme))
                 }
             }
             .listRowBackground(settingsSectionBackground)
@@ -184,7 +203,7 @@ struct SettingsView: View {
                 LabeledContent(refineStatus.headline) {
                     Text(refineStatus.detail)
                         .font(.caption)
-                        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                        .foregroundStyle(palette.secondaryText(for: colorScheme))
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -203,13 +222,13 @@ struct SettingsView: View {
 
                 Text(languageHelpText)
                     .font(.caption)
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .foregroundStyle(palette.secondaryText(for: colorScheme))
 
                 if languageResolution.isUsingFallback,
                    let unsupported = languageResolution.unsupportedSavedLocaleIdentifier {
                     Text("Saved language \(unsupported) is unavailable on this Mac. Refine is using Match note language until you choose another option.")
                         .font(.caption)
-                        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                        .foregroundStyle(palette.secondaryText(for: colorScheme))
                 }
             }
             .listRowBackground(settingsSectionBackground)
@@ -217,7 +236,7 @@ struct SettingsView: View {
             Section {
                 Text("Your notes are stored locally on this Mac. Refine runs on-device when available.")
                     .font(.caption)
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .foregroundStyle(palette.secondaryText(for: colorScheme))
 
                 Link("Source on GitHub", destination: URL(string: "https://github.com/rafaeltorresng/rasc")!)
 
@@ -246,10 +265,103 @@ struct SettingsView: View {
             await refreshRefineStatus()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-            selectedTheme = themeSettings.load()
+            selectMode(themeSettings.load())
             refreshLaunchAtLoginState()
             refreshLanguageSettings()
         }
+    }
+
+    private func selectMode(_ theme: AppTheme) {
+        guard theme != selectedTheme else { return }
+        selectedTheme = theme
+        customEditingScheme = nil
+        themeSettings.save(theme)
+        AppThemeApplicator.apply(theme)
+    }
+
+    private var customThemeEditor: some View {
+        let scheme = customEditingScheme ?? colorScheme
+        let otherScheme: ColorScheme = scheme == .dark ? .light : .dark
+        let preview = customDraft[scheme].palette(for: scheme)
+        let issue = customDraft[scheme].issue(for: scheme) ?? customDraft[otherScheme].issue(for: otherScheme)
+
+        return VStack(alignment: .leading, spacing: 10) {
+            Picker("Custom Palette Appearance", selection: Binding(
+                get: { customEditingScheme ?? colorScheme },
+                set: { customEditingScheme = $0 }
+            )) {
+                Text("Light").tag(ColorScheme.light)
+                Text("Dark").tag(ColorScheme.dark)
+            }
+            .labelsHidden()
+            .pickerStyle(.segmented)
+            .frame(width: 120)
+
+            HStack(spacing: 20) {
+                ColorPicker("Background", selection: colorBinding(for: scheme, \.background), supportsOpacity: false)
+                ColorPicker("Note Text", selection: colorBinding(for: scheme, \.noteText), supportsOpacity: false)
+                Spacer(minLength: 0)
+            }
+            .id(scheme)
+            .onChange(of: scheme) {
+                if NSColorPanel.sharedColorPanelExists {
+                    NSColorPanel.shared.close()
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("An unfinished thought")
+                    .font(.system(size: noteTextSize.points(RascSurfaceMetrics.noteFontSize), weight: .medium))
+                Text("A little room to think.")
+                    .font(.system(size: noteTextSize.points(13)))
+            }
+            .foregroundStyle(preview.noteText.map { Color(nsColor: $0) } ?? .primary)
+            .padding(12)
+            .frame(maxWidth: .infinity, minHeight: 72, alignment: .leading)
+            .background(Color(nsColor: preview.canvas), in: .rect(cornerRadius: 8))
+            .overlay {
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(Color(nsColor: preview.border), lineWidth: 1)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Palette preview")
+            .accessibilityValue("An unfinished thought. A little room to think.")
+
+            HStack {
+                Text(issue ?? "Preview")
+                    .font(.caption)
+                    .foregroundStyle(issue == nil
+                        ? palette.secondaryText(for: colorScheme)
+                        : palette.destructiveText(for: colorScheme))
+                Spacer(minLength: 8)
+                Button("Reset Palette") {
+                    customDraft = .standard
+                    themeStore.applyCustomPalette(customDraft)
+                }
+                .disabled(customDraft == .standard && themeStore.custom == .standard)
+                .help("Restore both the Light and Dark palettes")
+                Button("Apply") {
+                    themeStore.applyCustomPalette(customDraft)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(issue != nil || customDraft == themeStore.custom)
+                .accessibilityLabel("Apply Custom Palette")
+            }
+            .controlSize(.small)
+        }
+        .padding(.vertical, 4)
+        .accessibilityElement(children: .contain)
+        .transaction { $0.animation = nil }
+    }
+
+    private func colorBinding(for scheme: ColorScheme, _ role: WritableKeyPath<CustomThemeColors, ThemeColor>) -> Binding<CGColor> {
+        Binding(
+            get: { customDraft[scheme][keyPath: role].nsColor.cgColor },
+            set: { color in
+                guard let nativeColor = NSColor(cgColor: color), let chosenColor = ThemeColor(nativeColor) else { return }
+                customDraft[scheme][keyPath: role] = chosenColor
+            }
+        )
     }
 
     private var keyboardShortcutsSection: some View {
@@ -310,7 +422,7 @@ struct SettingsView: View {
             if let shortcutRestoreMessage {
                 Text(shortcutRestoreMessage)
                     .font(.caption)
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .foregroundStyle(palette.secondaryText(for: colorScheme))
                     .fixedSize(horizontal: false, vertical: true)
             }
 
@@ -347,7 +459,7 @@ struct SettingsView: View {
                 .accessibilityAddTraits(.isHeader)
             Text(detail)
                 .font(.caption)
-                .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                .foregroundStyle(palette.secondaryText(for: colorScheme))
                 .fixedSize(horizontal: false, vertical: true)
         }
         .accessibilityElement(children: .combine)
@@ -365,7 +477,7 @@ struct SettingsView: View {
                 if let detail = entry.detail {
                     Text(detail)
                         .font(.caption)
-                        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                        .foregroundStyle(palette.secondaryText(for: colorScheme))
                 }
             }
         }
@@ -425,7 +537,7 @@ struct SettingsView: View {
 
     private var settingsSectionBackground: some View {
         RoundedRectangle(cornerRadius: RascSurfaceMetrics.feedbackCornerRadius, style: .continuous)
-            .fill(RascSurfacePalette.raisedFill(for: colorScheme))
+            .fill(palette.raisedFill(for: colorScheme))
     }
 
     private func refreshLaunchAtLoginState() {
@@ -475,6 +587,7 @@ struct SettingsView: View {
 private struct InternalShortcutEditor: View {
     let command: InternalCommand
 
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @ObservedObject private var store = InternalShortcutStore.shared
     @State private var isRecording = false
@@ -494,7 +607,7 @@ private struct InternalShortcutEditor: View {
             if let message {
                 Text(message)
                     .font(.caption)
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .foregroundStyle(palette.secondaryText(for: colorScheme))
             }
         }
         .background {
@@ -555,21 +668,16 @@ private struct InternalShortcutCapture: NSViewRepresentable {
     }
 }
 
-/// Circular preview of one curated preset: the preset's canvas with a quiet ink
-/// bar, captioned with its name. The selected preset carries the neutral focus
-/// ring, never copper.
+/// Miniature swatch of the theme in the current native appearance.
 private struct ThemePresetSwatch: View {
     let preset: ThemePreset
+    let preview: ThemePalette
     let isSelected: Bool
     let onSelect: () -> Void
 
-    @ObservedObject private var theme = ThemeStore.shared
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var environmentScheme
     @Environment(\.colorSchemeContrast) private var contrast
-
-    private var preview: ThemePalette {
-        ThemeCatalog.resolve(preset: preset, scheme: environmentScheme)
-    }
 
     var body: some View {
         Button(action: onSelect) {
@@ -590,7 +698,7 @@ private struct ThemePresetSwatch: View {
                         .overlay {
                             VStack(spacing: 2.5) {
                                 RoundedRectangle(cornerRadius: 0.75, style: .continuous)
-                                    .fill(Color(nsColor: preview.secondaryText))
+                                    .fill(Color(nsColor: preview.noteText ?? preview.secondaryText))
                                     .frame(width: 12, height: 2)
                                 RoundedRectangle(cornerRadius: 0.75, style: .continuous)
                                     .fill(Color(nsColor: preview.metadataText))
@@ -602,7 +710,7 @@ private struct ThemePresetSwatch: View {
                     if isSelected {
                         RoundedRectangle(cornerRadius: 11, style: .continuous)
                             .strokeBorder(
-                                RascSurfacePalette.focus(for: environmentScheme),
+                                palette.focus(for: environmentScheme),
                                 lineWidth: contrast == .increased ? 2.5 : 1.5
                             )
                             .padding(-3)
@@ -614,8 +722,8 @@ private struct ThemePresetSwatch: View {
                     .font(.system(size: 10.5, weight: .medium))
                     .foregroundStyle(
                         isSelected
-                            ? RascSurfacePalette.primaryText(for: environmentScheme)
-                            : RascSurfacePalette.metadataText(for: environmentScheme)
+                            ? Color.primary
+                            : palette.metadataText(for: environmentScheme)
                     )
             }
             .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
