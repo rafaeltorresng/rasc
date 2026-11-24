@@ -22,7 +22,7 @@ final class VoiceCapture: ObservableObject {
 
     enum Phase: Equatable {
         case idle, checking, starting, listening, finishing, waitingForModel, transcribing, stopping
-        case reviewing, saving, kept, undoing
+        case saving, opening, ready
         case issue(Issue)
     }
 
@@ -35,7 +35,7 @@ final class VoiceCapture: ObservableObject {
             case .microphone: "Rasc couldn’t receive audio from your microphone."
             case .noSpeech: "Rasc didn’t recognize any speech."
             case .transcription: "Rasc couldn’t transcribe this recording."
-            case .persistence: "Rasc couldn’t recover the previous voice capture."
+            case .persistence: "Rasc couldn’t save the recorded thought. Try again to save it."
             case .blocked: "Finish the open dialog before recording."
             }
         }
@@ -68,8 +68,6 @@ final class VoiceCapture: ObservableObject {
     @Published private(set) var setup: Setup = .unchecked
     @Published private(set) var shortcutIsActive = false
     let inputLevel = VoiceInputLevel()
-    @Published private(set) var content = ""
-    @Published private(set) var reviewMessage: String?
     @Published private(set) var canRetryAudio = false
     @Published private(set) var awaitingMicrophonePermission = false
 
@@ -88,21 +86,19 @@ final class VoiceCapture: ObservableObject {
     private var operation: Task<Void, Never>?
     private var watchdog: Task<Void, Never>?
     private var meter: Task<Void, Never>?
-    private var receiptTimer: Task<Void, Never>?
     private var audioExpiry: Task<Void, Never>?
     private var id: UUID?
     private var decodeID: UUID?
     private var buffer: MicBuffer?
     private var retryAudio: VoiceAudio?
-    private var receipt: Note?
-    private var stagedContent: String?
-    private(set) var reviewWrite: Task<Bool, Never>?
-    private var recoveryRequired = false
+    private var pendingTranscript: String?
+    private var capturedScratchID: UUID?
+    private var captureWasInterrupted = false
     private var lastActivation: ContinuousClock.Instant?
     private var activatedAt: ContinuousClock.Instant?
 
     var canChangeEnabled: Bool {
-        setup != .importing && phase != .saving && phase != .undoing && !recoveryRequired
+        setup != .importing && phase != .saving && phase != .opening && pendingTranscript == nil
     }
 
     var hasUnsavedAudio: Bool {
@@ -114,7 +110,7 @@ final class VoiceCapture: ObservableObject {
     }
 
     var onNotesChanged: (() -> Void)?
-    var onOpenThought: ((UUID) -> Void)?
+    var onOpenScratch: ((UUID, Bool) async -> Bool)?
 
     init(
         preferences: UserDefaults = .standard,
@@ -159,11 +155,7 @@ final class VoiceCapture: ObservableObject {
             pressure?.cancel()
             pressure = nil
             Task { await model.releaseForMemoryPressure() }
-            if phase == .reviewing {
-                closeReview()
-            } else {
-                cancel()
-            }
+            cancel()
         }
     }
 
@@ -176,6 +168,14 @@ final class VoiceCapture: ObservableObject {
         }
         let active = KeyboardShortcuts.isEnabled(for: .voiceCapture)
         if shortcutIsActive != active { shortcutIsActive = active }
+    }
+
+    func handleScratchpadShortcut(_ event: NSEvent) -> Bool {
+        guard enabled, shortcutIsActive,
+              let shortcut = KeyboardShortcuts.getShortcut(for: .voiceCapture),
+              KeyboardShortcuts.Shortcut(event: event) == shortcut else { return false }
+        if !event.isARepeat { activate(fromShortcut: true) }
+        return true
     }
 
     func checkSetup(prepare: Bool = false) {
@@ -259,7 +259,7 @@ final class VoiceCapture: ObservableObject {
             lastActivation = now
         }
         switch phase {
-        case .idle, .kept:
+        case .idle:
             begin()
         case .issue(.permission) where fromShortcut && needsMicrophoneAccess:
             if presentWindows { windows.showStatus() }
@@ -267,17 +267,16 @@ final class VoiceCapture: ObservableObject {
             recover()
         case .listening:
             finish()
-        case .reviewing:
-            showReview()
+        case .ready:
+            transition(.opening)
+            operation = Task { await openSavedScratch() }
         default:
             break
         }
     }
 
     private func begin() {
-        guard let repository, setup != .importing else { return }
-        receiptTimer?.cancel()
-        receipt = nil
+        guard repository != nil, setup != .importing else { return }
         resetInput()
         let token = UUID()
         id = token
@@ -292,22 +291,6 @@ final class VoiceCapture: ObservableObject {
         observeResources()
 
         operation = Task {
-            do {
-                let pending = try await repository.pendingVoiceDraft()
-                guard owns(token) else { return }
-                if let pending {
-                    id = pending.id
-                    content = pending.content
-                    stagedContent = pending.content
-                    reviewMessage = nil
-                    transition(.reviewing)
-                    showReview()
-                    return
-                }
-            } catch {
-                if owns(token) { transition(.issue(.persistence)) }
-                return
-            }
             if injectedDecode == nil {
                 let available = await Task.detached { (try? VoiceModelAssets.availableFolder()) != nil }.value
                 guard owns(token) else { return }
@@ -419,13 +402,6 @@ final class VoiceCapture: ObservableObject {
     func finish(interrupted: Bool = false) {
         guard phase == .listening || (interrupted && phase == .finishing),
               let token = id, let buffer else { return }
-        if presentWindows {
-            if interrupted {
-                windows.rememberFinishContext(nil)
-            } else if phase == .listening {
-                windows.rememberFinishContext()
-            }
-        }
         operation?.cancel()
         transition(.finishing)
         meter?.cancel()
@@ -442,7 +418,7 @@ final class VoiceCapture: ObservableObject {
                 transition(.issue(interrupted ? .microphone : .noSpeech))
                 return
             }
-            reviewMessage = interrupted ? "Recording ended early. Check the captured text before keeping it." : nil
+            captureWasInterrupted = interrupted
             transcribe(audio, owner: token)
         }
     }
@@ -485,19 +461,9 @@ final class VoiceCapture: ObservableObject {
                     transition(.issue(.noSpeech))
                     return
                 }
-                content = text
+                pendingTranscript = text
                 Self.logger.debug("Finish to transcript: \(Self.ms(start), privacy: .public) ms")
-                recoveryRequired = true
-                let saved = await stageCurrentReview(token)
-                recoveryRequired = false
-                guard owns(token) else { return }
-                if !saved { reviewMessage = "Rasc couldn’t save a recovery copy. Your transcript is still available here." }
-                if enabled {
-                    transition(.reviewing)
-                    if presentWindows { windows.showReviewAfterFinish() }
-                } else {
-                    transition(.idle)
-                }
+                await saveAndOpenScratch()
             } catch {
                 guard owns(token), decodeID == attempt else { return }
                 watchdog?.cancel()
@@ -522,105 +488,57 @@ final class VoiceCapture: ObservableObject {
             openMicrophoneSettings()
             return
         }
-        if phase == .issue(.transcription), let retryAudio {
-            if presentWindows { windows.rememberFinishContext() }
+        if phase == .issue(.persistence), pendingTranscript != nil {
+            transition(.saving)
+            operation = Task { await saveAndOpenScratch() }
+        } else if phase == .issue(.transcription), let retryAudio {
             transcribe(retryAudio, owner: token)
         } else {
             begin()
         }
     }
 
-    func showReview() {
-        if presentWindows { windows.showReview() }
+    private func saveAndOpenScratch() async {
+        guard let repository, let transcript = pendingTranscript else { return }
+        if phase != .saving { transition(.saving) }
+        do {
+            capturedScratchID = try await repository.createScratch(content: transcript).id
+        } catch {
+            transition(.issue(.persistence))
+            return
+        }
+        pendingTranscript = nil
+        await openSavedScratch()
+        onNotesChanged?()
     }
 
-    func edit(_ text: String) {
-        guard phase == .reviewing else { return }
-        content = text
-    }
-
-    func closeReview() {
-        guard phase == .reviewing, let token = id else { return }
-        if presentWindows { windows.hideReview() }
-        writeReview(token)
-    }
-
-    private func writeReview(_ token: UUID) {
-        let previous = reviewWrite
-        reviewWrite = Task {
-            _ = await previous?.value
-            guard id == token, content != stagedContent else { return true }
-            let saved = await stageCurrentReview(token)
-            if !saved, id == token {
-                reviewMessage = "Rasc couldn’t save the review. Try Keep again or copy the transcript."
-                if presentWindows { windows.showReview() }
-            }
-            return saved
+    private func openSavedScratch() async {
+        guard let id = capturedScratchID else { return }
+        if phase != .opening { transition(.opening) }
+        if await onOpenScratch?(id, captureWasInterrupted) == true || onOpenScratch == nil {
+            dismiss()
+        } else {
+            transition(.ready)
         }
     }
 
-    private func stageCurrentReview(_ token: UUID) async -> Bool {
+    func flushForTermination() async -> Bool {
+        if phase == .saving || phase == .opening {
+            await operation?.value
+        }
+        guard let pendingTranscript else { return true }
         guard let repository else { return false }
-        let text = content
         do {
-            try await repository.stageVoiceDraft(VoiceDraft(id: token, content: text))
-            if id == token { stagedContent = text }
+            _ = try await repository.createScratch(content: pendingTranscript)
+            self.pendingTranscript = nil
             return true
         } catch {
             return false
         }
     }
 
-    func flushReviewForTermination() async -> Bool {
-        if recoveryRequired || phase == .saving || phase == .undoing {
-            await operation?.value
-        }
-        _ = await reviewWrite?.value
-        guard phase == .reviewing, let token = id, content != stagedContent else { return true }
-        writeReview(token)
-        return await reviewWrite?.value ?? true
-    }
-
-    func keep() {
-        guard phase == .reviewing, let token = id, let repository,
-              !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        transition(.saving)
-        let captured = VoiceDraft(id: token, content: content)
-        operation = Task {
-            _ = await reviewWrite?.value
-            do {
-                if stagedContent == nil {
-                    try await repository.stageVoiceDraft(captured)
-                }
-                let started = ContinuousClock.now
-                receipt = try await repository.keepVoiceDraft(captured)
-                Self.logger.debug("Keep commit: \(Self.ms(started), privacy: .public) ms")
-                content = ""
-                stagedContent = nil
-                reviewMessage = nil
-                id = nil
-                onNotesChanged?()
-                if presentWindows {
-                    windows.hideReview()
-                    windows.showStatus(reposition: false)
-                }
-                transition(.kept)
-                receiptTimer = Task {
-                    do { try await Task.sleep(for: .seconds(12)) } catch { return }
-                    if phase == .kept { dismiss() }
-                }
-            } catch {
-                reviewMessage = "Rasc couldn’t keep this thought. Your transcript is still here."
-                transition(.reviewing)
-            }
-        }
-    }
-
     func cancel() {
-        guard !recoveryRequired else { return }
         switch phase {
-        case .reviewing:
-            discardReview()
         case .checking, .starting, .listening, .finishing, .waitingForModel, .transcribing:
             let owner = id
             id = nil
@@ -633,46 +551,10 @@ final class VoiceCapture: ObservableObject {
                 if let owner { await input.stop(owner) }
                 dismiss()
             }
-        case .issue, .kept:
+        case .issue, .ready:
             dismiss()
         default:
             break
-        }
-    }
-
-    private func discardReview() {
-        guard let token = id, let repository else { return }
-        transition(.saving)
-        operation = Task {
-            _ = await reviewWrite?.value
-            do {
-                try await repository.discardVoiceDraft(id: token)
-                dismiss()
-            } catch {
-                reviewMessage = "Rasc couldn’t discard this transcript. Try again."
-                transition(.reviewing)
-            }
-        }
-    }
-
-    func openThought() {
-        guard phase == .kept, let receipt else { return }
-        dismiss()
-        onOpenThought?(receipt.id)
-    }
-
-    func undo() {
-        guard phase == .kept, let receipt, let repository else { return }
-        transition(.undoing)
-        operation = Task {
-            do {
-                try await repository.undoVoiceKeep(receipt)
-                onNotesChanged?()
-                dismiss()
-            } catch {
-                dismiss()
-                if presentWindows { windows.showUndoFailure() }
-            }
         }
     }
 
@@ -688,16 +570,13 @@ final class VoiceCapture: ObservableObject {
 
     private func dismiss() {
         resetInput()
-        receiptTimer?.cancel()
-        receipt = nil
         id = nil
         activatedAt = nil
-        content = ""
-        stagedContent = nil
-        reviewMessage = nil
-        reviewWrite = nil
+        pendingTranscript = nil
+        capturedScratchID = nil
+        captureWasInterrupted = false
         transition(.idle)
-        if presentWindows { windows.hide() }
+        if presentWindows { windows.hideStatus() }
     }
 
     private func resetInput() {

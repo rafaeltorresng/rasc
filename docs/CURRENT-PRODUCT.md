@@ -35,11 +35,11 @@ Established installs are migrated as onboarding-complete and never see a forced 
 
 On Apple silicon with macOS 26 or later, enable Voice Capture in Settings and
 record a global shortcut. The menu bar can also start or finish a capture.
-Wait for Listening, speak naturally, then press again. Edit the local transcript
-if needed and choose Keep. The kept thought appears in Home and Search. A brief
-receipt offers Open and Undo. The Scratchpad remains independent throughout
-capture and review. See the [local testing guide](VOICE-CAPTURE.md) for setup
-and the release gates.
+Wait for Listening, speak naturally, then press again. The transcript opens in
+Scratchpad as a new unfinished thought with the caret at the end. Continue
+writing, use Refine, or Keep or Discard with the usual commands. Any previous
+scratch remains available in Home and Search. See the
+[local testing guide](VOICE-CAPTURE.md) for setup and the release gates.
 
 ## Refine
 

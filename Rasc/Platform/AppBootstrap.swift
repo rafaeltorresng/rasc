@@ -29,6 +29,7 @@ final class AppBootstrap {
                     }
                 }
                 controller.onVoiceCapture = { VoiceCapture.shared.activate() }
+                controller.onVoiceCaptureShortcut = { VoiceCapture.shared.handleScratchpadShortcut($0) }
                 controller.onDidHide = { [weak self] in
                     self?.reloadHomeIfVisible()
                 }
@@ -38,8 +39,8 @@ final class AppBootstrap {
                     self?.reloadHomeIfVisible()
                     controller?.refreshSearchAfterVoiceCapture()
                 }
-                VoiceCapture.shared.onOpenThought = { [weak controller] id in
-                    Task { await controller?.openNote(id: id) }
+                VoiceCapture.shared.onOpenScratch = { [weak controller] id, interrupted in
+                    await controller?.openCapturedScratch(id: id, interrupted: interrupted) == true
                 }
                 let durationMs = Int((ContinuousClock.now - startedAt).components.attoseconds / 1_000_000_000_000_000)
                 AppDiagnostics.bootstrapReady(durationMs: max(durationMs, 0))

@@ -2,8 +2,8 @@
 
 Voice Capture is an opt-in feature for Apple silicon Macs running macOS 26 or
 later. Rasc itself still targets macOS 14. Voice Capture uses Fluid Speech Pro
-in verbatim mode. Review lets you correct recognition errors before Keep.
-Refine remains available as an explicit action on the kept thought.
+in verbatim mode. The transcript opens in Scratchpad as an unfinished thought.
+Refine remains available as an explicit Scratchpad action.
 
 ## Try the local build
 
@@ -13,14 +13,15 @@ Refine remains available as an explicit action on the kept thought.
 2. In Settings → Voice Capture, enable the feature and choose a free global
    shortcut. You can also start from the menu bar. Wait for **Listening**
    before speaking. The first recording is when macOS asks for microphone access.
-3. Press the shortcut again to finish. Edit the transcript if needed and
-   click **Keep** or press ⌘Return. If you switch apps after finishing, use
-   **Review** in the capsule or press the shortcut to open the transcript.
-   The confirmation offers **Open** and **Undo**. Try keeping one capture
-   while another Scratchpad thought is open.
-4. Escape closes the review and retains it for the next Voice Capture action.
-   Use **Discard** to remove the pending transcript. To retry microphone access
-   after a denial, open System Settings from the status panel.
+3. Press the shortcut again to finish. Scratchpad opens with the transcript
+   and the caret at the end. Continue writing or use the usual Scratchpad
+   commands for Refine, Keep, and Discard. Escape dismisses the Scratchpad
+   and preserves the unfinished thought.
+4. To check that both thoughts survive, start a typed scratch before recording.
+   After the transcript opens, find the typed thought again in Home or Search.
+   If an open dialog or concurrent edit delays the switch, the capsule offers
+   **Open**. To retry microphone access after a denial, open System Settings
+   from the status panel.
 
 To build another isolated signed preview:
 
@@ -38,36 +39,26 @@ can import that same directory through **Choose Model Folder…**.
 
 - The global shortcut uses KeyboardShortcuts key-down events. Settings shows
   when macOS can’t register an assigned shortcut and offers a direct recording
-  button. Enabling
-  Voice Capture leaves the default Scratchpad and Home chords unchanged. The
-  capsule is non-activating. Review is a separate, editable native panel.
-  If you switch apps, switch Rasc windows, or a recording is interrupted,
-  the capsule offers Review without taking focus. Keyboard users can also
-  retry transcription or open microphone settings from the menu bar.
+  button. When Scratchpad already has focus, its native key handler also
+  consumes the assigned shortcut so it cannot type into the note. The capsule
+  is non-activating during capture. Once the transcript is saved, the standard
+  Scratchpad opens and takes keyboard focus.
 - Preparing is explicit on opt-in and can overlap recording after the
   first genuine microphone buffer. The fixed 120 ms end buffer preserves
   speech near Finish. Silence never triggers Finish. The socket-free inference
   path loads one cleanly versioned Core ML pack with CPU + Neural Engine.
   After use, the actor releases the pack after 180 seconds of inactivity,
   on sleep, under memory pressure, or when the feature is disabled.
-- SQLite stages one recoverable transcript, then inserts the ordinary kept
-  thought and removes that stage in a single transaction. Keep is idempotent
-  on the capture UUID. Undo verifies the saved snapshot before soft-deleting it.
-  Home and an open Quick Search refresh after the commit. Voice Capture
-  leaves the current scratch untouched. Open uses the usual note navigation.
-- The shared Rasc scheme passed 553 tests, including 15 Voice Capture
-  tests and 120 consecutive cancellation cycles with synthetic input. The
-  new tests exercise denied and first-use permissions, silence, microphone
-  interruption, stale transcription, audio boundaries, restart recovery,
-  transaction rollback, duplicate Finish and Keep, FTS, guarded Undo, and
-  non-key panel presentation, and shortcut registration and opt-out. AppKit rendered Listening, Review and Kept in
-  light and dark appearances. The signed app's live accessibility tree exposed
-  the default-off toggle, model preparation status and shortcut recorder.
+- SQLite saves the transcript as an ordinary unfinished thought. The existing
+  Scratchpad opening path flushes the previous thought and guards against
+  concurrent edits before switching. If the switch must wait, the transcript
+  is already searchable in Home. Recovery from a failed save retries the text.
+  Older preview transcripts migrate from their pending review into normal notes.
 - On an M3 Pro with 18 GB and macOS 26.5.1, a signed probe built from the
   integrated recognition and audio sources loaded the model in 18.09 s
   on its first run at that path and 201 ms after restarting at the same path.
   On two short EN/PT fixtures, inference took 38–63 ms. This excludes the
-  microphone, the finish buffer, review and SQLite. Probe process footprint
+  microphone, the finish buffer, Scratchpad presentation and SQLite. Probe process footprint
   was 25 MB immediately after load, peaked at 59 MB across those observations,
   and dropped to 31 MB after release. The model occupies 652,304,885 bytes.
   A separate run retained the Release sandbox entitlements, received EPERM
@@ -76,8 +67,8 @@ can import that same directory through **Choose Model Folder…**.
   latency measured separately in the earlier study. Path and configuration
   affect Core ML's device-specific cache. [Apple Core ML lifecycle](https://developer.apple.com/videos/play/wwdc2023/10049/)
 - The pinned batch path does not use FluidAudio’s streaming or vocabulary
-  rescoring calls. The review UI receives the exact returned string. Refine
-  and recognition diagnostics never receive capture text from this feature.
+  rescoring calls. Scratchpad receives the returned text verbatim. Refine is
+  invoked separately by the user. Recognition diagnostics record timing only.
 
 ## Release gates
 
@@ -103,7 +94,6 @@ can import that same directory through **Choose Model Folder…**.
   on an actual capture still need device-level checks. The software fixtures
   cover states and outcomes but do not reproduce those physical conditions.
 - **Fidelity and resource targets.** The study measured occasional errors
-  that change meaning in PT/EN and mixed speech. Keep review before default
-  persistence. Repeat cold capture, physical readiness and energy checks
-  on memory-constrained Apple silicon before publishing. Automatic Keep
-  requires separate evidence and a product decision.
+  that change meaning in PT/EN and mixed speech. The transcript opens as
+  editable, unfinished text. Repeat cold capture, physical readiness and
+  energy checks on memory-constrained Apple silicon before publishing.

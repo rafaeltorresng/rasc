@@ -210,8 +210,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
             return .terminateCancel
         }
         Task { @MainActor [weak self] in
+            let voiceFlushed = await VoiceCapture.shared.flushForTermination()
             let didFlush = await self?.bootstrap.panelIfReady()?.flushForTermination() ?? true
-            let voiceFlushed = await VoiceCapture.shared.flushReviewForTermination()
             if didFlush && voiceFlushed {
                 sender.reply(toApplicationShouldTerminate: true)
             } else {

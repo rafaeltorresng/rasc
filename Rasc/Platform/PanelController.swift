@@ -71,6 +71,7 @@ final class PanelController: NSObject, NSWindowDelegate {
     var onOpenHome: (() -> Void)?
     var onOpenSettings: (() -> Void)?
     var onVoiceCapture: (() -> Void)?
+    var onVoiceCaptureShortcut: ((NSEvent) -> Bool)?
     var onDidHide: (() -> Void)?
 
     var scratchpadGuidance: OnboardingScratchpadGuidance = .inactive {
@@ -315,6 +316,19 @@ final class PanelController: NSObject, NSWindowDelegate {
         presentPanel()
     }
 
+    func openCapturedScratch(id: UUID, interrupted: Bool) async -> Bool {
+        func canOpen() -> Bool {
+            NSApp.modalWindow == nil && NSApp.keyWindow?.attachedSheet == nil
+        }
+
+        guard canOpen(), (try? await session.openNote(id: id, canOpen: canOpen)) == true else {
+            return false
+        }
+        if interrupted { session.reportInterruptedVoiceCapture() }
+        presentPanel()
+        return true
+    }
+
     private func presentPanel() {
         let startedAt = ContinuousClock.now
         let surfaceLabel = session.surfaceDiagnosticLabel
@@ -498,7 +512,8 @@ final class PanelController: NSObject, NSWindowDelegate {
         // consume the arrows. The editor keeps its own arrows.
         panel.keyDownHandler = { [weak self] event in
             MainActor.assumeIsolated {
-                self?.handlePreviewArrowKey(event) ?? false
+                if self?.onVoiceCaptureShortcut?(event) == true { return true }
+                return self?.handlePreviewArrowKey(event) ?? false
             }
         }
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in

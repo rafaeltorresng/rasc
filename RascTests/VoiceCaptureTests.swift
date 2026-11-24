@@ -68,37 +68,49 @@ struct VoiceCaptureTests {
         }
     }
 
-    @Test func keepsOneOrdinaryThoughtAndPreservesTheScratch() async throws {
+    @Test func opensAnOrdinaryScratchThatCanBeEditedRefinedAndKept() async throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
-        let created = try await fixture.repository.createScratch(content: "original")
-        let scratch = try #require(await fixture.repository.fetch(id: created.id))
+        let provider = VoiceHandoffRefinementProvider()
+        let session = ScratchpadSession(repository: fixture.repository, refinementProvider: provider,
+                                        userDefaults: fixture.defaults)
+        session.text = "An unfinished typed thought"
         let capture = fixture.capture()
+        capture.onOpenScratch = { id, _ in (try? await session.openNote(id: id)) == true }
         capture.activate()
         try await wait { capture.phase == .listening }
         #expect(capture.hasUnsavedAudio)
         capture.finish()
         capture.finish()
-        try await wait { capture.phase == .reviewing }
-        #expect(!capture.hasUnsavedAudio)
-        #expect(capture.content == "Talvez não fazer o deploy ainda.")
-        #expect(try await fixture.repository.fetchAllNonDeleted() == [scratch])
-        capture.edit("Talvez não fazer o deploy hoje.")
-        capture.keep()
-        capture.keep()
-        try await wait { capture.phase == .kept }
-        let matches = try await fixture.repository.search("deploy", limit: 10)
-        let kept = try #require(matches.first)
-        #expect(matches.count == 1)
-        #expect(kept.content == "Talvez não fazer o deploy hoje.")
-        #expect(kept.isKept)
-        #expect(try await fixture.repository.fetch(id: scratch.id) == scratch)
-        #expect(try await fixture.repository.pendingVoiceDraft() == nil)
-        capture.undo()
         try await wait { capture.phase == .idle }
-        #expect(try await fixture.repository.fetchAllNonDeleted() == [scratch])
-        #expect(try await fixture.repository.search("deploy", limit: 10).isEmpty)
+
+        let transcript = "Talvez não fazer o deploy ainda."
+        #expect(session.text == transcript)
+        #expect(session.surface == .editor)
+        #expect(session.editorSelection == nil)
+        #expect(!session.isActiveNoteKept)
+        #expect(await provider.requests.isEmpty)
+        let saved = try await fixture.repository.fetchAllNonDeleted()
+        #expect(saved.count == 2)
+        let typed = try #require(saved.first { $0.content == "An unfinished typed thought" })
+        let voice = try #require(saved.first { $0.content == transcript })
+        #expect(!voice.isKept)
+        #expect(!capture.hasUnsavedAudio)
         #expect(await fixture.input.active == nil)
+
+        session.text = "Talvez não fazer o deploy hoje."
+        session.scheduleAutosave()
+        try await session.flush()
+        #expect(try await fixture.repository.fetch(id: voice.id)?.content == session.text)
+        session.startRefinement()
+        try await wait { session.surface == .refinementPreview }
+        #expect(await provider.requests.first?.snapshot.text == session.text)
+        try await session.acceptRefinement()
+        let outcome = try await session.keepActiveNote()
+        #expect(outcome == .keptShouldHide)
+        #expect(try await fixture.repository.fetch(id: voice.id)?.content == VoiceHandoffRefinementProvider.suggestion)
+        #expect(try await fixture.repository.fetch(id: voice.id)?.isKept == true)
+        #expect(try await fixture.repository.fetch(id: typed.id) == typed)
     }
 
     @Test func repeatedCancellationStopsInputWithoutKeepingAnything() async throws {
@@ -116,7 +128,6 @@ struct VoiceCaptureTests {
         #expect(await fixture.input.stops == 120)
         #expect(await fixture.input.active == nil)
         #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
-        #expect(try await fixture.repository.pendingVoiceDraft() == nil)
     }
 
     @Test func lateDecodeCannotReplaceANewSession() async throws {
@@ -135,8 +146,7 @@ struct VoiceCaptureTests {
         await gate.release()
         try await Task.sleep(for: .milliseconds(40))
         #expect(capture.phase == .listening)
-        #expect(capture.content.isEmpty)
-        #expect(try await fixture.repository.pendingVoiceDraft() == nil)
+        #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
         capture.cancel()
         try await wait { capture.phase == .idle }
     }
@@ -154,7 +164,7 @@ struct VoiceCaptureTests {
         try await wait { silence.phase == .listening }
         silence.finish()
         try await wait { silence.phase == .issue(.noSpeech) }
-        #expect(try await fixture.repository.pendingVoiceDraft() == nil)
+        #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
         #expect(await fixture.input.active == nil)
     }
 
@@ -170,25 +180,31 @@ struct VoiceCaptureTests {
         try await wait { capture.phase == .idle }
     }
 
-    @Test func restoresStagedReviewOnRestartWithoutOpeningInput() async throws {
+    @Test func interruptionOpensRecoverableTextAndDiscardUsesTheScratchpad() async throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.defaults)
+        var interrupted = false
         let capture = fixture.capture()
+        capture.onOpenScratch = { id, endedEarly in
+            interrupted = endedEarly
+            return (try? await session.openNote(id: id)) == true
+        }
         capture.activate()
         try await wait { capture.phase == .listening }
         await fixture.input.interrupt()
-        try await wait { capture.phase == .reviewing }
-        #expect(capture.reviewMessage?.contains("ended early") == true)
-        capture.edit("Ainda não.")
-        #expect(await capture.flushReviewForTermination())
-        let restarted = fixture.capture()
-        restarted.activate()
-        try await wait { restarted.phase == .reviewing }
-        #expect(restarted.content == "Ainda não.")
+        try await wait { capture.phase == .idle }
+        #expect(interrupted)
+        #expect(session.text == "Talvez não fazer o deploy ainda.")
+
+        session.text = "Ainda não."
+        try await session.flush()
+        let restarted = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.defaults)
+        try await restarted.restore()
+        #expect(restarted.text == "Ainda não.")
         #expect(await fixture.input.starts == 1)
-        restarted.cancel()
-        try await wait { restarted.phase == .idle }
-        #expect(try await fixture.repository.pendingVoiceDraft() == nil)
+        try await restarted.discardActiveNote()
+        #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
     }
 
     @Test func disableCancelsCaptureAndPreventsRestart() async throws {
@@ -204,77 +220,115 @@ struct VoiceCaptureTests {
         #expect(await fixture.input.starts == 1)
     }
 
-    @Test func closingReopenedReviewPersistsRestoredTextBehindAnEarlierWrite() async throws {
+    @Test func blockedHandoffPersistsTheThoughtAndRetriesOpeningTheSameNote() async throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.defaults)
+        session.text = "Typed text stays in front"
+        var canOpen = false
         let capture = fixture.capture()
+        capture.onOpenScratch = { id, _ in
+            (try? await session.openNote(id: id, canOpen: { canOpen })) == true
+        }
+
         capture.activate()
         try await wait { capture.phase == .listening }
         capture.finish()
-        try await wait { capture.phase == .reviewing }
-        let original = capture.content
-        let gate = NoteRepositoryTestGate()
-        await fixture.repository.installTestGate(gate)
-        capture.edit("Temporary edit")
-        capture.closeReview()
-        await gate.waitForFirstEntry()
+        try await wait { capture.phase == .ready }
+        #expect(session.text == "Typed text stays in front")
+        let saved = try await fixture.repository.search("deploy", limit: 10)
+        #expect(saved.count == 1)
+        #expect(saved.first?.isKept == false)
+
+        canOpen = true
         capture.activate()
-        capture.edit(original)
-        capture.closeReview()
-        gate.release()
-        #expect(await capture.reviewWrite?.value == true)
-        #expect(try await fixture.repository.pendingVoiceDraft()?.content == original)
+        capture.activate()
+        try await wait { capture.phase == .idle }
+        #expect(session.text == saved.first?.content)
+        #expect(try await fixture.repository.search("deploy", limit: 10).map(\.id) == saved.map(\.id))
+        #expect(await fixture.input.starts == 1)
     }
 
-    @Test func failedKeepRollsBackAndLeavesReviewAvailableForRetry() async throws {
+    @Test func failedTranscriptSaveCanBeRetriedWithoutReopeningTheMicrophone() async throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
-        let capture = fixture.capture()
-        capture.activate()
-        try await wait { capture.phase == .listening }
-        capture.finish()
-        try await wait { capture.phase == .reviewing }
         let queue = try DatabaseQueue(path: fixture.database.path)
         defer { try? queue.close() }
         try await queue.write { db in
             try db.execute(sql: """
-                CREATE TRIGGER fail_voice_delete BEFORE DELETE ON voice_review
+                CREATE TRIGGER fail_note_insert BEFORE INSERT ON notes
                 BEGIN SELECT RAISE(ABORT, 'injected'); END
                 """)
         }
-        capture.keep()
-        try await wait { capture.phase == .reviewing }
-        #expect(capture.reviewMessage?.contains("couldn’t keep") == true)
+        let capture = fixture.capture()
+        capture.activate()
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .issue(.persistence) }
+        #expect(!capture.canChangeEnabled)
+        #expect(!capture.hasUnsavedAudio)
         #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
-        #expect(try await fixture.repository.pendingVoiceDraft()?.content == capture.content)
-        capture.cancel()
-        try await wait { capture.phase == .reviewing }
-        #expect(capture.reviewMessage?.contains("couldn’t discard") == true)
-        try await queue.write { db in try db.execute(sql: "DROP TRIGGER fail_voice_delete") }
-        capture.keep()
-        try await wait { capture.phase == .kept }
-        #expect(try await fixture.repository.fetchAllNonDeleted().count == 1)
+
+        try await queue.write { db in try db.execute(sql: "DROP TRIGGER fail_note_insert") }
+        capture.recover()
+        try await wait { capture.phase == .idle }
+        let notes = try await fixture.repository.fetchAllNonDeleted()
+        #expect(notes.map(\.content) == ["Talvez não fazer o deploy ainda."])
+        #expect(notes.first?.isKept == false)
+        #expect(await fixture.input.starts == 1)
     }
 
-    @Test func repositoryScopesRecoveryAndUndo() async throws {
+    @Test func typingDuringHandoffKeepsTheCurrentEditorAndBothThoughts() async throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
-        let draft = VoiceDraft(id: UUID(), content: "No deploy today.")
-        let other = VoiceDraft(id: UUID(), content: "Unrelated")
-        let repository = fixture.repository
-        try await repository.stageVoiceDraft(draft)
-        await #expect(throws: NoteRepository.PersistenceError.staleContent) {
-            try await repository.stageVoiceDraft(other)
+        let session = ScratchpadSession(repository: fixture.repository, userDefaults: fixture.defaults)
+        session.text = "Typed draft"
+        let gate = NoteRepositoryTestGate()
+        let capture = fixture.capture()
+        capture.onOpenScratch = { id, _ in
+            await fixture.repository.installTestGate(gate)
+            return (try? await session.openNote(id: id)) == true
         }
-        try await repository.discardVoiceDraft(id: other.id)
-        #expect(try await repository.pendingVoiceDraft() == draft)
-        let kept = try await repository.keepVoiceDraft(draft)
-        #expect(try await repository.keepVoiceDraft(draft) == kept)
-        try await repository.update(id: kept.id, content: "Edited independently.")
-        await #expect(throws: NoteRepository.PersistenceError.staleContent) {
-            try await repository.undoVoiceKeep(kept)
+
+        capture.activate()
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .opening }
+        await gate.waitForFirstEntry()
+        session.text = "Typed draft with a new edit"
+        gate.release()
+        try await wait { capture.phase == .ready }
+
+        #expect(session.text == "Typed draft with a new edit")
+        try await session.flush()
+        let notes = try await fixture.repository.fetchAllNonDeleted()
+        #expect(Set(notes.map(\.content)) == ["Typed draft with a new edit", "Talvez não fazer o deploy ainda."])
+    }
+
+    @Test func migrationRecoversTheLegacyReviewAsAnUnfinishedSearchableThought() async throws {
+        let directory = FileManager.default.temporaryDirectory.appending(path: "RascVoiceMigration-\(UUID())")
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let url = directory.appending(path: "rasc.sqlite")
+        let oldQueue = try DatabaseQueue(path: url.path)
+        let pending = UUID()
+        let typed = UUID()
+        try AppDatabase.migrator.migrate(oldQueue, upTo: "v9_voice_review")
+        try await oldQueue.write { db in
+            let now = Date()
+            try Note(id: typed, content: "Typed scratch", createdAt: now, updatedAt: now,
+                     deletedAt: nil, keptAt: nil).insert(db)
+            try db.execute(sql: "INSERT INTO voice_review (slot, id, content) VALUES (1, ?, ?)",
+                           arguments: [pending, "Legacy voice draft"])
         }
-        #expect(try await repository.fetch(id: kept.id)?.content == "Edited independently.")
+        try oldQueue.close()
+
+        let repository = try NoteRepository(databaseURL: url)
+        defer { try? repository.closeForTesting() }
+        let matches = try await repository.search("legacy", limit: 5)
+        #expect(matches.map(\.id) == [pending])
+        #expect(matches.first?.isKept == false)
+        #expect(try await repository.fetch(id: typed)?.content == "Typed scratch")
     }
 
     @Test func shortBufferPreservesBoundarySamplesAndSealsAfterFinish() throws {
@@ -288,12 +342,12 @@ struct VoiceCaptureTests {
         #expect(buffer.status().count == 1600)
     }
 
-    @Test func nativeStatusIsNonKeyAndVoiceViewsRenderInBothAppearances() async throws {
+    @Test func nativeRecordingStatusIsNonKeyAndRendersInBothAppearances() async throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
         let capture = fixture.capture()
         let windows = VoiceCaptureWindows(capture: capture)
-        defer { windows.hide() }
+        defer { windows.hideStatus() }
         capture.activate()
         try await wait { capture.phase == .listening }
         let app = NSApplication.shared
@@ -311,24 +365,8 @@ struct VoiceCaptureTests {
             try renderer.renderPNG(VoiceStatusView(capture: capture), width: 304, height: 70,
                                    scheme: scheme, name: "voice-listening-\(scheme)")
         }
-        capture.finish()
-        try await wait { capture.phase == .reviewing }
-        windows.rememberFinishContext(.init(application: 100, keyWindow: nil))
-        windows.showReviewAfterFinish(in: .init(application: 200, keyWindow: nil))
-        #expect(status.isVisible)
-        #expect(app.keyWindow === keyWindow)
-        windows.hideStatus()
-        for scheme in [ColorScheme.light, .dark] {
-            try HomeSnapshotTests().renderPNG(VoiceReviewView(capture: capture), width: 454, height: 304,
-                                              scheme: scheme, name: "voice-review-\(scheme)")
-        }
-        capture.keep()
-        try await wait { capture.phase == .kept }
-        for scheme in [ColorScheme.light, .dark] {
-            try HomeSnapshotTests().renderPNG(VoiceStatusView(capture: capture), width: 304, height: 70,
-                                              scheme: scheme, name: "voice-kept-\(scheme)")
-        }
         capture.cancel()
+        try await wait { capture.phase == .idle }
     }
 
     private func wait(until predicate: () -> Bool) async throws {
@@ -345,6 +383,7 @@ struct VoiceCaptureTests {
         let repository: NoteRepository
         let input = FakeMicrophone()
         let suite = "VoiceCaptureTests.\(UUID())"
+        var defaults: UserDefaults { UserDefaults(suiteName: suite)! }
 
         init() throws {
             directory = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
@@ -367,7 +406,6 @@ struct VoiceCaptureTests {
             presentWindows: Bool = false,
             decode: @escaping @Sendable (VoiceAudio) async throws -> String = { _ in "Talvez não fazer o deploy ainda." }
         ) -> VoiceCapture {
-            let defaults = UserDefaults(suiteName: suite)!
             defaults.set(enabled, forKey: VoiceCapture.preferenceKey)
             let capture = VoiceCapture(
                 preferences: defaults, supported: true,
@@ -437,5 +475,18 @@ private actor DecodeGate {
     func release() {
         pending?.resume(returning: "Stale text.")
         pending = nil
+    }
+}
+
+private actor VoiceHandoffRefinementProvider: RefinementProvider {
+    static let suggestion = "Talvez seja melhor não fazer o deploy hoje."
+    nonisolated let metadata = RefinementMetadata(provider: "fake", modelIdentifier: "fake", promptVersion: "test")
+    private(set) var requests: [RefinementRequest] = []
+
+    func availability(for _: RefinementRequest) async -> RefinementAvailability { .available }
+
+    func refine(_ request: RefinementRequest) async throws -> RefinementResult {
+        requests.append(request)
+        return .init(decision: .changed, kind: .messyText, text: Self.suggestion)
     }
 }

@@ -13,7 +13,7 @@ The Release entitlement file enables App Sandbox without network access.
 - These are separate stores. Installing a Release build does not import the
   unsandboxed development database automatically.
 - Notes contain a UUID, text, creation and update dates, optional discard and
-  Kept dates, and an image indicator. Nine ordered GRDB migrations preserve
+  Kept dates, and an image indicator. Ten ordered GRDB migrations preserve
   earlier schemas. Mixed thoughts store ordered text and original image bytes,
   with a separate text projection for search.
 - FTS5 indexes note content with prefix matching and diacritic normalization.
@@ -45,12 +45,12 @@ size and SHA-256 list before moving the pack into its Application Support
 folder. Model preparation can occur without microphone access.
 
 Audio stays in memory. After a recognition failure it can be retried for up to
-two minutes, or discarded immediately. Never rely on audio recovery after Rasc
-quits or crashes. The single pending transcript is stored separately in SQLite
-until you Keep or Discard it. Closing review or quitting normally saves edits
-for recovery. A kept voice thought is an ordinary note. Its capture method
-isn’t stored. Undo of Keep uses the same soft-delete storage convention as
-ordinary notes.
+two minutes, or discarded immediately. Audio recovery ends when Rasc quits or
+crashes. After transcription, Rasc saves the text as an ordinary unfinished
+thought in SQLite and opens it in Scratchpad. Edits autosave through the usual
+Scratchpad path. A pending transcript from an older preview migrates to an
+unfinished thought. Rasc stores the text and regular note metadata. Capture
+source is absent from the note record.
 
 ## Manual backup
 

@@ -3,46 +3,18 @@ import KeyboardShortcuts
 import SwiftUI
 
 @MainActor
-final class VoiceCaptureWindows: NSObject, NSWindowDelegate {
+final class VoiceCaptureWindows {
     private unowned let capture: VoiceCapture
     private(set) var status: NSPanel?
-    private var review: NSPanel?
     private var previousApp: NSRunningApplication?
-    private weak var previousKeyWindow: NSWindow?
     private var screenFrame: CGRect?
-    private var finishContext: ReviewFocus?
-
-    struct ReviewFocus: Equatable {
-        let application: pid_t
-        let keyWindow: Int?
-
-        @MainActor static func current() -> Self? {
-            guard let app = NSWorkspace.shared.frontmostApplication else { return nil }
-            let window = app == .current ? NSApp.keyWindow?.windowNumber : nil
-            return Self(application: app.processIdentifier, keyWindow: window)
-        }
-    }
-
     init(capture: VoiceCapture) {
         self.capture = capture
     }
 
     var hasBlockingSheet: Bool { NSApp.modalWindow != nil || NSApp.keyWindow?.attachedSheet != nil }
 
-    func rememberFinishContext(_ context: ReviewFocus? = ReviewFocus.current()) {
-        finishContext = context
-    }
-
-    func showReviewAfterFinish(in currentContext: ReviewFocus? = ReviewFocus.current()) {
-        if let finishContext, finishContext == currentContext {
-            showReview()
-        } else {
-            showStatus(reposition: false)
-        }
-        finishContext = nil
-    }
-
-    func showStatus(reposition: Bool = true) {
+    func showStatus() {
         let panel: NSPanel
         if let status {
             panel = status
@@ -62,9 +34,8 @@ final class VoiceCaptureWindows: NSObject, NSWindowDelegate {
             panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle]
             status = panel
         }
-        if reposition, !panel.isVisible {
+        if !panel.isVisible {
             previousApp = NSWorkspace.shared.frontmostApplication
-            previousKeyWindow = NSApp.keyWindow
             let target = NSApp.isActive ? NSApp.keyWindow?.screen : nil
             screenFrame = (target ?? WindowFramePlacement.targetPresentationScreen(
                 excludingProcessID: NSRunningApplication.current.processIdentifier
@@ -80,43 +51,6 @@ final class VoiceCaptureWindows: NSObject, NSWindowDelegate {
         panel.orderFrontRegardless()
     }
 
-    func showReview() {
-        if hasBlockingSheet {
-            showStatus(reposition: false)
-            return
-        }
-        hideStatus()
-        let panel: NSPanel
-        if let review {
-            panel = review
-        } else {
-            panel = NSPanel(contentRect: CGRect(x: 0, y: 0, width: 454, height: 304),
-                            styleMask: [.titled, .closable, .resizable],
-                            backing: .buffered, defer: true)
-            panel.title = "Review Voice Capture"
-            panel.isReleasedWhenClosed = false
-            panel.hidesOnDeactivate = false
-            panel.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
-            panel.contentMinSize = CGSize(width: 342, height: 238)
-            panel.delegate = self
-            let capture = self.capture
-            panel.contentView = NSHostingView(rootView: RascAppearanceView { VoiceReviewView(capture: capture) })
-            review = panel
-        }
-        if !panel.isVisible {
-            if let frame = screenFrame {
-                panel.setFrameOrigin(WindowFramePlacement.centeredOrigin(for: panel.frame.size, in: frame))
-            } else {
-                panel.center()
-            }
-            // A person may switch apps during a cold decode. Restore that app after review.
-            previousApp = NSWorkspace.shared.frontmostApplication
-            previousKeyWindow = NSApp.keyWindow
-        }
-        NSApp.activate()
-        panel.makeKeyAndOrderFront(nil)
-    }
-
     func restorePreviousApplicationAfterPermission() {
         if NSApp.isActive, let previousApp, previousApp != .current, !previousApp.isTerminated {
             previousApp.activate()
@@ -125,30 +59,6 @@ final class VoiceCaptureWindows: NSObject, NSWindowDelegate {
 
     func hideStatus() { status?.orderOut(nil) }
 
-    func hideReview() {
-        guard let review, review.isVisible else { return }
-        let restoreFocus = review.isKeyWindow && NSApp.isActive
-        review.orderOut(nil)
-        if restoreFocus {
-            if let previousKeyWindow, previousKeyWindow.isVisible, previousApp == .current {
-                previousKeyWindow.makeKeyAndOrderFront(nil)
-            } else {
-                restorePreviousApplicationAfterPermission()
-            }
-        }
-    }
-
-    func hide() {
-        finishContext = nil
-        hideStatus()
-        hideReview()
-    }
-
-    func windowShouldClose(_ sender: NSWindow) -> Bool {
-        capture.closeReview()
-        return false
-    }
-
     func announce(_ phase: VoiceCapture.Phase) {
         guard let status, status.isVisible else { return }
         let message: String
@@ -156,8 +66,7 @@ final class VoiceCaptureWindows: NSObject, NSWindowDelegate {
         case .listening: message = "Listening"
         case .waitingForModel: message = "Preparing speech"
         case .transcribing: message = "Transcribing"
-        case .reviewing: message = "Transcript ready to review"
-        case .kept: message = "Thought kept"
+        case .ready: message = "Thought saved. Open Scratchpad."
         case .issue(let issue): message = issue.message
         default: return
         }
@@ -165,13 +74,7 @@ final class VoiceCaptureWindows: NSObject, NSWindowDelegate {
                              userInfo: [.announcement: message, .priority: NSAccessibilityPriorityLevel.medium.rawValue])
     }
 
-    func showUndoFailure() {
-        let alert = NSAlert()
-        alert.messageText = "Couldn’t undo Keep"
-        alert.informativeText = "The thought may have changed. Find it in Home."
-        NSApp.activate()
-        alert.runModal()
-    }
+
 }
 
 private final class VoiceStatusPanel: NSPanel {
@@ -192,8 +95,8 @@ struct VoiceStatusView: View {
             Image(systemName: icon)
                 .font(.system(size: 12, weight: .semibold))
                 .frame(width: 26, height: 26)
-                .foregroundStyle(capture.phase == .kept ? palette.keepAccent(for: scheme) : palette.secondaryText(for: scheme))
-                .background(capture.phase == .kept ? palette.keepFill(for: scheme) : palette.subtleFill(for: scheme), in: Circle())
+                .foregroundStyle(palette.secondaryText(for: scheme))
+                .background(palette.subtleFill(for: scheme), in: Circle())
                 .accessibilityHidden(true)
             Text(title)
                 .font(.callout.weight(.semibold))
@@ -219,11 +122,9 @@ struct VoiceStatusView: View {
 
     @ViewBuilder private var actions: some View {
         switch capture.phase {
-        case .kept:
-            action("Open", call: { capture.openThought() })
-            action("Undo", call: { capture.undo() })
-        case .reviewing:
-            action("Review", call: { capture.showReview() })
+        case .ready:
+            action("Open", accessibilityLabel: "Open Captured Thought in Scratchpad") { capture.activate() }
+            action("Dismiss", icon: "xmark") { capture.cancel() }
         case .listening:
             VoiceLevelMeter(input: capture.inputLevel)
             action("Finish recording", icon: "stop.fill") { capture.finish() }
@@ -236,7 +137,7 @@ struct VoiceStatusView: View {
             } else {
                 action("Try again") { capture.recover() }
             }
-            action("Dismiss", icon: "xmark", call: { capture.cancel() })
+            action(issue == .persistence ? "Discard capture" : "Dismiss", icon: "xmark") { capture.cancel() }
         case .checking, .starting, .finishing, .waitingForModel, .transcribing:
             action("Cancel recording", icon: "xmark", call: { capture.cancel() })
         default: EmptyView()
@@ -252,24 +153,23 @@ struct VoiceStatusView: View {
         case .waitingForModel: "Preparing speech…"
         case .transcribing: "Transcribing…"
         case .stopping: "Cancelling…"
-        case .reviewing: "Transcript ready"
-        case .saving: "Saving…"
-        case .kept: "Kept"
-        case .undoing: "Undoing…"
+        case .ready: "Thought saved"
+        case .saving: "Saving thought…"
+        case .opening: "Opening Scratchpad…"
         case .issue(.permission): "Microphone access needed"
         case .issue(.microphone): "Microphone unavailable"
         case .issue(.noSpeech): "No speech heard"
         case .issue(.transcription): "Couldn’t transcribe"
-        case .issue(.persistence): "Couldn’t recover capture"
+        case .issue(.persistence): "Couldn’t save thought"
         case .issue(.blocked): "Close the open dialog"
         }
     }
 
     private var icon: String {
         switch capture.phase {
-        case .kept: "checkmark"
+        case .ready: "checkmark"
         case .listening, .finishing: "mic.fill"
-        case .waitingForModel, .transcribing, .undoing: "ellipsis"
+        case .waitingForModel, .transcribing, .saving, .opening: "ellipsis"
         case .issue(.noSpeech): "waveform.slash"
         case .issue: "exclamationmark"
         default: "mic"
@@ -336,57 +236,6 @@ private struct VoiceLevelMeter: View {
     }
 }
 
-struct VoiceReviewView: View {
-    @ObservedObject var capture: VoiceCapture
-    @Environment(\.rascPalette) private var palette
-    @Environment(\.colorScheme) private var scheme
-    @Environment(\.noteTextSize) private var textSize
-    @FocusState private var editorFocused: Bool
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            if let message = capture.reviewMessage {
-                Label(message, systemImage: "exclamationmark.circle")
-                    .font(.callout)
-                    .foregroundStyle(palette.secondaryText(for: scheme))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            TextEditor(text: Binding(get: { capture.content }, set: { capture.edit($0) }))
-                .accessibilityLabel("Transcript")
-                .font(.system(size: textSize.points(RascSurfaceMetrics.noteFontSize)))
-                .foregroundStyle(palette.noteText(for: scheme))
-                .scrollContentBackground(.hidden)
-                .focused($editorFocused)
-                .disabled(capture.phase != .reviewing)
-                .padding(6)
-                .background(palette.canvas(for: scheme), in: .rect(cornerRadius: 8))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(editorFocused ? palette.focusedFieldBorder(for: scheme) : palette.border(for: scheme))
-                        .allowsHitTesting(false)
-                }
-
-            HStack(spacing: 10) {
-                Button("Discard", role: .destructive, action: { capture.cancel() })
-                    .disabled(capture.phase != .reviewing)
-                Spacer()
-                Button("Keep", action: { capture.keep() })
-                    .keyboardShortcut(.return, modifiers: .command)
-                    .buttonStyle(.bordered)
-                    .tint(palette.keepAccent(for: scheme))
-                    .foregroundStyle(palette.keepAccent(for: scheme))
-                    .disabled(capture.phase != .reviewing || capture.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            }
-        }
-        .padding(RascSurfaceLayout.horizontalInset)
-        .background(palette.raisedFill(for: scheme))
-        .tint(palette.focus(for: scheme))
-        .onAppear { editorFocused = true }
-        .onChange(of: capture.phase) { _, phase in if phase == .reviewing { editorFocused = true } }
-        .onExitCommand(perform: { capture.closeReview() })
-    }
-}
-
 struct VoiceCaptureSettings: View {
     @ObservedObject var capture: VoiceCapture
     @Environment(\.rascPalette) private var palette
@@ -410,7 +259,7 @@ struct VoiceCaptureSettings: View {
                     }
                     recordingActions
                 }
-                detail("Speak a thought, then review it before keeping. Transcription stays on this Mac.")
+                detail("Speak a thought and continue in Scratchpad. Transcription stays on this Mac.")
             } else {
                 detail("Voice Capture requires an Apple silicon Mac with macOS 26 or later.")
             }
@@ -427,15 +276,17 @@ struct VoiceCaptureSettings: View {
 
     @ViewBuilder private var recordingActions: some View {
         switch capture.phase {
-        case .idle, .kept:
+        case .idle:
             if capture.setup == .installed || capture.setup == .preparing {
                 captureButton("Start Recording")
             }
         case .listening:
             captureButton("Finish Recording")
             Button("Cancel Recording", role: .cancel) { capture.cancel() }
-        case .reviewing:
-            captureButton("Review Transcript")
+        case .ready:
+            captureButton("Open Scratchpad")
+        case .saving, .opening:
+            detail("Opening your thought in Scratchpad…")
         case .checking, .starting:
             detail(capture.awaitingMicrophonePermission
                 ? "Allow microphone access in the macOS prompt."

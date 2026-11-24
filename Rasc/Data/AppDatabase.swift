@@ -107,6 +107,18 @@ enum AppDatabase {
             }
         }
 
+        migrator.registerMigration("v10_voice_review_to_scratch") { database in
+            if let row = try Row.fetchOne(database, sql: "SELECT id, content FROM voice_review WHERE slot = 1") {
+                let id: UUID = row["id"]
+                if try Note.fetchOne(database, key: id) == nil {
+                    let now = Date()
+                    try Note(id: id, content: row["content"], createdAt: now, updatedAt: now,
+                             deletedAt: nil, keptAt: nil).insert(database)
+                }
+            }
+            try database.drop(table: "voice_review")
+        }
+
         return migrator
     }
 }

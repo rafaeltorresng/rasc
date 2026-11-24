@@ -257,6 +257,10 @@ final class ScratchpadSession {
         showTransientFeedback(message, duration: .seconds(3))
     }
 
+    func reportInterruptedVoiceCapture() {
+        showTransientFeedback("Recording ended early.", duration: .seconds(3))
+    }
+
     func reportImageCopy(_ document: NoteDocument) {
         let imageCount = document.parts.filter { if case .image = $0 { true } else { false } }.count
         let imageOnly = imageCount == 1 && document.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -617,12 +621,12 @@ final class ScratchpadSession {
     }
 
     @discardableResult
-    func openNote(id: UUID) async throws -> Bool {
-        try await openNote(id: id, fromSearchQuery: nil)
+    func openNote(id: UUID, canOpen: () -> Bool = { true }) async throws -> Bool {
+        try await openNote(id: id, fromSearchQuery: nil, canOpen: canOpen)
     }
 
     @discardableResult
-    private func openNote(id: UUID, fromSearchQuery: String?) async throws -> Bool {
+    private func openNote(id: UUID, fromSearchQuery: String?, canOpen: () -> Bool = { true }) async throws -> Bool {
         if fromSearchQuery != nil {
             guard surface == .search else { return false }
         } else {
@@ -656,7 +660,7 @@ final class ScratchpadSession {
             guard surface == .search, searchQuery == fromSearchQuery else { return false }
         }
 
-        guard sessionEpoch == openingEpoch, contentRevision == openingRevision else { return false }
+        guard sessionEpoch == openingEpoch, contentRevision == openingRevision, canOpen() else { return false }
         editorSelection = nil
         editorHasMultipleSelections = false
         adoptDisplayedNote(selected.note, document: selected.document)
