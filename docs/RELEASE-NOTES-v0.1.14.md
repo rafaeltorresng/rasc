@@ -4,8 +4,8 @@ This release ships the personalization work from
 [PR #93](https://github.com/rafaeltorresng/rasc/pull/93). You can choose custom
 light and dark palettes and a note text size in Settings; those choices apply to
 the Scratchpad, Home, Search, onboarding, command palette and shortcut keycaps.
-Per-note colors and typography render in place, palettes persist across launches,
-and changing appearance keeps the editor's selection and undo state. Search
+Palette and note text size changes render in place. Preferences persist across
+launches, and changing appearance keeps the editor's selection and undo state. Search
 highlights resolve against the active palette.
 
 The change is visual and preference-driven. Capture, autosave, Keep, Home, Search
