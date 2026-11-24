@@ -1,5 +1,6 @@
 import AppKit
 import AVFoundation
+import Combine
 import Foundation
 import GRDB
 import SwiftUI
@@ -16,6 +17,23 @@ struct VoiceCaptureTests {
         #expect(capture.phase == .idle)
         #expect(await fixture.input.starts == 0)
         #expect(await fixture.input.requests == 0)
+    }
+
+    @Test func meterUpdatesStayLocalToTheRecordingMeter() throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let capture = fixture.capture()
+        var coordinatorChanges = 0
+        var meterChanges = 0
+        let coordinator = capture.objectWillChange.sink { coordinatorChanges += 1 }
+        let meter = capture.inputLevel.objectWillChange.sink { meterChanges += 1 }
+        withExtendedLifetime((coordinator, meter)) {
+            capture.inputLevel.update(0.2)
+            capture.inputLevel.update(0.2)
+            capture.inputLevel.update(0.4)
+            #expect(meterChanges == 2)
+            #expect(coordinatorChanges == 0)
+        }
     }
 
     @Test func keepsOneOrdinaryThoughtAndPreservesTheScratch() async throws {
@@ -154,6 +172,28 @@ struct VoiceCaptureTests {
         #expect(await fixture.input.starts == 1)
     }
 
+    @Test func closingReopenedReviewPersistsRestoredTextBehindAnEarlierWrite() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let capture = fixture.capture()
+        capture.activate()
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .reviewing }
+        let original = capture.content
+        let gate = NoteRepositoryTestGate()
+        await fixture.repository.installTestGate(gate)
+        capture.edit("Temporary edit")
+        capture.closeReview()
+        await gate.waitForFirstEntry()
+        capture.activate()
+        capture.edit(original)
+        capture.closeReview()
+        gate.release()
+        #expect(await capture.reviewWrite?.value == true)
+        #expect(try await fixture.repository.pendingVoiceDraft()?.content == original)
+    }
+
     @Test func failedKeepRollsBackAndLeavesReviewAvailableForRetry() async throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
@@ -241,6 +281,11 @@ struct VoiceCaptureTests {
         }
         capture.finish()
         try await wait { capture.phase == .reviewing }
+        windows.rememberFinishContext(.init(application: 100, keyWindow: nil))
+        windows.showReviewAfterFinish(in: .init(application: 200, keyWindow: nil))
+        #expect(status.isVisible)
+        #expect(app.keyWindow === keyWindow)
+        windows.hideStatus()
         for scheme in [ColorScheme.light, .dark] {
             try HomeSnapshotTests().renderPNG(VoiceReviewView(capture: capture), width: 454, height: 304,
                                               scheme: scheme, name: "voice-review-\(scheme)")

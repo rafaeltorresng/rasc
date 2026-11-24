@@ -65,7 +65,7 @@ final class VoiceCapture: ObservableObject {
     @Published private(set) var enabled: Bool
     @Published private(set) var phase: Phase = .idle
     @Published private(set) var setup: Setup = .unchecked
-    @Published private(set) var level: Float = 0
+    let inputLevel = VoiceInputLevel()
     @Published private(set) var content = ""
     @Published private(set) var reviewMessage: String?
     @Published private(set) var canRetryAudio = false
@@ -93,7 +93,7 @@ final class VoiceCapture: ObservableObject {
     private var retryAudio: VoiceAudio?
     private var receipt: Note?
     private var stagedContent: String?
-    private var reviewWrite: Task<Bool, Never>?
+    private(set) var reviewWrite: Task<Bool, Never>?
     private var recoveryRequired = false
     private var lastActivation: ContinuousClock.Instant?
     private var activatedAt: ContinuousClock.Instant?
@@ -105,6 +105,10 @@ final class VoiceCapture: ObservableObject {
 
     var hasUnsavedAudio: Bool {
         phase == .listening || phase == .finishing || retryAudio != nil
+    }
+
+    var needsMicrophoneAccess: Bool {
+        phase == .issue(.permission) && input.authorization() != .authorized
     }
 
     var onNotesChanged: (() -> Void)?
@@ -248,10 +252,10 @@ final class VoiceCapture: ObservableObject {
         switch phase {
         case .idle, .kept:
             begin()
-        case .issue(.permission) where input.authorization() == .authorized:
-            begin()
-        case .issue:
+        case .issue(.permission) where fromShortcut && needsMicrophoneAccess:
             if presentWindows { windows.showStatus() }
+        case .issue:
+            recover()
         case .listening:
             finish()
         case .reviewing:
@@ -369,7 +373,7 @@ final class VoiceCapture: ObservableObject {
                     return
                 }
                 if phase == .listening {
-                    level = state.rms
+                    inputLevel.update(state.rms)
                     if state.full {
                         finish(interrupted: true)
                         return
@@ -402,10 +406,17 @@ final class VoiceCapture: ObservableObject {
     func finish(interrupted: Bool = false) {
         guard phase == .listening || (interrupted && phase == .finishing),
               let token = id, let buffer else { return }
+        if presentWindows {
+            if interrupted {
+                windows.rememberFinishContext(nil)
+            } else if phase == .listening {
+                windows.rememberFinishContext()
+            }
+        }
         operation?.cancel()
         transition(.finishing)
         meter?.cancel()
-        level = 0
+        inputLevel.update(0)
         operation = Task {
             if !interrupted {
                 do { try await Task.sleep(for: .milliseconds(120)) } catch { return }
@@ -470,7 +481,7 @@ final class VoiceCapture: ObservableObject {
                 if !saved { reviewMessage = "Rasc couldn’t save a recovery copy. Your transcript is still available here." }
                 if enabled {
                     transition(.reviewing)
-                    showReview()
+                    if presentWindows { windows.showReviewAfterFinish() }
                 } else {
                     transition(.idle)
                 }
@@ -492,11 +503,16 @@ final class VoiceCapture: ObservableObject {
         }
     }
 
-    func retry() {
-        guard let token = id else { return }
+    func recover() {
+        guard case .issue = phase, let token = id else { return }
+        if needsMicrophoneAccess {
+            openMicrophoneSettings()
+            return
+        }
         if phase == .issue(.transcription), let retryAudio {
+            if presentWindows { windows.rememberFinishContext() }
             transcribe(retryAudio, owner: token)
-        } else if case .issue = phase {
+        } else {
             begin()
         }
     }
@@ -517,11 +533,10 @@ final class VoiceCapture: ObservableObject {
     }
 
     private func writeReview(_ token: UUID) {
-        guard content != stagedContent else { return }
         let previous = reviewWrite
         reviewWrite = Task {
             _ = await previous?.value
-            guard id == token else { return true }
+            guard id == token, content != stagedContent else { return true }
             let saved = await stageCurrentReview(token)
             if !saved, id == token {
                 reviewMessage = "Rasc couldn’t save the review. Try Keep again or copy the transcript."
@@ -676,7 +691,7 @@ final class VoiceCapture: ObservableObject {
         meter?.cancel()
         meter = nil
         buffer = nil
-        level = 0
+        inputLevel.update(0)
         watchdog?.cancel()
         watchdog = nil
         decodeID = nil

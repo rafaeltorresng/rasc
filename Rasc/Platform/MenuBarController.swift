@@ -163,7 +163,9 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         voiceItems[0].title = switch phase {
         case .listening: "Finish Voice Capture"
         case .reviewing: "Review Voice Capture"
-        case .issue: "Show Voice Capture"
+        case .issue(.permission) where capture.needsMicrophoneAccess: "Open Microphone Settings…"
+        case .issue(.transcription) where capture.canRetryAudio: "Retry Transcription"
+        case .issue: "Try Voice Capture Again"
         default: capture.enabled ? "Start Voice Capture" : "Voice Capture…"
         }
         voiceItems[0].isEnabled = switch phase {

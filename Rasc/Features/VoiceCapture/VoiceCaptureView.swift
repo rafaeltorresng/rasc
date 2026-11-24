@@ -10,12 +10,37 @@ final class VoiceCaptureWindows: NSObject, NSWindowDelegate {
     private var previousApp: NSRunningApplication?
     private weak var previousKeyWindow: NSWindow?
     private var screenFrame: CGRect?
+    private var finishContext: ReviewFocus?
+
+    struct ReviewFocus: Equatable {
+        let application: pid_t
+        let keyWindow: Int?
+
+        @MainActor static func current() -> Self? {
+            guard let app = NSWorkspace.shared.frontmostApplication else { return nil }
+            let window = app == .current ? NSApp.keyWindow?.windowNumber : nil
+            return Self(application: app.processIdentifier, keyWindow: window)
+        }
+    }
 
     init(capture: VoiceCapture) {
         self.capture = capture
     }
 
     var hasBlockingSheet: Bool { NSApp.modalWindow != nil || NSApp.keyWindow?.attachedSheet != nil }
+
+    func rememberFinishContext(_ context: ReviewFocus? = ReviewFocus.current()) {
+        finishContext = context
+    }
+
+    func showReviewAfterFinish(in currentContext: ReviewFocus? = ReviewFocus.current()) {
+        if let finishContext, finishContext == currentContext {
+            showReview()
+        } else {
+            showStatus(reposition: false)
+        }
+        finishContext = nil
+    }
 
     func showStatus(reposition: Bool = true) {
         let panel: NSPanel
@@ -110,6 +135,7 @@ final class VoiceCaptureWindows: NSObject, NSWindowDelegate {
     }
 
     func hide() {
+        finishContext = nil
         hideStatus()
         hideReview()
     }
@@ -155,6 +181,7 @@ struct VoiceStatusView: View {
     @Environment(\.colorScheme) private var scheme
     @Environment(\.colorSchemeContrast) private var contrast
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    private let outline = RoundedRectangle(cornerRadius: 24)
 
     var body: some View {
         HStack(spacing: 8) {
@@ -175,9 +202,9 @@ struct VoiceStatusView: View {
         .padding(.trailing, 6)
         .frame(width: 280, height: 48)
         .foregroundStyle(palette.noteText(for: scheme))
-        .background(palette.raisedFill(for: scheme), in: Capsule())
+        .background(palette.raisedFill(for: scheme), in: outline)
         .overlay {
-            Capsule().strokeBorder(palette.border(for: scheme), lineWidth: contrast == .increased ? 2 : 1)
+            outline.strokeBorder(palette.border(for: scheme), lineWidth: contrast == .increased ? 2 : 1)
                 .allowsHitTesting(false)
         }
         .shadow(color: .black.opacity(scheme == .dark ? 0.28 : 0.14), radius: 8, y: 4)
@@ -194,16 +221,16 @@ struct VoiceStatusView: View {
         case .reviewing:
             action("Review", call: { capture.showReview() })
         case .listening:
-            VoiceLevelMeter(rms: capture.level)
+            VoiceLevelMeter(input: capture.inputLevel)
             action("Finish recording", icon: "stop.fill") { capture.finish() }
             action("Cancel recording", icon: "xmark", call: { capture.cancel() })
         case .issue(let issue):
             if issue == .permission {
-                action("Settings", call: { capture.openMicrophoneSettings() })
+                action("Settings", accessibilityLabel: "Open Microphone Settings") { capture.openMicrophoneSettings() }
             } else if issue == .transcription && capture.canRetryAudio {
-                action("Retry", call: { capture.retry() })
+                action("Retry", accessibilityLabel: "Retry transcription") { capture.recover() }
             } else {
-                action("Try again", call: { capture.retry() })
+                action("Try again") { capture.recover() }
             }
             action("Dismiss", icon: "xmark", call: { capture.cancel() })
         case .checking, .starting, .finishing, .waitingForModel, .transcribing:
@@ -243,38 +270,54 @@ struct VoiceStatusView: View {
         }
     }
 
-    private func action(_ title: String, icon: String? = nil, call: @escaping () -> Void) -> some View {
+    private func action(
+        _ title: String,
+        icon: String? = nil,
+        accessibilityLabel: String? = nil,
+        call: @escaping () -> Void
+    ) -> some View {
         Button(action: call) {
             Group {
-                if let icon { Image(systemName: icon).font(.system(size: 10, weight: .semibold)) }
+                if let icon { Image(systemName: icon).font(.system(size: 11, weight: .semibold)) }
                 else { Text(title).font(.caption.weight(.medium)) }
             }
             .padding(.horizontal, icon == nil ? 5 : 0)
-            .frame(minWidth: 39, minHeight: 40)
+            .frame(minWidth: 40, minHeight: 40)
             .contentShape(Rectangle())
         }
         .buttonStyle(VoiceStatusButton(fill: palette.subtleFill(for: scheme), reduceMotion: reduceMotion))
-        .accessibilityLabel(title)
-        .help(title)
+        .accessibilityLabel(accessibilityLabel ?? title)
+        .help(accessibilityLabel ?? title)
     }
 }
 
 private struct VoiceStatusButton: ButtonStyle {
     let fill: Color
     let reduceMotion: Bool
+    @State private var isHovered = false
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .background(configuration.isPressed ? fill : .clear, in: Capsule())
+            .background(configuration.isPressed || isHovered ? fill : .clear, in: Capsule())
             .scaleEffect(configuration.isPressed && !reduceMotion ? 0.96 : 1)
+            .onHover { isHovered = $0 }
+    }
+}
+
+@MainActor
+final class VoiceInputLevel: ObservableObject {
+    @Published private(set) var rms: Float = 0
+
+    func update(_ level: Float) {
+        if rms != level { rms = level }
     }
 }
 
 private struct VoiceLevelMeter: View {
-    let rms: Float
+    @ObservedObject var input: VoiceInputLevel
 
     var body: some View {
-        let level = min(1, max(0, (20 * log10(max(rms, 0.00001)) + 58) / 42))
+        let level = min(1, max(0, (20 * log10(max(input.rms, 0.00001)) + 58) / 42))
         HStack(spacing: 2) {
             ForEach(0..<5) { index in
                 let amount = CGFloat(max(0, min(1, level * 5 - Float(index))))

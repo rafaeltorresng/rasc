@@ -577,6 +577,9 @@ actor NoteRepository {
     }
 
     func stageVoiceDraft(_ draft: VoiceDraft) throws {
+        #if DEBUG
+        testGate?.enter()
+        #endif
         try database.write { database in
             if let pending = try Self.readVoiceDraft(database), pending.id != draft.id {
                 throw PersistenceError.staleContent

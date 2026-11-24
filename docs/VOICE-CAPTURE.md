@@ -14,8 +14,10 @@ Refine remains available as an explicit action on the kept thought.
    shortcut. You can also start from the menu bar. Wait for **Listening**
    before speaking. The first recording is when macOS asks for microphone access.
 3. Press the shortcut again to finish. Edit the transcript if needed and
-   click **Keep** or press ⌘Return. The confirmation offers **Open** and
-   **Undo**. Try keeping one capture while another Scratchpad thought is open.
+   click **Keep** or press ⌘Return. If you switch apps after finishing, use
+   **Review** in the capsule or press the shortcut to open the transcript.
+   The confirmation offers **Open** and **Undo**. Try keeping one capture
+   while another Scratchpad thought is open.
 4. Escape closes the review and retains it for the next Voice Capture action.
    Use **Discard** to remove the pending transcript. To retry microphone access
    after a denial, open System Settings from the status panel.
@@ -37,6 +39,9 @@ can import that same directory through **Choose Model Folder…**.
 - The global shortcut uses KeyboardShortcuts key-up events. Enabling
   Voice Capture leaves the default Scratchpad and Home chords unchanged. The
   capsule is non-activating. Review is a separate, editable native panel.
+  If you switch apps, switch Rasc windows, or a recording is interrupted,
+  the capsule offers Review without taking focus. Keyboard users can also
+  retry transcription or open microphone settings from the menu bar.
 - Preparing is explicit on opt-in and can overlap recording after the
   first genuine microphone buffer. The fixed 120 ms end buffer preserves
   speech near Finish. Silence never triggers Finish. The socket-free inference
