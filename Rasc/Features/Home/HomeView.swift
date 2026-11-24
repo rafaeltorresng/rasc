@@ -34,6 +34,7 @@ struct HomeView: View {
     let onNewScratch: () -> Void
     let onNoteDiscarded: (UUID) -> Void
     let onNoteUnkept: (UUID) -> Void
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.undoManager) private var undoManager
@@ -139,7 +140,7 @@ struct HomeView: View {
             } else if session.lastDiscard != nil {
                 HStack {
                     Text("Thought discarded.")
-                        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                        .foregroundStyle(palette.secondaryText(for: colorScheme))
                     Spacer()
                     Button("Undo") { Task { await session.undoDiscard() } }
                 }
@@ -149,7 +150,7 @@ struct HomeView: View {
             } else if let copyFeedback {
                 Text(copyFeedback)
                     .font(.callout)
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .foregroundStyle(palette.secondaryText(for: colorScheme))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, HomeLayout.horizontalPadding)
                     .padding(.vertical, 12)
@@ -240,7 +241,7 @@ struct HomeView: View {
             RascSettingsLink {
                 Image(systemName: "gearshape")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .foregroundStyle(palette.secondaryText(for: colorScheme))
                     .frame(width: 26, height: 26)
             }
             .buttonStyle(.plain)
@@ -270,7 +271,7 @@ struct HomeView: View {
             } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .foregroundStyle(palette.secondaryText(for: colorScheme))
                     .frame(width: 26, height: 26)
                     .contentShape(Rectangle().inset(by: -3))
             }
@@ -279,12 +280,12 @@ struct HomeView: View {
             .help("Dismiss")
         }
         .font(.callout)
-        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+        .foregroundStyle(palette.secondaryText(for: colorScheme))
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background {
             RoundedRectangle(cornerRadius: 9, style: .continuous)
-                .fill(RascSurfacePalette.subtleFill(for: colorScheme))
+                .fill(palette.subtleFill(for: colorScheme))
         }
     }
 
@@ -308,7 +309,7 @@ struct HomeView: View {
             VStack(spacing: HomeLayout.emptyStateSpacing) {
                 Text("Your thoughts")
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(RascSurfacePalette.homeSectionLabel(for: colorScheme))
+                    .foregroundStyle(palette.homeSectionLabel(for: colorScheme))
                     .accessibilityAddTraits(.isHeader)
 
                 VStack(spacing: 8) {
@@ -318,7 +319,7 @@ struct HomeView: View {
 
                     Text("Your thoughts appear here as you write.")
                         .font(.system(size: 13))
-                        .foregroundStyle(RascSurfacePalette.homeSupportingText(for: colorScheme))
+                        .foregroundStyle(palette.homeSupportingText(for: colorScheme))
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -376,7 +377,7 @@ struct HomeView: View {
             if session.hasMoreSearchResults {
                 Text("Showing the first 500 matches. Narrow your search to find more.")
                     .font(.callout)
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .foregroundStyle(palette.secondaryText(for: colorScheme))
             }
         }
             .animation(RascMotion.bodyContentAnimation(reduceMotion: reduceMotion), value: session.searchResults.map(\.id))
@@ -455,7 +456,7 @@ struct HomeView: View {
     private func quietStateLabel(_ text: String) -> some View {
         Text(text)
             .font(.system(size: 15))
-            .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+            .foregroundStyle(palette.secondaryText(for: colorScheme))
             .frame(
                 maxWidth: .infinity,
                 minHeight: HomeLayout.quietStateMinHeight,
@@ -554,7 +555,7 @@ struct HomeView: View {
                     .monospacedDigit()
             }
         }
-        .foregroundStyle(RascSurfacePalette.homeSectionLabel(for: colorScheme))
+        .foregroundStyle(palette.homeSectionLabel(for: colorScheme))
         .accessibilityAddTraits(.isHeader)
     }
 
@@ -572,23 +573,25 @@ private struct HomeSearchField: View {
     @Binding var text: String
     let isFocused: FocusState<Bool>.Binding
 
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.noteTextSize) private var noteTextSize
 
     var body: some View {
         RascTransientInputShell(isFocused: isFocused.wrappedValue) {
             HStack(spacing: 7) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                    .foregroundStyle(palette.metadataText(for: colorScheme))
 
                 TextField(
                     "",
                     text: $text,
                     prompt: Text("Search thoughts…")
-                        .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                        .foregroundStyle(palette.metadataText(for: colorScheme))
                 )
                 .textFieldStyle(.plain)
-                .font(.system(size: 13.5))
+                .font(.system(size: noteTextSize.points(13.5)))
                 .focused(isFocused)
 
                 if !text.isEmpty {
@@ -598,7 +601,7 @@ private struct HomeSearchField: View {
                     } label: {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 15, weight: .medium))
-                            .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                            .foregroundStyle(palette.secondaryText(for: colorScheme))
                             .frame(width: 26, height: 26)
                             .contentShape(Rectangle().inset(by: -3))
                     }
@@ -626,7 +629,9 @@ private struct HomeNoteRowView: View {
     let onUnkeep: () -> Void
     let onDiscard: () -> Void
 
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.noteTextSize) private var noteTextSize
     @Environment(\.colorSchemeContrast) private var colorSchemeContrast
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isHovered = false
@@ -645,7 +650,7 @@ private struct HomeNoteRowView: View {
     }
 
     private var matchMark: Color {
-        RascSurfacePalette.searchMark(for: colorScheme, increasedContrast: colorSchemeContrast == .increased)
+        palette.searchMark(for: colorScheme, increasedContrast: colorSchemeContrast == .increased)
     }
 
     var body: some View {
@@ -674,23 +679,23 @@ private struct HomeNoteRowView: View {
         HStack(alignment: .firstTextBaseline, spacing: 10) {
             Image(systemName: "bookmark.fill")
                 .font(.system(size: 10, weight: .semibold))
-                .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                .foregroundStyle(palette.metadataText(for: colorScheme))
                 .opacity(note.isKept && showsKeptIndicator ? 1 : 0)
                 .accessibilityHidden(true)
                 .frame(width: 14)
 
             VStack(alignment: .leading, spacing: 1) {
-                Text(RascSearchMatch.highlighted(note.displayTitle, query: searchQuery, mark: matchMark, tokenStartOnly: true))
-                    .font(.system(size: 13.5, weight: .medium))
-                    .foregroundStyle(.primary.opacity(0.92))
+                Text(RascSearchMatch.highlighted(note.displayTitle, query: searchQuery, mark: matchMark, tokenStartOnly: true, underline: palette.preset == .custom))
+                    .font(.system(size: noteTextSize.points(13.5), weight: .medium))
+                    .foregroundStyle(palette.noteText(for: colorScheme, fallback: .primary.opacity(0.92)))
                     .lineLimit(1)
                     .multilineTextAlignment(.leading)
                     .truncationMode(.tail)
 
                 if let excerpt = rowExcerpt {
-                    Text(RascSearchMatch.highlighted(excerpt, query: searchQuery, mark: matchMark, tokenStartOnly: true))
-                        .font(.system(size: 12))
-                        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    Text(RascSearchMatch.highlighted(excerpt, query: searchQuery, mark: matchMark, tokenStartOnly: true, underline: palette.preset == .custom))
+                        .font(.system(size: noteTextSize.points(12)))
+                        .foregroundStyle(palette.noteText(for: colorScheme, fallback: palette.secondaryText(for: colorScheme)))
                         .lineLimit(1)
                         .multilineTextAlignment(.leading)
                         .truncationMode(.tail)
@@ -702,7 +707,7 @@ private struct HomeNoteRowView: View {
             Text(timestamp)
                 .font(.system(size: 11, weight: .medium))
                 .monospacedDigit()
-                .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                .foregroundStyle(palette.metadataText(for: colorScheme))
                 .lineLimit(1)
 
             noteActionsMenu
@@ -712,14 +717,14 @@ private struct HomeNoteRowView: View {
                 .accessibilityHidden(!showsTrailingActions)
         }
         .padding(.horizontal, 10)
-        .frame(maxWidth: .infinity, minHeight: 46, maxHeight: 46, alignment: .center)
+        .frame(maxWidth: .infinity, minHeight: noteTextSize == .large ? 52 : 46, alignment: .center)
         .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .background {
             if isSelected {
                 RascTransientSelectionBackground(cornerRadius: 8)
             } else if isHovered {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(RascSurfacePalette.subtleFill(for: colorScheme))
+                    .fill(palette.subtleFill(for: colorScheme))
             }
         }
     }
@@ -730,14 +735,14 @@ private struct HomeNoteRowView: View {
         } label: {
             Image(systemName: "ellipsis")
                 .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                .foregroundStyle(palette.secondaryText(for: colorScheme))
                 .symbolRenderingMode(.monochrome)
                 .frame(width: 26, height: 26, alignment: .trailing)
                 .contentShape(Rectangle().inset(by: -3))
                 .background {
                     if isHovered {
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            .fill(RascSurfacePalette.subtleFill(for: colorScheme))
+                            .fill(palette.subtleFill(for: colorScheme))
                     }
                 }
         }
@@ -802,6 +807,7 @@ private struct HomeNewScratchButton: View {
     let style: Style
     let action: () -> Void
 
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.colorSchemeContrast) private var colorSchemeContrast
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -825,8 +831,8 @@ private struct HomeNewScratchButton: View {
 
     private var labelColor: Color {
         style == .prominent
-            ? RascSurfacePalette.actionPrimaryLabel(for: colorScheme)
-            : RascSurfacePalette.primaryText(for: colorScheme)
+            ? palette.actionPrimaryLabel(for: colorScheme)
+            : Color.primary
     }
 
     @ViewBuilder
@@ -837,8 +843,8 @@ private struct HomeNewScratchButton: View {
         )
         .fill(
             style == .prominent
-                ? RascSurfacePalette.actionPrimaryFill(for: colorScheme)
-                : RascSurfacePalette.homeCardFill(for: colorScheme)
+                ? palette.actionPrimaryFill(for: colorScheme)
+                : palette.homeCardFill(for: colorScheme)
         )
         .overlay {
             if style == .header {
@@ -847,7 +853,7 @@ private struct HomeNewScratchButton: View {
                     style: .continuous
                 )
                 .strokeBorder(
-                    RascSurfacePalette.innerHighlight(for: colorScheme),
+                    palette.innerHighlight(for: colorScheme),
                     lineWidth: 1
                 )
             }
@@ -860,8 +866,8 @@ private struct HomeNewScratchButton: View {
                 )
                 .fill(
                     style == .prominent
-                        ? RascSurfacePalette.actionPrimaryLabel(for: colorScheme).opacity(0.08)
-                        : RascSurfacePalette.subtleFill(for: colorScheme)
+                        ? palette.actionPrimaryLabel(for: colorScheme).opacity(0.08)
+                        : palette.subtleFill(for: colorScheme)
                 )
             }
         }
@@ -875,7 +881,7 @@ private struct HomeNewScratchButton: View {
                 style: .continuous
             )
             .strokeBorder(
-                RascSurfacePalette.homeCardBorder(
+                palette.homeCardBorder(
                     for: colorScheme,
                     isHovered: isHovered,
                     increasedContrast: colorSchemeContrast == .increased
@@ -891,6 +897,7 @@ private struct HomeNewScratchButton: View {
 private struct HomeViewModeToggle: View {
     @Binding var mode: HomeViewMode
 
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.colorSchemeContrast) private var contrast
 
@@ -905,18 +912,18 @@ private struct HomeViewModeToggle: View {
                         .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(
                             isSelected
-                                ? RascSurfacePalette.primaryText(for: colorScheme)
-                                : RascSurfacePalette.metadataText(for: colorScheme)
+                                ? Color.primary
+                                : palette.metadataText(for: colorScheme)
                         )
                         .frame(width: 26, height: 26)
                         .background {
                             if isSelected {
                                 RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                    .fill(RascSurfacePalette.selectionFill(for: colorScheme))
+                                    .fill(palette.selectionFill(for: colorScheme))
                                     .overlay {
                                         RoundedRectangle(cornerRadius: 6, style: .continuous)
                                             .strokeBorder(
-                                                RascSurfacePalette.selectionStroke(for: colorScheme),
+                                                palette.selectionStroke(for: colorScheme),
                                                 lineWidth: contrast == .increased ? 1.5 : 1
                                             )
                                     }
@@ -934,11 +941,11 @@ private struct HomeViewModeToggle: View {
         .padding(2)
         .background {
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(RascSurfacePalette.subtleFill(for: colorScheme))
+                .fill(palette.subtleFill(for: colorScheme))
         }
         .overlay {
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .strokeBorder(RascSurfacePalette.border(for: colorScheme).opacity(contrast == .increased ? 1 : 0.66), lineWidth: 1)
+                .strokeBorder(palette.border(for: colorScheme).opacity(contrast == .increased ? 1 : 0.66), lineWidth: 1)
         }
         .accessibilityElement(children: .contain)
     }
@@ -959,13 +966,15 @@ private struct HomeNoteCardView: View {
     let onUnkeep: () -> Void
     let onDiscard: () -> Void
 
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.noteTextSize) private var noteTextSize
     @Environment(\.colorSchemeContrast) private var colorSchemeContrast
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isHovered = false
 
     private var matchMark: Color {
-        RascSurfacePalette.searchMark(for: colorScheme, increasedContrast: colorSchemeContrast == .increased)
+        palette.searchMark(for: colorScheme, increasedContrast: colorSchemeContrast == .increased)
     }
 
     private var cardExcerpt: String? {
@@ -1004,24 +1013,24 @@ private struct HomeNoteCardView: View {
         HStack(alignment: .top, spacing: 9) {
             Image(systemName: "bookmark.fill")
                 .font(.system(size: 10, weight: .semibold))
-                .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                .foregroundStyle(palette.metadataText(for: colorScheme))
                 .opacity(note.isKept && showsKeptIndicator ? 1 : 0)
                 .frame(width: 14)
                 .padding(.top, 3.5)
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(RascSearchMatch.highlighted(note.displayTitle, query: searchQuery, mark: matchMark, tokenStartOnly: true))
-                    .font(.system(size: HomeLayout.cardTitleFontSize, weight: .semibold))
-                    .foregroundStyle(.primary.opacity(0.92))
+                Text(RascSearchMatch.highlighted(note.displayTitle, query: searchQuery, mark: matchMark, tokenStartOnly: true, underline: palette.preset == .custom))
+                    .font(.system(size: noteTextSize.points(HomeLayout.cardTitleFontSize), weight: .semibold))
+                    .foregroundStyle(palette.noteText(for: colorScheme, fallback: .primary.opacity(0.92)))
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                     .truncationMode(.tail)
 
                 if let excerpt = cardExcerpt {
-                    Text(RascSearchMatch.highlighted(excerpt, query: searchQuery, mark: matchMark, tokenStartOnly: true))
-                        .font(.system(size: HomeLayout.cardExcerptFontSize))
-                        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    Text(RascSearchMatch.highlighted(excerpt, query: searchQuery, mark: matchMark, tokenStartOnly: true, underline: palette.preset == .custom))
+                        .font(.system(size: noteTextSize.points(HomeLayout.cardExcerptFontSize)))
+                        .foregroundStyle(palette.noteText(for: colorScheme, fallback: palette.secondaryText(for: colorScheme)))
                         .lineLimit(HomeLayout.cardExcerptLineLimit)
                         .multilineTextAlignment(.leading)
                         .truncationMode(.tail)
@@ -1034,7 +1043,7 @@ private struct HomeNoteCardView: View {
                 Text(timestamp)
                     .font(.system(size: 11, weight: .medium))
                     .monospacedDigit()
-                    .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                    .foregroundStyle(palette.metadataText(for: colorScheme))
                     .lineLimit(1)
 
                 noteActionsMenu
@@ -1051,11 +1060,11 @@ private struct HomeNoteCardView: View {
         .background {
             ZStack {
                 RoundedRectangle(cornerRadius: HomeLayout.gridItemCornerRadius, style: .continuous)
-                    .fill(RascSurfacePalette.homeCardFill(for: colorScheme))
+                    .fill(palette.homeCardFill(for: colorScheme))
                     .overlay {
                         RoundedRectangle(cornerRadius: HomeLayout.gridItemCornerRadius, style: .continuous)
                             .strokeBorder(
-                                RascSurfacePalette.homeCardBorder(
+                                palette.homeCardBorder(
                                     for: colorScheme,
                                     isHovered: isHovered,
                                     increasedContrast: colorSchemeContrast == .increased
@@ -1080,14 +1089,14 @@ private struct HomeNoteCardView: View {
         } label: {
             Image(systemName: "ellipsis")
                 .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                .foregroundStyle(palette.secondaryText(for: colorScheme))
                 .symbolRenderingMode(.monochrome)
                 .frame(width: 26, height: 26, alignment: .trailing)
                 .contentShape(Rectangle().inset(by: -3))
                 .background {
                     if isHovered {
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            .fill(RascSurfacePalette.subtleFill(for: colorScheme))
+                            .fill(palette.subtleFill(for: colorScheme))
                     }
                 }
         }
