@@ -72,8 +72,8 @@ struct OnboardingBehaviorTests {
     @Test
     func actionPrimaryFillKeepsProminentButtonLabelsReadable() throws {
         for colorScheme in [ColorScheme.light, .dark] {
-            let fill = RascSurfacePalette.actionPrimaryFillNSColor(for: colorScheme)
-            let label = RascSurfacePalette.actionPrimaryLabelNSColor(for: colorScheme)
+            let fill = RascSurfacePalette.standard.actionPrimaryFillNSColor(for: colorScheme)
+            let label = RascSurfacePalette.standard.actionPrimaryLabelNSColor(for: colorScheme)
             #expect(try contrastRatio(fill, label) >= 4.5)
         }
     }
@@ -81,8 +81,8 @@ struct OnboardingBehaviorTests {
     @Test
     func keepAccentKeepsTheApprovedCopperFillReadable() throws {
         for colorScheme in [ColorScheme.light, .dark] {
-            let accent = RascSurfacePalette.keepAccentNSColor(for: colorScheme)
-            let fill = RascSurfacePalette.keepFillNSColor(for: colorScheme)
+            let accent = RascSurfacePalette.standard.keepAccentNSColor(for: colorScheme)
+            let fill = RascSurfacePalette.standard.keepFillNSColor(for: colorScheme)
             #expect(try contrastRatio(accent, fill) >= 4.5)
         }
     }
