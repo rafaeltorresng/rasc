@@ -1,8 +1,8 @@
 # Production runbook: Sparkle updates via Library Load Constraint (ad-hoc signed)
 
-Status: **v0.1.13/build 19 is published (2026-11-23); v0.1.7/build 13 was the
-first updater release.** The production feed serves the v0.1.13 entry with
-v0.1.7–v0.1.12 retained. The default Release build is unchanged and cannot
+Status: **v0.1.14/build 20 is published (2026-11-23); v0.1.7/build 13 was the
+first updater release.** The production feed serves the v0.1.14 entry with
+v0.1.7–v0.1.13 retained. The default Release build is unchanged and cannot
 update itself. This document is
 the canonical procedure for the updater-enabled build. Please read fully before
 publishing.
@@ -37,8 +37,8 @@ a publicly-trusted tunnel such as Cloudflare quick tunnel (`cloudflared tunnel
 --url …`) or any static HTTPS host. This was used both on this Mac and on the
 maintainer's Air M4. The host name is disposable; the feed is never the
 production one and never served from `rasc.app`. The production feed at
-`https://rasc.app/appcast.xml` is live and serves the published v0.1.13 entry
-(build 19), with earlier entries retained for older upgrades.
+`https://rasc.app/appcast.xml` is live and serves the published v0.1.14 entry
+(build 20), with earlier entries retained for older upgrades.
 
 ## RC build pipeline (what `build-updater-rc.sh` does)
 
@@ -293,7 +293,7 @@ cost and can remain as belt-and-braces.
 
 ## Decision checklist before publishing
 
-The v0.1.13 release is published. The checklist below remains the publication gate
+The v0.1.14 release is published. The checklist below remains the publication gate
 for each next candidate; completed run records belong in the release notes.
 
 - [ ] `xcodebuild test` green; `RELEASE_NOTES-v<version>.md` written (Open-Anyway note present)
@@ -309,22 +309,33 @@ for each next candidate; completed run records belong in the release notes.
 
 ## Current status (2026-11-23)
 
-- **Published:** v0.1.13/build 19, source commit `c3ce2a1`, DMG
+- **Published:** v0.1.14/build 20, source on
+  [PR #94](https://github.com/rafaeltorresng/rasc/pull/94) (the personalization
+  merge from #93 plus the version bump), DMG `Rasc-0.1.14-updater.dmg`, SHA-256
+  `f8c7d079cdf8a589556713a4dd3d7118a7582a465a4ae5c553474e6b2cd9f9b4`, with
+  six `Rasc20-*` deltas. GitHub Actions runs `45308334979` and `45308356169`
+  passed the Debug build, 486 domain checks plus the scale benchmark, the full
+  native suite and the Release build. The appcast retains v0.1.7–v0.1.13 with
+  their original versioned URLs; all eight entries are byte-identical to the
+  previous feed for the seven historical versions. Signatures, lengths and
+  tamper rejection passed. See [RELEASE-NOTES-v0.1.14.md](RELEASE-NOTES-v0.1.14.md).
+- **Native update check:** an isolated build 19 app (bundle identifier
+  `com.rafaeltorres.rasc.isolatedtest`, own container, three synthetic notes)
+  checked for updates over a temporary public HTTPS staging feed. Sparkle
+  offered 0.1.14/build 20, verified and installed it, and relaunched at build
+  20 with all three synthetic notes byte-identical, the isolated container and
+  the Library Load Constraint intact. The user's installed app and notes were
+  not involved.
+- The public release assets were downloaded and byte-matched; the website
+  download link and appcast were checked after publication. macOS 14–25 remain
+  unverified.
+- **Previous:** v0.1.13/build 19, source commit `c3ce2a1`, DMG
   `Rasc-0.1.13-updater.dmg`, SHA-256
   `bf324171fc1fe535c9615f56d4083300ea72f45279e8b5327d1ea3b993fa2cae`, with
-  six `Rasc19-*` deltas. GitHub Actions run `45246536033` passed. The appcast
-  retains v0.1.7–v0.1.12 with their original versioned URLs; signatures,
-  lengths, and tamper rejection passed. The public release assets were
-  downloaded and byte-matched. See
-  [RELEASE-NOTES-v0.1.13.md](RELEASE-NOTES-v0.1.13.md).
-- GitHub Pages runs `45248619505` (brand and appcast) and `45249191060`
-  (current release facts) passed. The live appcast is byte-identical to the
-  verified seven-entry file and all enclosure URLs retain their original
-  versioned GitHub releases.
-- **Not performed for v0.1.13:** the live in-app update and clean-account
-  post-deploy “Already up to date” smoke; the publishing environment had no
-  usable interactive display. The appcast and download link were checked
-  directly over HTTPS. macOS 14–25 remain unverified.
+  six `Rasc19-*` deltas. GitHub Actions run `45246536033` passed. Its appcast
+  retains v0.1.7–v0.1.12. Its live in-app update and clean-account post-deploy
+  smoke were not performed because that publishing environment had no usable
+  interactive display.
 - **Previous:** v0.1.12/build 18, behavioral source tip `6bdd410`, DMG
   `Rasc-0.1.12-updater.dmg`, SHA-256
   `64637dc077e9f882a2154ea3d710bf76ab23687738fef6f2e2c7148ccfa0805c`.
