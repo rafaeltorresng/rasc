@@ -3,6 +3,7 @@ import SwiftUI
 struct CommandPaletteView: View {
     @Bindable var session: ScratchpadSession
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.colorSchemeContrast) private var colorSchemeContrast
     @State private var isFocused = false
@@ -60,7 +61,7 @@ struct CommandPaletteView: View {
             if session.filteredCommands.isEmpty {
                 Text("No matching commands.")
                     .font(.system(size: 13))
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .foregroundStyle(palette.secondaryText(for: colorScheme))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .accessibilityLabel("No matching commands")
             } else {
@@ -91,16 +92,16 @@ struct CommandPaletteView: View {
     }
 
     private var matchMark: Color {
-        RascSurfacePalette.searchMark(for: colorScheme, increasedContrast: colorSchemeContrast == .increased)
+        palette.searchMark(for: colorScheme, increasedContrast: colorSchemeContrast == .increased)
     }
 
     private func commandRow(_ command: PaletteCommand, isSelected: Bool) -> some View {
         HStack(spacing: 12) {
-            Text(RascSearchMatch.highlighted(command.title, query: session.commandPaletteQuery, mark: matchMark, tokenStartOnly: false))
+            Text(RascSearchMatch.highlighted(command.title, query: session.commandPaletteQuery, mark: matchMark, tokenStartOnly: false, underline: palette.preset == .custom))
                 .font(.system(size: RascSurfaceMetrics.searchTitleFontSize, weight: .medium))
                 .foregroundStyle(
                     command == .discardNote
-                        ? RascSurfacePalette.destructiveText(for: colorScheme)
+                        ? palette.destructiveText(for: colorScheme)
                         : Color.primary
                 )
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -108,11 +109,11 @@ struct CommandPaletteView: View {
             if command == .discardNote, session.destructiveConfirmationRequested {
                 Text("↵ again to discard")
                     .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(RascSurfacePalette.destructiveText(for: colorScheme))
+                    .foregroundStyle(palette.destructiveText(for: colorScheme))
             } else {
                 Text(command.displayedShortcutLabel())
                     .font(.system(size: RascSurfaceMetrics.searchTimestampFontSize, design: .monospaced))
-                    .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                    .foregroundStyle(palette.metadataText(for: colorScheme))
             }
         }
         .rascTransientListRow(
