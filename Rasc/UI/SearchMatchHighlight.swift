@@ -72,6 +72,7 @@ enum RascSearchMatch {
         query: String,
         mark: Color,
         tokenStartOnly: Bool,
+        underline: Bool = false,
         locale: Locale = .current
     ) -> AttributedString {
         var out = AttributedString(text)
@@ -80,6 +81,7 @@ enum RascSearchMatch {
                 guard let lower = AttributedString.Index(hit.lowerBound, within: out),
                       let upper = AttributedString.Index(hit.upperBound, within: out) else { continue }
                 out[lower..<upper].backgroundColor = mark
+                if underline { out[lower..<upper].underlineStyle = .single }
             }
         }
         return out
