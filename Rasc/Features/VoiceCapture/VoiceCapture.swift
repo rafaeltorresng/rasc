@@ -45,12 +45,25 @@ final class VoiceCapture: ObservableObject {
     }
 
     enum Setup: Equatable {
-        case unchecked, missing, installed, importing, preparing, failed, lowDiskSpace
+        case unchecked
+        case missing
+        case downloading(downloaded: Int64, total: Int64)
+        case importing
+        case preparing
+        case installed
+        case downloadFailed
+        case failed
+        case lowDiskSpace
     }
 
     struct Speech: Sendable {
         typealias Ready = @Sendable () async -> Void
+        typealias DownloadProgress = @Sendable (Int64, Int64) -> Void
         var assetsAvailable: @Sendable () -> Bool
+        var hasInstalledAssets: @Sendable () -> Bool = { false }
+        var downloadSizeBytes: @Sendable () -> Int64 = { 652_304_885 }
+        var download: @Sendable (@escaping DownloadProgress) async throws -> Void = { _ in }
+        var removeInstalled: @Sendable () throws -> Void = {}
         var prepare: @Sendable () async throws -> Void
         var transcribe: @Sendable (VoiceAudio, @escaping Ready) async throws -> String
         var release: @Sendable () async -> Void
@@ -58,6 +71,10 @@ final class VoiceCapture: ObservableObject {
         static func local() -> Self {
             let model = VoiceModel()
             return Self(assetsAvailable: { (try? VoiceModelAssets.availableFolder()) != nil },
+                        hasInstalledAssets: { VoiceModelAssets.hasInstalledFolder() },
+                        downloadSizeBytes: { VoiceModelAssets.totalManifestBytes() },
+                        download: { try await VoiceModelAssets.installFromDownloader(progress: $0) },
+                        removeInstalled: { try VoiceModelAssets.removeInstalled() },
                         prepare: { try await model.prepare() },
                         transcribe: { try await model.transcribe($0, modelReady: $1) },
                         release: { await model.releaseForMemoryPressure() })
@@ -89,6 +106,7 @@ final class VoiceCapture: ObservableObject {
     let inputLevel = VoiceInputLevel()
     @Published private(set) var canRetryAudio = false
     @Published private(set) var awaitingMicrophonePermission = false
+    @Published private(set) var canRemoveInstalledModel = false
 
     private let preferences: UserDefaults
     private let support: Bool
@@ -117,6 +135,10 @@ final class VoiceCapture: ObservableObject {
     private var captureWasInterrupted = false
     private var lastActivation: ContinuousClock.Instant?
     private var activatedAt: ContinuousClock.Instant?
+
+    var modelDownloadSizeBytes: Int64 {
+        speech.downloadSizeBytes()
+    }
 
     var canChangeEnabled: Bool {
         setup != .importing && phase != .saving && phase != .opening && pendingTranscript == nil
@@ -174,6 +196,7 @@ final class VoiceCapture: ObservableObject {
             setupTask?.cancel()
             setupTask = nil
             setup = .unchecked
+            canRemoveInstalledModel = false
             if let sleepObserver { NSWorkspace.shared.notificationCenter.removeObserver(sleepObserver) }
             sleepObserver = nil
             pressure?.cancel()
@@ -204,12 +227,83 @@ final class VoiceCapture: ObservableObject {
 
     func checkSetup(prepare: Bool = false) {
         guard enabled, setupTask == nil else { return }
+        let speech = self.speech
         setupTask = Task(priority: .utility) {
-            let available = await Task.detached(priority: .utility, operation: speech.assetsAvailable).value
+            let (available, installed) = await Task.detached(priority: .utility) {
+                (speech.assetsAvailable(), speech.hasInstalledAssets())
+            }.value
             guard !Task.isCancelled else { return }
             setupTask = nil
+            canRemoveInstalledModel = installed
             setup = available ? .installed : .missing
             if available, prepare { prepareModel() }
+        }
+    }
+
+    func downloadModel() {
+        guard enabled, setupTask == nil, phase == .idle else { return }
+        let total = speech.downloadSizeBytes()
+        setup = .downloading(downloaded: 0, total: total)
+        setupTask = Task {
+            do {
+                try await speech.download { [weak self] downloaded, totalBytes in
+                    Task { @MainActor [weak self] in
+                        guard let self, case .downloading = self.setup else { return }
+                        self.setup = .downloading(downloaded: downloaded, total: totalBytes)
+                    }
+                }
+                try Task.checkCancellation()
+                setupTask = nil
+                canRemoveInstalledModel = speech.hasInstalledAssets()
+                setup = .installed
+                prepareModel()
+            } catch is CancellationError {
+                guard !Task.isCancelled else { return }
+                setupTask = nil
+                setup = .missing
+            } catch let error as URLError where error.code == .cancelled {
+                guard !Task.isCancelled else { return }
+                setupTask = nil
+                setup = .missing
+            } catch {
+                guard !Task.isCancelled else { return }
+                setupTask = nil
+                if (error as? VoiceModel.PreparationError) == .lowDiskSpace ||
+                    (error as NSError).domain == NSCocoaErrorDomain && (error as NSError).code == NSFileWriteOutOfSpaceError {
+                    setup = .lowDiskSpace
+                } else {
+                    setup = .downloadFailed
+                }
+            }
+        }
+    }
+
+    func cancelModelDownload() {
+        guard case .downloading = setup else { return }
+        setupTask?.cancel()
+        setupTask = nil
+        setup = .missing
+    }
+
+    func removeInstalledModel() {
+        guard enabled, phase == .idle, setupTask == nil, speech.hasInstalledAssets() else { return }
+        let speech = self.speech
+        setupTask = Task {
+            await speech.release()
+            do {
+                try await Task.detached(priority: .utility) {
+                    try speech.removeInstalled()
+                }.value
+                guard !Task.isCancelled else { return }
+                setupTask = nil
+                canRemoveInstalledModel = false
+                setup = .missing
+            } catch {
+                guard !Task.isCancelled else { return }
+                setupTask = nil
+                canRemoveInstalledModel = speech.hasInstalledAssets()
+                setup = canRemoveInstalledModel ? .installed : .missing
+            }
         }
     }
 
@@ -224,6 +318,7 @@ final class VoiceCapture: ObservableObject {
                 } onCancel: { install.cancel() }
                 try Task.checkCancellation()
                 setupTask = nil
+                canRemoveInstalledModel = speech.hasInstalledAssets()
                 setup = .installed
                 prepareModel()
             } catch {
@@ -331,7 +426,7 @@ final class VoiceCapture: ObservableObject {
             let available = await Task.detached(operation: speech.assetsAvailable).value
             guard owns(token) else { return }
             guard available else {
-                setup = .missing
+                if case .downloading = setup { } else { setup = .missing }
                 transition(.idle)
                 if presentWindows {
                     windows.hideStatus()

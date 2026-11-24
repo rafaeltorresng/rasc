@@ -27,6 +27,17 @@ enum VoiceModelAssets {
         Bundle.main.url(forResource: "VoiceModel", withExtension: nil)
     }
 
+    static func totalManifestBytes() -> Int64 {
+        guard let expected = try? manifest() else { return 652_304_885 }
+        return expected.values.reduce(0) { $0 + Int64($1.bytes) }
+    }
+
+    static func hasInstalledFolder() -> Bool {
+        guard let expected = try? manifest(),
+              let installed = try? storage().appending(path: revision) else { return false }
+        return isComplete(installed, expected: expected)
+    }
+
     private static func storage() throws -> URL {
         try NoteRepository.defaultDatabaseURL.deletingLastPathComponent().appending(path: "VoiceModels")
     }
@@ -105,6 +116,172 @@ enum VoiceModelAssets {
         } else {
             try fm.moveItem(at: staging, to: installed)
         }
+        pruneOtherRevisions(in: storage, keeping: revision)
+    }
+
+    static func removeInstalled() throws {
+        let fm = FileManager.default
+        let storage = try storage()
+        if fm.fileExists(atPath: storage.path) {
+            try fm.removeItem(at: storage)
+        }
+        clearDownloaderCache()
+    }
+
+    static func installFromDownloader(
+        progress: @escaping @Sendable (Int64, Int64) -> Void
+    ) async throws {
+        let expected = try manifest()
+        let totalBytes = expected.values.reduce(0) { $0 + Int64($1.bytes) }
+        let fm = FileManager.default
+        let storage = try storage()
+        try fm.createDirectory(at: storage, withIntermediateDirectories: true)
+
+        if let capacity = try? storage.resourceValues(forKeys: [.volumeAvailableCapacityKey]).volumeAvailableCapacity,
+           Int64(capacity) < totalBytes + 500_000_000 {
+            throw VoiceModel.PreparationError.lowDiskSpace
+        }
+
+        for url in try fm.contentsOfDirectory(at: storage, includingPropertiesForKeys: nil)
+            where url.lastPathComponent.hasPrefix(".incoming-") {
+            try? fm.removeItem(at: url)
+        }
+        let staging = storage.appending(path: ".incoming-\(UUID())")
+        let installed = storage.appending(path: revision)
+        defer { try? fm.removeItem(at: staging) }
+
+        let receiver = VoiceModelDownloadProgressReceiver(totalBytes: totalBytes, onProgress: progress)
+        let box = DownloaderConnectionBox(serviceName: VoiceModelDownloaderConstants.serviceName, receiver: receiver)
+        defer { box.connection.invalidate() }
+
+        let entries = expected.sorted { $0.key < $1.key }
+        try await withTaskCancellationHandler {
+            for (path, file) in entries {
+                try Task.checkCancellation()
+                let handle: FileHandle = try await withCheckedThrowingContinuation { continuation in
+                    let proxy = box.connection.remoteObjectProxyWithErrorHandler { error in
+                        continuation.resume(throwing: error)
+                    } as? VoiceModelDownloaderProtocol
+                    guard let proxy else {
+                        continuation.resume(throwing: Issue.missing)
+                        return
+                    }
+                    proxy.downloadFile(revision: revision, relativePath: path, expectedBytes: Int64(file.bytes)) { fileHandle, error in
+                        if let error {
+                            continuation.resume(throwing: error)
+                        } else if let fileHandle {
+                            continuation.resume(returning: fileHandle)
+                        } else {
+                            continuation.resume(throwing: Issue.invalid)
+                        }
+                    }
+                }
+                defer { try? handle.close() }
+                try Task.checkCancellation()
+
+                let destination = staging.appending(path: path)
+                try fm.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
+                fm.createFile(atPath: destination.path, contents: nil)
+                let output = try FileHandle(forWritingTo: destination)
+                defer { try? output.close() }
+
+                var hash = SHA256()
+                var writtenBytes = 0
+                while let block = try handle.read(upToCount: 1 << 20), !block.isEmpty {
+                    try Task.checkCancellation()
+                    try output.write(contentsOf: block)
+                    hash.update(data: block)
+                    writtenBytes += block.count
+                }
+                guard writtenBytes == file.bytes else { throw Issue.invalid }
+                let digest = hash.finalize().map { String(format: "%02x", $0) }.joined()
+                guard digest == file.sha256 else { throw Issue.invalid }
+            }
+
+            try Task.checkCancellation()
+            if fm.fileExists(atPath: installed.path) {
+                _ = try fm.replaceItemAt(installed, withItemAt: staging)
+            } else {
+                try fm.moveItem(at: staging, to: installed)
+            }
+            pruneOtherRevisions(in: storage, keeping: revision)
+        } onCancel: {
+            (box.connection.remoteObjectProxy as? VoiceModelDownloaderProtocol)?.cancelDownload()
+        }
+
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            let proxy = box.connection.remoteObjectProxyWithErrorHandler { _ in
+                continuation.resume()
+            } as? VoiceModelDownloaderProtocol
+            guard let proxy else {
+                continuation.resume()
+                return
+            }
+            proxy.clearCache(revision: revision) {
+                continuation.resume()
+            }
+        }
+    }
+
+    private static func clearDownloaderCache() {
+        let box = DownloaderConnectionBox(serviceName: VoiceModelDownloaderConstants.serviceName, receiver: nil)
+        let proxy = box.connection.remoteObjectProxyWithErrorHandler { _ in
+            box.connection.invalidate()
+        } as? VoiceModelDownloaderProtocol
+        proxy?.clearCache(revision: revision) {
+            box.connection.invalidate()
+        }
+    }
+
+    private static func pruneOtherRevisions(in storage: URL, keeping current: String) {
+        let fm = FileManager.default
+        guard let items = try? fm.contentsOfDirectory(at: storage, includingPropertiesForKeys: nil) else { return }
+        for item in items where item.lastPathComponent != current && !item.lastPathComponent.hasPrefix(".") {
+            try? fm.removeItem(at: item)
+        }
+    }
+}
+
+private final class DownloaderConnectionBox: @unchecked Sendable {
+    let connection: NSXPCConnection
+
+    init(serviceName: String, receiver: VoiceModelDownloadProgressReceiver?) {
+        let connection = NSXPCConnection(serviceName: serviceName)
+        connection.remoteObjectInterface = NSXPCInterface(with: VoiceModelDownloaderProtocol.self)
+        if let receiver {
+            connection.exportedInterface = NSXPCInterface(with: VoiceModelDownloadProgressProtocol.self)
+            connection.exportedObject = receiver
+        }
+        connection.resume()
+        self.connection = connection
+    }
+}
+
+private final class VoiceModelDownloadProgressReceiver: NSObject, VoiceModelDownloadProgressProtocol, @unchecked Sendable {
+    private let lock = NSLock()
+    private let totalBytes: Int64
+    private let onProgress: @Sendable (Int64, Int64) -> Void
+    private var bytesByPath: [String: Int64] = [:]
+
+    init(totalBytes: Int64, onProgress: @escaping @Sendable (Int64, Int64) -> Void) {
+        self.totalBytes = totalBytes
+        self.onProgress = onProgress
+    }
+
+    func didSetInitialBytes(_ bytes: Int64, forPath relativePath: String) {
+        let sum = lock.withLock {
+            bytesByPath[relativePath] = bytes
+            return bytesByPath.values.reduce(0, +)
+        }
+        onProgress(min(sum, totalBytes), totalBytes)
+    }
+
+    func didReceiveBytes(_ delta: Int64, forPath relativePath: String) {
+        let sum = lock.withLock {
+            bytesByPath[relativePath, default: 0] += delta
+            return bytesByPath.values.reduce(0, +)
+        }
+        onProgress(min(sum, totalBytes), totalBytes)
     }
 }
 

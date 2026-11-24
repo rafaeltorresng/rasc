@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F40000000000000000000001 /* VoiceModelDownloadProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F40000000000000000000010 /* VoiceModelDownloadProtocol.swift */; };
+		F40000000000000000000002 /* VoiceModelDownloadProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F40000000000000000000010 /* VoiceModelDownloadProtocol.swift */; };
+		F40000000000000000000003 /* VoiceModelDownloaderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F40000000000000000000011 /* VoiceModelDownloaderService.swift */; };
+		F40000000000000000000004 /* com.rafaeltorres.rasc.VoiceModelDownloader.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = F40000000000000000000014 /* com.rafaeltorres.rasc.VoiceModelDownloader.xpc */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F10000000000000000000005 /* VoiceModelManifest.json in Resources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000004 /* VoiceModelManifest.json */; };
 		F30000000000000000000005 /* VoiceCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000005 /* VoiceCaptureTests.swift */; };
 		F30000000000000000000004 /* VoiceCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20000000000000000000004 /* VoiceCaptureView.swift */; };
@@ -164,9 +168,35 @@
 			remoteGlobalIDString = 080000000000000000000001;
 			remoteInfo = Rasc;
 		};
+		F40000000000000000000005 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 090000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F40000000000000000000020;
+			remoteInfo = VoiceModelDownloader;
+		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		F40000000000000000000006 /* Embed XPC Services */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/XPCServices;
+			dstSubfolderSpec = 1;
+			files = (
+				F40000000000000000000004 /* com.rafaeltorres.rasc.VoiceModelDownloader.xpc in Embed XPC Services */,
+			);
+			name = "Embed XPC Services";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		F40000000000000000000010 /* VoiceModelDownloadProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/VoiceCapture/VoiceModelDownloadProtocol.swift; sourceTree = SOURCE_ROOT; };
+		F40000000000000000000011 /* VoiceModelDownloaderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceModelDownloaderService.swift; sourceTree = "<group>"; };
+		F40000000000000000000012 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F40000000000000000000013 /* VoiceModelDownloader.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VoiceModelDownloader.entitlements; sourceTree = "<group>"; };
+		F40000000000000000000014 /* com.rafaeltorres.rasc.VoiceModelDownloader.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.xpc-service; includeInIndex = 0; path = com.rafaeltorres.rasc.VoiceModelDownloader.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		F10000000000000000000004 /* VoiceModelManifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Rasc/Resources/VoiceModelManifest.json; sourceTree = SOURCE_ROOT; };
 		F20000000000000000000005 /* VoiceCaptureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCaptureTests.swift; sourceTree = "<group>"; };
 		F20000000000000000000004 /* VoiceCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/VoiceCapture/VoiceCaptureView.swift; sourceTree = SOURCE_ROOT; };
@@ -336,6 +366,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F40000000000000000000016 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -344,6 +381,7 @@
 			children = (
 				050000000000000000000002 /* Rasc */,
 				050000000000000000000003 /* RascTests */,
+				F40000000000000000000015 /* VoiceModelDownloader */,
 				050000000000000000000004 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -359,6 +397,7 @@
 				F20000000000000000000004 /* VoiceCaptureView.swift */,
 				F20000000000000000000003 /* VoiceCapture.swift */,
 				F20000000000000000000002 /* VoiceModel.swift */,
+				F40000000000000000000010 /* VoiceModelDownloadProtocol.swift */,
 				F20000000000000000000001 /* VoiceMicrophone.swift */,
 				020000000000000000000006 /* PanelController.swift */,
 				020000000000000000000007 /* ScratchpadView.swift */,
@@ -507,11 +546,22 @@
 			path = RascTests;
 			sourceTree = SOURCE_ROOT;
 		};
+		F40000000000000000000015 /* VoiceModelDownloader */ = {
+			isa = PBXGroup;
+			children = (
+				F40000000000000000000011 /* VoiceModelDownloaderService.swift */,
+				F40000000000000000000012 /* Info.plist */,
+				F40000000000000000000013 /* VoiceModelDownloader.entitlements */,
+			);
+			path = VoiceModelDownloader;
+			sourceTree = "<group>";
+		};
 		050000000000000000000004 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				020000000000000000000003 /* Rasc.app */,
 				020000000000000000000004 /* RascTests.xctest */,
+				F40000000000000000000014 /* com.rafaeltorres.rasc.VoiceModelDownloader.xpc */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -526,10 +576,12 @@
 				060000000000000000000001 /* Sources */,
 				040000000000000000000001 /* Frameworks */,
 				070000000000000000000001 /* Resources */,
+				F40000000000000000000006 /* Embed XPC Services */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F40000000000000000000021 /* PBXTargetDependency */,
 			);
 			name = Rasc;
 			packageProductDependencies = (
@@ -560,6 +612,22 @@
 			productReference = 020000000000000000000004 /* RascTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		F40000000000000000000020 /* VoiceModelDownloader */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F40000000000000000000024 /* Build configuration list for PBXNativeTarget "VoiceModelDownloader" */;
+			buildPhases = (
+				F40000000000000000000017 /* Sources */,
+				F40000000000000000000016 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VoiceModelDownloader;
+			productName = VoiceModelDownloader;
+			productReference = F40000000000000000000014 /* com.rafaeltorres.rasc.VoiceModelDownloader.xpc */;
+			productType = "com.apple.product-type.xpc-service";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -576,6 +644,9 @@
 					080000000000000000000002 = {
 						CreatedOnToolsVersion = 26.2;
 						TestTargetID = 080000000000000000000001;
+					};
+					F40000000000000000000020 = {
+						CreatedOnToolsVersion = 26.2;
 					};
 				};
 			};
@@ -600,6 +671,7 @@
 			targets = (
 				080000000000000000000001 /* Rasc */,
 				080000000000000000000002 /* RascTests */,
+				F40000000000000000000020 /* VoiceModelDownloader */,
 			);
 		};
 /* End PBXProject section */
@@ -635,6 +707,7 @@
 				F30000000000000000000004 /* VoiceCaptureView.swift in Sources */,
 				F30000000000000000000003 /* VoiceCapture.swift in Sources */,
 				F30000000000000000000002 /* VoiceModel.swift in Sources */,
+				F40000000000000000000001 /* VoiceModelDownloadProtocol.swift in Sources */,
 				F30000000000000000000001 /* VoiceMicrophone.swift in Sources */,
 				010000000000000000000005 /* PanelController.swift in Sources */,
 				010000000000000000000006 /* ScratchpadView.swift in Sources */,
@@ -778,6 +851,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F40000000000000000000017 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F40000000000000000000002 /* VoiceModelDownloadProtocol.swift in Sources */,
+				F40000000000000000000003 /* VoiceModelDownloaderService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -785,6 +867,11 @@
 			isa = PBXTargetDependency;
 			target = 080000000000000000000001 /* Rasc */;
 			targetProxy = 030000000000000000000001 /* PBXContainerItemProxy */;
+		};
+		F40000000000000000000021 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F40000000000000000000020 /* VoiceModelDownloader */;
+			targetProxy = F40000000000000000000005 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -991,9 +1078,60 @@
 			};
 			name = Release;
 		};
+		F40000000000000000000022 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = VoiceModelDownloader/VoiceModelDownloader.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 20;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VoiceModelDownloader/Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.1.14;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rafaeltorres.rasc.VoiceModelDownloader;
+				PRODUCT_NAME = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		F40000000000000000000023 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = VoiceModelDownloader/VoiceModelDownloader.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 20;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VoiceModelDownloader/Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.1.14;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rafaeltorres.rasc.VoiceModelDownloader;
+				PRODUCT_NAME = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		F40000000000000000000024 /* Build configuration list for PBXNativeTarget "VoiceModelDownloader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F40000000000000000000022 /* Debug */,
+				F40000000000000000000023 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		0A0000000000000000000001 /* Build configuration list for PBXNativeTarget "Rasc" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

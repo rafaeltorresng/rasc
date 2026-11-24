@@ -322,23 +322,54 @@ struct VoiceCaptureSettings: View {
         case .unchecked:
             modelProgress("Checking…")
         case .missing:
+            Button("Download Speech Model (\(formattedSize(capture.modelDownloadSizeBytes)))") {
+                capture.downloadModel()
+            }
+            detail("Downloads once for offline, on-device transcription. Nothing leaves this Mac.")
             Button("Choose Model Folder…", action: { importModel() })
-            detail("Choose the Fluid Speech Pro model folder for this version of Rasc.")
+        case .downloading(let downloaded, let total):
+            VStack(alignment: .leading, spacing: 6) {
+                LabeledContent("Speech Model") {
+                    Text("\(formattedSize(downloaded)) of \(formattedSize(total))")
+                        .foregroundStyle(palette.secondaryText(for: scheme))
+                        .monospacedDigit()
+                }
+                ProgressView(value: Double(min(downloaded, max(total, 1))), total: Double(max(total, 1)))
+                    .accessibilityLabel("Downloading speech model")
+                    .accessibilityValue("\(formattedSize(downloaded)) of \(formattedSize(total))")
+            }
+            Button("Cancel Download") { capture.cancelModelDownload() }
         case .importing:
             modelProgress("Verifying…")
         case .preparing:
             modelProgress("Preparing…")
             detail("The first preparation may take 20 seconds or more.")
         case .installed:
-            LabeledContent("Speech Model", value: "Installed")
+            LabeledContent("Speech Model", value: capture.canRemoveInstalledModel
+                ? "Installed (\(formattedSize(capture.modelDownloadSizeBytes)))"
+                : "Installed")
+            if capture.canRemoveInstalledModel {
+                Button("Remove Speech Model", role: .destructive) {
+                    capture.removeInstalledModel()
+                }
+                .disabled(capture.phase != .idle)
+            }
+        case .downloadFailed:
+            detail("Rasc couldn’t finish downloading the speech model. Check your connection and try again.")
+            Button("Retry Download") { capture.downloadModel() }
+            Button("Choose Model Folder…", action: { importModel() })
         case .failed:
             detail("Rasc couldn’t prepare the speech model.")
             Button("Check Model Again") { capture.checkSetup(prepare: true) }
             Button("Choose Model Folder…", action: { importModel() })
         case .lowDiskSpace:
-            detail("Free up disk space to prepare the speech model.")
+            detail("Free up disk space to install and prepare the speech model.")
             Button("Check Model Again") { capture.checkSetup(prepare: true) }
         }
+    }
+
+    private func formattedSize(_ bytes: Int64) -> String {
+        ByteCountFormatter.string(fromByteCount: bytes, countStyle: .file)
     }
 
     private func modelProgress(_ text: String) -> some View {

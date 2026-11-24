@@ -128,6 +128,111 @@ struct VoiceCaptureTests {
         #expect(try await fixture.repository.fetchAllNonDeleted().map(\.content) == ["Saved after freeing space."])
     }
 
+    @Test func downloadModelReportsProgressInstallsPreparesAndAllowsRemoval() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let store = DownloadStateProbe()
+        let capture = fixture.capture(speech: .init(
+            assetsAvailable: { store.available },
+            hasInstalledAssets: { store.installed },
+            downloadSizeBytes: { 1000 },
+            download: { progress in
+                progress(400, 1000)
+                try await Task.sleep(for: .milliseconds(20))
+                progress(1000, 1000)
+                store.markInstalled()
+            },
+            removeInstalled: { store.markRemoved() },
+            prepare: { store.recordPrepare() },
+            transcribe: { _, ready in await ready(); return "Downloaded." },
+            release: { store.recordRelease() }
+        ))
+        try await wait { capture.setup == .missing }
+        #expect(!capture.canRemoveInstalledModel)
+        capture.downloadModel()
+        try await wait {
+            if case .downloading(let downloaded, let total) = capture.setup {
+                return downloaded >= 400 && total == 1000
+            }
+            return false
+        }
+        try await wait { capture.setup == .installed }
+        #expect(capture.canRemoveInstalledModel)
+        #expect(store.prepares == 1)
+
+        capture.removeInstalledModel()
+        try await wait { capture.setup == .missing }
+        #expect(!capture.canRemoveInstalledModel)
+        #expect(store.releases == 1)
+        #expect(store.removals == 1)
+    }
+
+    @Test func cancellingModelDownloadRestoresMissingWithoutPreparing() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let store = DownloadStateProbe()
+        let gate = DecodeGate()
+        let capture = fixture.capture(speech: .init(
+            assetsAvailable: { store.available },
+            hasInstalledAssets: { store.installed },
+            downloadSizeBytes: { 1000 },
+            download: { progress in
+                progress(250, 1000)
+                _ = await gate.wait()
+                try Task.checkCancellation()
+            },
+            removeInstalled: {},
+            prepare: { store.recordPrepare() },
+            transcribe: { _, ready in await ready(); return "" },
+            release: {}
+        ))
+        try await wait { capture.setup == .missing }
+        capture.downloadModel()
+        await gate.waitUntilEntered()
+        try await wait {
+            if case .downloading = capture.setup { return true }
+            return false
+        }
+        capture.cancelModelDownload()
+        await gate.release()
+        try await wait { capture.setup == .missing }
+        #expect(store.prepares == 0)
+    }
+
+    @Test func interruptedDownloadRecoversOnRetryAndLowDiskMapsCorrectly() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let store = DownloadStateProbe()
+        let attempts = ModelReadinessProbe()
+        let capture = fixture.capture(speech: .init(
+            assetsAvailable: { store.available },
+            hasInstalledAssets: { store.installed },
+            downloadSizeBytes: { 1000 },
+            download: { _ in
+                switch await attempts.nextAttempt() {
+                case 1: throw VoiceModel.PreparationError.lowDiskSpace
+                case 2: throw URLError(.networkConnectionLost)
+                default: store.markInstalled()
+                }
+            },
+            removeInstalled: {},
+            prepare: { store.recordPrepare() },
+            transcribe: { _, ready in await ready(); return "" },
+            release: {}
+        ))
+        try await wait { capture.setup == .missing }
+        capture.downloadModel()
+        try await wait { capture.setup == .lowDiskSpace }
+
+        capture.downloadModel()
+        try await wait { capture.setup == .downloadFailed }
+
+        capture.downloadModel()
+        try await wait { capture.setup == .installed }
+        #expect(capture.canRemoveInstalledModel)
+        #expect(store.prepares == 1)
+    }
+
     @Test func meterUpdatesStayLocalToTheRecordingMeter() throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
@@ -594,6 +699,39 @@ private actor ModelReadinessProbe {
     func makeReady() { ready = true }
 
     func release() { releases += 1 }
+}
+
+private final class DownloadStateProbe: @unchecked Sendable {
+    private let lock = NSLock()
+    private var _available = false
+    private var _installed = false
+    private var _prepares = 0
+    private var _releases = 0
+    private var _removals = 0
+
+    var available: Bool { lock.withLock { _available } }
+    var installed: Bool { lock.withLock { _installed } }
+    var prepares: Int { lock.withLock { _prepares } }
+    var releases: Int { lock.withLock { _releases } }
+    var removals: Int { lock.withLock { _removals } }
+
+    func markInstalled() {
+        lock.withLock {
+            _available = true
+            _installed = true
+        }
+    }
+
+    func markRemoved() {
+        lock.withLock {
+            _available = false
+            _installed = false
+            _removals += 1
+        }
+    }
+
+    func recordPrepare() { lock.withLock { _prepares += 1 } }
+    func recordRelease() { lock.withLock { _releases += 1 } }
 }
 
 private actor VoiceHandoffRefinementProvider: RefinementProvider {

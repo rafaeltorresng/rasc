@@ -43,6 +43,17 @@ can import that same directory through **Choose Model Folder…**.
   consumes the assigned shortcut so it cannot type into the note. The capsule
   is non-activating during capture. Once the transcript is saved, the standard
   Scratchpad opens and takes keyboard focus.
+- Standard Rasc distributions do not bundle the 622 MiB speech model. When you
+  enable Voice Capture and choose **Download Speech Model**, an embedded
+  sandboxed XPC helper (`com.rafaeltorres.rasc.VoiceModelDownloader.xpc`,
+  with only `app-sandbox` and `network.client` entitlements) downloads the
+  pinned files with HTTP `Range` resume support into its own cache and hands
+  read-only file handles back to Rasc. The main app keeps its network-isolated
+  sandbox, verifies every byte size and SHA-256 hash against
+  `VoiceModelManifest.json`, atomically installs into
+  `Application Support/Rasc/VoiceModels/<revision>/`, prunes older revisions,
+  and clears the helper cache. You can also remove the installed model from
+  Settings to reclaim storage, or import a local folder with **Choose Model Folder…**.
 - Rasc starts preparing speech on opt-in and after launch when Voice Capture
   is already enabled. A recording can share the same in-progress load. The
   microphone opens only when recording starts. The fixed 120 ms end buffer preserves

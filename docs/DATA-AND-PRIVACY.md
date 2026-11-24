@@ -37,12 +37,17 @@ recording, including a short end buffer. It stops before transcription and
 releases the tap and engine. Rasc caps a recording at 90 seconds. It records
 microphone input only.
 
-Fluid Speech Pro transcribes on this Mac using Core ML. The app has no network
-client for Voice Capture, no remote fallback and no speech or audio telemetry.
-A build can include the verified model pack, or you can select the matching
-model folder in Settings. Rasc verifies imported files against the built-in
-size and SHA-256 list before moving the pack into its Application Support
-folder. Model preparation can occur without microphone access.
+Fluid Speech Pro transcribes on this Mac using Core ML. The main app has no
+network client for Voice Capture, no remote fallback and no speech or audio
+telemetry. When you opt in and choose **Download Speech Model**, an embedded
+sandboxed XPC helper (`com.rafaeltorres.rasc.VoiceModelDownloader.xpc`, holding
+only `app-sandbox` and `network.client` entitlements) fetches only the pinned
+model files into its own cache and passes read-only file handles back to Rasc.
+Rasc verifies every file against the built-in byte size and SHA-256 manifest
+before moving the pack into its Application Support folder. After installation,
+transcription runs completely offline, and you can remove the installed model
+from Settings to reclaim storage. A manual **Choose Model Folder…** import path
+also remains available. Model preparation can occur without microphone access.
 
 Audio stays in memory. After a recognition failure it can be retried for up to
 two minutes, or discarded immediately. Audio recovery ends when Rasc quits or
