@@ -1,10 +1,12 @@
 import AppKit
+import Combine
 import SwiftUI
 
 @MainActor
 final class HomeWindowController: NSObject, NSWindowDelegate {
     private var window: NSWindow?
     private var session: HomeSession?
+    private var paletteObservation: AnyCancellable?
     private let windowFrameStore: WindowFrameStore
     private var displayObservers: [NSObjectProtocol] = []
 
@@ -32,7 +34,7 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
         self.session = session
         session.recordHomeVisit()
 
-        let contentView = ThemeRebuildView {
+        let contentView = RascAppearanceView {
             HomeView(
                 session: session,
                 onOpenNote: onOpenNote,
@@ -104,7 +106,9 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
         window.isMovableByWindowBackground = true
         window.minSize = RascWindowMetrics.homeMinimum
         window.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
-        window.backgroundColor = RascSurfacePalette.panelBackground
+        paletteObservation = ThemeStore.shared.$palette.sink { [weak window] palette in
+            window?.backgroundColor = palette.panelBackground
+        }
         return window
     }
 
