@@ -19,6 +19,7 @@ struct OnboardingView: View {
     @Bindable var coordinator: OnboardingCoordinator
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @FocusState private var welcomeFocused: Bool
     @FocusState private var completionFocused: Bool
@@ -72,7 +73,7 @@ struct OnboardingView: View {
             width: RascWindowMetrics.onboarding.width,
             height: RascWindowMetrics.onboarding.height
         )
-        .tint(RascSurfacePalette.primaryText(for: colorScheme))
+        .tint(Color.primary)
         .animation(RascMotion.surface(reduceMotion: reduceMotion), value: coordinator.presentedStep)
         .onAppear {
             focusCurrentStep()
@@ -109,11 +110,11 @@ struct OnboardingView: View {
     }
 
     private var onboardingSecondaryText: Color {
-        RascSurfacePalette.secondaryText(for: colorScheme)
+        palette.secondaryText(for: colorScheme)
     }
 
     private var onboardingProductLoopText: Color {
-        RascSurfacePalette.secondaryText(for: colorScheme)
+        palette.secondaryText(for: colorScheme)
     }
 
     private var welcomeContent: some View {
@@ -221,8 +222,8 @@ struct OnboardingView: View {
                 Circle()
                     .fill(
                         step <= progress.current
-                            ? RascSurfacePalette.homeSectionLabel(for: colorScheme)
-                            : RascSurfacePalette.homeSectionLabel(for: colorScheme).opacity(0.26)
+                            ? palette.homeSectionLabel(for: colorScheme)
+                            : palette.homeSectionLabel(for: colorScheme).opacity(0.26)
                     )
                     .frame(width: 5, height: 5)
             }
@@ -251,7 +252,7 @@ struct OnboardingView: View {
                 Text("YOUR SHORTCUT")
                     .font(.caption2.weight(.medium))
                     .tracking(0.8)
-                    .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                    .foregroundStyle(palette.metadataText(for: colorScheme))
 
                 ShortcutKeycapView(
                     label: GlobalShortcutFormatting.currentToggleShortcutDisplay(),
@@ -419,7 +420,7 @@ struct OnboardingView: View {
                 if let loginError = coordinator.loginItemError {
                     Text(loginError)
                         .font(.caption)
-                        .foregroundStyle(RascSurfacePalette.destructiveText(for: colorScheme))
+                        .foregroundStyle(palette.destructiveText(for: colorScheme))
                         .multilineTextAlignment(.center)
                 }
 
@@ -436,7 +437,7 @@ struct OnboardingView: View {
 
                 Text("Optional. Rasc works without it.")
                     .font(.caption)
-                    .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                    .foregroundStyle(palette.metadataText(for: colorScheme))
                     .multilineTextAlignment(.center)
             }
             .padding(.bottom, 16)
@@ -502,15 +503,16 @@ struct OnboardingView: View {
 }
 
 private struct OnboardingBackground: View {
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         ZStack {
-            RascSurfacePalette.canvas(for: colorScheme)
+            palette.canvas(for: colorScheme)
 
             RadialGradient(
                 colors: [
-                    RascSurfacePalette.focus(for: colorScheme)
+                    palette.focus(for: colorScheme)
                         .opacity(colorScheme == .dark ? 0.07 : 0.04),
                     .clear,
                 ],
@@ -526,6 +528,7 @@ private struct OnboardingBackground: View {
 private struct OnboardingProminentButtonStyle: ButtonStyle {
     var fullWidth = true
 
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -533,19 +536,19 @@ private struct OnboardingProminentButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: 13, weight: .semibold))
-            .foregroundStyle(RascSurfacePalette.actionPrimaryLabel(for: colorScheme))
+            .foregroundStyle(palette.actionPrimaryLabel(for: colorScheme))
             .frame(maxWidth: fullWidth ? .infinity : nil)
             .padding(.horizontal, fullWidth ? 0 : 24)
             .padding(.vertical, 9)
             .background {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(RascSurfacePalette.actionPrimaryFill(for: colorScheme))
+                    .fill(palette.actionPrimaryFill(for: colorScheme))
                     .opacity(isEnabled ? 1 : 0.45)
             }
             .overlay {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .strokeBorder(
-                        RascSurfacePalette.actionPrimaryLabel(for: colorScheme).opacity(0.18),
+                        palette.actionPrimaryLabel(for: colorScheme).opacity(0.18),
                         lineWidth: 1
                     )
             }
