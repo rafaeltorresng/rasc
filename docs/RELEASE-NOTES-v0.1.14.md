@@ -46,9 +46,16 @@ require **Open Anyway** in System Settings → Privacy & Security. See the
   relaunched with all three notes unchanged; the bundled library-load
   constraint and codesign verification remained valid. The user's installed app
   and notes were not involved.
-- The landing's lint, typecheck, production build and unit tests passed. Its
-  production download link and appcast were checked after publication.
+- The landing's lint, typecheck, production build and unit tests passed. GitHub
+  Pages runs
+  [45310336475](https://github.com/rafaeltorresng/rasc-web/actions/runs/45310336475)
+  (appcast) and
+  [45310606975](https://github.com/rafaeltorresng/rasc-web/actions/runs/45310606975)
+  (release facts) passed. The live appcast is byte-identical to the verified
+  eight-entry file, and the live landing serves the v0.1.14 download URL and
+  checksum. All GitHub Release assets were re-downloaded and byte-matched.
+- A post-deploy in-app check on the live feed reported “You’re up to date! Rasc
+  0.1.14 is currently the newest version available.”
 
-The clean-account post-deploy “Already up to date” smoke was not run in this
-environment. macOS 14–25, VoiceOver, Full Keyboard Access, Reduce
-Motion/Transparency, and a clean-machine install remain unverified.
+macOS 14–25, VoiceOver, Full Keyboard Access, Reduce Motion/Transparency, and a
+clean-machine install remain unverified.

@@ -324,11 +324,16 @@ for each next candidate; completed run records belong in the release notes.
   checked for updates over a temporary public HTTPS staging feed. Sparkle
   offered 0.1.14/build 20, verified and installed it, and relaunched at build
   20 with all three synthetic notes byte-identical, the isolated container and
-  the Library Load Constraint intact. The user's installed app and notes were
-  not involved.
+  the Library Load Constraint intact. A one-byte-flipped DMG was rejected by
+  Sparkle with “The update is improperly signed and could not be validated” and
+  the app stayed on build 19. The user's installed app and notes
+  were not involved.
 - The public release assets were downloaded and byte-matched; the website
-  download link and appcast were checked after publication. macOS 14–25 remain
-  unverified.
+  download link and appcast were checked after publication. GitHub Pages runs
+  `45310336475` (appcast) and `45310606975` (release facts) passed, and the live
+  appcast is byte-identical to the verified eight-entry file. A post-deploy
+  in-app check on the live feed reported “You’re up to date!” on build 20.
+  macOS 14–25 remain unverified.
 - **Previous:** v0.1.13/build 19, source commit `c3ce2a1`, DMG
   `Rasc-0.1.13-updater.dmg`, SHA-256
   `bf324171fc1fe535c9615f56d4083300ea72f45279e8b5327d1ea3b993fa2cae`, with
