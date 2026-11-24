@@ -132,7 +132,7 @@ struct VoiceStatusView: View {
         case .issue(let issue):
             if issue == .permission {
                 action("Settings", accessibilityLabel: "Open Microphone Settings") { capture.openMicrophoneSettings() }
-            } else if issue == .transcription && capture.canRetryAudio {
+            } else if capture.canRetryAudio {
                 action("Retry", accessibilityLabel: "Retry transcription") { capture.recover() }
             } else {
                 action("Try again") { capture.recover() }
@@ -159,6 +159,9 @@ struct VoiceStatusView: View {
         case .issue(.permission): "Microphone access needed"
         case .issue(.microphone): "Microphone unavailable"
         case .issue(.noSpeech): "No speech heard"
+        case .issue(.modelUnavailable): "Speech model unavailable"
+        case .issue(.modelTimeout): "Speech is taking too long"
+        case .issue(.lowDiskSpace): "Free up disk space"
         case .issue(.transcription): "Couldn’t transcribe"
         case .issue(.persistence): "Couldn’t save thought"
         case .issue(.blocked): "Close the open dialog"
@@ -295,8 +298,9 @@ struct VoiceCaptureSettings: View {
         case .finishing, .waitingForModel, .transcribing:
             detail("Preparing your transcript…")
             Button("Cancel Recording") { capture.cancel() }
-        case .issue:
-            Button(capture.needsMicrophoneAccess ? "Open Microphone Settings…" : "Try Again") {
+        case .issue(let issue):
+            detail(issue.message)
+            Button(capture.needsMicrophoneAccess ? "Open Microphone Settings…" : capture.canRetryAudio ? "Retry Transcription" : "Try Again") {
                 capture.recover()
             }
         default:
@@ -331,6 +335,9 @@ struct VoiceCaptureSettings: View {
             detail("Rasc couldn’t prepare the speech model.")
             Button("Check Model Again") { capture.checkSetup(prepare: true) }
             Button("Choose Model Folder…", action: { importModel() })
+        case .lowDiskSpace:
+            detail("Free up disk space to prepare the speech model.")
+            Button("Check Model Again") { capture.checkSetup(prepare: true) }
         }
     }
 

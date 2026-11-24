@@ -27,13 +27,16 @@ final class VoiceCapture: ObservableObject {
     }
 
     enum Issue: Equatable {
-        case permission, microphone, noSpeech, transcription, persistence, blocked
+        case permission, microphone, noSpeech, modelUnavailable, modelTimeout, lowDiskSpace, transcription, persistence, blocked
 
         var message: String {
             switch self {
             case .permission: "Allow Rasc to use the microphone in System Settings."
             case .microphone: "Rasc couldn’t receive audio from your microphone."
             case .noSpeech: "Rasc didn’t recognize any speech."
+            case .modelUnavailable: "Rasc couldn’t load the local speech model."
+            case .modelTimeout: "The speech model is taking too long to load."
+            case .lowDiskSpace: "Free up disk space, then retry transcription."
             case .transcription: "Rasc couldn’t transcribe this recording."
             case .persistence: "Rasc couldn’t save the recorded thought. Try again to save it."
             case .blocked: "Finish the open dialog before recording."
@@ -42,7 +45,23 @@ final class VoiceCapture: ObservableObject {
     }
 
     enum Setup: Equatable {
-        case unchecked, missing, installed, importing, preparing, failed
+        case unchecked, missing, installed, importing, preparing, failed, lowDiskSpace
+    }
+
+    struct Speech: Sendable {
+        typealias Ready = @Sendable () async -> Void
+        var assetsAvailable: @Sendable () -> Bool
+        var prepare: @Sendable () async throws -> Void
+        var transcribe: @Sendable (VoiceAudio, @escaping Ready) async throws -> String
+        var release: @Sendable () async -> Void
+
+        static func local() -> Self {
+            let model = VoiceModel()
+            return Self(assetsAvailable: { (try? VoiceModelAssets.availableFolder()) != nil },
+                        prepare: { try await model.prepare() },
+                        transcribe: { try await model.transcribe($0, modelReady: $1) },
+                        release: { await model.releaseForMemoryPressure() })
+        }
     }
 
     struct Input: Sendable {
@@ -74,9 +93,9 @@ final class VoiceCapture: ObservableObject {
     private let preferences: UserDefaults
     private let support: Bool
     private let input: Input
-    private let model = VoiceModel()
+    private let speech: Speech
+    private let modelTimeout: Duration
     private let presentWindows: Bool
-    private let injectedDecode: (@Sendable (VoiceAudio) async throws -> String)?
     private var repository: NoteRepository?
     private lazy var windows = VoiceCaptureWindows(capture: self)
     private var handlesShortcut = false
@@ -85,6 +104,8 @@ final class VoiceCapture: ObservableObject {
     private var sleepObserver: (any NSObjectProtocol)?
     private var operation: Task<Void, Never>?
     private var watchdog: Task<Void, Never>?
+    private var slowPreparation: Task<Void, Never>?
+    private var releaseAfterCapture = false
     private var meter: Task<Void, Never>?
     private var audioExpiry: Task<Void, Never>?
     private var id: UUID?
@@ -117,18 +138,21 @@ final class VoiceCapture: ObservableObject {
         supported: Bool = VoiceCapture.isSupported,
         input: Input = .microphone(),
         presentWindows: Bool = true,
-        decode: (@Sendable (VoiceAudio) async throws -> String)? = nil
+        speech: Speech = .local(),
+        modelTimeout: Duration = .seconds(35)
     ) {
         self.preferences = preferences
         support = supported
         enabled = supported && preferences.bool(forKey: Self.preferenceKey)
         self.input = input
         self.presentWindows = presentWindows
-        injectedDecode = decode
+        self.speech = speech
+        self.modelTimeout = modelTimeout
     }
 
     func connect(repository: NoteRepository) {
         self.repository = repository
+        if enabled { checkSetup(prepare: true) }
         guard support, presentWindows, !handlesShortcut else { return }
         handlesShortcut = true
         if !enabled { KeyboardShortcuts.disable(.voiceCapture) }
@@ -154,7 +178,7 @@ final class VoiceCapture: ObservableObject {
             sleepObserver = nil
             pressure?.cancel()
             pressure = nil
-            Task { await model.releaseForMemoryPressure() }
+            Task { if !enabled { await speech.release() } }
             cancel()
         }
     }
@@ -180,12 +204,12 @@ final class VoiceCapture: ObservableObject {
 
     func checkSetup(prepare: Bool = false) {
         guard enabled, setupTask == nil else { return }
-        setupTask = Task {
-            let folder = await Task.detached { try? VoiceModelAssets.availableFolder() }.value
+        setupTask = Task(priority: .utility) {
+            let available = await Task.detached(priority: .utility, operation: speech.assetsAvailable).value
             guard !Task.isCancelled else { return }
             setupTask = nil
-            setup = folder == nil ? .missing : .installed
-            if folder != nil, prepare { prepareModel() }
+            setup = available ? .installed : .missing
+            if available, prepare { prepareModel() }
         }
     }
 
@@ -211,17 +235,20 @@ final class VoiceCapture: ObservableObject {
     }
 
     func prepareModel() {
-        guard enabled, setupTask == nil, phase == .idle else { return }
+        guard enabled, setupTask == nil, phase == .idle || phase == .listening else { return }
         observeResources()
         setup = .preparing
-        setupTask = Task {
+        setupTask = Task(priority: .utility) {
             do {
-                try await model.prepare()
+                try await speech.prepare()
                 try Task.checkCancellation()
+                setup = .installed
+            } catch is CancellationError {
+                guard !Task.isCancelled else { return }
                 setup = .installed
             } catch {
                 guard !Task.isCancelled else { return }
-                setup = .failed
+                setup = (error as? VoiceModel.PreparationError) == .lowDiskSpace ? .lowDiskSpace : .failed
             }
             setupTask = nil
         }
@@ -231,7 +258,7 @@ final class VoiceCapture: ObservableObject {
         guard presentWindows, pressure == nil else { return }
         let pressure = DispatchSource.makeMemoryPressureSource(eventMask: [.warning, .critical], queue: .main)
         pressure.setEventHandler { [weak self] in
-            Task { @MainActor in await self?.model.releaseForMemoryPressure() }
+            Task { @MainActor in self?.releaseModelWhenSafe() }
         }
         self.pressure = pressure
         pressure.activate()
@@ -242,8 +269,18 @@ final class VoiceCapture: ObservableObject {
                 guard let self else { return }
                 if self.phase == .checking { self.cancel() }
                 else { self.interruptInput() }
-                await self.model.releaseForMemoryPressure()
+                self.releaseModelWhenSafe()
             }
+        }
+    }
+
+    func releaseModelWhenSafe() {
+        switch phase {
+        case .checking, .starting, .listening, .finishing, .waitingForModel, .transcribing:
+            releaseAfterCapture = true
+        default:
+            releaseAfterCapture = false
+            Task { await speech.release() }
         }
     }
 
@@ -291,18 +328,16 @@ final class VoiceCapture: ObservableObject {
         observeResources()
 
         operation = Task {
-            if injectedDecode == nil {
-                let available = await Task.detached { (try? VoiceModelAssets.availableFolder()) != nil }.value
-                guard owns(token) else { return }
-                guard available else {
-                    setup = .missing
-                    transition(.idle)
-                    if presentWindows {
-                        windows.hideStatus()
-                        SettingsNavigation.revealVoiceCapture()
-                    }
-                    return
+            let available = await Task.detached(operation: speech.assetsAvailable).value
+            guard owns(token) else { return }
+            guard available else {
+                setup = .missing
+                transition(.idle)
+                if presentWindows {
+                    windows.hideStatus()
+                    SettingsNavigation.revealVoiceCapture()
                 }
+                return
             }
 
             switch input.authorization() {
@@ -353,16 +388,7 @@ final class VoiceCapture: ObservableObject {
                         Self.logger.debug("Shortcut to microphone: \(Self.ms(activatedAt), privacy: .public) ms")
                     }
                     transition(.listening)
-                    if injectedDecode == nil, setupTask == nil {
-                        setupTask = Task {
-                            do {
-                                try await model.prepare()
-                                guard !Task.isCancelled else { return }
-                            } catch { /* Finalization exposes the failure and provides Retry. */ }
-                            guard !Task.isCancelled else { return }
-                            setupTask = nil
-                        }
-                    }
+                    prepareModel()
                 }
                 if phase == .starting, started.duration(to: .now) > .seconds(2) {
                     interruptInput()
@@ -429,33 +455,21 @@ final class VoiceCapture: ObservableObject {
         audioExpiry?.cancel()
         retryAudio = audio
         canRetryAudio = false
-        transition(.waitingForModel)
+        transition(.finishing)
         let start = ContinuousClock.now
-        watchdog?.cancel()
-        watchdog = Task {
-            do { try await Task.sleep(for: .seconds(60)) } catch { return }
+        slowPreparation = Task {
+            do { try await Task.sleep(for: .milliseconds(500)) } catch { return }
             guard owns(token), decodeID == attempt else { return }
-            decodeID = nil
-            operation?.cancel()
-            transcriptionFailed(token)
+            transition(.waitingForModel)
         }
+        armDeadline(modelTimeout, owner: token, attempt: attempt, issue: .modelTimeout)
         operation = Task {
             do {
-                let text: String
-                if let injectedDecode {
-                    transition(.transcribing)
-                    text = try await injectedDecode(audio)
-                } else {
-                    text = try await model.transcribe(audio) { [weak self] in
-                        Task { @MainActor in
-                            guard let self, self.id == token, self.decodeID == attempt else { return }
-                            self.transition(.transcribing)
-                        }
-                    }
+                let text = try await speech.transcribe(audio) { [weak self] in
+                    await self?.didPrepareModel(owner: token, attempt: attempt)
                 }
                 guard owns(token), decodeID == attempt else { return }
-                watchdog?.cancel()
-                decodeID = nil
+                clearDecodeTimers()
                 releaseAudio()
                 guard text.contains(where: { $0.isLetter || $0.isNumber }) else {
                     transition(.issue(.noSpeech))
@@ -466,16 +480,39 @@ final class VoiceCapture: ObservableObject {
                 await saveAndOpenScratch()
             } catch {
                 guard owns(token), decodeID == attempt else { return }
-                watchdog?.cancel()
-                decodeID = nil
-                transcriptionFailed(token)
+                let issue: Issue = switch error as? VoiceModel.PreparationError {
+                case .lowDiskSpace: .lowDiskSpace
+                case .unavailable: .modelUnavailable
+                case nil: .transcription
+                }
+                transcriptionFailed(token, issue: issue)
             }
         }
     }
 
-    private func transcriptionFailed(_ token: UUID) {
-        transition(.issue(.transcription))
+    private func didPrepareModel(owner token: UUID, attempt: UUID) {
+        guard owns(token), decodeID == attempt else { return }
+        slowPreparation?.cancel()
+        slowPreparation = nil
+        if setup == .failed || setup == .lowDiskSpace { setup = .installed }
+        transition(.transcribing)
+        armDeadline(.seconds(30), owner: token, attempt: attempt, issue: .transcription)
+    }
+
+    private func armDeadline(_ duration: Duration, owner token: UUID, attempt: UUID, issue: Issue) {
+        watchdog?.cancel()
+        watchdog = Task {
+            do { try await Task.sleep(for: duration) } catch { return }
+            guard owns(token), decodeID == attempt else { return }
+            operation?.cancel()
+            transcriptionFailed(token, issue: issue)
+        }
+    }
+
+    private func transcriptionFailed(_ token: UUID, issue: Issue) {
+        clearDecodeTimers()
         canRetryAudio = retryAudio != nil
+        transition(.issue(issue))
         audioExpiry = Task {
             do { try await Task.sleep(for: .seconds(120)) } catch { return }
             if id == token { releaseAudio() }
@@ -491,7 +528,7 @@ final class VoiceCapture: ObservableObject {
         if phase == .issue(.persistence), pendingTranscript != nil {
             transition(.saving)
             operation = Task { await saveAndOpenScratch() }
-        } else if phase == .issue(.transcription), let retryAudio {
+        } else if let retryAudio {
             transcribe(retryAudio, owner: token)
         } else {
             begin()
@@ -584,10 +621,16 @@ final class VoiceCapture: ObservableObject {
         meter = nil
         buffer = nil
         inputLevel.update(0)
+        clearDecodeTimers()
+        releaseAudio()
+    }
+
+    private func clearDecodeTimers() {
         watchdog?.cancel()
         watchdog = nil
+        slowPreparation?.cancel()
+        slowPreparation = nil
         decodeID = nil
-        releaseAudio()
     }
 
     private func releaseAudio() {
@@ -599,6 +642,12 @@ final class VoiceCapture: ObservableObject {
 
     private func transition(_ next: Phase) {
         phase = next
+        switch next {
+        case .idle, .issue, .saving:
+            if releaseAfterCapture { releaseModelWhenSafe() }
+        default:
+            break
+        }
         if presentWindows { windows.announce(next) }
     }
 

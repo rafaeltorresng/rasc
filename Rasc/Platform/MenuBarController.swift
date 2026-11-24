@@ -162,7 +162,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         case .listening: "Finish Voice Capture"
         case .ready: "Open Captured Thought"
         case .issue(.permission) where capture.needsMicrophoneAccess: "Open Microphone Settings…"
-        case .issue(.transcription) where capture.canRetryAudio: "Retry Transcription"
+        case .issue where capture.canRetryAudio: "Retry Transcription"
         case .issue: "Try Voice Capture Again"
         default: capture.enabled ? "Start Voice Capture" : "Voice Capture…"
         }

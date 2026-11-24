@@ -110,6 +110,10 @@ enum VoiceModelAssets {
 
 actor VoiceModel {
     private static let logger = Logger(subsystem: "app.rasc", category: "VoiceModel")
+    enum PreparationError: Error {
+        case unavailable, lowDiskSpace
+    }
+
     private let retention: Duration
     private var models: AsrModels?
     private var loading: (id: UUID, task: Task<AsrModels, Error>)?
@@ -118,7 +122,7 @@ actor VoiceModel {
     private var expiryID: UUID?
     private var releaseAfterPrediction = false
 
-    init(retention: Duration = .seconds(180)) {
+    init(retention: Duration = .seconds(600)) {
         self.retention = retention
     }
 
@@ -145,13 +149,7 @@ actor VoiceModel {
         if let loading {
             job = loading
         } else {
-            job = (UUID(), Task {
-                let url = try VoiceModelAssets.availableFolder()
-                let start = ContinuousClock.now
-                let models = try await AsrModels.loadLocalOnly(from: url, version: .fluidParakeetPro)
-                Self.logger.debug("Core ML model load: \(Self.milliseconds(since: start), privacy: .public) ms")
-                return models
-            })
+            job = (UUID(), Task { try await Self.loadModels() })
             loading = job
         }
         do {
@@ -171,7 +169,30 @@ actor VoiceModel {
         }
     }
 
-    func transcribe(_ audio: VoiceAudio, modelReady: @escaping @Sendable () -> Void) async throws -> String {
+    private static func loadModels() async throws -> AsrModels {
+        guard let url = try? VoiceModelAssets.availableFolder() else { throw PreparationError.unavailable }
+        let start = ContinuousClock.now
+        for attempt in 1...2 {
+            do {
+                let models = try await AsrModels.loadLocalOnly(from: url, version: .fluidParakeetPro)
+                logger.debug("Core ML model load: \(milliseconds(since: start), privacy: .public) ms")
+                return models
+            } catch {
+                try Task.checkCancellation()
+                let failure = error as NSError
+                logger.error("Local model load attempt \(attempt, privacy: .public) failed: \(failure.domain, privacy: .public) (\(failure.code, privacy: .public))")
+                if let capacity = try? url.resourceValues(forKeys: [.volumeAvailableCapacityKey]).volumeAvailableCapacity,
+                   capacity < 1_000_000_000 {
+                    throw PreparationError.lowDiskSpace
+                }
+                guard attempt == 1, failure.domain == MLModelErrorDomain else { throw PreparationError.unavailable }
+                try await Task.sleep(for: .milliseconds(200))
+            }
+        }
+        throw PreparationError.unavailable
+    }
+
+    func transcribe(_ audio: VoiceAudio, modelReady: @escaping @Sendable () async -> Void) async throws -> String {
         // A canceled Core ML prediction may still be executing. Drain it before another starts.
         while let previous = prediction {
             _ = await previous.task.result
@@ -183,7 +204,7 @@ actor VoiceModel {
         let task = Task {
             let models = try await preparedModel()
             try Task.checkCancellation()
-            modelReady()
+            await modelReady()
             var samples = try audio.mono16k()
             if samples.count < 16_000 {
                 samples.append(contentsOf: repeatElement(0, count: 16_000 - samples.count))

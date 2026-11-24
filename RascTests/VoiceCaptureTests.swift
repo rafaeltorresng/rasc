@@ -51,6 +51,83 @@ struct VoiceCaptureTests {
         #expect(await fixture.input.requests == 0)
     }
 
+    @Test func enabledLaunchPreparesSpeechAndDefersMemoryReleaseUntilAfterCapture() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let model = ModelReadinessProbe()
+        let capture = fixture.capture(speech: .init(
+            assetsAvailable: { true }, prepare: { try await model.prepare() },
+            transcribe: { _, ready in
+                try await model.waitUntilReady()
+                await ready()
+                return "Prepared during capture."
+            }, release: { await model.release() }
+        ))
+        try await wait { capture.setup == .preparing }
+        await model.waitUntilPrepared()
+        #expect(await model.preparations == 1)
+        #expect(await fixture.input.starts == 0)
+        capture.activate()
+        try await wait { capture.phase == .listening }
+        capture.releaseModelWhenSafe()
+        capture.finish()
+        try await wait { capture.phase == .waitingForModel }
+        #expect(await model.releases == 0)
+        #expect(await fixture.input.active == nil)
+        await model.makeReady()
+        try await wait { capture.phase == .idle }
+        #expect(await model.preparations == 1)
+        #expect(await model.releases == 1)
+        #expect(try await fixture.repository.fetchAllNonDeleted().map(\.content) == ["Prepared during capture."])
+    }
+
+    @Test func modelTimeoutRetainsAudioForRetryAndIgnoresLateResults() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let stale = DecodeGate()
+        let attempts = ModelReadinessProbe()
+        let capture = fixture.capture(speech: .init(
+            assetsAvailable: { true }, prepare: {}, transcribe: { _, ready in
+                if await attempts.nextAttempt() == 1 { return await stale.wait() }
+                await ready()
+                return "Recovered from the same recording."
+            }, release: {}
+        ), modelTimeout: .milliseconds(110))
+        capture.activate()
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        await stale.waitUntilEntered()
+        try await wait { capture.phase == .issue(.modelTimeout) }
+        #expect(capture.canRetryAudio)
+        capture.recover()
+        try await wait { capture.phase == .idle }
+        await stale.release()
+        #expect(await fixture.input.starts == 1)
+        #expect(try await fixture.repository.fetchAllNonDeleted().map(\.content) == ["Recovered from the same recording."])
+    }
+
+    @Test func lowDiskFailureKeepsTheRecordingReadyToRetry() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let attempts = ModelReadinessProbe()
+        let capture = fixture.capture(speech: .init(
+            assetsAvailable: { true }, prepare: {}, transcribe: { _, ready in
+                if await attempts.nextAttempt() == 1 { throw VoiceModel.PreparationError.lowDiskSpace }
+                await ready()
+                return "Saved after freeing space."
+            }, release: {}
+        ))
+        capture.activate()
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .issue(.lowDiskSpace) }
+        #expect(capture.canRetryAudio)
+        capture.recover()
+        try await wait { capture.phase == .idle }
+        #expect(await fixture.input.starts == 1)
+        #expect(try await fixture.repository.fetchAllNonDeleted().map(\.content) == ["Saved after freeing space."])
+    }
+
     @Test func meterUpdatesStayLocalToTheRecordingMeter() throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
@@ -404,6 +481,8 @@ struct VoiceCaptureTests {
             authorization: AVAuthorizationStatus = .authorized,
             audible: Bool = true,
             presentWindows: Bool = false,
+            speech: VoiceCapture.Speech? = nil,
+            modelTimeout: Duration = .seconds(35),
             decode: @escaping @Sendable (VoiceAudio) async throws -> String = { _ in "Talvez não fazer o deploy ainda." }
         ) -> VoiceCapture {
             defaults.set(enabled, forKey: VoiceCapture.preferenceKey)
@@ -415,7 +494,12 @@ struct VoiceCaptureTests {
                     start: { id, route in await input.start(id, audible: audible, route: route) },
                     stop: { id in await input.stop(id) }
                 ),
-                presentWindows: presentWindows, decode: decode
+                presentWindows: presentWindows,
+                speech: speech ?? .init(assetsAvailable: { true }, prepare: {}, transcribe: { audio, ready in
+                    await ready()
+                    return try await decode(audio)
+                }, release: {}),
+                modelTimeout: modelTimeout
             )
             capture.connect(repository: repository)
             return capture
@@ -476,6 +560,40 @@ private actor DecodeGate {
         pending?.resume(returning: "Stale text.")
         pending = nil
     }
+}
+
+private actor ModelReadinessProbe {
+    private(set) var preparations = 0
+    private(set) var releases = 0
+    private var attempts = 0
+    private var ready = false
+    private var prepared: CheckedContinuation<Void, Never>?
+
+    func nextAttempt() -> Int {
+        attempts += 1
+        return attempts
+    }
+
+    func prepare() async throws {
+        preparations += 1
+        prepared?.resume()
+        prepared = nil
+        try await waitUntilReady()
+    }
+
+    func waitUntilPrepared() async {
+        if preparations == 0 {
+            await withCheckedContinuation { prepared = $0 }
+        }
+    }
+
+    func waitUntilReady() async throws {
+        while !ready { try await Task.sleep(for: .milliseconds(8)) }
+    }
+
+    func makeReady() { ready = true }
+
+    func release() { releases += 1 }
 }
 
 private actor VoiceHandoffRefinementProvider: RefinementProvider {

@@ -43,12 +43,16 @@ can import that same directory through **Choose Model Folder…**.
   consumes the assigned shortcut so it cannot type into the note. The capsule
   is non-activating during capture. Once the transcript is saved, the standard
   Scratchpad opens and takes keyboard focus.
-- Preparing is explicit on opt-in and can overlap recording after the
-  first genuine microphone buffer. The fixed 120 ms end buffer preserves
+- Rasc starts preparing speech on opt-in and after launch when Voice Capture
+  is already enabled. A recording can share the same in-progress load. The
+  microphone opens only when recording starts. The fixed 120 ms end buffer preserves
   speech near Finish. Silence never triggers Finish. The socket-free inference
   path loads one cleanly versioned Core ML pack with CPU + Neural Engine.
-  After use, the actor releases the pack after 180 seconds of inactivity,
-  on sleep, under memory pressure, or when the feature is disabled.
+  Rasc releases it after ten idle minutes, on sleep, under memory pressure, or
+  when the feature is disabled. A load needed by an active capture is protected
+  until that capture finishes. Core ML can still specialize the model again on
+  a cache miss. If a load fails with low available disk space, the capsule
+  offers a disk-space message and **Retry** for the same recording.
 - SQLite saves the transcript as an ordinary unfinished thought. The existing
   Scratchpad opening path flushes the previous thought and guards against
   concurrent edits before switching. If the switch must wait, the transcript
