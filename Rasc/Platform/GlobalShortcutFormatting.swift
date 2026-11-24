@@ -13,7 +13,7 @@ enum GlobalShortcutFormatting {
     }
 
     static func currentVoiceShortcutDisplay() -> String {
-        guard VoiceCapture.shared.enabled else { return "" }
+        guard VoiceCapture.shared.shortcutIsActive else { return "" }
         return KeyboardShortcuts.getShortcut(for: .voiceCapture)?.description ?? ""
     }
 
@@ -370,6 +370,7 @@ final class InternalShortcutStore: ObservableObject {
         let pairs: [(KeyboardShortcuts.Name, String)] = [
             (.toggleScratchpad, "Toggle Scratchpad"),
             (.toggleHome, "Toggle Home"),
+            (.voiceCapture, "Voice Capture"),
         ]
         for (name, title) in pairs {
             guard let global = KeyboardShortcuts.getShortcut(for: name) else { continue }

@@ -3,12 +3,44 @@ import AVFoundation
 import Combine
 import Foundation
 import GRDB
+import KeyboardShortcuts
 import SwiftUI
 import Testing
 @testable import Rasc
 
 @MainActor
 struct VoiceCaptureTests {
+    @Test func assignedShortcutRegistersOnlyWhileVoiceCaptureIsEnabled() throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let previous = KeyboardShortcuts.getShortcut(for: .voiceCapture)
+        let capture = fixture.capture(enabled: false, presentWindows: true)
+        defer {
+            capture.setEnabled(false)
+            KeyboardShortcuts.removeHandler(for: .voiceCapture)
+            KeyboardShortcuts.setShortcut(previous, for: .voiceCapture)
+            KeyboardShortcuts.enable(.voiceCapture)
+        }
+
+        KeyboardShortcuts.setShortcut(nil, for: .voiceCapture)
+        capture.setEnabled(true)
+        #expect(!capture.shortcutIsActive)
+
+        let chord = KeyboardShortcuts.Shortcut(.f18, modifiers: [.control, .option, .shift, .command])
+        KeyboardShortcuts.setShortcut(chord, for: .voiceCapture)
+        capture.refreshShortcut()
+        #expect(capture.shortcutIsActive)
+        #expect(KeyboardShortcuts.isEnabled(for: .voiceCapture))
+
+        capture.setEnabled(false)
+        #expect(!capture.shortcutIsActive)
+        #expect(!KeyboardShortcuts.isEnabled(for: .voiceCapture))
+        #expect(KeyboardShortcuts.getShortcut(for: .voiceCapture) == chord)
+
+        capture.setEnabled(true)
+        #expect(capture.shortcutIsActive)
+    }
+
     @Test func disabledCaptureLeavesMicrophoneIdle() async throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
@@ -332,6 +364,7 @@ struct VoiceCaptureTests {
             enabled: Bool = true,
             authorization: AVAuthorizationStatus = .authorized,
             audible: Bool = true,
+            presentWindows: Bool = false,
             decode: @escaping @Sendable (VoiceAudio) async throws -> String = { _ in "Talvez não fazer o deploy ainda." }
         ) -> VoiceCapture {
             let defaults = UserDefaults(suiteName: suite)!
@@ -344,7 +377,7 @@ struct VoiceCaptureTests {
                     start: { id, route in await input.start(id, audible: audible, route: route) },
                     stop: { id in await input.stop(id) }
                 ),
-                presentWindows: false, decode: decode
+                presentWindows: presentWindows, decode: decode
             )
             capture.connect(repository: repository)
             return capture

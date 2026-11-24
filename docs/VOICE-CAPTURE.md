@@ -36,7 +36,9 @@ can import that same directory through **Choose Model Folder…**.
 
 ## Engineering and validation
 
-- The global shortcut uses KeyboardShortcuts key-up events. Enabling
+- The global shortcut uses KeyboardShortcuts key-down events. Settings shows
+  when macOS can’t register an assigned shortcut and offers a direct recording
+  button. Enabling
   Voice Capture leaves the default Scratchpad and Home chords unchanged. The
   capsule is non-activating. Review is a separate, editable native panel.
   If you switch apps, switch Rasc windows, or a recording is interrupted,
@@ -53,12 +55,12 @@ can import that same directory through **Choose Model Folder…**.
   on the capture UUID. Undo verifies the saved snapshot before soft-deleting it.
   Home and an open Quick Search refresh after the commit. Voice Capture
   leaves the current scratch untouched. Open uses the usual note navigation.
-- The shared Rasc scheme passed 550 tests, including 12 Voice Capture
+- The shared Rasc scheme passed 553 tests, including 15 Voice Capture
   tests and 120 consecutive cancellation cycles with synthetic input. The
   new tests exercise denied and first-use permissions, silence, microphone
   interruption, stale transcription, audio boundaries, restart recovery,
   transaction rollback, duplicate Finish and Keep, FTS, guarded Undo, and
-  non-key panel presentation. AppKit rendered Listening, Review and Kept in
+  non-key panel presentation, and shortcut registration and opt-out. AppKit rendered Listening, Review and Kept in
   light and dark appearances. The signed app's live accessibility tree exposed
   the default-off toggle, model preparation status and shortcut recorder.
 - On an M3 Pro with 18 GB and macOS 26.5.1, a signed probe built from the

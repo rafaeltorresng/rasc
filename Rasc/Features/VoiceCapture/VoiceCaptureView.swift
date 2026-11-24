@@ -70,6 +70,10 @@ final class VoiceCaptureWindows: NSObject, NSWindowDelegate {
                 excludingProcessID: NSRunningApplication.current.processIdentifier
             ))?.visibleFrame
         }
+        let visibleFrames = NSScreen.screens.map(\.visibleFrame)
+        if screenFrame == nil || !visibleFrames.contains(where: { $0 == screenFrame }) {
+            screenFrame = NSScreen.main?.visibleFrame ?? visibleFrames.first
+        }
         if let frame = screenFrame {
             panel.setFrameOrigin(CGPoint(x: frame.midX - panel.frame.width / 2, y: frame.minY + 18))
         }
@@ -241,6 +245,7 @@ struct VoiceStatusView: View {
 
     private var title: String {
         switch capture.phase {
+        case .checking where capture.awaitingMicrophonePermission: "Allow microphone access"
         case .idle, .checking, .starting: "Getting ready…"
         case .listening: "Listening"
         case .finishing: "Finishing…"
@@ -256,6 +261,7 @@ struct VoiceStatusView: View {
         case .issue(.noSpeech): "No speech heard"
         case .issue(.transcription): "Couldn’t transcribe"
         case .issue(.persistence): "Couldn’t recover capture"
+        case .issue(.blocked): "Close the open dialog"
         }
     }
 
@@ -393,23 +399,67 @@ struct VoiceCaptureSettings: View {
                     .disabled(!capture.canChangeEnabled)
                 if capture.enabled {
                     setupRows
-                    KeyboardShortcuts.Recorder("Start or Finish Recording", name: .voiceCapture)
+                    KeyboardShortcuts.Recorder("Start or Finish Recording", name: .voiceCapture) { _ in
+                        capture.refreshShortcut()
+                    }
                         .shortcutValidation { GlobalShortcutPolicy.validation(proposed: $0, excluding: .voiceCapture) }
                         .accessibilityHint("Press once to start and again to finish")
                         .frame(maxWidth: .infinity, alignment: .trailing)
-                    if capture.phase == .reviewing {
-                        Button("Resume Review", action: { capture.showReview() })
-                    } else if capture.phase == .idle, capture.setup == .installed || capture.setup == .preparing {
-                        Button("Start Recording") { capture.activate() }
+                    if KeyboardShortcuts.getShortcut(for: .voiceCapture) != nil, !capture.shortcutIsActive {
+                        detail("This shortcut is unavailable. Choose a different shortcut or start recording here.")
                     }
+                    recordingActions
                 }
                 detail("Speak a thought, then review it before keeping. Transcription stays on this Mac.")
             } else {
                 detail("Voice Capture requires an Apple silicon Mac with macOS 26 or later.")
             }
         }
-        .onAppear { if capture.setup == .unchecked { capture.checkSetup() } }
+        .onAppear {
+            capture.refreshShortcut()
+            if capture.setup == .unchecked { capture.checkSetup() }
+        }
         .onChange(of: capture.enabled) { _, enabled in if enabled, capture.setup == .unchecked { capture.checkSetup() } }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            capture.refreshShortcut()
+        }
+    }
+
+    @ViewBuilder private var recordingActions: some View {
+        switch capture.phase {
+        case .idle, .kept:
+            if capture.setup == .installed || capture.setup == .preparing {
+                captureButton("Start Recording")
+            }
+        case .listening:
+            captureButton("Finish Recording")
+            Button("Cancel Recording", role: .cancel) { capture.cancel() }
+        case .reviewing:
+            captureButton("Review Transcript")
+        case .checking, .starting:
+            detail(capture.awaitingMicrophonePermission
+                ? "Allow microphone access in the macOS prompt."
+                : "Getting the microphone ready…")
+            Button("Cancel Recording") { capture.cancel() }
+        case .finishing, .waitingForModel, .transcribing:
+            detail("Preparing your transcript…")
+            Button("Cancel Recording") { capture.cancel() }
+        case .issue:
+            Button(capture.needsMicrophoneAccess ? "Open Microphone Settings…" : "Try Again") {
+                capture.recover()
+            }
+        default:
+            EmptyView()
+        }
+    }
+
+    @ViewBuilder private func captureButton(_ title: String) -> some View {
+        if capture.shortcutIsActive {
+            Button(title) { capture.activate(fromShortcut: true) }
+                .globalKeyboardShortcut(.voiceCapture)
+        } else {
+            Button(title) { capture.activate() }
+        }
     }
 
     @ViewBuilder private var setupRows: some View {

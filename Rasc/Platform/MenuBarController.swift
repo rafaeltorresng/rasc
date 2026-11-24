@@ -156,7 +156,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
     }
 
     func menuWillOpen(_ menu: NSMenu) {
-        KeyboardShortcuts.disable(.toggleScratchpad, .toggleHome, .voiceCapture)
+        KeyboardShortcuts.disable(.toggleScratchpad, .toggleHome)
         guard voiceItems.count == 4 else { return }
         let capture = VoiceCapture.shared
         let phase = capture.phase
@@ -181,7 +181,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
     }
 
     func menuDidClose(_ menu: NSMenu) {
-        KeyboardShortcuts.enable(.toggleScratchpad, .toggleHome, .voiceCapture)
+        KeyboardShortcuts.enable(.toggleScratchpad, .toggleHome)
     }
 
     @objc private func voiceCapture() { VoiceCapture.shared.activate() }

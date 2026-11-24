@@ -27,7 +27,7 @@ final class VoiceCapture: ObservableObject {
     }
 
     enum Issue: Equatable {
-        case permission, microphone, noSpeech, transcription, persistence
+        case permission, microphone, noSpeech, transcription, persistence, blocked
 
         var message: String {
             switch self {
@@ -36,6 +36,7 @@ final class VoiceCapture: ObservableObject {
             case .noSpeech: "Rasc didn’t recognize any speech."
             case .transcription: "Rasc couldn’t transcribe this recording."
             case .persistence: "Rasc couldn’t recover the previous voice capture."
+            case .blocked: "Finish the open dialog before recording."
             }
         }
     }
@@ -65,10 +66,12 @@ final class VoiceCapture: ObservableObject {
     @Published private(set) var enabled: Bool
     @Published private(set) var phase: Phase = .idle
     @Published private(set) var setup: Setup = .unchecked
+    @Published private(set) var shortcutIsActive = false
     let inputLevel = VoiceInputLevel()
     @Published private(set) var content = ""
     @Published private(set) var reviewMessage: String?
     @Published private(set) var canRetryAudio = false
+    @Published private(set) var awaitingMicrophonePermission = false
 
     private let preferences: UserDefaults
     private let support: Bool
@@ -78,7 +81,7 @@ final class VoiceCapture: ObservableObject {
     private let injectedDecode: (@Sendable (VoiceAudio) async throws -> String)?
     private var repository: NoteRepository?
     private lazy var windows = VoiceCaptureWindows(capture: self)
-    private var shortcutTask: Task<Void, Never>?
+    private var handlesShortcut = false
     private var setupTask: Task<Void, Never>?
     private var pressure: DispatchSourceMemoryPressure?
     private var sleepObserver: (any NSObjectProtocol)?
@@ -97,7 +100,6 @@ final class VoiceCapture: ObservableObject {
     private var recoveryRequired = false
     private var lastActivation: ContinuousClock.Instant?
     private var activatedAt: ContinuousClock.Instant?
-    private var promptWillActivate = false
 
     var canChangeEnabled: Bool {
         setup != .importing && phase != .saving && phase != .undoing && !recoveryRequired
@@ -131,14 +133,21 @@ final class VoiceCapture: ObservableObject {
 
     func connect(repository: NoteRepository) {
         self.repository = repository
-        updateShortcut()
+        guard support, presentWindows, !handlesShortcut else { return }
+        handlesShortcut = true
+        if !enabled { KeyboardShortcuts.disable(.voiceCapture) }
+        KeyboardShortcuts.onKeyDown(for: .voiceCapture) { [weak self] in
+            Self.logger.debug("Global Voice Capture shortcut received")
+            self?.activate(fromShortcut: true)
+        }
+        refreshShortcut()
     }
 
     func setEnabled(_ value: Bool) {
         guard support, value != enabled, canChangeEnabled else { return }
         enabled = value
         preferences.set(value, forKey: Self.preferenceKey)
-        updateShortcut()
+        refreshShortcut()
         if value {
             checkSetup(prepare: true)
         } else {
@@ -158,15 +167,15 @@ final class VoiceCapture: ObservableObject {
         }
     }
 
-    private func updateShortcut() {
-        shortcutTask?.cancel()
-        shortcutTask = nil
-        guard enabled, presentWindows else { return }
-        shortcutTask = Task { [weak self] in
-            for await _ in KeyboardShortcuts.events(.keyUp, for: .voiceCapture) {
-                self?.activate(fromShortcut: true)
-            }
+    func refreshShortcut() {
+        guard handlesShortcut else { return }
+        if enabled {
+            KeyboardShortcuts.enable(.voiceCapture)
+        } else {
+            KeyboardShortcuts.disable(.voiceCapture)
         }
+        let active = KeyboardShortcuts.isEnabled(for: .voiceCapture)
+        if shortcutIsActive != active { shortcutIsActive = active }
     }
 
     func checkSetup(prepare: Bool = false) {
@@ -267,12 +276,16 @@ final class VoiceCapture: ObservableObject {
 
     private func begin() {
         guard let repository, setup != .importing else { return }
-        if presentWindows, windows.hasBlockingSheet { return }
         receiptTimer?.cancel()
         receipt = nil
         resetInput()
         let token = UUID()
         id = token
+        if presentWindows, windows.hasBlockingSheet {
+            transition(.issue(.blocked))
+            windows.showStatus()
+            return
+        }
         activatedAt = .now
         transition(.checking)
         if presentWindows { windows.showStatus() }
@@ -312,11 +325,11 @@ final class VoiceCapture: ObservableObject {
             switch input.authorization() {
             case .authorized: break
             case .notDetermined:
-                promptWillActivate = true
+                awaitingMicrophonePermission = true
                 let granted = await input.requestAccess()
                 guard owns(token) else { return }
                 if presentWindows { windows.restorePreviousApplicationAfterPermission() }
-                promptWillActivate = false
+                awaitingMicrophonePermission = false
                 guard granted else {
                     transition(.issue(.permission))
                     return
@@ -611,8 +624,8 @@ final class VoiceCapture: ObservableObject {
         case .checking, .starting, .listening, .finishing, .waitingForModel, .transcribing:
             let owner = id
             id = nil
-            if promptWillActivate, presentWindows { windows.restorePreviousApplicationAfterPermission() }
-            promptWillActivate = false
+            if awaitingMicrophonePermission, presentWindows { windows.restorePreviousApplicationAfterPermission() }
+            awaitingMicrophonePermission = false
             operation?.cancel()
             resetInput()
             transition(.stopping)
