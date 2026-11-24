@@ -1,0 +1,13 @@
+{
+  "manifest_version": "0.3",
+  "name": "rasc-synthetic-probe",
+  "version": "0.1.0",
+  "description": "Synthetic read-only Rasc fixture. Includes no user data and does not read Rasc storage.",
+  "author": {"name": "Rasc feasibility probe"},
+  "server": {
+    "type": "binary",
+    "entry_point": "server/RascMCPProbe",
+    "mcp_config": {"command": "${__dirname}/server/RascMCPProbe", "args": ["--fixture"]}
+  },
+  "compatibility": {"platforms": ["darwin"]}
+}

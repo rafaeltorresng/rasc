@@ -19,7 +19,8 @@ behavior.
 | [Previous release notes](RELEASE-NOTES-v0.1.11.md) | Archived v0.1.11 changes and provenance |
 | [Release](RELEASE.md) | Versioning, packaging, signing and optional notarization |
 | [Sparkle release](SPARKLE-RELEASE.md) | Ad-hoc updater build and publication runbook |
-| [Data and privacy](DATA-AND-PRIVACY.md) | Storage, retention and safe manual backups |
+| [Data and privacy](DATA-AND-PRIVACY.md) | Storage, export, retention and safe manual backups |
+| [Local assistant feasibility](LOCAL-MCP-FEASIBILITY.md) | Results of the isolated Swift stdio and local IPC spike |
 | [Third-party notices](THIRD_PARTY_NOTICES.md) | Dependency licenses/provenance |
 | [Contributing](../CONTRIBUTING.md) | Development and review |
 
