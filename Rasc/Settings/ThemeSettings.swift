@@ -1,12 +1,12 @@
 import AppKit
 import SwiftUI
 
-/// Curated theme presets for Rasc. Every preset keeps graphite-paper DNA:
-/// warm-to-true neutral canvases, native semantics, copper reserved for Keep.
+/// Theme styles are independent of the native appearance.
 enum ThemePreset: String, CaseIterable, Identifiable, Sendable {
     case graphitePaper = "graphitePaper"
     case slate = "slate"
     case porcelain = "porcelain"
+    case custom = "custom"
 
     var id: String { rawValue }
 
@@ -18,6 +18,8 @@ enum ThemePreset: String, CaseIterable, Identifiable, Sendable {
             "Slate"
         case .porcelain:
             "Porcelain"
+        case .custom:
+            "Custom"
         }
     }
 
@@ -29,13 +31,16 @@ enum ThemePreset: String, CaseIterable, Identifiable, Sendable {
             "Cool blue-gray neutrals."
         case .porcelain:
             "True neutral with crisper contrast."
+        case .custom:
+            "Choose colors for Light and Dark appearances."
         }
     }
 }
 
 struct ThemeSettingsStore {
     static let presetKey = "appThemePreset"
-    /// Legacy keys from the removed Custom option; ignored, overwritten or cleared by reset().
+    static let customPaletteKey = "appThemeCustomPalette"
+    /// Legacy Custom stored named tone and ink choices.
     static let toneKey = "appThemeCustomTone"
     static let inkKey = "appThemeCustomInk"
 
@@ -47,9 +52,9 @@ struct ThemeSettingsStore {
 
     func loadPreset() -> ThemePreset {
         guard let raw = userDefaults.string(forKey: Self.presetKey),
-              let preset = ThemePreset(rawValue: raw)
+              let preset = ThemePreset(rawValue: raw),
+              preset != .custom || savedCustomPalette() != nil
         else {
-            // Includes the legacy stored value "custom".
             return .graphitePaper
         }
         return preset
@@ -57,6 +62,19 @@ struct ThemeSettingsStore {
 
     func savePreset(_ preset: ThemePreset) {
         userDefaults.set(preset.rawValue, forKey: Self.presetKey)
+    }
+
+    func savedCustomPalette() -> CustomTheme? {
+        guard let data = userDefaults.data(forKey: Self.customPaletteKey),
+              let palette = try? JSONDecoder().decode(CustomTheme.self, from: data),
+              palette.light.issue(for: .light) == nil,
+              palette.dark.issue(for: .dark) == nil else { return nil }
+        return palette
+    }
+
+    func saveCustomPalette(_ palette: CustomTheme) {
+        guard let data = try? JSONEncoder().encode(palette) else { return }
+        userDefaults.set(data, forKey: Self.customPaletteKey)
     }
 
     var isCustomized: Bool {
@@ -67,7 +85,6 @@ struct ThemeSettingsStore {
     /// The appearance mode (System / Light / Dark) is restored by the caller.
     func reset() {
         userDefaults.removeObject(forKey: Self.presetKey)
-        // Drop the legacy Custom keys so a fresh Start is indistinguishable.
         userDefaults.removeObject(forKey: Self.toneKey)
         userDefaults.removeObject(forKey: Self.inkKey)
     }
@@ -90,34 +107,17 @@ struct ThemePalette {
     let selectionStroke: NSColor
     let searchMark: NSColor
     let searchMarkContrast: NSColor
-
-    static func current(for colorScheme: ColorScheme) -> ThemePalette {
-        ThemeCatalog.palette(for: colorScheme)
-    }
+    var noteText: NSColor? = nil
+    var subtleFill: NSColor? = nil
 }
 
-/// Lock-protected, synchronous view of the current theme. `NSColor` dynamic
-/// providers and static palette functions resolve through here, so they work
-/// from any thread without actor hops. `ThemeStore` publishes into it on change.
 enum ThemeCatalog {
-    private static let lock = NSLock()
-    nonisolated(unsafe) private static var preset: ThemePreset = .graphitePaper
-
-    static func update(preset: ThemePreset) {
-        lock.lock()
-        defer { lock.unlock() }
-        self.preset = preset
-    }
-
-    static func palette(for colorScheme: ColorScheme) -> ThemePalette {
-        lock.lock()
-        let preset = self.preset
-        lock.unlock()
-        return resolve(preset: preset, scheme: colorScheme)
-    }
-
-    static func resolve(preset: ThemePreset, scheme colorScheme: ColorScheme) -> ThemePalette {
-        let dark = colorScheme == .dark
+    static func resolve(
+        preset: ThemePreset,
+        scheme: ColorScheme,
+        custom: CustomTheme = .standard
+    ) -> ThemePalette {
+        let dark = scheme == .dark
         switch preset {
         case .graphitePaper:
             return dark ? .graphiteDark : .graphiteLight
@@ -125,19 +125,49 @@ enum ThemeCatalog {
             return dark ? .slateDark : .slateLight
         case .porcelain:
             return dark ? .porcelainDark : .porcelainLight
+        case .custom:
+            return custom[scheme].palette(for: scheme)
         }
     }
 }
 
-/// Rebuilds its content with fresh tokens whenever the theme version changes.
-/// The themed roots are recreated rather than surgically repainted: every surface
-/// always reads the current palette, at the cost of dropping transient view state.
-struct ThemeRebuildView<Content: View>: View {
+struct RascAppearanceView<Content: View>: View {
     @ObservedObject private var theme = ThemeStore.shared
+    @AppStorage(NoteTextSize.preferenceKey) private var textSize: NoteTextSize = .standard
     @ViewBuilder let content: () -> Content
 
     var body: some View {
-        content().id(theme.version)
+        content()
+            .environment(\.rascPalette, theme.palette)
+            .environment(\.noteTextSize, textSize)
+    }
+}
+
+extension EnvironmentValues {
+    @Entry var rascPalette = RascSurfacePalette.standard
+    @Entry var noteTextSize: NoteTextSize = .standard
+}
+
+enum NoteTextSize: String, CaseIterable, Identifiable {
+    static let preferenceKey = "noteTextSize"
+    case small, standard, large
+
+    var id: Self { self }
+
+    var title: String {
+        switch self {
+        case .small: "Small"
+        case .standard: "Default"
+        case .large: "Large"
+        }
+    }
+
+    func points(_ base: CGFloat) -> CGFloat {
+        switch self {
+        case .small: base - 1.5
+        case .standard: base
+        case .large: base + 3
+        }
     }
 }
 
@@ -145,39 +175,195 @@ struct ThemeRebuildView<Content: View>: View {
 final class ThemeStore: ObservableObject {
     static let shared = ThemeStore()
 
-    @Published private(set) var preset: ThemePreset
-    /// Bumped on every theme change. Themed roots rebuild behind this identity.
-    @Published private(set) var version: UInt64 = 0
-
+    @Published private(set) var palette: RascSurfacePalette
+    private(set) var custom: CustomTheme
     private let store: ThemeSettingsStore
 
     init(store: ThemeSettingsStore = ThemeSettingsStore()) {
         self.store = store
-        self.preset = store.loadPreset()
-        ThemeCatalog.update(preset: self.preset)
+        custom = store.savedCustomPalette() ?? .standard
+        palette = RascSurfacePalette(preset: store.loadPreset(), custom: custom)
     }
 
-    var isCustomized: Bool {
-        preset != .graphitePaper
-    }
+    var preset: ThemePreset { palette.preset }
+    var isCustomized: Bool { preset != .graphitePaper }
 
     func selectPreset(_ newPreset: ThemePreset) {
         guard newPreset != preset else { return }
-        preset = newPreset
+        if newPreset == .custom { store.saveCustomPalette(custom) }
         store.savePreset(newPreset)
-        ThemeCatalog.update(preset: preset)
-        version &+= 1
+        palette = RascSurfacePalette(preset: newPreset, custom: custom)
+    }
+
+    func applyCustomPalette(_ newPalette: CustomTheme) {
+        guard newPalette != custom,
+              newPalette.light.issue(for: .light) == nil,
+              newPalette.dark.issue(for: .dark) == nil else { return }
+        store.saveCustomPalette(newPalette)
+        custom = newPalette
+        palette = RascSurfacePalette(preset: preset, custom: custom)
     }
 
     func reset() {
-        preset = .graphitePaper
         store.reset()
-        ThemeCatalog.update(preset: preset)
-        version &+= 1
+        palette = .standard
     }
 
     func palette(for colorScheme: ColorScheme) -> ThemePalette {
-        ThemeCatalog.resolve(preset: preset, scheme: colorScheme)
+        palette.colors(for: colorScheme)
+    }
+}
+
+struct CustomTheme: Codable, Equatable {
+    var light: CustomThemeColors
+    var dark: CustomThemeColors
+
+    static let standard = Self(
+        light: CustomThemeColors(
+            background: ThemePalette.graphiteLight.canvas,
+            noteText: ThemePalette.graphiteLight.actionPrimaryFill
+        ),
+        dark: CustomThemeColors(
+            background: ThemePalette.graphiteDark.canvas,
+            noteText: ThemePalette.graphiteDark.actionPrimaryFill
+        )
+    )
+
+    subscript(scheme: ColorScheme) -> CustomThemeColors {
+        get { scheme == .dark ? dark : light }
+        set {
+            if scheme == .dark { dark = newValue } else { light = newValue }
+        }
+    }
+}
+
+struct CustomThemeColors: Codable, Equatable {
+    var background: ThemeColor
+    var noteText: ThemeColor
+
+    init(background: NSColor, noteText: NSColor) {
+        self.background = ThemeColor(background)!
+        self.noteText = ThemeColor(noteText)!
+    }
+
+    /// The native controls and brand mark use the appearance's own ink.
+    /// Reject inaccessible drafts explicitly, while previewing the exact colors.
+    func issue(for scheme: ColorScheme) -> String? {
+        let canvas = background.nsColor
+        if !Self.chromeIsReadable(over: canvas, scheme: scheme) {
+            return scheme == .dark
+                ? "Dark needs a darker background."
+                : "Light needs a lighter background."
+        }
+        if ThemeColor.contrast(canvas, noteText.nsColor) < 4.5 {
+            return scheme == .dark ? "Dark needs more text contrast." : "Light needs more text contrast."
+        }
+        return nil
+    }
+
+    func palette(for scheme: ColorScheme) -> ThemePalette {
+        let dark = scheme == .dark
+        let base: ThemePalette = dark ? .graphiteDark : .graphiteLight
+        let canvas = background.nsColor
+        let noteInk = noteText.nsColor
+        let ink = base.actionPrimaryFill
+
+        // Keep note text and native labels readable on raised or highlighted surfaces.
+        func surface(toward tint: NSColor, amount: CGFloat) -> NSColor {
+            let fill = ThemeColor.mix(canvas, tint, amount: amount)
+            return ThemeColor.contrast(fill, noteInk) >= 4.5 && Self.chromeIsReadable(over: fill, scheme: scheme)
+                ? fill : canvas
+        }
+
+        func supportingInk(_ amount: CGFloat, minimum: Double = 4.5) -> NSColor {
+            let candidate = ThemeColor.mix(ink, canvas, amount: amount)
+            return [canvas, raised, card].allSatisfy {
+                ThemeColor.contrast(candidate, $0) >= minimum
+            } ? candidate : ink
+        }
+
+        let raised = surface(toward: ink, amount: dark ? 0.055 : 0.035)
+        let card = surface(toward: dark ? ink : .white, amount: dark ? 0.085 : 0.42)
+        let mark = surface(toward: ink, amount: 0.16)
+        let strongerMark = surface(toward: ink, amount: 0.22)
+        let hoverOpacity: CGFloat = 0.045
+        let hoverPreservesContrast = [canvas, raised, card].allSatisfy {
+            let hovered = ThemeColor.mix($0, ink, amount: hoverOpacity)
+            return ThemeColor.contrast(hovered, noteInk) >= 4.5 && Self.chromeIsReadable(over: hovered, scheme: scheme)
+        }
+        return ThemePalette(
+            canvas: canvas,
+            raisedFill: raised,
+            homeCardFill: card,
+            border: supportingInk(0.72, minimum: 1.4),
+            focus: supportingInk(0.34, minimum: 3),
+            actionPrimaryFill: ink,
+            actionPrimaryLabel: canvas,
+            secondaryText: supportingInk(0.24),
+            metadataText: supportingInk(0.27),
+            tertiaryText: supportingInk(0.42, minimum: 3),
+            selectionStroke: supportingInk(0.53, minimum: 3),
+            searchMark: mark,
+            searchMarkContrast: strongerMark,
+            noteText: noteInk,
+            subtleFill: ink.withAlphaComponent(hoverPreservesContrast ? hoverOpacity : 0)
+        )
+    }
+
+    private static func chromeIsReadable(over background: NSColor, scheme: ColorScheme) -> Bool {
+        let dark = scheme == .dark
+        let graphiteInk = dark ? ThemePalette.graphiteDark.actionPrimaryFill : ThemePalette.graphiteLight.actionPrimaryFill
+        // macOS labelColor is approximately 85% opaque. Check it composited onto
+        // the canvas as well as the opaque ink used by Rasc's own controls.
+        let nativeLabel = ThemeColor.mix(background, dark ? .white : .black, amount: 0.84)
+        return ThemeColor.contrast(background, nativeLabel) >= 4.5
+            && ThemeColor.contrast(background, graphiteInk) >= 4.5
+    }
+}
+
+/// Extended sRGB preserves native color-panel choices outside standard sRGB.
+struct ThemeColor: Codable, Equatable {
+    private let red: CGFloat
+    private let green: CGFloat
+    private let blue: CGFloat
+
+    init?(_ color: NSColor) {
+        guard let rgb = color.usingColorSpace(.extendedSRGB),
+              rgb.redComponent.isFinite, rgb.greenComponent.isFinite, rgb.blueComponent.isFinite else { return nil }
+        red = rgb.redComponent
+        green = rgb.greenComponent
+        blue = rgb.blueComponent
+    }
+
+    var nsColor: NSColor {
+        NSColor(colorSpace: .extendedSRGB, components: [red, green, blue, 1], count: 4)
+    }
+
+    static func mix(_ first: NSColor, _ second: NSColor, amount: CGFloat) -> NSColor {
+        guard let first = ThemeColor(first), let second = ThemeColor(second) else { return first }
+        return NSColor(colorSpace: .extendedSRGB, components: [
+            first.red + (second.red - first.red) * amount,
+            first.green + (second.green - first.green) * amount,
+            first.blue + (second.blue - first.blue) * amount,
+            1
+        ], count: 4)
+    }
+
+    static func contrast(_ first: NSColor, _ second: NSColor) -> Double {
+        func luminance(_ color: NSColor) -> Double {
+            guard let rgb = ThemeColor(color) else { return 0 }
+            func linear(_ component: CGFloat) -> Double {
+                let magnitude = Double(abs(component))
+                let linear = magnitude <= 0.04045 ? magnitude / 12.92 : pow((magnitude + 0.055) / 1.055, 2.4)
+                return component < 0 ? -linear : linear
+            }
+            let value = linear(rgb.red) * 0.2126 + linear(rgb.green) * 0.7152 + linear(rgb.blue) * 0.0722
+            return min(1, max(0, value))
+        }
+
+        let first = luminance(first)
+        let second = luminance(second)
+        return (max(first, second) + 0.05) / (min(first, second) + 0.05)
     }
 }
 
