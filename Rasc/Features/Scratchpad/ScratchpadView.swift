@@ -6,8 +6,10 @@ import UniformTypeIdentifiers
 struct ScratchpadView: View {
     @Bindable var session: ScratchpadSession
     @Environment(\.undoManager) private var undoManager
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.noteTextSize) private var noteTextSize
     @State private var globalShortcutRevision = 0
     /// Caches the refinement word-diff across body re-evaluation so the preview
     /// doesn't redo the LCS for the header label, the body and VoiceOver on every
@@ -99,7 +101,7 @@ struct ScratchpadView: View {
         }
         .padding(.horizontal, RascSurfaceLayout.horizontalInset)
         .padding(.vertical, 10)
-        .background(RascSurfacePalette.raisedFill(for: colorScheme))
+        .background(palette.raisedFill(for: colorScheme))
         .accessibilityElement(children: .contain)
     }
 
@@ -132,13 +134,13 @@ struct ScratchpadView: View {
             if session.surface == .refinementPreview {
                 Text(refinementPreviewHeading)
                     .font(.caption.weight(.medium))
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .foregroundStyle(palette.secondaryText(for: colorScheme))
                     .accessibilityAddTraits(.isHeader)
                     .lineLimit(1)
 
                 Text(refinementChangeCountLabel)
                     .font(.caption.weight(.medium))
-                    .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                    .foregroundStyle(palette.metadataText(for: colorScheme))
                     .monospacedDigit()
                     .lineLimit(1)
             } else if let statusText {
@@ -146,6 +148,13 @@ struct ScratchpadView: View {
                     .font(.caption.weight(.medium))
                     .foregroundStyle(statusColor(for: statusText))
                     .lineLimit(1)
+                    .padding(.horizontal, statusText == "Kept" && palette.preset == .custom ? 6 : 0)
+                    .padding(.vertical, statusText == "Kept" && palette.preset == .custom ? 2 : 0)
+                    .background {
+                        if statusText == "Kept", palette.preset == .custom {
+                            Capsule().fill(palette.keepFill(for: colorScheme))
+                        }
+                    }
             }
 
             Spacer(minLength: 8)
@@ -275,11 +284,11 @@ struct ScratchpadView: View {
             .scrollContentBackground(.hidden)
             .background(.clear)
             .font(.system(
-                size: RascSurfaceMetrics.noteFontSize,
+                size: noteTextSize.points(RascSurfaceMetrics.noteFontSize),
                 weight: .regular
             ))
             .lineSpacing(RascSurfaceMetrics.noteLineSpacing)
-            .foregroundStyle(.primary.opacity(0.78))
+            .foregroundStyle(palette.noteText(for: colorScheme, fallback: .primary.opacity(0.78)))
             .padding(.horizontal, RascSurfaceMetrics.editorHorizontalPadding)
             .padding(.top, RascSurfaceMetrics.editorTopPadding)
             .disabled(true)
@@ -307,7 +316,7 @@ struct ScratchpadView: View {
         .labelsHidden()
         .frame(width: 216)
         .controlSize(.small)
-        .tint(RascSurfacePalette.secondaryText(for: colorScheme))
+        .tint(palette.secondaryText(for: colorScheme))
         .onExitCommand(perform: handleEscape)
     }
 
@@ -361,7 +370,7 @@ struct ScratchpadView: View {
     private var refinementScrollBody: some View {
         let content = refinementPreviewBody
             .font(.system(
-                size: RascSurfaceMetrics.noteFontSize,
+                size: noteTextSize.points(RascSurfaceMetrics.noteFontSize),
                 weight: .regular
             ))
             .lineSpacing(RascSurfaceMetrics.noteLineSpacing)
@@ -381,10 +390,10 @@ struct ScratchpadView: View {
         switch session.previewMode {
         case .suggested:
             Text(session.refinementPreview?.proposedNoteText ?? "")
-                .foregroundStyle(.primary)
+                .foregroundStyle(palette.noteText(for: colorScheme))
         case .original:
             Text(session.refinementPreview?.request.snapshot.text ?? "")
-                .foregroundStyle(.primary)
+                .foregroundStyle(palette.noteText(for: colorScheme))
         case .changes:
             Text(refinementChangesAttributed)
         }
@@ -397,8 +406,8 @@ struct ScratchpadView: View {
     private var refinementChangesAttributed: AttributedString {
         WordDiff.attributed(
             from: refinementDiff.runs,
-            textColor: .primary,
-            removedColor: RascSurfacePalette.secondaryText(for: colorScheme)
+            textColor: palette.noteText(for: colorScheme),
+            removedColor: palette.secondaryText(for: colorScheme)
         )
     }
 
@@ -430,8 +439,8 @@ struct ScratchpadView: View {
 
     private func statusColor(for text: String) -> Color {
         text == "Kept"
-            ? RascSurfacePalette.keepAccent(for: colorScheme)
-            : RascSurfacePalette.secondaryText(for: colorScheme)
+            ? palette.keepAccent(for: colorScheme)
+            : palette.secondaryText(for: colorScheme)
     }
 
     private var statusText: String? {
@@ -464,6 +473,22 @@ struct ScratchpadView: View {
 private struct ScratchEditor: NSViewRepresentable {
     @Bindable var session: ScratchpadSession
     let onEscape: () -> Void
+    @Environment(\.rascPalette) private var palette
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.noteTextSize) private var noteTextSize
+
+    private func updateTypography(_ editor: ListTextView) {
+        let colors = palette.colors(for: colorScheme)
+        editor.updateTypography(
+            font: .systemFont(ofSize: noteTextSize.points(RascSurfaceMetrics.noteFontSize)),
+            ink: colors.noteText ?? .labelColor,
+            caret: colors.focus,
+            selection: colors.noteText == nil ? nil : [
+                .foregroundColor: colors.actionPrimaryLabel,
+                .backgroundColor: colors.actionPrimaryFill
+            ]
+        )
+    }
 
     func makeCoordinator() -> Coordinator { Coordinator(session: session) }
 
@@ -483,8 +508,9 @@ private struct ScratchEditor: NSViewRepresentable {
         editor.isRichText = true
         editor.allowsUndo = true
         editor.drawsBackground = false
-        editor.syncLayoutMetrics()
+        editor.configureTextContainer()
         editor.applyBodyAttributes()
+        updateTypography(editor)
         editor.isVerticallyResizable = true
         editor.isHorizontallyResizable = false
         editor.autoresizingMask = [.width]
@@ -506,6 +532,7 @@ private struct ScratchEditor: NSViewRepresentable {
         editor.imageBoundaryFailure = { session.reportImageImportFailure("Images stay on separate lines. Select an image to remove it.") }
         editor.imageCopyFailure = { session.reportImageImportFailure("Couldn't copy images. Select one range and try again.") }
         editor.imageCopySuccess = { session.reportImageCopy($0) }
+        updateTypography(editor)
         if editor.string != session.text || context.coordinator.renderedDocument != session.document {
             let selection = session.editorSelection
             let previousSelection = editor.selectedRange()
@@ -532,11 +559,7 @@ private struct ScratchEditor: NSViewRepresentable {
                 let location = min(previousSelection.location, length)
                 editor.setSelectedRange(NSRange(location: location, length: min(previousSelection.length, length - location)))
             }
-            editor.syncLayoutMetrics()
             editor.applyParagraphStyles()
-        } else {
-            editor.syncLayoutMetrics()
-            editor.applyBodyAttributes()
         }
         if context.coordinator.focusRequest != session.focusRequest {
             context.coordinator.focusRequest = session.focusRequest
@@ -643,6 +666,9 @@ final class ListTextView: NSTextView {
     var imageCopySuccess: ((NoteDocument) -> Void)?
     private var previewWindow: NSWindow?
     private let marker = "• "
+    private var bodyFont = RascSurfaceMetrics.noteFont
+    private var bodyInk = NSColor.labelColor
+    private var defaultSelectionAttributes: [NSAttributedString.Key: Any]?
     private var focusWhenAttached = false
 
     func requestFocusWhenAttached() {
@@ -939,8 +965,9 @@ final class ListTextView: NSTextView {
 
     func applyBodyAttributes() {
         typingAttributes = bodyAttributes
-        insertionPointColor = RascSurfacePalette.scratchpadInsertionPoint
         guard let storage = textStorage else { return }
+        storage.beginEditing()
+        defer { storage.endEditing() }
         let text = storage.string as NSString
         var location = 0
         while location < text.length {
@@ -958,30 +985,49 @@ final class ListTextView: NSTextView {
         }
     }
 
-    func syncLayoutMetrics() {
-        font = RascSurfaceMetrics.noteFont
-        textColor = .labelColor
-        insertionPointColor = RascSurfacePalette.scratchpadInsertionPoint
+    func configureTextContainer() {
         textContainer?.lineFragmentPadding = 0
         textContainer?.widthTracksTextView = true
         textContainerInset = NSSize(
             width: RascSurfaceLayout.textContainerHorizontalInset,
             height: RascSurfaceLayout.scratchpadEditorCaretTopInset
         )
-        applyBodyAttributes()
+    }
+
+    func updateTypography(
+        font: NSFont,
+        ink: NSColor,
+        caret: NSColor,
+        selection: [NSAttributedString.Key: NSColor]?
+    ) {
+        if insertionPointColor != caret { insertionPointColor = caret }
+        if let selection {
+            if defaultSelectionAttributes == nil { defaultSelectionAttributes = selectedTextAttributes }
+            if selectedTextAttributes as? [NSAttributedString.Key: NSColor] != selection {
+                selectedTextAttributes = selection
+            }
+        } else if let defaultSelectionAttributes {
+            selectedTextAttributes = defaultSelectionAttributes
+            self.defaultSelectionAttributes = nil
+        }
+
+        guard bodyFont != font || bodyInk != ink else { return }
+        bodyFont = font
+        bodyInk = ink
+        // Changing display attributes should leave the text and the undo manager alone.
+        applyParagraphStyles()
     }
 
     private var bodyAttributes: [NSAttributedString.Key: Any] {
         [
-            .font: font ?? RascSurfaceMetrics.noteFont,
-            .foregroundColor: NSColor.labelColor,
+            .font: bodyFont,
+            .foregroundColor: bodyInk,
         ]
     }
 
     override func viewDidChangeEffectiveAppearance() {
         super.viewDidChangeEffectiveAppearance()
-        applyBodyAttributes()
-        applyParagraphStyles()
+        needsDisplay = true
     }
 
     func render(_ document: NoteDocument) {
@@ -1200,7 +1246,7 @@ final class ListTextView: NSTextView {
             let style = NSMutableParagraphStyle()
             style.lineSpacing = RascSurfaceMetrics.noteLineSpacing
             if line.length >= 2, text.substring(with: NSRange(location: location, length: 2)) == marker {
-                style.headIndent = (marker as NSString).size(withAttributes: [.font: font ?? RascSurfaceMetrics.noteFont]).width
+                style.headIndent = (marker as NSString).size(withAttributes: [.font: bodyFont]).width
             }
             layoutManager.addTemporaryAttribute(.paragraphStyle, value: style, forCharacterRange: line)
             location = NSMaxRange(line)
@@ -1245,12 +1291,14 @@ private final class RascImageAttachmentCell: NSTextAttachmentCell {
 }
 
 private struct ScratchpadEmptyState: View {
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.noteTextSize) private var noteTextSize
 
     var body: some View {
         Text("Write something unfinished…")
-            .font(.system(size: RascSurfaceMetrics.scratchpadPlaceholderFontSize, weight: .regular))
-            .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+            .font(.system(size: noteTextSize.points(RascSurfaceMetrics.scratchpadPlaceholderFontSize), weight: .regular))
+            .foregroundStyle(palette.secondaryText(for: colorScheme))
             .padding(.leading, RascSurfaceLayout.textContainerHorizontalInset)
             .padding(.top, RascSurfaceLayout.scratchpadEditorCaretTopInset)
             .allowsHitTesting(false)
@@ -1262,6 +1310,7 @@ private struct ScratchpadChromeIconButton: View {
     let systemName: String
     let action: () -> Void
 
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @State private var isHovered = false
 
@@ -1269,12 +1318,12 @@ private struct ScratchpadChromeIconButton: View {
         Button(action: action) {
             Image(systemName: systemName)
                 .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                .foregroundStyle(palette.secondaryText(for: colorScheme))
                 .frame(width: 26, height: 26)
                 .background {
                     if isHovered {
                         RoundedRectangle(cornerRadius: 7, style: .continuous)
-                            .fill(RascSurfacePalette.subtleFill(for: colorScheme))
+                            .fill(palette.subtleFill(for: colorScheme))
                     }
                 }
                 .contentShape(Rectangle().inset(by: -3))
@@ -1290,6 +1339,7 @@ private struct ScratchpadChromeButton: View {
     var isPrimary = false
     let action: () -> Void
 
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @State private var isHovered = false
 
@@ -1316,7 +1366,7 @@ private struct ScratchpadChromeButton: View {
                 if isPrimary {
                     RoundedRectangle(cornerRadius: 7, style: .continuous)
                         .strokeBorder(
-                            RascSurfacePalette.keepAccent(for: colorScheme).opacity(0.20),
+                            palette.keepAccent(for: colorScheme).opacity(0.20),
                             lineWidth: 1
                         )
                 }
@@ -1329,22 +1379,22 @@ private struct ScratchpadChromeButton: View {
 
     private var titleColor: Color {
         isPrimary
-            ? RascSurfacePalette.keepAccent(for: colorScheme)
-            : RascSurfacePalette.secondaryText(for: colorScheme)
+            ? palette.keepAccent(for: colorScheme)
+            : palette.secondaryText(for: colorScheme)
     }
 
     private var shortcutColor: Color {
         isPrimary
-            ? RascSurfacePalette.keepAccent(for: colorScheme)
-            : RascSurfacePalette.metadataText(for: colorScheme)
+            ? palette.keepAccent(for: colorScheme)
+            : palette.metadataText(for: colorScheme)
     }
 
     private var backgroundFill: Color {
         if isPrimary {
-            return RascSurfacePalette.keepFill(for: colorScheme)
+            return palette.keepFill(for: colorScheme)
         }
         return isHovered
-            ? RascSurfacePalette.subtleFill(for: colorScheme)
+            ? palette.subtleFill(for: colorScheme)
             : .clear
     }
 }
@@ -1354,6 +1404,7 @@ private struct RefinementActionLabel: View {
     let shortcut: String
     var isPrimary = false
 
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
@@ -1371,7 +1422,7 @@ private struct RefinementActionLabel: View {
         .background {
             if isPrimary {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(RascSurfacePalette.actionPrimaryFill(for: colorScheme))
+                    .fill(palette.actionPrimaryFill(for: colorScheme))
             }
         }
         .contentShape(Rectangle())
@@ -1379,14 +1430,14 @@ private struct RefinementActionLabel: View {
 
     private var titleColor: Color {
         isPrimary
-            ? RascSurfacePalette.actionPrimaryLabel(for: colorScheme)
-            : RascSurfacePalette.secondaryText(for: colorScheme)
+            ? palette.actionPrimaryLabel(for: colorScheme)
+            : palette.secondaryText(for: colorScheme)
     }
 
     private var shortcutColor: Color {
         isPrimary
-            ? RascSurfacePalette.actionPrimaryLabel(for: colorScheme).opacity(0.82)
-            : RascSurfacePalette.metadataText(for: colorScheme)
+            ? palette.actionPrimaryLabel(for: colorScheme).opacity(0.82)
+            : palette.metadataText(for: colorScheme)
     }
 }
 

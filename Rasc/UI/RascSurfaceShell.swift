@@ -118,6 +118,7 @@ struct RascTransientInputTextField: NSViewRepresentable {
     let focusRequest: Int
     let placeholder: String
     let accessibilityLabel: String
+    var fontSize: CGFloat = 15
     let onCommand: (RascTransientFieldCommand) -> Void
 
     func makeCoordinator() -> Coordinator {
@@ -130,7 +131,7 @@ struct RascTransientInputTextField: NSViewRepresentable {
         textField.isBordered = false
         textField.drawsBackground = false
         textField.focusRingType = .none
-        textField.font = .systemFont(ofSize: 15)
+        textField.font = .systemFont(ofSize: fontSize)
         textField.placeholderString = placeholder
         textField.setAccessibilityLabel(accessibilityLabel)
         textField.cell?.usesSingleLineMode = true
@@ -140,6 +141,12 @@ struct RascTransientInputTextField: NSViewRepresentable {
 
     func updateNSView(_ textField: NSTextField, context: Context) {
         context.coordinator.parent = self
+
+        if textField.font?.pointSize != fontSize {
+            let font = NSFont.systemFont(ofSize: fontSize)
+            textField.font = font
+            (textField.currentEditor() as? NSTextView)?.font = font
+        }
 
         if textField.stringValue != text {
             textField.stringValue = text

@@ -7,7 +7,7 @@ struct RascApp: App {
 
     var body: some Scene {
         Settings {
-            ThemeRebuildView {
+            RascAppearanceView {
                 SettingsView()
             }
         }

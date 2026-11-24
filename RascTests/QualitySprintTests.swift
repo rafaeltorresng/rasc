@@ -207,6 +207,34 @@ struct NaturalListEditingTests {
     }
 
     @Test
+    func editorKeepsSelectionAndUndoWhenTypographyChanges() {
+        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 300, height: 200), styleMask: [.titled], backing: .buffered, defer: false)
+        let editor = ListTextView(frame: window.contentView!.bounds)
+        editor.allowsUndo = true
+        window.contentView = editor
+        window.makeFirstResponder(editor)
+        let undo = window.undoManager!
+        undo.groupsByEvent = false
+        undo.beginUndoGrouping()
+        editor.insertText("• A thought", replacementRange: editor.selectedRange())
+        undo.endUndoGrouping()
+
+        let selected = NSRange(location: 2, length: 1)
+        editor.setSelectedRange(selected)
+        let font = NSFont.systemFont(ofSize: 19)
+        editor.updateTypography(font: font, ink: .purple, caret: .black, selection: nil)
+
+        #expect(editor.string == "• A thought")
+        #expect(editor.selectedRange() == selected)
+        #expect(window.firstResponder === editor)
+        #expect(editor.textStorage?.attribute(.font, at: 0, effectiveRange: nil) as? NSFont == font)
+        #expect(editor.textStorage?.attribute(.foregroundColor, at: 0, effectiveRange: nil) as? NSColor == .purple)
+        #expect(undo.canUndo)
+        undo.undo()
+        #expect(editor.string.isEmpty)
+    }
+
+    @Test
     func splittingAnItemPreservesBothSides() {
         let editor = ListTextView()
         editor.string = "• FirstSecond"
@@ -544,12 +572,12 @@ struct VisualTokenContrastTests {
     func secondaryTextIsReadableOnOpaqueSurfaces() throws {
         for colorScheme in Self.colorSchemes {
             for surface in [
-                Surface("canvas", RascSurfacePalette.canvasNSColor(for: colorScheme)),
-                Surface("raised fill", RascSurfacePalette.raisedFillNSColor(for: colorScheme)),
-                Surface("Home card", RascSurfacePalette.homeCardFillNSColor(for: colorScheme)),
+                Surface("canvas", RascSurfacePalette.standard.canvasNSColor(for: colorScheme)),
+                Surface("raised fill", RascSurfacePalette.standard.raisedFillNSColor(for: colorScheme)),
+                Surface("Home card", RascSurfacePalette.standard.homeCardFillNSColor(for: colorScheme)),
             ] {
                 try expectContrast(
-                    RascSurfacePalette.secondaryTextNSColor(for: colorScheme),
+                    RascSurfacePalette.standard.secondaryTextNSColor(for: colorScheme),
                     over: surface.color,
                     atLeast: 4.5,
                     "secondaryText on \(surface.name) (\(colorScheme))"
@@ -562,12 +590,12 @@ struct VisualTokenContrastTests {
     func metadataTextIsReadableOnOpaqueSurfaces() throws {
         for colorScheme in Self.colorSchemes {
             for surface in [
-                Surface("canvas", RascSurfacePalette.canvasNSColor(for: colorScheme)),
-                Surface("raised fill", RascSurfacePalette.raisedFillNSColor(for: colorScheme)),
-                Surface("Home card", RascSurfacePalette.homeCardFillNSColor(for: colorScheme)),
+                Surface("canvas", RascSurfacePalette.standard.canvasNSColor(for: colorScheme)),
+                Surface("raised fill", RascSurfacePalette.standard.raisedFillNSColor(for: colorScheme)),
+                Surface("Home card", RascSurfacePalette.standard.homeCardFillNSColor(for: colorScheme)),
             ] {
                 try expectContrast(
-                    RascSurfacePalette.metadataTextNSColor(for: colorScheme),
+                    RascSurfacePalette.standard.metadataTextNSColor(for: colorScheme),
                     over: surface.color,
                     atLeast: 4.5,
                     "metadataText on \(surface.name) (\(colorScheme))"
@@ -580,17 +608,17 @@ struct VisualTokenContrastTests {
     func secondaryAndMetadataTextStayReadableOnSelectionFill() throws {
         for colorScheme in Self.colorSchemes {
             for base in [
-                Surface("canvas", RascSurfacePalette.canvasNSColor(for: colorScheme)),
-                Surface("raised fill", RascSurfacePalette.raisedFillNSColor(for: colorScheme)),
+                Surface("canvas", RascSurfacePalette.standard.canvasNSColor(for: colorScheme)),
+                Surface("raised fill", RascSurfacePalette.standard.raisedFillNSColor(for: colorScheme)),
             ] {
                 let selection = try composite(
-                    RascSurfacePalette.selectionFillNSColor(for: colorScheme),
+                    RascSurfacePalette.standard.selectionFillNSColor(for: colorScheme),
                     over: base.color
                 )
 
                 for role in [
-                    TextRole("secondaryText", RascSurfacePalette.secondaryTextNSColor(for: colorScheme)),
-                    TextRole("metadataText", RascSurfacePalette.metadataTextNSColor(for: colorScheme)),
+                    TextRole("secondaryText", RascSurfacePalette.standard.secondaryTextNSColor(for: colorScheme)),
+                    TextRole("metadataText", RascSurfacePalette.standard.metadataTextNSColor(for: colorScheme)),
                 ] {
                     try expectContrast(
                         role.color,
@@ -607,12 +635,12 @@ struct VisualTokenContrastTests {
     func tertiaryTextMeetsTheLowerBoundForNonEssentialHints() throws {
         for colorScheme in Self.colorSchemes {
             for surface in [
-                Surface("canvas", RascSurfacePalette.canvasNSColor(for: colorScheme)),
-                Surface("raised fill", RascSurfacePalette.raisedFillNSColor(for: colorScheme)),
-                Surface("Home card", RascSurfacePalette.homeCardFillNSColor(for: colorScheme)),
+                Surface("canvas", RascSurfacePalette.standard.canvasNSColor(for: colorScheme)),
+                Surface("raised fill", RascSurfacePalette.standard.raisedFillNSColor(for: colorScheme)),
+                Surface("Home card", RascSurfacePalette.standard.homeCardFillNSColor(for: colorScheme)),
             ] {
                 try expectContrast(
-                    RascSurfacePalette.tertiaryTextNSColor(for: colorScheme),
+                    RascSurfacePalette.standard.tertiaryTextNSColor(for: colorScheme),
                     over: surface.color,
                     atLeast: 3.0,
                     "tertiaryText on \(surface.name) (\(colorScheme))"
@@ -624,13 +652,13 @@ struct VisualTokenContrastTests {
     @Test
     func keepCopperIsReservedForTheKeepPair() throws {
         for colorScheme in Self.colorSchemes {
-            let accent = RascSurfacePalette.keepAccentNSColor(for: colorScheme)
+            let accent = RascSurfacePalette.standard.keepAccentNSColor(for: colorScheme)
 
-            try expectContrast(accent, over: RascSurfacePalette.keepFillNSColor(for: colorScheme),
+            try expectContrast(accent, over: RascSurfacePalette.standard.keepFillNSColor(for: colorScheme),
                               atLeast: 4.5, "keepAccent on keepFill (\(colorScheme))")
-            try expectContrast(accent, over: RascSurfacePalette.canvasNSColor(for: colorScheme),
+            try expectContrast(accent, over: RascSurfacePalette.standard.canvasNSColor(for: colorScheme),
                               atLeast: 4.5, "keepAccent on canvas (\(colorScheme))")
-            try expectContrast(accent, over: RascSurfacePalette.raisedFillNSColor(for: colorScheme),
+            try expectContrast(accent, over: RascSurfacePalette.standard.raisedFillNSColor(for: colorScheme),
                               atLeast: 4.5, "keepAccent on raised fill (\(colorScheme))")
         }
     }
@@ -639,12 +667,12 @@ struct VisualTokenContrastTests {
     func destructiveTextStaysReadableOnWorkingSurfaces() throws {
         for colorScheme in Self.colorSchemes {
             for surface in [
-                Surface("canvas", RascSurfacePalette.canvasNSColor(for: colorScheme)),
-                Surface("raised fill", RascSurfacePalette.raisedFillNSColor(for: colorScheme)),
-                Surface("Home card", RascSurfacePalette.homeCardFillNSColor(for: colorScheme)),
+                Surface("canvas", RascSurfacePalette.standard.canvasNSColor(for: colorScheme)),
+                Surface("raised fill", RascSurfacePalette.standard.raisedFillNSColor(for: colorScheme)),
+                Surface("Home card", RascSurfacePalette.standard.homeCardFillNSColor(for: colorScheme)),
             ] {
                 try expectContrast(
-                    RascSurfacePalette.destructiveTextNSColor(for: colorScheme),
+                    RascSurfacePalette.standard.destructiveTextNSColor(for: colorScheme),
                     over: surface.color,
                     atLeast: 4.5,
                     "destructiveText on \(surface.name) (\(colorScheme))"
@@ -657,15 +685,15 @@ struct VisualTokenContrastTests {
     func destructiveTextStaysReadableOnSelectionFill() throws {
         for colorScheme in Self.colorSchemes {
             for base in [
-                Surface("canvas", RascSurfacePalette.canvasNSColor(for: colorScheme)),
-                Surface("raised fill", RascSurfacePalette.raisedFillNSColor(for: colorScheme)),
+                Surface("canvas", RascSurfacePalette.standard.canvasNSColor(for: colorScheme)),
+                Surface("raised fill", RascSurfacePalette.standard.raisedFillNSColor(for: colorScheme)),
             ] {
                 let selection = try composite(
-                    RascSurfacePalette.selectionFillNSColor(for: colorScheme),
+                    RascSurfacePalette.standard.selectionFillNSColor(for: colorScheme),
                     over: base.color
                 )
                 try expectContrast(
-                    RascSurfacePalette.destructiveTextNSColor(for: colorScheme),
+                    RascSurfacePalette.standard.destructiveTextNSColor(for: colorScheme),
                     over: selection,
                     atLeast: 4.5,
                     "destructiveText on selection over \(base.name) (\(colorScheme))"
@@ -678,8 +706,8 @@ struct VisualTokenContrastTests {
     func neutralPrimaryActionPairingIsReadable() throws {
         for colorScheme in Self.colorSchemes {
             try expectContrast(
-                RascSurfacePalette.actionPrimaryLabelNSColor(for: colorScheme),
-                over: RascSurfacePalette.actionPrimaryFillNSColor(for: colorScheme),
+                RascSurfacePalette.standard.actionPrimaryLabelNSColor(for: colorScheme),
+                over: RascSurfacePalette.standard.actionPrimaryFillNSColor(for: colorScheme),
                 atLeast: 4.5,
                 "primary action label on primary fill (\(colorScheme))"
             )

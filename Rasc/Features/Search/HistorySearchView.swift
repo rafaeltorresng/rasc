@@ -4,6 +4,7 @@ import SwiftUI
 struct HistorySearchInputField: View {
     @Bindable var session: ScratchpadSession
     @State private var isFocused = false
+    @Environment(\.noteTextSize) private var noteTextSize
 
     var body: some View {
         RascTransientInputShell(isFocused: isFocused) {
@@ -14,6 +15,7 @@ struct HistorySearchInputField: View {
                     focusRequest: session.searchFocusRequest,
                     placeholder: "Search thoughts…",
                     accessibilityLabel: "Search thoughts",
+                    fontSize: noteTextSize.points(15),
                     onCommand: handleSearchCommand
                 )
                 if !session.searchQuery.isEmpty {
@@ -50,6 +52,8 @@ struct HistorySearchInputField: View {
 struct HistorySearchView: View {
     @Bindable var session: ScratchpadSession
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.rascPalette) private var palette
+    @Environment(\.noteTextSize) private var noteTextSize
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.colorSchemeContrast) private var colorSchemeContrast
 
@@ -62,7 +66,7 @@ struct HistorySearchView: View {
             if session.hasMoreSearchResults {
                 Text("Search more specifically, or browse Home.")
                     .font(.caption)
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .foregroundStyle(palette.secondaryText(for: colorScheme))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, RascSurfaceLayout.horizontalInset)
                     .padding(.vertical, 10)
@@ -102,14 +106,14 @@ struct HistorySearchView: View {
     private var recentSectionHeader: some View {
         Text("Recent")
             .font(.system(size: 11.5, weight: .medium))
-            .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+            .foregroundStyle(palette.metadataText(for: colorScheme))
             .accessibilityAddTraits(.isHeader)
     }
 
     private func quietStateLabel(_ text: String) -> some View {
         Text(text)
             .font(.system(size: 13))
-            .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+            .foregroundStyle(palette.secondaryText(for: colorScheme))
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityLabel(text)
     }
@@ -146,22 +150,22 @@ struct HistorySearchView: View {
     }
 
     private var matchMark: Color {
-        RascSurfacePalette.searchMark(for: colorScheme, increasedContrast: colorSchemeContrast == .increased)
+        palette.searchMark(for: colorScheme, increasedContrast: colorSchemeContrast == .increased)
     }
 
     private func resultRow(_ note: Note, isSelected: Bool) -> some View {
         HStack(alignment: .top, spacing: 8) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(RascSearchMatch.highlighted(note.displayTitle, query: session.searchQuery, mark: matchMark, tokenStartOnly: true))
-                    .font(.system(size: RascSurfaceMetrics.searchTitleFontSize, weight: .medium))
-                    .foregroundStyle(.primary)
+                Text(RascSearchMatch.highlighted(note.displayTitle, query: session.searchQuery, mark: matchMark, tokenStartOnly: true, underline: palette.preset == .custom))
+                    .font(.system(size: noteTextSize.points(RascSurfaceMetrics.searchTitleFontSize), weight: .medium))
+                    .foregroundStyle(palette.noteText(for: colorScheme))
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
 
                 if let snippet = note.retrievalSnippet(matching: session.searchQuery) {
-                    Text(RascSearchMatch.highlighted(snippet, query: session.searchQuery, mark: matchMark, tokenStartOnly: true))
-                        .font(.system(size: RascSurfaceMetrics.searchSnippetFontSize))
-                        .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    Text(RascSearchMatch.highlighted(snippet, query: session.searchQuery, mark: matchMark, tokenStartOnly: true, underline: palette.preset == .custom))
+                        .font(.system(size: noteTextSize.points(RascSurfaceMetrics.searchSnippetFontSize)))
+                        .foregroundStyle(palette.noteText(for: colorScheme, fallback: palette.secondaryText(for: colorScheme)))
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                 }
@@ -173,13 +177,13 @@ struct HistorySearchView: View {
                 if note.isKept {
                     Text("Kept")
                         .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                        .foregroundStyle(palette.metadataText(for: colorScheme))
                 }
 
                 Text(HomeNoteTimestampFormatter.format(note.updatedAt, calendar: .current, now: .now))
                     .font(.system(size: RascSurfaceMetrics.searchTimestampFontSize))
                     .monospacedDigit()
-                    .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                    .foregroundStyle(palette.metadataText(for: colorScheme))
                     .lineLimit(1)
 
                 if isSelected {

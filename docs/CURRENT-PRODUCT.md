@@ -64,7 +64,9 @@ Search thoughts (`⌘P`); legacy “find” remains a palette search alias.
 
 ## Presentation
 
-The interface uses Graphite Paper: warm paper and neutral graphite surfaces, neutral selection and focus, and copper reserved for Keep and Kept. Settings → Theme Style adds curated presets (Graphite Paper default, Slate, Porcelain) without changing the default or copper's role; reset restores System + Graphite Paper. The brand symbol remains separate from the writing surface. The Thinking Orb has been removed from the interface. See the [design system](DESIGN-SYSTEM.md) and [brand](BRAND.md).
+Graphite Paper is the default, with warm paper, neutral graphite, and copper for Keep and Kept. Settings → Appearance offers Graphite Paper, Slate, Porcelain, and Custom in System, Rasc Light, or Rasc Dark mode. Custom has independent Background and Note Text colors for Light and Dark, a live preview, and a palette reset. Apply saves the chosen colors after the palette passes contrast checks. Restore Default Theme switches to System and Graphite Paper and retains the saved Custom palette.
+
+Note Text Size offers Small, Default, and Large for Scratchpad, Refine comparisons, and Home and Search note content and search fields. The default Scratchpad body is 16 pt. See the [design system](DESIGN-SYSTEM.md) and [brand](BRAND.md).
 
 ## Validation boundaries
 

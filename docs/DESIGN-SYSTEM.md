@@ -163,8 +163,11 @@ Use primarily for temporary confirmation — copper, only for Keep and its `Kept
 ### Error
 Use only where actionable. Destructive actions render as destructive red (`#B3261E` light / `#FF8A80` dark), never filled, never the default Return target.
 
-### Theme presets
-Settings → Theme Style offers curated presets on top of the three native appearances (System, Rasc Light, Rasc Dark): **Graphite Paper** (the default — exactly the palette above), **Slate** (cool blue-gray neutrals) and **Porcelain** (true neutral, crisper contrast). Presets only vary canvases, fills, borders, focus and neutral text opacities; **copper stays exclusive to Keep and Kept in every preset**, and destructive red keeps its existing role. Reset in the same section restores System appearance with Graphite Paper. Implementation: `Rasc/Settings/ThemeSettings.swift` (preset catalog, store, reset) parameterized into `RascSurfacePalette`; the active theme rebuilds the Home, Scratchpad and Settings subtrees. Rebuilding is deliberate — it guarantees every surface reads fresh tokens, but it drops transient state in rebuilt surfaces (the Scratchpad editor loses its undo stack and scroll position).
+### Theme styles
+
+Settings → Appearance offers Graphite Paper, Slate, Porcelain, and Custom. The three native appearance modes are independent of theme style. Custom stores a Light and Dark palette with opaque Background and Note Text colors. Preview shows the draft immediately. Apply requires 4.5:1 contrast for note text and for the background against the native appearance’s ink. Tokens for raised surfaces, supporting text, focus, and search marks are derived from those colors. Copper remains dedicated to Keep and Kept.
+
+Themes and note size flow through the SwiftUI environment. The AppKit editor updates display attributes on its existing text view so selection and undo can survive a style change.
 
 Never use color alone to communicate state.
 
@@ -181,6 +184,8 @@ Default:
 - `.body` for editor text
 - `.callout` or `.subheadline` for auxiliary content
 - `.caption` for transient metadata
+
+Small, Default, and Large change note content with fixed point offsets. Scratchpad and Refine share the same body size. Home and Search scale note titles, excerpts, and search input. Controls, timestamps, shortcuts, and Settings labels keep their existing sizes.
 
 Avoid custom fonts inside the app.
 

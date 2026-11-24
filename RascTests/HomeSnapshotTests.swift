@@ -36,7 +36,10 @@ struct HomeSnapshotTests {
         return session
     }
 
-    private func renderPNG<V: View>(_ view: V, width: CGFloat, height: CGFloat, scheme: ColorScheme, name: String) throws {
+    private func renderPNG<V: View>(
+        _ view: V, width: CGFloat, height: CGFloat, scheme: ColorScheme, name: String,
+        palette: RascSurfacePalette = .standard, textSize: NoteTextSize = .standard
+    ) throws {
         let contentRect = NSRect(x: -20000, y: -20000, width: width, height: height)
         let window = NSWindow(
             contentRect: contentRect,
@@ -49,10 +52,12 @@ struct HomeSnapshotTests {
         window.appearance = NSAppearance(named: scheme == .dark ? .darkAqua : .aqua)
         let host = NSHostingView(
             rootView: ZStack {
-                RascSurfacePalette.canvas(for: scheme)
+                palette.canvas(for: scheme)
                 view
             }
             .environment(\.colorScheme, scheme)
+            .environment(\.rascPalette, palette)
+            .environment(\.noteTextSize, textSize)
             .frame(width: width, height: height)
         )
         host.frame = NSRect(origin: .zero, size: contentRect.size)
@@ -85,7 +90,6 @@ struct HomeSnapshotTests {
             onNoteUnkept: { _ in }
         )
         .environment(\.colorScheme, scheme)
-        .background(RascSurfacePalette.canvas(for: scheme))
     }
 
     @Test
@@ -119,6 +123,12 @@ struct HomeSnapshotTests {
             height: 250,
             scheme: .light,
             name: "quick-search-grat-light"
+        )
+
+        try renderPNG(
+            HistorySearchView(session: session), width: 560, height: 250, scheme: .dark,
+            name: "quick-search-custom-large-dark", palette: RascSurfacePalette(preset: .custom, custom: Self.customColors),
+            textSize: .large
         )
 
         await MainActor.run {
@@ -219,41 +229,51 @@ struct HomeSnapshotTests {
             onKeep: {},
             onUnkeep: {}
         )
-        .environment(\.colorScheme, .light)
         try renderPNG(view, width: 720, height: 480, scheme: .light, name: "refine-preview-suggested-light")
+        let palette = RascSurfacePalette(preset: .custom, custom: Self.customColors)
+        try renderPNG(view, width: 560, height: 320, scheme: .dark,
+                      name: "refine-preview-custom-large-dark", palette: palette, textSize: .large)
     }
 
     @Test
     func settingsThemeSectionRender() throws {
+        let suiteName = "SettingsThemeSnapshots.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let store = ThemeStore(store: ThemeSettingsStore(userDefaults: defaults))
         try renderPNG(
-            settingsCanvas(scheme: .light) {
-                SettingsView()
-            },
-            width: 500,
-            height: 860,
-            scheme: .light,
+            SettingsView(themeStore: store), width: 500, height: 860, scheme: .light,
             name: "settings-theme-light"
         )
-        ThemeStore.shared.selectPreset(.slate)
-        defer { ThemeStore.shared.reset() }
+        store.selectPreset(.slate)
         try renderPNG(
-            settingsCanvas(scheme: .dark) {
-                SettingsView()
-            },
-            width: 500,
-            height: 860,
-            scheme: .dark,
-            name: "settings-theme-slate-dark"
+            SettingsView(themeStore: store), width: 500, height: 860, scheme: .dark,
+            name: "settings-theme-slate-dark", palette: store.palette
         )
+        store.selectPreset(.custom)
+        store.applyCustomPalette(Self.customColors)
+        let minimumHeight = SettingsWindowPresentation.fittedMinimumHeight(
+            visibleHeight: NSScreen.main?.visibleFrame.height ?? 680
+        )
+        for (scheme, name) in [(ColorScheme.light, "light"), (.dark, "dark")] {
+            try renderPNG(
+                SettingsView(themeStore: store), width: 460, height: minimumHeight, scheme: scheme,
+                name: "settings-custom-\(name)", palette: store.palette
+            )
+        }
     }
 
-    private func settingsCanvas<V: View>(scheme: ColorScheme, @ViewBuilder content: () -> V) -> some View {
-        ZStack {
-            RascSurfacePalette.canvas(for: scheme)
-                .ignoresSafeArea()
-            content()
-        }
-        .environment(\.colorScheme, scheme)
+    private static var customColors: CustomTheme {
+        CustomTheme(
+            light: CustomThemeColors(
+                background: NSColor(srgbRed: 0.89, green: 0.94, blue: 0.89, alpha: 1),
+                noteText: NSColor(srgbRed: 0.13, green: 0.24, blue: 0.17, alpha: 1)
+            ),
+            dark: CustomThemeColors(
+                background: NSColor(srgbRed: 0.13, green: 0.16, blue: 0.25, alpha: 1),
+                noteText: NSColor(srgbRed: 0.83, green: 0.90, blue: 1, alpha: 1)
+            )
+        )
     }
 
     @Test
@@ -290,6 +310,8 @@ struct HomeSnapshotTests {
         )
         try renderPNG(view, width: 720, height: 420, scheme: .light, name: "scratchpad-image-light")
         try renderPNG(view, width: 720, height: 420, scheme: .dark, name: "scratchpad-image-dark")
+        try renderPNG(view, width: 560, height: 320, scheme: .light, name: "scratchpad-custom-large-light",
+                      palette: RascSurfacePalette(preset: .custom, custom: Self.customColors), textSize: .large)
     }
 
     private func makeSolidPNG(width: Int, height: Int, red: CGFloat, green: CGFloat, blue: CGFloat) throws -> Data {
@@ -337,7 +359,12 @@ struct HomeSnapshotTests {
         let searchSession = try await makeSeededSession(query: "grat")
         try renderPNG(homeView(session: searchSession, scheme: .light), width: 1000, height: 420, scheme: .light, name: "home-cards-light-search")
 
+        let palette = RascSurfacePalette(preset: .custom, custom: Self.customColors)
+        try renderPNG(homeView(session: searchSession, scheme: .dark), width: 760, height: 520, scheme: .dark,
+                      name: "home-cards-custom-large-dark", palette: palette, textSize: .large)
         HomeViewModeStore(userDefaults: .standard).save(.list)
+        try renderPNG(homeView(session: listSession, scheme: .light), width: 760, height: 520, scheme: .light,
+                      name: "home-list-custom-large-light", palette: palette, textSize: .large)
     }
 }
 

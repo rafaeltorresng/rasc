@@ -6,7 +6,7 @@ final class OnboardingWindowController {
     private var window: NSWindow?
 
     func show(coordinator: OnboardingCoordinator) {
-        let contentView = OnboardingView(coordinator: coordinator)
+        let contentView = RascAppearanceView { OnboardingView(coordinator: coordinator) }
         let hostingController = NSHostingController(rootView: contentView)
 
         let window = self.window ?? makeWindow()

@@ -12,6 +12,7 @@ struct ShortcutKeycapView: View {
     var isPressed: Bool = false
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @State private var isHovered = false
 
@@ -82,7 +83,7 @@ struct ShortcutKeycapView: View {
             .padding(.vertical, verticalPadding)
             .background {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(RascSurfacePalette.raisedFill(for: colorScheme))
+                    .fill(palette.raisedFill(for: colorScheme))
                     .shadow(
                         color: .black.opacity(shadowOpacity(pressed: pressed, elevated: elevated)),
                         radius: shadowRadius(pressed: pressed, elevated: elevated),
@@ -91,7 +92,7 @@ struct ShortcutKeycapView: View {
                     .overlay {
                         RoundedRectangle(cornerRadius: cornerRadius - 1, style: .continuous)
                             .strokeBorder(
-                                RascSurfacePalette.innerHighlight(for: colorScheme),
+                                palette.innerHighlight(for: colorScheme),
                                 lineWidth: 0.5
                             )
                             .padding(1)
@@ -100,7 +101,7 @@ struct ShortcutKeycapView: View {
             .overlay {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .strokeBorder(
-                        RascSurfacePalette.border(for: colorScheme).opacity(borderOpacityMultiplier),
+                        palette.border(for: colorScheme).opacity(borderOpacityMultiplier),
                         lineWidth: 1
                     )
             }

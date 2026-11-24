@@ -33,9 +33,7 @@ enum RascSurfaceMetrics {
 
 
     static let noteFontSize: CGFloat = 16
-    /// Matches `noteFontSize` so the caret lines up with the empty-state prompt.
-    static let scratchpadPlaceholderFontSize: CGFloat = noteFontSize
-
+    static let scratchpadPlaceholderFontSize = noteFontSize
     static var noteFont: NSFont {
         NSFont.systemFont(ofSize: noteFontSize, weight: .regular)
     }
@@ -46,178 +44,206 @@ enum RascSurfaceMetrics {
     static let feedbackCornerRadius: CGFloat = 10
 }
 
-enum RascSurfacePalette {
-    static let panelBackground = NSColor(
-        name: NSColor.Name("RascPanelBackground")
-    ) { appearance in
-        let dark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-        return ThemePalette.current(for: dark ? .dark : .light).canvas
+struct RascSurfacePalette: Equatable {
+    static let standard = Self()
+
+    let preset: ThemePreset
+    private let custom: CustomTheme
+    private let light: ThemePalette
+    private let dark: ThemePalette
+
+    init(preset: ThemePreset = .graphitePaper, custom: CustomTheme = .standard) {
+        self.preset = preset
+        self.custom = custom
+        light = ThemeCatalog.resolve(preset: preset, scheme: .light, custom: custom)
+        dark = ThemeCatalog.resolve(preset: preset, scheme: .dark, custom: custom)
     }
 
-    static func canvas(for colorScheme: ColorScheme) -> Color {
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.preset == rhs.preset && (lhs.preset != .custom || lhs.custom == rhs.custom)
+    }
+
+    func colors(for colorScheme: ColorScheme) -> ThemePalette {
+        colorScheme == .dark ? dark : light
+    }
+
+    var panelBackground: NSColor {
+        NSColor(name: nil) { appearance in
+            let scheme: ColorScheme = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua ? .dark : .light
+            return colors(for: scheme).canvas
+        }
+    }
+
+    func canvas(for colorScheme: ColorScheme) -> Color {
         Color(nsColor: canvasNSColor(for: colorScheme))
     }
 
-    static func canvasNSColor(for colorScheme: ColorScheme) -> NSColor {
-        ThemePalette.current(for: colorScheme).canvas
+    func canvasNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colors(for: colorScheme).canvas
     }
 
-    static func raisedFill(for colorScheme: ColorScheme) -> Color {
+    func raisedFill(for colorScheme: ColorScheme) -> Color {
         Color(nsColor: raisedFillNSColor(for: colorScheme))
     }
 
-    static func raisedFillNSColor(for colorScheme: ColorScheme) -> NSColor {
-        ThemePalette.current(for: colorScheme).raisedFill
+    func raisedFillNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colors(for: colorScheme).raisedFill
     }
 
-    static func subtleFill(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark
+    func subtleFill(for colorScheme: ColorScheme) -> Color {
+        if let fill = colors(for: colorScheme).subtleFill { return Color(nsColor: fill) }
+        return colorScheme == .dark
             ? Color.white.opacity(0.045)
             : Color.black.opacity(0.035)
     }
 
-    static func border(for colorScheme: ColorScheme) -> Color {
-        Color(nsColor: ThemePalette.current(for: colorScheme).border)
+    func border(for colorScheme: ColorScheme) -> Color {
+        Color(nsColor: colors(for: colorScheme).border)
     }
 
-    static func innerHighlight(for colorScheme: ColorScheme) -> Color {
+    func innerHighlight(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark
             ? Color.white.opacity(0.055)
             : Color.white.opacity(0.72)
     }
 
-    /// Scratchpad caret; mirrors the SwiftUI editor tint before the AppKit text surface.
-    static let scratchpadInsertionPoint = NSColor(
-        name: NSColor.Name("RascScratchpadInsertionPoint")
-    ) { appearance in
-        let dark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-        return ThemePalette.current(for: dark ? .dark : .light).focus
-    }
-
     // MARK: Text roles
 
-    static func primaryText(for colorScheme: ColorScheme) -> Color {
-        .primary
+    func noteText(for colorScheme: ColorScheme, fallback: Color = .primary) -> Color {
+        colors(for: colorScheme).noteText.map { Color(nsColor: $0) } ?? fallback
     }
 
     /// Functional supporting copy: snippets, descriptions and action labels.
-    static func secondaryText(for colorScheme: ColorScheme) -> Color {
+    func secondaryText(for colorScheme: ColorScheme) -> Color {
         Color(nsColor: secondaryTextNSColor(for: colorScheme))
     }
 
-    static func secondaryTextNSColor(for colorScheme: ColorScheme) -> NSColor {
-        ThemePalette.current(for: colorScheme).secondaryText
+    func secondaryTextNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colors(for: colorScheme).secondaryText
     }
 
     /// Functional metadata: shortcuts, timestamps and section labels.
-    static func metadataText(for colorScheme: ColorScheme) -> Color {
+    func metadataText(for colorScheme: ColorScheme) -> Color {
         Color(nsColor: metadataTextNSColor(for: colorScheme))
     }
 
-    static func metadataTextNSColor(for colorScheme: ColorScheme) -> NSColor {
-        ThemePalette.current(for: colorScheme).metadataText
+    func metadataTextNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colors(for: colorScheme).metadataText
     }
 
     /// Non-essential hints only. Never use for shortcuts or functional labels.
-    static func tertiaryText(for colorScheme: ColorScheme) -> Color {
+    func tertiaryText(for colorScheme: ColorScheme) -> Color {
         Color(nsColor: tertiaryTextNSColor(for: colorScheme))
     }
 
-    static func tertiaryTextNSColor(for colorScheme: ColorScheme) -> NSColor {
-        ThemePalette.current(for: colorScheme).tertiaryText
+    func tertiaryTextNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colors(for: colorScheme).tertiaryText
     }
 
     /// Destructive actions. Text only, never a fill, never the default selection.
-    static func destructiveText(for colorScheme: ColorScheme) -> Color {
+    func destructiveText(for colorScheme: ColorScheme) -> Color {
         Color(nsColor: destructiveTextNSColor(for: colorScheme))
     }
 
-    static func destructiveTextNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark
+    func destructiveTextNSColor(for colorScheme: ColorScheme) -> NSColor {
+        let red = colorScheme == .dark
             ? NSColor(srgbRed: 1.0, green: 0.541, blue: 0.502, alpha: 1)
             : NSColor(srgbRed: 0.702, green: 0.149, blue: 0.118, alpha: 1)
+        guard preset == .custom else { return red }
+        let colors = colors(for: colorScheme)
+        for fraction: CGFloat in [0, 0.35, 0.65, 0.9] {
+            let candidate = ThemeColor.mix(red, colors.actionPrimaryFill, amount: fraction)
+            if [colors.canvas, colors.raisedFill, colors.homeCardFill].allSatisfy({
+                ThemeColor.contrast(candidate, $0) >= 4.5
+            }) {
+                return candidate
+            }
+        }
+        return colors.actionPrimaryFill
     }
 
     // MARK: Actions
 
     /// Neutral primary action. Keep is the only copper action in the app.
-    static func actionPrimaryFill(for colorScheme: ColorScheme) -> Color {
+    func actionPrimaryFill(for colorScheme: ColorScheme) -> Color {
         Color(nsColor: actionPrimaryFillNSColor(for: colorScheme))
     }
 
-    static func actionPrimaryFillNSColor(for colorScheme: ColorScheme) -> NSColor {
-        ThemePalette.current(for: colorScheme).actionPrimaryFill
+    func actionPrimaryFillNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colors(for: colorScheme).actionPrimaryFill
     }
 
-    static func actionPrimaryLabel(for colorScheme: ColorScheme) -> Color {
+    func actionPrimaryLabel(for colorScheme: ColorScheme) -> Color {
         Color(nsColor: actionPrimaryLabelNSColor(for: colorScheme))
     }
 
-    static func actionPrimaryLabelNSColor(for colorScheme: ColorScheme) -> NSColor {
-        ThemePalette.current(for: colorScheme).actionPrimaryLabel
+    func actionPrimaryLabelNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colors(for: colorScheme).actionPrimaryLabel
     }
 
     /// Approved Keep pair: `#9C421F` on `#F5E5DA`, and `#F0A780` on `#382822`.
-    static func keepAccent(for colorScheme: ColorScheme) -> Color {
+    func keepAccent(for colorScheme: ColorScheme) -> Color {
         Color(nsColor: keepAccentNSColor(for: colorScheme))
     }
 
-    static func keepAccentNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark ? darkKeepAccent : lightKeepAccent
+    func keepAccentNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark ? Self.darkKeepAccent : Self.lightKeepAccent
     }
 
-    static func keepFill(for colorScheme: ColorScheme) -> Color {
+    func keepFill(for colorScheme: ColorScheme) -> Color {
         Color(nsColor: keepFillNSColor(for: colorScheme))
     }
 
-    static func keepFillNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark ? darkKeepFill : lightKeepFill
+    func keepFillNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colorScheme == .dark ? Self.darkKeepFill : Self.lightKeepFill
     }
 
-    static func focus(for colorScheme: ColorScheme) -> Color {
-        Color(nsColor: ThemePalette.current(for: colorScheme).focus)
+    func focus(for colorScheme: ColorScheme) -> Color {
+        Color(nsColor: colors(for: colorScheme).focus)
     }
 
     // MARK: Selection
 
-    static func selectionFill(for colorScheme: ColorScheme) -> Color {
+    func selectionFill(for colorScheme: ColorScheme) -> Color {
         Color(nsColor: selectionFillNSColor(for: colorScheme))
     }
 
-    static func selectionFillNSColor(for colorScheme: ColorScheme) -> NSColor {
-        colorScheme == .dark
+    func selectionFillNSColor(for colorScheme: ColorScheme) -> NSColor {
+        if preset == .custom { return .clear }
+        return colorScheme == .dark
             ? NSColor(srgbRed: 1, green: 1, blue: 1, alpha: 0.08)
             : NSColor(srgbRed: 0, green: 0, blue: 0, alpha: 0.07)
     }
 
-    static func selectionStroke(for colorScheme: ColorScheme) -> Color {
+    func selectionStroke(for colorScheme: ColorScheme) -> Color {
         Color(nsColor: selectionStrokeNSColor(for: colorScheme))
     }
 
-    static func selectionStrokeNSColor(for colorScheme: ColorScheme) -> NSColor {
-        ThemePalette.current(for: colorScheme).selectionStroke
+    func selectionStrokeNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colors(for: colorScheme).selectionStroke
     }
 
-    static func focusedFieldBorder(for colorScheme: ColorScheme) -> Color {
-        Color.primary.opacity(colorScheme == .dark ? 0.36 : 0.30)
+    func focusedFieldBorder(for colorScheme: ColorScheme) -> Color {
+        if preset == .custom { return focus(for: colorScheme) }
+        return Color.primary.opacity(colorScheme == .dark ? 0.36 : 0.30)
     }
 
     /// Neutral backdrop painted behind search matches. Never a brand color; the
     /// text on top keeps its own color so contrast is preserved everywhere.
-    static func searchMark(for colorScheme: ColorScheme, increasedContrast: Bool) -> Color {
-        let values = ThemePalette.current(for: colorScheme)
+    func searchMark(for colorScheme: ColorScheme, increasedContrast: Bool) -> Color {
+        let values = colors(for: colorScheme)
         return Color(nsColor: increasedContrast ? values.searchMarkContrast : values.searchMark)
     }
 
-    static func homeCardFill(for colorScheme: ColorScheme) -> Color {
+    func homeCardFill(for colorScheme: ColorScheme) -> Color {
         Color(nsColor: homeCardFillNSColor(for: colorScheme))
     }
 
-    static func homeCardFillNSColor(for colorScheme: ColorScheme) -> NSColor {
-        ThemePalette.current(for: colorScheme).homeCardFill
+    func homeCardFillNSColor(for colorScheme: ColorScheme) -> NSColor {
+        colors(for: colorScheme).homeCardFill
     }
 
-    static func homeCardBorder(
+    func homeCardBorder(
         for colorScheme: ColorScheme,
         isHovered: Bool,
         increasedContrast: Bool
@@ -227,7 +253,7 @@ enum RascSurfacePalette {
             .opacity(isHovered ? opacities.hover : opacities.base)
     }
 
-    private static func homeCardBorderOpacities(
+    private func homeCardBorderOpacities(
         for colorScheme: ColorScheme,
         increasedContrast: Bool
     ) -> (base: Double, hover: Double) {
@@ -241,11 +267,11 @@ enum RascSurfacePalette {
         }
     }
 
-    static func homeSupportingText(for colorScheme: ColorScheme) -> Color {
+    func homeSupportingText(for colorScheme: ColorScheme) -> Color {
         secondaryText(for: colorScheme)
     }
 
-    static func homeSectionLabel(for colorScheme: ColorScheme) -> Color {
+    func homeSectionLabel(for colorScheme: ColorScheme) -> Color {
         metadataText(for: colorScheme)
     }
 
@@ -328,16 +354,17 @@ extension View {
 struct RascTransientSelectionBackground: View {
     let cornerRadius: CGFloat
 
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.colorSchemeContrast) private var colorSchemeContrast
 
     var body: some View {
         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-            .fill(RascSurfacePalette.selectionFill(for: colorScheme))
+            .fill(palette.selectionFill(for: colorScheme))
             .overlay {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .strokeBorder(
-                        RascSurfacePalette.selectionStroke(for: colorScheme),
+                        palette.selectionStroke(for: colorScheme),
                         lineWidth: colorSchemeContrast == .increased ? 1.5 : 1
                     )
             }
@@ -348,16 +375,17 @@ struct RascKeyboardActionHint: View {
     let shortcut: String
     let title: String
 
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         HStack(spacing: 5) {
             Text(title)
                 .font(.system(size: 11, weight: .medium))
-                .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                .foregroundStyle(palette.secondaryText(for: colorScheme))
             Text(shortcut)
                 .font(.system(size: 10, weight: .medium, design: .monospaced))
-                .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+                .foregroundStyle(palette.metadataText(for: colorScheme))
         }
     }
 }
@@ -376,13 +404,14 @@ enum RascAccessibility {
 struct RascClearInputButton: View {
     let label: String
     let action: () -> Void
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         Button(action: action) {
             Image(systemName: "xmark.circle.fill")
                 .font(.system(size: 15, weight: .medium))
-                .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                .foregroundStyle(palette.secondaryText(for: colorScheme))
                 .frame(width: 26, height: 26)
         }
         .buttonStyle(.plain)
@@ -397,6 +426,7 @@ struct RascTransientInputShell<Content: View>: View {
     @Environment(\.colorSchemeContrast) private var contrast
     @ViewBuilder var content: () -> Content
 
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
@@ -408,7 +438,7 @@ struct RascTransientInputShell<Content: View>: View {
                     cornerRadius: RascSurfaceMetrics.searchFieldCornerRadius,
                     style: .continuous
                 )
-                .fill(RascSurfacePalette.raisedFill(for: colorScheme))
+                .fill(palette.raisedFill(for: colorScheme))
             }
             .overlay {
                 RoundedRectangle(
@@ -417,8 +447,8 @@ struct RascTransientInputShell<Content: View>: View {
                 )
                 .strokeBorder(
                     isFocused
-                        ? (contrast == .increased ? RascSurfacePalette.primaryText(for: colorScheme) : RascSurfacePalette.focusedFieldBorder(for: colorScheme))
-                        : RascSurfacePalette.border(for: colorScheme).opacity(contrast == .increased ? 1 : 0.72),
+                        ? (contrast == .increased ? Color.primary : palette.focusedFieldBorder(for: colorScheme))
+                        : palette.border(for: colorScheme).opacity(contrast == .increased ? 1 : 0.72),
                     lineWidth: contrast == .increased ? 1.5 : 1
                 )
             }
@@ -426,58 +456,61 @@ struct RascTransientInputShell<Content: View>: View {
 }
 
 private struct RascWindowSurfaceModifier: ViewModifier {
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
 
     @ViewBuilder
     func body(content: Content) -> some View {
         if #available(macOS 15.0, *) {
             content
-                .containerBackground(RascSurfacePalette.canvas(for: colorScheme), for: .window)
-                .tint(RascSurfacePalette.focus(for: colorScheme))
+                .containerBackground(palette.canvas(for: colorScheme), for: .window)
+                .tint(palette.focus(for: colorScheme))
         } else {
             content
                 .background {
-                    RascSurfacePalette.canvas(for: colorScheme)
+                    palette.canvas(for: colorScheme)
                         .ignoresSafeArea()
                 }
-                .tint(RascSurfacePalette.focus(for: colorScheme))
+                .tint(palette.focus(for: colorScheme))
         }
     }
 }
 
 private struct ScratchpadOverlayBackgroundModifier: ViewModifier {
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
 
     func body(content: Content) -> some View {
         content.background {
-            RascSurfacePalette.canvas(for: colorScheme)
+            palette.canvas(for: colorScheme)
                 .ignoresSafeArea()
         }
     }
 }
 
 private struct ScratchpadCanvasModifier: ViewModifier {
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.controlActiveState) private var controlActiveState
 
     func body(content: Content) -> some View {
         content
             .background {
-                RascSurfacePalette.canvas(for: colorScheme)
+                palette.canvas(for: colorScheme)
                     .ignoresSafeArea()
             }
             .overlay {
                 ContainerRelativeShape()
                     .strokeBorder(
                         controlActiveState == .key
-                            ? RascSurfacePalette.focus(for: colorScheme).opacity(0.34)
-                            : RascSurfacePalette.border(for: colorScheme).opacity(0.62),
+                            ? palette.focus(for: colorScheme).opacity(0.34)
+                            : palette.border(for: colorScheme).opacity(0.62),
                         lineWidth: 1
                     )
                     .ignoresSafeArea()
                     .allowsHitTesting(false)
             }
-            .tint(RascSurfacePalette.focus(for: colorScheme))
+            .tint(palette.focus(for: colorScheme))
     }
 }
 
@@ -485,13 +518,14 @@ private struct QuietRaisedSurfaceModifier: ViewModifier {
     let cornerRadius: CGFloat
     let shadowOpacity: Double
 
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
 
     func body(content: Content) -> some View {
         content
             .background {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(RascSurfacePalette.raisedFill(for: colorScheme))
+                    .fill(palette.raisedFill(for: colorScheme))
                     .shadow(
                         color: .black.opacity(shadowOpacity),
                         radius: 8,
@@ -500,7 +534,7 @@ private struct QuietRaisedSurfaceModifier: ViewModifier {
             }
             .overlay {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .strokeBorder(RascSurfacePalette.border(for: colorScheme), lineWidth: 1)
+                    .strokeBorder(palette.border(for: colorScheme), lineWidth: 1)
             }
     }
 }
@@ -509,13 +543,14 @@ private struct TransientSurfaceBackgroundModifier: ViewModifier {
     let cornerRadius: CGFloat
 
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
 
     func body(content: Content) -> some View {
         if reduceTransparency {
             content.background {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(RascSurfacePalette.canvas(for: colorScheme))
+                    .fill(palette.canvas(for: colorScheme))
             }
         } else if #available(macOS 26.0, *) {
             content.background {
@@ -531,6 +566,7 @@ private struct TransientSurfaceBackgroundModifier: ViewModifier {
 
 private struct RefinementPreviewSurfaceModifier: ViewModifier {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
 
     func body(content: Content) -> some View {
@@ -539,7 +575,7 @@ private struct RefinementPreviewSurfaceModifier: ViewModifier {
         if reduceTransparency {
             content.background {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(RascSurfacePalette.raisedFill(for: colorScheme))
+                    .fill(palette.raisedFill(for: colorScheme))
             }
         } else if #available(macOS 26.0, *) {
             content.background {

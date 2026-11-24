@@ -22,6 +22,7 @@ struct OnboardingScratchpadOverlay: View {
 
     @Environment(\.onboardingScratchpadActions) private var actions
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @State private var showDelayedEmptyHint = false
     @State private var emptyHintTask: Task<Void, Never>?
@@ -82,7 +83,7 @@ struct OnboardingScratchpadOverlay: View {
     private var emptyHint: some View {
         Text("Anything unfinished is enough.")
             .font(.caption)
-            .foregroundStyle(RascSurfacePalette.metadataText(for: colorScheme))
+            .foregroundStyle(palette.metadataText(for: colorScheme))
             .accessibilityLabel("Anything unfinished is enough.")
     }
 
@@ -95,7 +96,7 @@ struct OnboardingScratchpadOverlay: View {
                     .font(.caption.weight(.semibold))
                 Text("Rasc still works without it.")
                     .font(.caption2)
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .foregroundStyle(palette.secondaryText(for: colorScheme))
                 HStack(spacing: 12) {
                     Button("Open System Settings") {
                         actions.openRefineSystemSettings()
@@ -113,7 +114,7 @@ struct OnboardingScratchpadOverlay: View {
                     .font(.caption.weight(.semibold))
                 Text("You can start using Rasc now.")
                     .font(.caption2)
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .foregroundStyle(palette.secondaryText(for: colorScheme))
                 Button("Continue") {
                     actions.dismissRefineUnavailable()
                 }
@@ -124,7 +125,7 @@ struct OnboardingScratchpadOverlay: View {
                     .font(.caption.weight(.semibold))
                 Text("Refine needs macOS 26 and Apple Intelligence. Capture and Keep still work.")
                     .font(.caption2)
-                    .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                    .foregroundStyle(palette.secondaryText(for: colorScheme))
                 Button("Continue") {
                     actions.dismissRefineUnavailable()
                 }
@@ -140,7 +141,7 @@ struct OnboardingScratchpadOverlay: View {
             ShortcutKeycapView(label: symbol, style: .compact)
             Text(text)
                 .font(.caption)
-                .foregroundStyle(RascSurfacePalette.secondaryText(for: colorScheme))
+                .foregroundStyle(palette.secondaryText(for: colorScheme))
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(text), \(symbol)")
