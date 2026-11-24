@@ -112,21 +112,103 @@ struct ThemeSettingsTests {
             for scheme in [ColorScheme.light, .dark] {
                 let expectedAccent = scheme == .light ? "9C421F" : "F0A780"
                 let expectedFill = scheme == .light ? "F5E5DA" : "382822"
-                #expect(ThemeStore.hex(RascSurfacePalette.keepAccentNSColor(for: scheme)) == expectedAccent)
-                #expect(ThemeStore.hex(RascSurfacePalette.keepFillNSColor(for: scheme)) == expectedFill)
+                #expect(ThemeStore.hex(instance.palette.keepAccentNSColor(for: scheme)) == expectedAccent)
+                #expect(ThemeStore.hex(instance.palette.keepFillNSColor(for: scheme)) == expectedFill)
             }
         }
     }
 
     @Test
-    func versionBumpsOnEveryThemeChange() {
+    func customColorsAreIndependentAndPersistAcrossPresetChanges() throws {
         let store = makeStore()
         let instance = ThemeStore(store: store)
-        let initial = instance.version
-        instance.selectPreset(.slate)
-        #expect(instance.version == initial + 1)
-        instance.reset()
-        #expect(instance.version == initial + 2)
+        instance.selectPreset(.custom)
+        #expect(store.loadPreset() == .custom)
+
+        var edited = instance.custom
+        edited[.dark].background = try #require(ThemeColor(.init(srgbRed: 0.06, green: 0.13, blue: 0.16, alpha: 1)))
+        edited[.dark].noteText = try #require(ThemeColor(.init(srgbRed: 0.78, green: 0.96, blue: 0.88, alpha: 1)))
+        instance.applyCustomPalette(edited)
+        #expect(instance.palette(for: .dark).canvas == edited.dark.background.nsColor)
+        #expect(instance.palette(for: .dark).noteText == edited.dark.noteText.nsColor)
+        #expect(instance.palette(for: .light).canvas == CustomTheme.standard.light.background.nsColor)
+
+        instance.selectPreset(.porcelain)
+        let reloaded = ThemeStore(store: store)
+        #expect(reloaded.preset == .porcelain)
+        #expect(reloaded.custom == edited)
+        reloaded.selectPreset(.custom)
+        #expect(reloaded.palette(for: .dark).canvas == edited.dark.background.nsColor)
+        reloaded.reset()
+        #expect(store.loadPreset() == .graphitePaper)
+        #expect(store.savedCustomPalette() == edited)
+        reloaded.selectPreset(.custom)
+        reloaded.applyCustomPalette(.standard)
+        #expect(ThemeStore(store: store).preset == .custom)
+        #expect(store.savedCustomPalette() == .standard)
+    }
+
+    @Test
+    func invalidOrLegacyPalettesDoNotApply() throws {
+        let store = makeStore()
+        let instance = ThemeStore(store: store)
+        instance.selectPreset(.custom)
+        var invalid = instance.custom
+        invalid[.light].noteText = invalid.light.background
+        #expect(invalid.light.issue(for: .light) != nil)
+        instance.applyCustomPalette(invalid)
+        #expect(store.savedCustomPalette() == .standard)
+
+        invalid[.light].background = try #require(ThemeColor(.black))
+        #expect(invalid.light.issue(for: .light) != nil)
+        store.saveCustomPalette(invalid)
+        #expect(store.loadPreset() == .graphitePaper)
+    }
+
+    @Test
+    func wideGamutColorRoundTripsThroughPreferences() throws {
+        let p3 = NSColor(displayP3Red: 0, green: 0.2, blue: 0, alpha: 1)
+        let picked = try #require(ThemeColor(p3))
+        #expect(picked.nsColor.redComponent < 0)
+        let store = makeStore()
+        var custom = CustomTheme.standard
+        custom[.light].noteText = picked
+        store.saveCustomPalette(custom)
+        #expect(store.savedCustomPalette()?.light.noteText == picked)
+    }
+
+    @Test(arguments: [ColorScheme.light, .dark])
+    func customSurfacesKeepChosenTextReadable(scheme: ColorScheme) throws {
+        let dark = scheme == .dark
+        // This canvas is near the contrast boundary, where derived fills need to adapt.
+        let neutral: CGFloat = dark ? 0.40 : 0.55
+        let colors = CustomThemeColors(
+            background: NSColor(srgbRed: neutral, green: neutral, blue: neutral, alpha: 1),
+            noteText: dark ? .white : .black
+        )
+        try #require(colors.issue(for: scheme) == nil)
+        let palette = colors.palette(for: scheme)
+        for surface in [palette.canvas, palette.raisedFill, palette.homeCardFill,
+                        palette.searchMark, palette.searchMarkContrast] {
+            #expect(ThemeColor.contrast(colors.noteText.nsColor, surface) >= 4.5)
+            #expect(ThemeColor.contrast(palette.secondaryText, surface) >= 4.5)
+            #expect(ThemeColor.contrast(palette.metadataText, surface) >= 4.5)
+            #expect(ThemeColor.contrast(palette.focus, surface) >= 3)
+        }
+    }
+
+    @Test
+    func noteTextSizeRetainsCurrentDefaultAndFallsBackForUnknownPreference() {
+        let defaults = UserDefaults(suiteName: "NoteTextSizeTests.\(UUID().uuidString)")!
+        func preference() -> AppStorage<NoteTextSize> {
+            AppStorage(wrappedValue: .standard, NoteTextSize.preferenceKey, store: defaults)
+        }
+        #expect(preference().wrappedValue.points(16) == 16)
+        preference().wrappedValue = .large
+        #expect(defaults.string(forKey: NoteTextSize.preferenceKey) == NoteTextSize.large.rawValue)
+        #expect(preference().wrappedValue.points(16) == 19)
+        defaults.set("obsolete", forKey: NoteTextSize.preferenceKey)
+        #expect(preference().wrappedValue == .standard)
     }
 }
 
