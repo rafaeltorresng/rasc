@@ -34,6 +34,7 @@ struct HomeView: View {
     let onNewScratch: () -> Void
     let onNoteDiscarded: (UUID) -> Void
     let onNoteUnkept: (UUID) -> Void
+    let onExportThought: (UUID) -> Void
     @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -223,7 +224,7 @@ struct HomeView: View {
             .accessibilityElement(children: .combine)
             .accessibilityLabel("Rasc")
 
-            HomeSearchField(text: $session.searchQuery, isFocused: $searchIsFocused)
+            ThoughtSearchField(text: $session.searchQuery, isFocused: $searchIsFocused)
                 .onSubmit { searchIsFocused = false; listIsFocused = true }
                 .onKeyPress(.downArrow) {
                     searchIsFocused = false
@@ -414,6 +415,7 @@ struct HomeView: View {
                     onOpen: { onOpenNote(note.id) },
                     onSelect: { session.selectNote(note.id) },
                     onCopy: { copyNote(note.id) },
+                    onExport: { onExportThought(note.id) },
                     onDuplicate: { duplicateNote(note.id) },
                     onUnkeep: { unkeepNote(note.id) },
                     onDiscard: { discardNote(note.id) }
@@ -438,6 +440,7 @@ struct HomeView: View {
                     onOpen: { onOpenNote(note.id) },
                     onSelect: { session.selectNote(note.id) },
                     onCopy: { copyNote(note.id) },
+                    onExport: { onExportThought(note.id) },
                     onDuplicate: { duplicateNote(note.id) },
                     onUnkeep: { unkeepNote(note.id) },
                     onDiscard: { discardNote(note.id) }
@@ -569,7 +572,7 @@ struct HomeView: View {
     }
 }
 
-private struct HomeSearchField: View {
+struct ThoughtSearchField: View {
     @Binding var text: String
     let isFocused: FocusState<Bool>.Binding
 
@@ -625,6 +628,7 @@ private struct HomeNoteRowView: View {
     let onOpen: () -> Void
     let onSelect: () -> Void
     let onCopy: () -> Void
+    let onExport: () -> Void
     let onDuplicate: () -> Void
     let onUnkeep: () -> Void
     let onDiscard: () -> Void
@@ -759,6 +763,7 @@ private struct HomeNoteRowView: View {
             Button("Unkeep", action: onUnkeep)
         }
         Button("Copy content", action: onCopy)
+        Button("Export Thought…", action: onExport)
         Button("Duplicate", action: onDuplicate)
             .disabled(!note.hasMeaningfulContent)
         Button("Discard Note", role: .destructive, action: onDiscard)
@@ -962,6 +967,7 @@ private struct HomeNoteCardView: View {
     let onOpen: () -> Void
     let onSelect: () -> Void
     let onCopy: () -> Void
+    let onExport: () -> Void
     let onDuplicate: () -> Void
     let onUnkeep: () -> Void
     let onDiscard: () -> Void
@@ -1113,6 +1119,7 @@ private struct HomeNoteCardView: View {
             Button("Unkeep", action: onUnkeep)
         }
         Button("Copy content", action: onCopy)
+        Button("Export Thought…", action: onExport)
         Button("Duplicate", action: onDuplicate)
             .disabled(!note.hasMeaningfulContent)
         Button("Discard Note", role: .destructive, action: onDiscard)

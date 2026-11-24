@@ -12,8 +12,10 @@ The Release entitlement file enables App Sandbox without network access.
 - Unsandboxed Debug: `~/Library/Application Support/Rasc/Rasc.sqlite`.
 - These are separate stores. Installing a Release build does not import the
   unsandboxed development database automatically.
-- Notes contain UUID, content, creation/update dates, optional discard date and
-  optional Kept date. Five ordered GRDB migrations preserve earlier schemas.
+- Notes contain a UUID, text, creation and update dates, optional discard and
+  Kept dates, and an image indicator. Eight ordered GRDB migrations preserve
+  earlier schemas. Mixed thoughts store ordered text and original image bytes,
+  with a separate text projection for search.
 - FTS5 indexes note content with prefix matching and diacritic normalization.
   Discarded notes are filtered out of retrieval; their rows/indexed content remain.
 - Accepted refinements store both before and after text in `refinement_revisions`
@@ -40,9 +42,26 @@ The Release entitlement file enables App Sandbox without network access.
    as an error-recovery step. Opening a newer schema with an older binary is not
    guaranteed to work; keep the matching release artifact with the backup.
 
-There is no built-in export, automatic backup or sync. Copy and Share are explicit
-user handoffs to other applications. Feedback opens an email draft with version
-information; it neither attaches notes nor sends the message automatically.
+## Export and handoff
+
+- Use **Export Thought…** in the Scratchpad command palette or a Home thought’s
+  context menu. Text-only thoughts save as a Markdown text file. Thoughts with
+  images save as a folder with the text file and its images.
+- Use **Export Thoughts…** in the Rasc menu bar or command palette for Kept,
+  All, or Selected thoughts. All includes unfinished thoughts. In Selected,
+  search and check the thoughts you want. Your checks stay selected as you search.
+- Collection folders contain one Markdown file per thought, any images in
+  `assets`, and a `manifest.json` with IDs and dates. Mixed-note entries also
+  record the order and UTF-8 byte ranges of original text parts. Keep the folder
+  together so relative image links continue to work. If a destination only accepts
+  individual files, attach the Markdown and images separately.
+- Exports include current saved content and exclude discarded thoughts and
+  refinement history. The app receives write access to the location you choose
+  in the macOS panel. Export leaves the thoughts in Rasc and produces files you
+  can open and move independently. Use the manual backup steps for recovery.
+
+Copy and Share remain available for quick handoff to compatible applications.
+Feedback opens an email draft with version information and never attaches notes.
 
 Refine proposals may still change meaning or uncertainty. Review Suggested, or the
 word-level Changes diff, against Original before accepting. Automated language/literal

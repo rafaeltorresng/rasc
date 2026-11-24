@@ -27,7 +27,8 @@ The current ad-hoc updater release path is documented in [SPARKLE-RELEASE.md](SP
 Release builds use `Rasc/Rasc.entitlements` with only:
 
 - `com.apple.security.app-sandbox`
-- `com.apple.security.files.user-selected.read-only` (for explicit copy/share handoff)
+- `com.apple.security.files.user-selected.read-write` for files and folders the
+  user chooses for portable export
 
 No Accessibility, Contacts, Calendar, Location, Camera, Microphone, outgoing network, file-provider, or temporary exception entitlements are enabled in the default Release build.
 

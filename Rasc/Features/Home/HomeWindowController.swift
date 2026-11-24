@@ -14,6 +14,10 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
         window?.isVisible == true
     }
 
+    var isKeyWindow: Bool { window?.isKeyWindow == true }
+    var selectedNoteID: UUID? { session?.selectedNote()?.id }
+    var exportWindow: NSWindow? { window }
+
     var onVisibilityChange: ((Bool) -> Void)?
 
     init(windowFrameStore: WindowFrameStore = .home()) {
@@ -28,7 +32,8 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
         onNewScratch: @escaping () -> Void,
         prepareForDuplicate: @escaping @MainActor (UUID) async throws -> Void = { _ in },
         onNoteDiscarded: @escaping (UUID) -> Void = { _ in },
-        onNoteUnkept: @escaping (UUID) -> Void = { _ in }
+        onNoteUnkept: @escaping (UUID) -> Void = { _ in },
+        onExportThought: @escaping (UUID) -> Void = { _ in }
     ) {
         let session = session ?? HomeSession(repository: repository, prepareForDuplicate: prepareForDuplicate)
         self.session = session
@@ -40,7 +45,8 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
                 onOpenNote: onOpenNote,
                 onNewScratch: onNewScratch,
                 onNoteDiscarded: onNoteDiscarded,
-                onNoteUnkept: onNoteUnkept
+                onNoteUnkept: onNoteUnkept,
+                onExportThought: onExportThought
             )
         }
 

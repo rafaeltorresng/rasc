@@ -5,6 +5,8 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
     case unkeep
     case copyNote
     case shareNote
+    case exportThought
+    case exportThoughts
     case discardNote
     case newScratch
     case findNote
@@ -25,6 +27,10 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             "Copy Note"
         case .shareNote:
             "Share…"
+        case .exportThought:
+            "Export Thought…"
+        case .exportThoughts:
+            "Export Thoughts…"
         case .discardNote:
             "Discard Note"
         case .newScratch:
@@ -50,7 +56,7 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             ""
         case .copyNote:
             ""
-        case .shareNote:
+        case .shareNote, .exportThought, .exportThoughts:
             ""
         case .discardNote:
             ""
@@ -98,6 +104,10 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             "Copies the entire note to the clipboard"
         case .shareNote:
             "Shares the note using macOS share sheet"
+        case .exportThought:
+            "Saves a copy of this thought with its images"
+        case .exportThoughts:
+            "Choose which thoughts to save as files"
         case .discardNote:
             "Discards this thought. Undo restores it while Rasc is running"
         case .newScratch:
@@ -131,6 +141,7 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             if hasPersistableContent {
                 commands.append(.copyNote)
                 commands.append(.shareNote)
+                commands.append(.exportThought)
             }
             commands.append(.discardNote)
         }
@@ -139,6 +150,7 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             .newScratch,
             .findNote,
             .openHome,
+            .exportThoughts,
             .refine,
             .keyboardShortcuts,
             .settings

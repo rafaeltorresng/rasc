@@ -25,6 +25,19 @@ Use synthetic thoughts and a temporary test account/profile when exercising fail
 - [ ] Undo while writing a new thought leaves the new text intact.
 - [ ] A failed write gives actionable feedback, preserves content and can be retried.
 
+## Export
+
+- [ ] Export text and a mixed thought from Scratchpad and both Home views. Open the
+  Markdown with the export folder in a new location and inspect image placement.
+- [ ] Check Kept, All and Selected from the Rasc menu. Search in Selected and
+  verify previously checked thoughts remain selected. Verify discarded thoughts
+  and refinement history stay out of the files.
+- [ ] Confirm a system save panel writes to a chosen external location using the
+  release sandbox. Check an existing filename, repeat a folder export, and cancel
+  the picker and the save dialog. Verify focus returns to the source window.
+- [ ] Check the picker, checkboxes, count, confirmation and retry messages with
+  VoiceOver and Full Keyboard Access in light and dark appearances.
+
 ## Refine and retrieval
 
 - [ ] Whole-note/selection preview: Suggested, Changes (word-level strike/underline) and Original all render; selection context is preserved; Esc/Return grammar is unchanged; Reduce Motion falls back to instant transitions.

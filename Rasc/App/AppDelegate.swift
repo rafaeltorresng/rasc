@@ -181,6 +181,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
         bootstrap.panelIfReady()?.shareActiveNote()
     }
 
+    func exportThought() {
+        Task { await bootstrap.exportThought() }
+    }
+
+    func exportThoughts() {
+        Task { await bootstrap.exportThoughts() }
+    }
+
     func discardActiveNote() {
         Task { @MainActor in
             await bootstrap.awaitPanel()?.discardActiveNote()
@@ -230,6 +238,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
 
     func menuBarOpenHome() {
         openHome()
+    }
+
+    func menuBarExportThoughts() {
+        exportThoughts()
     }
 
     func menuBarNewScratch() {

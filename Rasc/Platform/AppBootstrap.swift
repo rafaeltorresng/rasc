@@ -95,8 +95,39 @@ final class AppBootstrap {
                 Task { @MainActor in
                     await panel.refreshActiveNoteIfMatching(id: noteID)
                 }
+            },
+            onExportThought: { [weak self] id in
+                Task { @MainActor in await self?.exportHomeThought(id) }
             }
         )
+    }
+
+    func exportThought() async {
+        guard let panel = await awaitPanel() else { return }
+        if homeWindowController?.isKeyWindow == true {
+            if let id = homeWindowController?.selectedNoteID { await exportHomeThought(id) }
+        } else if panel.panel.isKeyWindow {
+            await panel.exportActiveThought()
+        }
+    }
+
+    private func exportHomeThought(_ id: UUID) async {
+        guard let panel = await awaitPanel(), let window = homeWindowController?.exportWindow else { return }
+        await panel.noteExport.exportThought(from: window) {
+            try await panel.prepareThoughtsForExport(.selected([id]))
+            return id
+        }
+    }
+
+    func exportThoughts() async {
+        guard let panel = await awaitPanel() else { return }
+        if let window = NSApp.keyWindow, window === homeWindowController?.exportWindow || window === panel.panel {
+            await panel.noteExport.exportThoughts(from: window, prepare: panel.prepareThoughtsForExport)
+        } else {
+            await openHome()
+            guard let window = homeWindowController?.exportWindow else { return }
+            await panel.noteExport.exportThoughts(from: window, prepare: panel.prepareThoughtsForExport)
+        }
     }
 
     func toggleHome() async {
