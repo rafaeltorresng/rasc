@@ -5,7 +5,7 @@ import Testing
 
 @Suite
 struct SearchMatchHighlightTests {
-    private let mark = RascSurfacePalette.searchMark(for: .light, increasedContrast: false)
+    private let mark = RascSurfacePalette.standard.searchMark(for: .light, increasedContrast: false)
 
     @Test
     func queryWordsFoldCaseDiacriticsAndPunctuation() {
