@@ -55,7 +55,7 @@ struct GlobalShortcutMigrationTests {
             KeyboardShortcuts.setShortcut(homeCustom, for: .toggleHome)
 
             #expect(KeyboardShortcuts.getShortcut(for: .toggleScratchpad) == scratchpadCustom)
-            #expect(GlobalShortcutPolicy.restoreDefault(.toggleScratchpad, other: .toggleHome))
+            #expect(GlobalShortcutPolicy.restoreDefault(.toggleScratchpad))
             #expect(KeyboardShortcuts.getShortcut(for: .toggleScratchpad) == KeyboardShortcuts.Name.toggleScratchpad.initialShortcut)
             #expect(KeyboardShortcuts.getShortcut(for: .toggleHome) == homeCustom)
         }
@@ -70,7 +70,7 @@ struct GlobalShortcutMigrationTests {
             KeyboardShortcuts.setShortcut(scratchpadCustom, for: .toggleScratchpad)
             KeyboardShortcuts.setShortcut(scratchpadDefault, for: .toggleHome)
 
-            #expect(!GlobalShortcutPolicy.restoreDefault(.toggleScratchpad, other: .toggleHome))
+            #expect(!GlobalShortcutPolicy.restoreDefault(.toggleScratchpad))
             #expect(KeyboardShortcuts.getShortcut(for: .toggleScratchpad) == scratchpadCustom)
             #expect(KeyboardShortcuts.getShortcut(for: .toggleHome) == scratchpadDefault)
         }
@@ -94,10 +94,10 @@ struct GlobalShortcutMigrationTests {
     @Test
     @MainActor
     func keyboardShortcutsRevealRequestIsConsumedOnce() {
-        _ = SettingsNavigation.consumeKeyboardShortcutsRequest()
+        _ = SettingsNavigation.consumeRevealRequest()
         SettingsNavigation.prepareKeyboardShortcutsReveal()
-        #expect(SettingsNavigation.consumeKeyboardShortcutsRequest())
-        #expect(!SettingsNavigation.consumeKeyboardShortcutsRequest())
+        #expect(SettingsNavigation.consumeRevealRequest() == SettingsNavigation.keyboardShortcutsID)
+        #expect(SettingsNavigation.consumeRevealRequest() == nil)
     }
 }
 

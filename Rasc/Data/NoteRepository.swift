@@ -11,6 +11,11 @@ struct NoteDiscardReceipt: Equatable, Sendable {
     let deletedAt: Date
 }
 
+struct VoiceDraft: Equatable, Sendable {
+    let id: UUID
+    var content: String
+}
+
 actor NoteRepository {
     enum PersistenceError: Error {
         case emptyContent
@@ -556,6 +561,74 @@ actor NoteRepository {
                 throw PersistenceError.staleContent
             }
             return try Note.fetchOne(database, key: id)!
+        }
+    }
+
+    func pendingVoiceDraft() throws -> VoiceDraft? {
+        try database.read { database in
+            try Self.readVoiceDraft(database)
+        }
+    }
+
+    private nonisolated static func readVoiceDraft(_ database: Database) throws -> VoiceDraft? {
+        try Row.fetchOne(database, sql: "SELECT id, content FROM voice_review WHERE slot = 1").map {
+            VoiceDraft(id: $0["id"], content: $0["content"])
+        }
+    }
+
+    func stageVoiceDraft(_ draft: VoiceDraft) throws {
+        try database.write { database in
+            if let pending = try Self.readVoiceDraft(database), pending.id != draft.id {
+                throw PersistenceError.staleContent
+            }
+            guard try Note.fetchOne(database, key: draft.id) == nil else {
+                throw PersistenceError.staleContent
+            }
+            try database.execute(
+                sql: "INSERT OR REPLACE INTO voice_review (slot, id, content) VALUES (1, ?, ?)",
+                arguments: [draft.id, draft.content]
+            )
+        }
+    }
+
+    func discardVoiceDraft(id: UUID) throws {
+        try database.write { database in
+            try database.execute(sql: "DELETE FROM voice_review WHERE slot = 1 AND id = ?", arguments: [id])
+        }
+    }
+
+    func keepVoiceDraft(_ draft: VoiceDraft) throws -> Note {
+        guard Self.hasMeaningfulContent(draft.content) else { throw PersistenceError.emptyContent }
+        return try database.write { database in
+            if let existing = try Note.fetchOne(database, key: draft.id) {
+                guard existing.isKept, existing.deletedAt == nil, existing.content == draft.content else {
+                    throw PersistenceError.staleContent
+                }
+                return existing
+            }
+            guard try Self.readVoiceDraft(database)?.id == draft.id else {
+                throw PersistenceError.staleContent
+            }
+            let now = Date()
+            let note = Note(id: draft.id, content: draft.content, createdAt: now, updatedAt: now,
+                            deletedAt: nil, keptAt: now)
+            try note.insert(database)
+            try database.execute(sql: "DELETE FROM voice_review WHERE slot = 1 AND id = ?", arguments: [draft.id])
+            guard let stored = try Note.fetchOne(database, key: draft.id) else { throw PersistenceError.staleContent }
+            return stored
+        }
+    }
+
+    func undoVoiceKeep(_ saved: Note) throws {
+        try database.write { database in
+            guard saved.isKept, saved.deletedAt == nil,
+                  try Note.fetchOne(database, key: saved.id) == saved,
+                  try Self.loadStructured(id: saved.id, in: database) == nil else {
+                throw PersistenceError.staleContent
+            }
+            try database.execute(
+                sql: "UPDATE notes SET deleted_at = ? WHERE id = ?", arguments: [Date(), saved.id]
+            )
         }
     }
 

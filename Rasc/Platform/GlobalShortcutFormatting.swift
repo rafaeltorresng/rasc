@@ -12,6 +12,11 @@ enum GlobalShortcutFormatting {
         display(for: .toggleHome)
     }
 
+    static func currentVoiceShortcutDisplay() -> String {
+        guard VoiceCapture.shared.enabled else { return "" }
+        return KeyboardShortcuts.getShortcut(for: .voiceCapture)?.description ?? ""
+    }
+
     static func hasValidToggleShortcut() -> Bool {
         KeyboardShortcuts.getShortcut(for: .toggleScratchpad) != nil
     }
@@ -32,6 +37,23 @@ enum GlobalShortcutFormatting {
 enum GlobalShortcutPolicy {
     static func validation(
         proposed: KeyboardShortcuts.Shortcut,
+        excluding name: KeyboardShortcuts.Name
+    ) -> KeyboardShortcuts.ValidationResult {
+        let shortcuts: [(KeyboardShortcuts.Name, String)] = [
+            (.toggleScratchpad, "Toggle Scratchpad"),
+            (.toggleHome, "Toggle Home"),
+            (.voiceCapture, "Voice Capture"),
+        ]
+        for (other, title) in shortcuts where other != name {
+            if case let .disallow(reason) = validation(proposed: proposed, other: other, otherTitle: title) {
+                return .disallow(reason: reason)
+            }
+        }
+        return .allow
+    }
+
+    static func validation(
+        proposed: KeyboardShortcuts.Shortcut,
         other: KeyboardShortcuts.Name,
         otherTitle: String
     ) -> KeyboardShortcuts.ValidationResult {
@@ -42,15 +64,12 @@ enum GlobalShortcutPolicy {
     }
 
     @discardableResult
-    static func restoreDefault(
-        _ name: KeyboardShortcuts.Name,
-        other: KeyboardShortcuts.Name
-    ) -> Bool {
+    static func restoreDefault(_ name: KeyboardShortcuts.Name) -> Bool {
         guard let initial = name.initialShortcut else {
             KeyboardShortcuts.setShortcut(nil, for: name)
             return true
         }
-        if KeyboardShortcuts.getShortcut(for: other) == initial {
+        if case .disallow = validation(proposed: initial, excluding: name) {
             return false
         }
         KeyboardShortcuts.reset(name)

@@ -29,6 +29,8 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         configureMenu()
     }
 
+    private var voiceItems: [NSMenuItem] = []
+
     private func configureMenu() {
         guard let button = statusItem.button else { return }
 
@@ -68,6 +70,15 @@ final class MenuBarController: NSObject, NSMenuDelegate {
             keyEquivalent: "p",
             modifierMask: .command
         ))
+        if VoiceCapture.isSupported {
+            voiceItems = [
+                makeItem(title: "Voice Capture…", action: #selector(voiceCapture), keyEquivalent: ""),
+                makeItem(title: "Cancel Voice Capture", action: #selector(cancelVoiceCapture), keyEquivalent: ""),
+                makeItem(title: "Open Kept Thought", action: #selector(openVoiceThought), keyEquivalent: ""),
+                makeItem(title: "Undo Voice Capture", action: #selector(undoVoiceKeep), keyEquivalent: ""),
+            ]
+            voiceItems.forEach(menu.addItem)
+        }
         menu.addItem(.separator())
         menu.addItem(makeItem(
             title: "Export Thoughts…",
@@ -145,12 +156,36 @@ final class MenuBarController: NSObject, NSMenuDelegate {
     }
 
     func menuWillOpen(_ menu: NSMenu) {
-        KeyboardShortcuts.disable(.toggleScratchpad, .toggleHome)
+        KeyboardShortcuts.disable(.toggleScratchpad, .toggleHome, .voiceCapture)
+        guard voiceItems.count == 4 else { return }
+        let capture = VoiceCapture.shared
+        let phase = capture.phase
+        voiceItems[0].title = switch phase {
+        case .listening: "Finish Voice Capture"
+        case .reviewing: "Review Voice Capture"
+        case .issue: "Show Voice Capture"
+        default: capture.enabled ? "Start Voice Capture" : "Voice Capture…"
+        }
+        voiceItems[0].isEnabled = switch phase {
+        case .idle, .listening, .reviewing, .kept, .issue: true
+        default: false
+        }
+        voiceItems[1].isHidden = switch phase {
+        case .checking, .starting, .listening, .finishing, .transcribing, .waitingForModel, .issue: false
+        default: true
+        }
+        voiceItems[2].isHidden = phase != .kept
+        voiceItems[3].isHidden = phase != .kept
     }
 
     func menuDidClose(_ menu: NSMenu) {
-        KeyboardShortcuts.enable(.toggleScratchpad, .toggleHome)
+        KeyboardShortcuts.enable(.toggleScratchpad, .toggleHome, .voiceCapture)
     }
+
+    @objc private func voiceCapture() { VoiceCapture.shared.activate() }
+    @objc private func cancelVoiceCapture() { VoiceCapture.shared.cancel() }
+    @objc private func openVoiceThought() { VoiceCapture.shared.openThought() }
+    @objc private func undoVoiceKeep() { VoiceCapture.shared.undo() }
 
     @objc private func openScratch() {
         delegate?.menuBarOpenScratch()

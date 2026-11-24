@@ -1455,7 +1455,8 @@ final class ScratchpadSession {
         PaletteCommand.availableCommands(
             isKept: isActiveNoteKept,
             hasPersistableContent: hasPersistableContent,
-            canPerformCompletion: canPerformThoughtCompletion
+            canPerformCompletion: canPerformThoughtCompletion,
+            includesVoiceCapture: VoiceCapture.shared.enabled
         )
     }
 

@@ -36,7 +36,7 @@ struct HomeSnapshotTests {
         return session
     }
 
-    private func renderPNG<V: View>(
+    func renderPNG<V: View>(
         _ view: V, width: CGFloat, height: CGFloat, scheme: ColorScheme, name: String,
         palette: RascSurfacePalette = .standard, textSize: NoteTextSize = .standard
     ) throws {

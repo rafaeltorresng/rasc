@@ -28,10 +28,19 @@ final class AppBootstrap {
                         await self?.openSettings()
                     }
                 }
+                controller.onVoiceCapture = { VoiceCapture.shared.activate() }
                 controller.onDidHide = { [weak self] in
                     self?.reloadHomeIfVisible()
                 }
                 panelController = controller
+                VoiceCapture.shared.connect(repository: repository)
+                VoiceCapture.shared.onNotesChanged = { [weak self, weak controller] in
+                    self?.reloadHomeIfVisible()
+                    controller?.refreshSearchAfterVoiceCapture()
+                }
+                VoiceCapture.shared.onOpenThought = { [weak controller] id in
+                    Task { await controller?.openNote(id: id) }
+                }
                 let durationMs = Int((ContinuousClock.now - startedAt).components.attoseconds / 1_000_000_000_000_000)
                 AppDiagnostics.bootstrapReady(durationMs: max(durationMs, 0))
                 return controller

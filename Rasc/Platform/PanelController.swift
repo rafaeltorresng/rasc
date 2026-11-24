@@ -70,6 +70,7 @@ final class PanelController: NSObject, NSWindowDelegate {
     weak var onboardingDelegate: OnboardingPanelDelegate?
     var onOpenHome: (() -> Void)?
     var onOpenSettings: (() -> Void)?
+    var onVoiceCapture: (() -> Void)?
     var onDidHide: (() -> Void)?
 
     var scratchpadGuidance: OnboardingScratchpadGuidance = .inactive {
@@ -749,6 +750,10 @@ final class PanelController: NSObject, NSWindowDelegate {
         }
     }
 
+    func refreshSearchAfterVoiceCapture() {
+        if session.surface == .search { session.scheduleSearch() }
+    }
+
     private func handlePaletteCommand(_ command: PaletteCommand) {
         switch command {
         case .keep:
@@ -772,6 +777,9 @@ final class PanelController: NSObject, NSWindowDelegate {
             Task { await openSearch() }
         case .refine:
             startRefinement()
+        case .voiceCapture:
+            session.closeCommandPalette()
+            onVoiceCapture?()
         case .openHome:
             session.closeCommandPalette()
             onOpenHome?()

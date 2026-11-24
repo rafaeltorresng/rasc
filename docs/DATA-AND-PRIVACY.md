@@ -13,7 +13,7 @@ The Release entitlement file enables App Sandbox without network access.
 - These are separate stores. Installing a Release build does not import the
   unsandboxed development database automatically.
 - Notes contain a UUID, text, creation and update dates, optional discard and
-  Kept dates, and an image indicator. Eight ordered GRDB migrations preserve
+  Kept dates, and an image indicator. Nine ordered GRDB migrations preserve
   earlier schemas. Mixed thoughts store ordered text and original image bytes,
   with a separate text projection for search.
 - FTS5 indexes note content with prefix matching and diacritic normalization.
@@ -28,6 +28,29 @@ The Release entitlement file enables App Sandbox without network access.
   active note UUID, not note content. Runtime diagnostics contain timing/state
   labels rather than text. Historical eval tools can write synthetic input/output
   locally; they are DEBUG-only and excluded from the Release entry points.
+
+## Voice Capture
+
+Voice Capture is off by default. Rasc requests microphone permission when you
+explicitly start a recording. It activates the microphone only for that
+recording, including a short end buffer. It stops before transcription and
+releases the tap and engine. Rasc caps a recording at 90 seconds. It records
+microphone input only.
+
+Fluid Speech Pro transcribes on this Mac using Core ML. The app has no network
+client for Voice Capture, no remote fallback and no speech or audio telemetry.
+A build can include the verified model pack, or you can select the matching
+model folder in Settings. Rasc verifies imported files against the built-in
+size and SHA-256 list before moving the pack into its Application Support
+folder. Model preparation can occur without microphone access.
+
+Audio stays in memory. After a recognition failure it can be retried for up to
+two minutes, or discarded immediately. Never rely on audio recovery after Rasc
+quits or crashes. The single pending transcript is stored separately in SQLite
+until you Keep or Discard it. Closing review or quitting normally saves edits
+for recovery. A kept voice thought is an ordinary note. Its capture method
+isn’t stored. Undo of Keep uses the same soft-delete storage convention as
+ordinary notes.
 
 ## Manual backup
 

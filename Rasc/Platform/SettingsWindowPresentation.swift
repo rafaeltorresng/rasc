@@ -4,8 +4,9 @@ import SwiftUI
 @MainActor
 enum SettingsNavigation {
     static let keyboardShortcutsID = "keyboard-shortcuts"
+    static let voiceCaptureID = "voice-capture"
     static let revealNotification = Notification.Name("RascSettingsRevealKeyboardShortcuts")
-    private static var pendingKeyboardShortcuts = false
+    private static var pendingSection: String?
 
     static func revealKeyboardShortcuts() {
         prepareKeyboardShortcutsReveal()
@@ -13,13 +14,22 @@ enum SettingsNavigation {
     }
 
     static func prepareKeyboardShortcutsReveal() {
-        pendingKeyboardShortcuts = true
+        reveal(keyboardShortcutsID)
+    }
+
+    static func revealVoiceCapture() {
+        reveal(voiceCaptureID)
+        SettingsWindowPresentation.present()
+    }
+
+    private static func reveal(_ id: String) {
+        pendingSection = id
         NotificationCenter.default.post(name: revealNotification, object: nil)
     }
 
-    static func consumeKeyboardShortcutsRequest() -> Bool {
-        let pending = pendingKeyboardShortcuts
-        pendingKeyboardShortcuts = false
+    static func consumeRevealRequest() -> String? {
+        let pending = pendingSection
+        pendingSection = nil
         return pending
     }
 }

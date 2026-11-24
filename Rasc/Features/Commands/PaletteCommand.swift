@@ -12,6 +12,7 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
     case findNote
     case openHome
     case refine
+    case voiceCapture
     case keyboardShortcuts
     case settings
 
@@ -41,6 +42,8 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             "Open Home"
         case .refine:
             "Refine"
+        case .voiceCapture:
+            "Voice Capture"
         case .keyboardShortcuts:
             "Keyboard Shortcuts"
         case .settings:
@@ -56,7 +59,7 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             ""
         case .copyNote:
             ""
-        case .shareNote, .exportThought, .exportThoughts:
+        case .shareNote, .exportThought, .exportThoughts, .voiceCapture:
             ""
         case .discardNote:
             ""
@@ -89,6 +92,8 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             return InternalShortcutStore.shared.displayString(for: .refine)
         case .keep:
             return InternalShortcutStore.shared.displayString(for: .keep)
+        case .voiceCapture:
+            return GlobalShortcutFormatting.currentVoiceShortcutDisplay()
         default:
             return shortcutLabel
         }
@@ -118,6 +123,8 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             "Opens Rasc Home"
         case .refine:
             "Refines the current note"
+        case .voiceCapture:
+            "Record a new thought or open Voice Capture setup"
         case .keyboardShortcuts:
             "Opens keyboard shortcut settings"
         case .settings:
@@ -128,7 +135,8 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
     static func availableCommands(
         isKept: Bool,
         hasPersistableContent: Bool,
-        canPerformCompletion: Bool
+        canPerformCompletion: Bool,
+        includesVoiceCapture: Bool = false
     ) -> [PaletteCommand] {
         var commands: [PaletteCommand] = []
 
@@ -155,6 +163,9 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             .keyboardShortcuts,
             .settings
         ])
+        if includesVoiceCapture, let index = commands.firstIndex(of: .newScratch) {
+            commands.insert(.voiceCapture, at: index + 1)
+        }
         return commands
     }
 
