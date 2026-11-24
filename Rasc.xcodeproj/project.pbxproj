@@ -143,6 +143,10 @@
 		010000000000000000000097 /* HomeViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000097 /* HomeViewMode.swift */; };
 		010000000000000000000098 /* HomeSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000098 /* HomeSnapshotTests.swift */; };
 		010000000000000000000099 /* RefinePreviewModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000099 /* RefinePreviewModeTests.swift */; };
+		EE0000000000000000000001 /* NoteExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0000000000000000000001 /* NoteExport.swift */; };
+		EE0000000000000000000002 /* NoteExportFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0000000000000000000002 /* NoteExportFiles.swift */; };
+		EE0000000000000000000003 /* NoteExportController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0000000000000000000003 /* NoteExportController.swift */; };
+		EE0000000000000000000004 /* NoteExportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0000000000000000000004 /* NoteExportTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -293,6 +297,10 @@
 		020000000000000000000097 /* HomeViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Features/Home/HomeViewMode.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000098 /* HomeSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSnapshotTests.swift; sourceTree = "<group>"; };
 		020000000000000000000099 /* RefinePreviewModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefinePreviewModeTests.swift; sourceTree = "<group>"; };
+		EF0000000000000000000001 /* NoteExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Domain/NoteExport.swift; sourceTree = SOURCE_ROOT; };
+		EF0000000000000000000002 /* NoteExportFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/NoteExportFiles.swift; sourceTree = SOURCE_ROOT; };
+		EF0000000000000000000003 /* NoteExportController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/NoteExportController.swift; sourceTree = SOURCE_ROOT; };
+		EF0000000000000000000004 /* NoteExportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteExportTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -360,6 +368,7 @@
 				02000000000000000000000A /* NoteRepository.swift */,
 				02000000000000000000000B /* AppDatabase.swift */,
 				02000000000000000000000C /* Note.swift */,
+				EF0000000000000000000001 /* NoteExport.swift */,
 				02000000000000000000000E /* ActiveNoteStore.swift */,
 				02000000000000000000000F /* HistorySearchView.swift */,
 				020000000000000000000010 /* Refinement.swift */,
@@ -404,6 +413,8 @@
 				02000000000000000000004A /* SettingsWindowPresentation.swift */,
 				02000000000000000000004C /* BetaFeedback.swift */,
 				02000000000000000000007E /* NoteHandoff.swift */,
+				EF0000000000000000000003 /* NoteExportController.swift */,
+				EF0000000000000000000002 /* NoteExportFiles.swift */,
 				02000000000000000000004E /* RefineEvalModels.swift */,
 				02000000000000000000004F /* ProtectedTokenExtractor.swift */,
 				020000000000000000000050 /* RefineEvalLanguageAnalyzer.swift */,
@@ -468,6 +479,7 @@
 				020000000000000000000078 /* AppReliabilityLifecycleTests.swift */,
 				020000000000000000000079 /* AppReliabilityScaleTests.swift */,
 				02000000000000000000007F /* ThoughtCompletionTests.swift */,
+				EF0000000000000000000004 /* NoteExportTests.swift */,
 				020000000000000000000083 /* QualitySprintTests.swift */,
 				020000000000000000000084 /* SparkleUpdaterConfigurationTests.swift */,
 				020000000000000000000067 /* RefineAdjudicationTests.swift */,
@@ -622,6 +634,7 @@
 				010000000000000000000009 /* NoteRepository.swift in Sources */,
 				01000000000000000000000C /* AppDatabase.swift in Sources */,
 				01000000000000000000000D /* Note.swift in Sources */,
+				EE0000000000000000000001 /* NoteExport.swift in Sources */,
 				01000000000000000000000F /* ActiveNoteStore.swift in Sources */,
 				010000000000000000000010 /* HistorySearchView.swift in Sources */,
 				010000000000000000000011 /* Refinement.swift in Sources */,
@@ -656,6 +669,8 @@
 				01000000000000000000004A /* SettingsWindowPresentation.swift in Sources */,
 				01000000000000000000004C /* BetaFeedback.swift in Sources */,
 				01000000000000000000007E /* NoteHandoff.swift in Sources */,
+				EE0000000000000000000003 /* NoteExportController.swift in Sources */,
+				EE0000000000000000000002 /* NoteExportFiles.swift in Sources */,
 				01000000000000000000004E /* RefineEvalModels.swift in Sources */,
 				01000000000000000000004F /* ProtectedTokenExtractor.swift in Sources */,
 				010000000000000000000050 /* RefineEvalLanguageAnalyzer.swift in Sources */,
@@ -728,6 +743,7 @@
 				01000000000000000000007B /* AppReliabilityLifecycleTests.swift in Sources */,
 				01000000000000000000007C /* AppReliabilityScaleTests.swift in Sources */,
 				01000000000000000000007F /* ThoughtCompletionTests.swift in Sources */,
+				EE0000000000000000000004 /* NoteExportTests.swift in Sources */,
 				010000000000000000000083 /* QualitySprintTests.swift in Sources */,
 				010000000000000000000084 /* SparkleUpdaterConfigurationTests.swift in Sources */,
 				010000000000000000000067 /* RefineAdjudicationTests.swift in Sources */,

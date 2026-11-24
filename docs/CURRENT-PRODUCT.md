@@ -14,6 +14,9 @@ Private-beta access requests, checkout and licensing are not current priorities.
 - Autosave persists locally. Esc hides the panel and preserves the current scratch.
 - Keep persists a kept timestamp, clears the active scratch and returns to work.
 - Unkeep returns the thought to unfinished status. Copy and Share are explicit handoffs.
+- Export Thought saves a portable Markdown copy with any images. Export Thoughts
+  offers Kept, All, and an explicit searchable selection. All includes unfinished
+  thoughts. Export preserves the source thought and its lifecycle state.
 - Discard soft-deletes. Undo restores its content, original dates and Kept state while
   the repository/session remains alive. No Trash screen or recovery across restart
   is promised. A stale Undo receipt cannot restore a later discard.

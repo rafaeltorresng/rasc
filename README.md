@@ -95,13 +95,15 @@ Refine can still make mistakes. It preserves the original until you accept and
 checks revisions, language and protected literals. Review the proposal before
 accepting; automated checks do not prove that every meaning is unchanged.
 
-Copy and Share are explicit handoffs. Feedback opens a draft email with app/system
-version details; it does not attach your thoughts or send automatically.
+Copy, Share, and Markdown export are explicit handoffs. Export a single thought
+or choose Kept, All, or Selected thoughts from the Rasc menu. Exports preserve
+images alongside the text. Feedback opens an email draft with app and system
+version details.
 
 The database is not encrypted by Rasc. Discard hides a thought; it does not securely
-erase its content or accepted refinement history. There is no built-in backup,
-export, sync or recovery UI. See [data, privacy and backup](docs/DATA-AND-PRIVACY.md)
-for storage paths and safe manual backups.
+erase its content or accepted refinement history. See
+[data, privacy and backup](docs/DATA-AND-PRIVACY.md) for storage, export and
+manual backup instructions.
 
 ## Contributing
 

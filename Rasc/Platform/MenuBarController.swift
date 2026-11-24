@@ -4,6 +4,7 @@ import KeyboardShortcuts
 @MainActor
 protocol MenuBarControllerDelegate: AnyObject {
     func menuBarOpenHome()
+    func menuBarExportThoughts()
     func menuBarOpenScratch()
     func menuBarNewScratch()
     func menuBarOpenSearch()
@@ -68,6 +69,11 @@ final class MenuBarController: NSObject, NSMenuDelegate {
             modifierMask: .command
         ))
         menu.addItem(.separator())
+        menu.addItem(makeItem(
+            title: "Export Thoughts…",
+            action: #selector(exportThoughts),
+            keyEquivalent: ""
+        ))
         menu.addItem(makeItem(
             title: "Settings",
             action: #selector(openSettings),
@@ -152,6 +158,10 @@ final class MenuBarController: NSObject, NSMenuDelegate {
 
     @objc private func openRasc() {
         delegate?.menuBarOpenHome()
+    }
+
+    @objc private func exportThoughts() {
+        delegate?.menuBarExportThoughts()
     }
 
     @objc private func newScratch() {

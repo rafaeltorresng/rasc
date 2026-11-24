@@ -317,6 +317,51 @@ actor NoteRepository {
         return editable.document ?? NoteDocument(parts: [.text(editable.note.content)])
     }
 
+    /// Captures the members and versions of the export in one read. Individual
+    /// documents are then loaded one at a time without holding SQLite across file writes.
+    func exportSnapshot(for scope: NoteExportScope) throws -> [NoteExportSnapshot] {
+        let snapshots: [NoteExportSnapshot] = try database.read { db in
+            let keptOnly = scope == .kept
+            let rows = try Row.fetchCursor(db, sql: """
+                SELECT notes.*, note_document_edits.revision AS export_revision
+                FROM notes LEFT JOIN note_document_edits ON note_document_edits.note_id = notes.id
+                WHERE notes.deleted_at IS NULL AND (? = 0 OR notes.kept_at IS NOT NULL)
+                ORDER BY notes.updated_at DESC, notes.rowid DESC
+                """, arguments: [keptOnly])
+            var result = [NoteExportSnapshot]()
+            while let row = try rows.next() {
+                try Task.checkCancellation()
+                if case let .selected(ids) = scope, !ids.contains(row["id"] as UUID) { continue }
+                result.append(try NoteExportSnapshot(note: Note(row: row), documentRevision: row["export_revision"]))
+            }
+            return result
+        }
+        if case let .selected(ids) = scope, snapshots.count != ids.count {
+            throw NoteExportError.thoughtChanged
+        }
+        guard !snapshots.isEmpty else { throw NoteExportError.empty }
+        return snapshots
+    }
+
+    func documentForExport(_ snapshot: NoteExportSnapshot) throws -> NoteDocument {
+        try database.read { db in
+            guard let note = try Note.fetchOne(db, key: snapshot.note.id),
+                  note.deletedAt == nil, note == snapshot.note,
+                  note.content.utf8.elementsEqual(snapshot.note.content.utf8) else {
+                throw NoteExportError.thoughtChanged
+            }
+            let stored = try Self.loadStructured(id: note.id, in: db)
+            guard stored?.revision == snapshot.documentRevision else {
+                throw NoteExportError.thoughtChanged
+            }
+            let document = stored?.document ?? NoteDocument(parts: [.text(note.content)])
+            guard document.text.utf8.elementsEqual(note.content.utf8), document.hasImages == note.hasImages else {
+                throw NoteExportError.invalidOutput
+            }
+            return document
+        }
+    }
+
     func update(id: UUID, document: NoteDocument, ifCurrent expected: NoteDocument) throws {
         #if DEBUG
         testGate?.enter()

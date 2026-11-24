@@ -87,7 +87,8 @@ struct HomeSnapshotTests {
             onOpenNote: { _ in },
             onNewScratch: {},
             onNoteDiscarded: { _ in },
-            onNoteUnkept: { _ in }
+            onNoteUnkept: { _ in },
+            onExportThought: { _ in }
         )
         .environment(\.colorScheme, scheme)
     }

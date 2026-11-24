@@ -23,6 +23,16 @@ struct RascApp: App {
             }
 
             CommandGroup(after: .newItem) {
+                Button("Export Thought…") {
+                    appDelegate.exportThought()
+                }
+
+                Button("Export Thoughts…") {
+                    appDelegate.exportThoughts()
+                }
+
+                Divider()
+
                 Button("Open Home") {
                     appDelegate.openHome()
                 }

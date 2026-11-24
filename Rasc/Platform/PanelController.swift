@@ -56,6 +56,7 @@ private struct PanelKeySnapshot: Sendable {
 final class PanelController: NSObject, NSWindowDelegate {
     let panel: ScratchpadPanel
     let repository: NoteRepository
+    lazy var noteExport = NoteExportController(repository: repository)
 
     private let session: ScratchpadSession
     private let windowFrameStore: WindowFrameStore
@@ -261,6 +262,16 @@ final class PanelController: NSObject, NSWindowDelegate {
                 try await NoteHandoff.presentSharePicker(for: document, relativeTo: contentView)
             } catch { session.reportCompletionFailure(.share) }
         }
+    }
+
+    func exportActiveThought() async {
+        await noteExport.exportThought(from: panel) {
+            try await session.activeThoughtForExport()
+        }
+    }
+
+    func prepareThoughtsForExport(_ scope: NoteExportScope) async throws {
+        try await session.flushForExport(scope)
     }
 
     func discardActiveNote() async {
@@ -748,6 +759,11 @@ final class PanelController: NSObject, NSWindowDelegate {
             Task { await copyActiveNote() }
         case .shareNote:
             shareActiveNote()
+        case .exportThought:
+            Task { await exportActiveThought() }
+        case .exportThoughts:
+            session.closeCommandPalette()
+            Task { await noteExport.exportThoughts(from: panel, prepare: prepareThoughtsForExport) }
         case .discardNote:
             Task { await discardActiveNote() }
         case .newScratch:

@@ -7,8 +7,8 @@
 #   - no network entitlement on the main app (Sparkle's XPC services do network I/O)
 #   - ad-hoc signature with an Apple-documented Library Load Constraint (LLC) that
 #     pins the exact cdhash(es) of the final signed Sparkle binary
-#   - the Sparkle mach-lookup exceptions and the default user-selected read-only
-#     entitlement; nothing else
+#   - the Sparkle mach-lookup exceptions and user-selected read/write
+#     for export destinations
 #
 # This is NOT the default Release build: the default keeps Rasc/Rasc.entitlements,
 # embeds nothing, and is untouched by this script.

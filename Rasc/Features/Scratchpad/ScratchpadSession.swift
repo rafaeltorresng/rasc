@@ -354,6 +354,28 @@ final class ScratchpadSession {
         return document ?? NoteDocument(parts: [.text(text)])
     }
 
+    func activeThoughtForExport() async throws -> UUID? {
+        guard canPerformThoughtCompletion, hasPersistableContent || pendingImageImport != nil else { return nil }
+        let epoch = sessionEpoch
+        try await prepareForThoughtCompletionAction()
+        guard epoch == sessionEpoch else { throw NoteExportError.thoughtChanged }
+        return noteID
+    }
+
+    func flushForExport(_ scope: NoteExportScope) async throws {
+        switch scope {
+        case .kept:
+            if isActiveNoteKept { try await flush() }
+        case .all:
+            try await flush()
+        case let .selected(ids):
+            if noteID == nil, inFlightNoteCreate != nil || documentWriteTask != nil {
+                try await flush()
+            }
+            if let noteID, ids.contains(noteID) { try await flushIfActiveNote(id: noteID) }
+        }
+    }
+
     func discardActiveNote(undoManager: UndoManager? = nil) async throws {
         guard canPerformThoughtCompletion else { return }
         try await prepareForThoughtCompletionAction()
