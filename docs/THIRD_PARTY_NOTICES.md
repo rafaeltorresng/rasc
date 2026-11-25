@@ -41,3 +41,9 @@ Resolved Swift packages are GRDB **7.11.1** (commit `b83108d10f42680d78f23fe4d4d
 - KeyboardShortcuts: https://github.com/sindresorhus/KeyboardShortcuts — upstream `license`; copyright Sindre Sorhus.
 
 When updating a dependency, review its license and update the bundled notice along with `Package.resolved`. SQLite's upstream source identifies its code as public domain; see GRDB's SQLite distribution license.
+
+## Voice Capture
+
+Rasc uses the [FluidAudio maintainer fork](https://github.com/altic-dev/FluidAudio/tree/386f7195670b77f2954c7ee143ec63fcb50b6c3b) (Apache 2.0) for local inference. The Xcode lockfile pins the Swift dependency graph. Runtime and applicable dependency notices appear in the bundled `ThirdPartyNotices.txt`.
+
+The optional `VoiceModel` folder contains the unchanged INT8 [Fluid Speech Pro Core ML components](https://huggingface.co/FluidVoice-Labs/fluid-speech-pro-coreml/tree/3b9d38a93d606f84011e5a0a669b7ea146375a22) by FluidVoice Labs, derived from [NVIDIA Parakeet TDT 0.6B v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3). Both are licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Rasc pins the converted assets by revision, size and SHA-256.

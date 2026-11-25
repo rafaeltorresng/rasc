@@ -17,7 +17,7 @@ parser.add_argument("--package-dir", type=Path, default=ROOT / ".derivedData/Dom
 args = parser.parse_args()
 work = args.package_dir.resolve()
 checkouts = args.checkouts.resolve()
-for name in ["GRDB.swift", "KeyboardShortcuts"]:
+for name in ["GRDB.swift", "KeyboardShortcuts", "FluidAudio"]:
     if not (checkouts / name / "Package.swift").exists():
         parser.error(f"Resolve Xcode packages first; missing {checkouts / name}")
 
@@ -39,14 +39,15 @@ link(ROOT / "RascTests/Fixtures", work / "Tests/RascTests/Fixtures")
 # Historical corpus tests resolve paths relative to #filePath.
 link(ROOT / "Evals", work / "Tests/Evals")
 link(ROOT / "Evals", work / "Evals")
-paths = [checkouts / "GRDB.swift", checkouts / "KeyboardShortcuts", ROOT / "Vendor/ThinkingOrbsKit"]
+paths = [checkouts / name for name in ("GRDB.swift", "KeyboardShortcuts", "FluidAudio")]
+paths.append(ROOT / "Vendor/ThinkingOrbsKit")
 dependencies = ",\n".join(f".package(path: {json.dumps(str(path))})" for path in paths)
 (work / "Package.swift").write_text(f'''// swift-tools-version:6.2
 import PackageDescription
 let package = Package(name: "RascDomainVerification", platforms: [.macOS(.v14)], dependencies: [
 {dependencies}
 ], targets: [
-.target(name: "Rasc", dependencies: [.product(name: "GRDB", package: "GRDB.swift"), .product(name: "KeyboardShortcuts", package: "KeyboardShortcuts"), .product(name: "ThinkingOrbsKit", package: "ThinkingOrbsKit")]),
+.target(name: "Rasc", dependencies: [.product(name: "GRDB", package: "GRDB.swift"), .product(name: "KeyboardShortcuts", package: "KeyboardShortcuts"), .product(name: "ThinkingOrbsKit", package: "ThinkingOrbsKit"), .product(name: "FluidAudio", package: "FluidAudio")]),
 .testTarget(name: "RascTests", dependencies: ["Rasc"], resources: [.copy("Fixtures")])
 ])
 ''')

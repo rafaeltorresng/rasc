@@ -99,6 +99,26 @@ enum AppDatabase {
             try database.execute(sql: "INSERT INTO note_document_edits (note_id) SELECT note_id FROM note_document_bases")
         }
 
+        migrator.registerMigration("v9_voice_review") { database in
+            try database.create(table: "voice_review") { table in
+                table.column("slot", .integer).primaryKey()
+                table.column("id", .text).notNull()
+                table.column("content", .text).notNull()
+            }
+        }
+
+        migrator.registerMigration("v10_voice_review_to_scratch") { database in
+            if let row = try Row.fetchOne(database, sql: "SELECT id, content FROM voice_review WHERE slot = 1") {
+                let id: UUID = row["id"]
+                if try Note.fetchOne(database, key: id) == nil {
+                    let now = Date()
+                    try Note(id: id, content: row["content"], createdAt: now, updatedAt: now,
+                             deletedAt: nil, keptAt: nil).insert(database)
+                }
+            }
+            try database.drop(table: "voice_review")
+        }
+
         return migrator
     }
 }

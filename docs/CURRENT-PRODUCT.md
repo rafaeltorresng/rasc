@@ -31,6 +31,16 @@ one-line descriptions and live shortcuts, and states that Refine is optional. Af
 least three notes and a second Home visit, Home shows a one-time, dismissible Search tip.
 Established installs are migrated as onboarding-complete and never see a forced tour.
 
+## Voice Capture
+
+On Apple silicon with macOS 26 or later, enable Voice Capture in Settings and
+record a global shortcut. The menu bar can also start or finish a capture.
+Wait for Listening, speak naturally, then press again. The transcript opens in
+Scratchpad as a new unfinished thought with the caret at the end. Continue
+writing, use Refine, or Keep or Discard with the usual commands. Any previous
+scratch remains available in Home and Search. See the
+[local testing guide](VOICE-CAPTURE.md) for setup and the release gates.
+
 ## Refine
 
 Foundation Models operates on-device on macOS 26+ when Apple Intelligence and its

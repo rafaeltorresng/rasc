@@ -28,10 +28,20 @@ final class AppBootstrap {
                         await self?.openSettings()
                     }
                 }
+                controller.onVoiceCapture = { VoiceCapture.shared.activate() }
+                controller.onVoiceCaptureShortcut = { VoiceCapture.shared.handleScratchpadShortcut($0) }
                 controller.onDidHide = { [weak self] in
                     self?.reloadHomeIfVisible()
                 }
                 panelController = controller
+                VoiceCapture.shared.connect(repository: repository)
+                VoiceCapture.shared.onNotesChanged = { [weak self, weak controller] in
+                    self?.reloadHomeIfVisible()
+                    controller?.refreshSearchAfterVoiceCapture()
+                }
+                VoiceCapture.shared.onOpenScratch = { [weak controller] id, interrupted in
+                    await controller?.openCapturedScratch(id: id, interrupted: interrupted) == true
+                }
                 let durationMs = Int((ContinuousClock.now - startedAt).components.attoseconds / 1_000_000_000_000_000)
                 AppDiagnostics.bootstrapReady(durationMs: max(durationMs, 0))
                 return controller

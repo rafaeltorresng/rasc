@@ -13,7 +13,7 @@ The Release entitlement file enables App Sandbox without network access.
 - These are separate stores. Installing a Release build does not import the
   unsandboxed development database automatically.
 - Notes contain a UUID, text, creation and update dates, optional discard and
-  Kept dates, and an image indicator. Eight ordered GRDB migrations preserve
+  Kept dates, and an image indicator. Ten ordered GRDB migrations preserve
   earlier schemas. Mixed thoughts store ordered text and original image bytes,
   with a separate text projection for search.
 - FTS5 indexes note content with prefix matching and diacritic normalization.
@@ -28,6 +28,34 @@ The Release entitlement file enables App Sandbox without network access.
   active note UUID, not note content. Runtime diagnostics contain timing/state
   labels rather than text. Historical eval tools can write synthetic input/output
   locally; they are DEBUG-only and excluded from the Release entry points.
+
+## Voice Capture
+
+Voice Capture is off by default. Rasc requests microphone permission when you
+explicitly start a recording. It activates the microphone only for that
+recording, including a short end buffer. It stops before transcription and
+releases the tap and engine. Rasc caps a recording at 90 seconds. It records
+microphone input only.
+
+Fluid Speech Pro transcribes on this Mac using Core ML. The main app has no
+network client for Voice Capture, no remote fallback and no speech or audio
+telemetry. When you opt in and choose **Download Speech Model**, an embedded
+sandboxed XPC helper (`com.rafaeltorres.rasc.VoiceModelDownloader.xpc`, holding
+only `app-sandbox` and `network.client` entitlements) fetches only the pinned
+model files into its own cache and passes read-only file handles back to Rasc.
+Rasc verifies every file against the built-in byte size and SHA-256 manifest
+before moving the pack into its Application Support folder. After installation,
+transcription runs completely offline, and you can remove the installed model
+from Settings to reclaim storage. A manual **Choose Model Folder…** import path
+also remains available. Model preparation can occur without microphone access.
+
+Audio stays in memory. After a recognition failure it can be retried for up to
+two minutes, or discarded immediately. Audio recovery ends when Rasc quits or
+crashes. After transcription, Rasc saves the text as an ordinary unfinished
+thought in SQLite and opens it in Scratchpad. Edits autosave through the usual
+Scratchpad path. A pending transcript from an older preview migrates to an
+unfinished thought. Rasc stores the text and regular note metadata. Capture
+source is absent from the note record.
 
 ## Manual backup
 

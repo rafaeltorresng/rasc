@@ -202,9 +202,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        if VoiceCapture.shared.hasUnsavedAudio {
+            let alert = NSAlert()
+            alert.messageText = "Voice Capture is still in progress"
+            alert.informativeText = "Finish or cancel the capture before quitting Rasc."
+            alert.runModal()
+            return .terminateCancel
+        }
         Task { @MainActor [weak self] in
+            let voiceFlushed = await VoiceCapture.shared.flushForTermination()
             let didFlush = await self?.bootstrap.panelIfReady()?.flushForTermination() ?? true
-            if didFlush {
+            if didFlush && voiceFlushed {
                 sender.reply(toApplicationShouldTerminate: true)
             } else {
                 let alert = NSAlert()

@@ -70,6 +70,8 @@ final class PanelController: NSObject, NSWindowDelegate {
     weak var onboardingDelegate: OnboardingPanelDelegate?
     var onOpenHome: (() -> Void)?
     var onOpenSettings: (() -> Void)?
+    var onVoiceCapture: (() -> Void)?
+    var onVoiceCaptureShortcut: ((NSEvent) -> Bool)?
     var onDidHide: (() -> Void)?
 
     var scratchpadGuidance: OnboardingScratchpadGuidance = .inactive {
@@ -314,6 +316,19 @@ final class PanelController: NSObject, NSWindowDelegate {
         presentPanel()
     }
 
+    func openCapturedScratch(id: UUID, interrupted: Bool) async -> Bool {
+        func canOpen() -> Bool {
+            NSApp.modalWindow == nil && NSApp.keyWindow?.attachedSheet == nil
+        }
+
+        guard canOpen(), (try? await session.openNote(id: id, canOpen: canOpen)) == true else {
+            return false
+        }
+        if interrupted { session.reportInterruptedVoiceCapture() }
+        presentPanel()
+        return true
+    }
+
     private func presentPanel() {
         let startedAt = ContinuousClock.now
         let surfaceLabel = session.surfaceDiagnosticLabel
@@ -497,7 +512,8 @@ final class PanelController: NSObject, NSWindowDelegate {
         // consume the arrows. The editor keeps its own arrows.
         panel.keyDownHandler = { [weak self] event in
             MainActor.assumeIsolated {
-                self?.handlePreviewArrowKey(event) ?? false
+                if self?.onVoiceCaptureShortcut?(event) == true { return true }
+                return self?.handlePreviewArrowKey(event) ?? false
             }
         }
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
@@ -749,6 +765,10 @@ final class PanelController: NSObject, NSWindowDelegate {
         }
     }
 
+    func refreshSearchAfterVoiceCapture() {
+        if session.surface == .search { session.scheduleSearch() }
+    }
+
     private func handlePaletteCommand(_ command: PaletteCommand) {
         switch command {
         case .keep:
@@ -772,6 +792,9 @@ final class PanelController: NSObject, NSWindowDelegate {
             Task { await openSearch() }
         case .refine:
             startRefinement()
+        case .voiceCapture:
+            session.closeCommandPalette()
+            onVoiceCapture?()
         case .openHome:
             session.closeCommandPalette()
             onOpenHome?()

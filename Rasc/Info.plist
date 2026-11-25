@@ -28,6 +28,8 @@
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>LSMultipleInstancesProhibited</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Rasc uses the microphone when you start Voice Capture to transcribe your thought on this Mac.</string>
 	<key>LSUIElement</key>
 	<true/>
 	<!-- Sparkle stays inactive until SUPublicEDKey is replaced with a real

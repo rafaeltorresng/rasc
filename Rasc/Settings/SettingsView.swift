@@ -103,10 +103,10 @@ struct SettingsView: View {
         ScrollViewReader { proxy in
             settingsForm
                 .onAppear {
-                    scrollToKeyboardShortcutsIfNeeded(proxy)
+                    scrollToRequestedSection(proxy)
                 }
                 .onReceive(NotificationCenter.default.publisher(for: SettingsNavigation.revealNotification)) { _ in
-                    scrollToKeyboardShortcutsIfNeeded(proxy)
+                    scrollToRequestedSection(proxy)
                 }
         }
         .onGlobalShortcutChange {
@@ -196,6 +196,12 @@ struct SettingsView: View {
                 }
             }
             .listRowBackground(settingsSectionBackground)
+
+            Section("Voice Capture") {
+                VoiceCaptureSettings(capture: .shared)
+            }
+            .listRowBackground(settingsSectionBackground)
+            .id(SettingsNavigation.voiceCaptureID)
 
             keyboardShortcutsSection
 
@@ -375,8 +381,7 @@ struct SettingsView: View {
                 .shortcutValidation { shortcut in
                     GlobalShortcutPolicy.validation(
                         proposed: shortcut,
-                        other: .toggleHome,
-                        otherTitle: "Toggle Home"
+                        excluding: .toggleScratchpad
                     )
                 }
                 .accessibilityHint("Editable global shortcut")
@@ -384,12 +389,7 @@ struct SettingsView: View {
 
             if !GlobalShortcutPolicy.isUsingInitialShortcut(.toggleScratchpad) {
                 Button("Restore Default") {
-                    restoreGlobalShortcut(
-                        .toggleScratchpad,
-                        other: .toggleHome,
-                        title: "Toggle Scratchpad",
-                        otherTitle: "Toggle Home"
-                    )
+                    restoreGlobalShortcut(.toggleScratchpad, title: "Toggle Scratchpad")
                 }
                 .accessibilityLabel("Restore Toggle Scratchpad")
                 .accessibilityHint("Returns Toggle Scratchpad to its default shortcut")
@@ -399,8 +399,7 @@ struct SettingsView: View {
                 .shortcutValidation { shortcut in
                     GlobalShortcutPolicy.validation(
                         proposed: shortcut,
-                        other: .toggleScratchpad,
-                        otherTitle: "Toggle Scratchpad"
+                        excluding: .toggleHome
                     )
                 }
                 .accessibilityHint("Editable global shortcut")
@@ -408,12 +407,7 @@ struct SettingsView: View {
 
             if !GlobalShortcutPolicy.isUsingInitialShortcut(.toggleHome) {
                 Button("Restore Default") {
-                    restoreGlobalShortcut(
-                        .toggleHome,
-                        other: .toggleScratchpad,
-                        title: "Toggle Home",
-                        otherTitle: "Toggle Scratchpad"
-                    )
+                    restoreGlobalShortcut(.toggleHome, title: "Toggle Home")
                 }
                 .accessibilityLabel("Restore Toggle Home")
                 .accessibilityHint("Returns Toggle Home to its default shortcut")
@@ -488,21 +482,17 @@ struct SettingsView: View {
 
     private func restoreGlobalShortcut(
         _ name: KeyboardShortcuts.Name,
-        other: KeyboardShortcuts.Name,
-        title: String,
-        otherTitle: String
+        title: String
     ) {
-        if GlobalShortcutPolicy.restoreDefault(name, other: other) {
-            shortcutRestoreMessage = nil
-        } else {
-            shortcutRestoreMessage = "\(title) can't return to its default while \(otherTitle) uses that shortcut."
-        }
+        shortcutRestoreMessage = GlobalShortcutPolicy.restoreDefault(name)
+            ? nil : "Couldn’t restore the default for \(title). The shortcut is already in use."
+
     }
 
-    private func scrollToKeyboardShortcutsIfNeeded(_ proxy: ScrollViewProxy) {
-        guard SettingsNavigation.consumeKeyboardShortcutsRequest() else { return }
+    private func scrollToRequestedSection(_ proxy: ScrollViewProxy) {
+        guard let section = SettingsNavigation.consumeRevealRequest() else { return }
         let scroll = {
-            proxy.scrollTo(SettingsNavigation.keyboardShortcutsID, anchor: .top)
+            proxy.scrollTo(section, anchor: .top)
         }
         if reduceMotion {
             scroll()
