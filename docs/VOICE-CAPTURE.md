@@ -59,9 +59,11 @@ can import that same directory through **Choose Model Folder…**.
   microphone opens only when recording starts. The fixed 120 ms end buffer preserves
   speech near Finish. Silence never triggers Finish. The socket-free inference
   path loads one cleanly versioned Core ML pack with CPU + Neural Engine.
-  Rasc releases it after ten idle minutes, on sleep, under memory pressure, or
-  when the feature is disabled. A load needed by an active capture is protected
-  until that capture finishes. Core ML can still specialize the model again on
+  Rasc keeps the pack prepared while Voice Capture is enabled and system
+  resources permit, and releases it on sleep, under memory pressure, when
+  removed, or when the feature is disabled. Once system wake or normal memory
+  pressure returns, Rasc proactively re-prepares the model in the background.
+  A load needed by an active capture is protected until that capture finishes. Core ML can still specialize the model again on
   a cache miss. If a load fails with low available disk space, the capsule
   offers a disk-space message and **Retry** for the same recording.
 - SQLite saves the transcript as an ordinary unfinished thought. The existing

@@ -118,8 +118,11 @@ final class VoiceCapture: ObservableObject {
     private lazy var windows = VoiceCaptureWindows(capture: self)
     private var handlesShortcut = false
     private var setupTask: Task<Void, Never>?
+    private var reprepareTask: Task<Void, Never>?
     private var pressure: DispatchSourceMemoryPressure?
     private var sleepObserver: (any NSObjectProtocol)?
+    private var wakeObserver: (any NSObjectProtocol)?
+    private var releasedForResourceConstraint = false
     private var operation: Task<Void, Never>?
     private var watchdog: Task<Void, Never>?
     private var slowPreparation: Task<Void, Never>?
@@ -195,10 +198,15 @@ final class VoiceCapture: ObservableObject {
         } else {
             setupTask?.cancel()
             setupTask = nil
+            reprepareTask?.cancel()
+            reprepareTask = nil
+            releasedForResourceConstraint = false
             setup = .unchecked
             canRemoveInstalledModel = false
             if let sleepObserver { NSWorkspace.shared.notificationCenter.removeObserver(sleepObserver) }
             sleepObserver = nil
+            if let wakeObserver { NSWorkspace.shared.notificationCenter.removeObserver(wakeObserver) }
+            wakeObserver = nil
             pressure?.cancel()
             pressure = nil
             Task { if !enabled { await speech.release() } }
@@ -331,6 +339,9 @@ final class VoiceCapture: ObservableObject {
 
     func prepareModel() {
         guard enabled, setupTask == nil, phase == .idle || phase == .listening else { return }
+        reprepareTask?.cancel()
+        reprepareTask = nil
+        releasedForResourceConstraint = false
         observeResources()
         setup = .preparing
         setupTask = Task(priority: .utility) {
@@ -351,9 +362,18 @@ final class VoiceCapture: ObservableObject {
 
     private func observeResources() {
         guard presentWindows, pressure == nil else { return }
-        let pressure = DispatchSource.makeMemoryPressureSource(eventMask: [.warning, .critical], queue: .main)
-        pressure.setEventHandler { [weak self] in
-            Task { @MainActor in self?.releaseModelWhenSafe() }
+        let pressure = DispatchSource.makeMemoryPressureSource(eventMask: [.normal, .warning, .critical], queue: .main)
+        pressure.setEventHandler { [weak self, weak pressure] in
+            guard let pressure else { return }
+            let data = pressure.data
+            Task { @MainActor in
+                guard let self else { return }
+                if data.contains(.warning) || data.contains(.critical) {
+                    self.handleResourceConstraint()
+                } else if data.contains(.normal) {
+                    self.scheduleReprepareAfterConstraint(delay: .seconds(2))
+                }
+            }
         }
         self.pressure = pressure
         pressure.activate()
@@ -364,8 +384,32 @@ final class VoiceCapture: ObservableObject {
                 guard let self else { return }
                 if self.phase == .checking { self.cancel() }
                 else { self.interruptInput() }
-                self.releaseModelWhenSafe()
+                self.handleResourceConstraint()
             }
+        }
+        wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didWakeNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.scheduleReprepareAfterConstraint(delay: .milliseconds(1500))
+            }
+        }
+    }
+
+    func handleResourceConstraint() {
+        reprepareTask?.cancel()
+        reprepareTask = nil
+        releasedForResourceConstraint = true
+        releaseModelWhenSafe()
+    }
+
+    func scheduleReprepareAfterConstraint(delay: Duration = .seconds(2)) {
+        guard enabled, releasedForResourceConstraint, reprepareTask == nil else { return }
+        reprepareTask = Task {
+            do { try await Task.sleep(for: delay) } catch { return }
+            reprepareTask = nil
+            guard enabled, releasedForResourceConstraint, phase == .idle, setup == .installed else { return }
+            prepareModel()
         }
     }
 

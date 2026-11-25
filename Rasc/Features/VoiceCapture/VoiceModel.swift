@@ -298,7 +298,7 @@ actor VoiceModel {
         case unavailable, lowDiskSpace
     }
 
-    private let retention: Duration
+    private let retention: Duration?
     private var models: AsrModels?
     private var loading: (id: UUID, task: Task<AsrModels, Error>)?
     private var prediction: (id: UUID, task: Task<String, Error>)?
@@ -306,7 +306,7 @@ actor VoiceModel {
     private var expiryID: UUID?
     private var releaseAfterPrediction = false
 
-    init(retention: Duration = .seconds(600)) {
+    init(retention: Duration? = nil) {
         self.retention = retention
     }
 
@@ -432,6 +432,11 @@ actor VoiceModel {
 
     private func renewLease() {
         expiry?.cancel()
+        guard let retention else {
+            expiry = nil
+            expiryID = nil
+            return
+        }
         let id = UUID()
         expiryID = id
         expiry = Task { [weak self, retention] in

@@ -233,6 +233,36 @@ struct VoiceCaptureTests {
         #expect(store.prepares == 1)
     }
 
+    @Test func resourceConstraintReleasesAndRepreparesWhenPressureSubsides() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let store = DownloadStateProbe()
+        store.markInstalled()
+        let capture = fixture.capture(speech: .init(
+            assetsAvailable: { store.available },
+            hasInstalledAssets: { store.installed },
+            prepare: { store.recordPrepare() },
+            transcribe: { _, ready in await ready(); return "" },
+            release: { store.recordRelease() }
+        ))
+        try await wait { capture.setup == .installed }
+        #expect(store.prepares == 1)
+
+        capture.handleResourceConstraint()
+        try await wait { store.releases == 1 }
+
+        // A second constraint before reprepare completes cancels the pending reprepare.
+        capture.scheduleReprepareAfterConstraint(delay: .milliseconds(80))
+        capture.handleResourceConstraint()
+        try await wait { store.releases == 2 }
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(store.prepares == 1)
+
+        // Once normal/wake arrives without another constraint, the model re-prepares.
+        capture.scheduleReprepareAfterConstraint(delay: .milliseconds(20))
+        try await wait { store.prepares == 2 }
+    }
+
     @Test func meterUpdatesStayLocalToTheRecordingMeter() throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
