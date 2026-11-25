@@ -9,6 +9,7 @@ import Testing
 @testable import Rasc
 
 @MainActor
+@Suite(.serialized)
 struct VoiceCaptureTests {
     @Test func assignedShortcutRegistersOnlyWhileVoiceCaptureIsEnabled() throws {
         let fixture = try Fixture()
@@ -132,13 +133,14 @@ struct VoiceCaptureTests {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
         let store = DownloadStateProbe()
+        let gate = DecodeGate()
         let capture = fixture.capture(speech: .init(
             assetsAvailable: { store.available },
             hasInstalledAssets: { store.installed },
             downloadSizeBytes: { 1000 },
             download: { progress in
                 progress(400, 1000)
-                try await Task.sleep(for: .milliseconds(20))
+                _ = await gate.wait()
                 progress(1000, 1000)
                 store.markInstalled()
             },
@@ -150,12 +152,14 @@ struct VoiceCaptureTests {
         try await wait { capture.setup == .missing }
         #expect(!capture.canRemoveInstalledModel)
         capture.downloadModel()
+        await gate.waitUntilEntered()
         try await wait {
             if case .downloading(let downloaded, let total) = capture.setup {
                 return downloaded >= 400 && total == 1000
             }
             return false
         }
+        await gate.release()
         try await wait { capture.setup == .installed }
         #expect(capture.canRemoveInstalledModel)
         #expect(store.prepares == 1)
