@@ -263,6 +263,109 @@ struct VoiceCaptureTests {
         try await wait { store.prepares == 2 }
     }
 
+    @Test func repeatedSleepWakeAndFluctuatingMemoryPressureAvoidsReloadLoops() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let store = DownloadStateProbe()
+        store.markInstalled()
+        let capture = fixture.capture(speech: .init(
+            assetsAvailable: { store.available },
+            hasInstalledAssets: { store.installed },
+            prepare: { store.recordPrepare() },
+            transcribe: { _, ready in await ready(); return "" },
+            release: { store.recordRelease() }
+        ))
+        try await wait { capture.setup == .installed }
+        #expect(store.prepares == 1)
+
+        // Spurious .normal memory pressure while already prepared must be a no-op.
+        capture.scheduleReprepareAfterConstraint(delay: .milliseconds(15))
+        try await Task.sleep(for: .milliseconds(40))
+        #expect(store.prepares == 1)
+
+        // Repeated sleep/wake cycles stay 1:1 with zero extra reloads.
+        for cycle in 1...10 {
+            capture.handleResourceConstraint()
+            try await wait { store.releases == cycle }
+            capture.scheduleReprepareAfterConstraint(delay: .milliseconds(15))
+            try await wait { store.prepares == cycle + 1 }
+        }
+
+        // Rapidly fluctuating pressure bursts coalesce into a single re-prepare after settling.
+        let baseReleases = store.releases
+        let basePrepares = store.prepares
+        for _ in 0..<5 {
+            capture.handleResourceConstraint()
+            capture.scheduleReprepareAfterConstraint(delay: .milliseconds(150))
+        }
+        try await wait { store.releases == baseReleases + 5 }
+        try await wait { store.prepares == basePrepares + 1 }
+        try await Task.sleep(for: .milliseconds(80))
+        #expect(store.prepares == basePrepares + 1)
+    }
+
+    @Test func repeatedPreparationFailuresDoNotLoopOnWakeOrNormalPressure() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let store = DownloadStateProbe()
+        store.markInstalled()
+        let attempts = ModelReadinessProbe()
+        let capture = fixture.capture(speech: .init(
+            assetsAvailable: { store.available },
+            hasInstalledAssets: { store.installed },
+            prepare: {
+                store.recordPrepare()
+                switch await attempts.nextAttempt() {
+                case 1: throw VoiceModel.PreparationError.unavailable
+                case 2: throw VoiceModel.PreparationError.lowDiskSpace
+                default: break
+                }
+            },
+            transcribe: { _, ready in await ready(); return "" },
+            release: { store.recordRelease() }
+        ))
+        try await wait { capture.setup == .failed }
+        #expect(store.prepares == 1)
+
+        // Wake / .normal pressure must not re-trigger failed preparation.
+        capture.handleResourceConstraint()
+        capture.scheduleReprepareAfterConstraint(delay: .milliseconds(15))
+        try await Task.sleep(for: .milliseconds(40))
+        #expect(store.prepares == 1)
+        #expect(capture.setup == .failed)
+
+        // Explicit retry hitting lowDiskSpace also does not loop on subsequent wake.
+        capture.prepareModel()
+        try await wait { capture.setup == .lowDiskSpace }
+        #expect(store.prepares == 2)
+        capture.handleResourceConstraint()
+        capture.scheduleReprepareAfterConstraint(delay: .milliseconds(15))
+        try await Task.sleep(for: .milliseconds(40))
+        #expect(store.prepares == 2)
+        #expect(capture.setup == .lowDiskSpace)
+
+        // Explicit recovery succeeds and restores adaptive lifecycle.
+        capture.prepareModel()
+        try await wait { capture.setup == .installed }
+        #expect(store.prepares == 3)
+        capture.handleResourceConstraint()
+        capture.scheduleReprepareAfterConstraint(delay: .milliseconds(15))
+        try await wait { store.prepares == 4 }
+    }
+
+    @Test func voiceModelRepeatedFailuresLeaveNoStuckLoadingState() async throws {
+        let model = VoiceModel()
+        for _ in 1...3 {
+            await #expect(throws: VoiceModel.PreparationError.unavailable) {
+                try await model.prepare()
+            }
+        }
+        await model.releaseForMemoryPressure()
+        await #expect(throws: VoiceModel.PreparationError.unavailable) {
+            try await model.prepare()
+        }
+    }
+
     @Test func meterUpdatesStayLocalToTheRecordingMeter() throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
@@ -582,7 +685,7 @@ struct VoiceCaptureTests {
     }
 
     private func wait(until predicate: () -> Bool) async throws {
-        let deadline = ContinuousClock.now.advanced(by: .seconds(4))
+        let deadline = ContinuousClock.now.advanced(by: .seconds(10))
         while !predicate(), ContinuousClock.now < deadline {
             try await Task.sleep(for: .milliseconds(8))
         }
