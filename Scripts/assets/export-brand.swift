@@ -15,13 +15,17 @@ guard let source = CGImageSourceCreateWithURL(masterURL as CFURL, nil),
 }
 let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
 
-func context(_ size: Int) -> CGContext {
-    CGContext(data: nil, width: size, height: size, bitsPerComponent: 8, bytesPerRow: size * 4,
+func context(width: Int, height: Int) -> CGContext {
+    CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4,
               space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
 }
 
+func context(_ size: Int) -> CGContext {
+    context(width: size, height: size)
+}
+
 // Trim transparent padding only; the silhouette pixels are retained unchanged.
-let scan = context(master.width)
+let scan = context(width: master.width, height: master.height)
 scan.draw(master, in: CGRect(x: 0, y: 0, width: master.width, height: master.height))
 let bytes = scan.data!.assumingMemoryBound(to: UInt8.self)
 var minX = master.width, minY = master.height, maxX = 0, maxY = 0
@@ -35,9 +39,33 @@ for y in 0..<master.height {
     }
 }
 precondition(maxX > minX && maxY > minY, "Master must contain a silhouette")
-let bounds = CGRect(x: minX, y: master.height - maxY - 1,
+let bounds = CGRect(x: minX, y: minY,
                     width: maxX - minX + 1, height: maxY - minY + 1)
 let symbol = master.cropping(to: bounds)!
+
+/// Darkness-weighted center of mass in top-left bitmap coordinates (x right, y down).
+func symbolCenterOfMass() -> CGPoint {
+    let scan = context(width: symbol.width, height: symbol.height)
+    scan.draw(symbol, in: CGRect(x: 0, y: 0, width: symbol.width, height: symbol.height))
+    let bytes = scan.data!.assumingMemoryBound(to: UInt8.self)
+    var sumX = 0.0, sumY = 0.0, sumW = 0.0
+    for y in 0..<symbol.height {
+        for x in 0..<symbol.width {
+            let i = (y * symbol.width + x) * 4
+            let alpha = Double(bytes[i + 3])
+            guard alpha > 8 else { continue }
+            let luminance = 0.299 * Double(bytes[i]) + 0.587 * Double(bytes[i + 1]) + 0.114 * Double(bytes[i + 2])
+            let weight = (255 - luminance) * (alpha / 255)
+            sumX += Double(x) * weight
+            sumY += Double(y) * weight
+            sumW += weight
+        }
+    }
+    precondition(sumW > 0)
+    return CGPoint(x: sumX / sumW, y: sumY / sumW)
+}
+
+let symbolCOM = symbolCenterOfMass()
 
 let graphite = CGColor(srgbRed: 0.141, green: 0.141, blue: 0.137, alpha: 1) // #242423
 let warmPaper = CGColor(srgbRed: 0.969, green: 0.961, blue: 0.941, alpha: 1) // #F7F5F0
@@ -49,6 +77,30 @@ func drawSymbol(in output: CGContext, rect: CGRect, color: CGColor) {
     let w = CGFloat(symbol.width) * scale
     let h = CGFloat(symbol.height) * scale
     let dest = CGRect(x: rect.midX - w / 2, y: rect.midY - h / 2, width: w, height: h)
+    output.saveGState()
+    output.beginTransparencyLayer(auxiliaryInfo: nil)
+    output.interpolationQuality = .high
+    output.draw(symbol, in: dest)
+    output.setBlendMode(.sourceIn)
+    output.setFillColor(color)
+    output.fill(dest)
+    output.endTransparencyLayer()
+    output.restoreGState()
+}
+
+/// Scales the mark to fit `plate` and places it with a balanced 50/50 blend of geometric
+/// bounding-box center and optical center of mass so margins and visual weight both feel centered.
+func drawSymbolOpticallyCentered(in output: CGContext, plate: CGRect, color: CGColor) {
+    let scale = min(plate.width / CGFloat(symbol.width), plate.height / CGFloat(symbol.height))
+    let w = CGFloat(symbol.width) * scale
+    let h = CGFloat(symbol.height) * scale
+    let comX = symbolCOM.x / CGFloat(symbol.width)
+    let comYFromTop = symbolCOM.y / CGFloat(symbol.height)
+    let anchorX = 0.5 + 0.5 * (comX - 0.5)
+    let anchorYFromTop = 0.5 + 0.5 * (comYFromTop - 0.5)
+    let destX = plate.midX - anchorX * w
+    let destY = plate.midY - (1 - anchorYFromTop) * h
+    let dest = CGRect(x: destX, y: destY, width: w, height: h)
     output.saveGState()
     output.beginTransparencyLayer(auxiliaryInfo: nil)
     output.interpolationQuality = .high
@@ -94,13 +146,12 @@ for (name, color) in [("rasc-dark", graphite), ("rasc-light", warmPaper)] {
     }
 }
 
-// Menu bar stays a monochrome template, now using the approved mark.
+// Menu bar stays a monochrome template at native 22 pt status-bar height (1:1 pixels,
+// ~17 pt mark height) so NSStatusBarButton does not downscale a 32 pt asset.
 for scale in [1, 2] {
-    let edge = 32 * scale
+    let edge = 22 * scale
     let output = context(edge)
-    // Match the visual weight of standard macOS status items: the mark occupies
-    // roughly 24 pt inside the 32 pt template instead of nearly filling it.
-    let inset = CGFloat(edge) / 5
+    let inset = 2.5 * CGFloat(scale)
     drawSymbol(in: output,
                rect: CGRect(x: inset, y: inset,
                             width: CGFloat(edge) - inset * 2,
@@ -123,28 +174,14 @@ func renderAppIcon(_ size: Int) -> CGImage {
     output.setLineWidth(max(0.5, edge / 1024))
     output.addPath(CGPath(roundedRect: plate, cornerWidth: edge * 0.19, cornerHeight: edge * 0.19, transform: nil))
     output.strokePath()
-    // Slightly larger and optically high compared with the old standalone mark.
-    drawSymbol(in: output,
-               rect: CGRect(x: edge * 0.20, y: edge * 0.18,
-                            width: edge * 0.60, height: edge * 0.60),
-               color: graphite)
+    // Inset symmetrically inside the plate; optical centering corrects mark asymmetry.
+    let inset = edge * 0.14
+    let symbolPlate = plate.insetBy(dx: inset, dy: inset)
+    drawSymbolOpticallyCentered(in: output, plate: symbolPlate, color: graphite)
     return output.makeImage()!
 }
 
-for points in [16, 32, 128, 256, 512] {
-    for scale in [1, 2] {
-        let size = points * scale
-        var icon = renderAppIcon(size)
-        // The 16 px 1x tile needs a 2x render downsampled once; drawing the
-        // silhouette directly at 16 px leaves it too faint to read.
-        if points == 16 && scale == 1 {
-            let downsampled = context(size)
-            downsampled.interpolationQuality = .high
-            downsampled.draw(renderAppIcon(size * 2), in: CGRect(x: 0, y: 0, width: CGFloat(size), height: CGFloat(size)))
-            icon = downsampled.makeImage()!
-        }
-        let suffix = scale == 2 ? "@2x" : ""
-        export(icon, to: "\(assets)/AppIcon.appiconset/icon_\(points)x\(points)\(suffix).png")
-    }
-}
-print("Exported Twin Fish logo appearances, 24 pt compact logos, menu-bar template and 10 AppIcon sizes from the approved master.")
+let appIconMaster = renderAppIcon(1024)
+export(appIconMaster, to: "\(assets)/AppIcon.appiconset/icon_512x512@2x.png")
+print("Exported Twin Fish logo appearances, 24 pt compact logos, menu-bar template, and the 1024 px AppIcon master.")
+print("Downsample the remaining AppIcon slots from icon_512x512@2x.png with Lanczos.")

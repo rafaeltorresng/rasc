@@ -4,13 +4,13 @@
       "filename" : "menubar.png",
       "idiom" : "mac",
       "scale" : "1x",
-      "size" : "32x32"
+      "size" : "22x22"
     },
     {
       "filename" : "menubar@2x.png",
       "idiom" : "mac",
       "scale" : "2x",
-      "size" : "32x32"
+      "size" : "22x22"
     }
   ],
   "info" : {
