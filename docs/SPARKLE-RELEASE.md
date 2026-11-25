@@ -1,7 +1,8 @@
 # Production runbook: Sparkle updates via Library Load Constraint (ad-hoc signed)
 
-Status: **v0.1.14/build 20 is published (2026-11-23); v0.1.7/build 13 was the
-first updater release.** The production feed serves the v0.1.14 entry with
+Status: **v0.1.15/build 21 is a verified local candidate (2026-11-24); v0.1.14/build
+20 remains published until this release ships; v0.1.7/build 13 was the first
+updater release.** The production feed still serves the v0.1.14 entry with
 v0.1.7–v0.1.13 retained. The default Release build is unchanged and cannot
 update itself. This document is
 the canonical procedure for the updater-enabled build. Please read fully before
@@ -38,7 +39,8 @@ a publicly-trusted tunnel such as Cloudflare quick tunnel (`cloudflared tunnel
 maintainer's Air M4. The host name is disposable; the feed is never the
 production one and never served from `rasc.app`. The production feed at
 `https://rasc.app/appcast.xml` is live and serves the published v0.1.14 entry
-(build 20), with earlier entries retained for older upgrades.
+(build 20) until v0.1.15 is deployed; earlier entries are retained for older
+upgrades.
 
 ## RC build pipeline (what `build-updater-rc.sh` does)
 
@@ -47,7 +49,9 @@ here (Release keeps the weak link); ad-hoc signature:
 
 1. Builds `Release` with `ARCHS=arm64`, ad-hoc signing, sandbox + Hardened
    Runtime, Sparkle entitlements from `Rasc/Rasc.sparkle.entitlements`.
-2. Confirms no `com.apple.security.network.client` anywhere in the main app.
+2. Confirms no `com.apple.security.network.client` on the main app; re-signs
+   `VoiceModelDownloader.xpc` with its own entitlements because the updater
+   `xcodebuild` pass applies Sparkle entitlements to every target.
 3. Embeds and re-signs Sparkle with Hardened Runtime (nested XPCs,
    `Autoupdate`, `Updater.app`, then the framework), preserving identifiers and
    entitlements.
@@ -293,8 +297,9 @@ cost and can remain as belt-and-braces.
 
 ## Decision checklist before publishing
 
-The v0.1.14 release is published. The checklist below remains the publication gate
-for each next candidate; completed run records belong in the release notes.
+The v0.1.15 candidate passed local build verification; it is not published yet.
+The checklist below remains the publication gate for each next candidate;
+completed run records belong in the release notes.
 
 - [ ] `xcodebuild test` green; `RELEASE_NOTES-v<version>.md` written (Open-Anyway note present)
 - [ ] Clean-machine pass of every step in the checklist above, on macOS 14.x as well as the deployment target if accessible
@@ -307,8 +312,18 @@ for each next candidate; completed run records belong in the release notes.
 - [ ] Website download link changed only after the feed is live and verified
 - [ ] `git status --porcelain` shows only the intended files; no `build/`
 
-## Current status (2026-11-23)
+## Current status (2026-11-24)
 
+- **Candidate (local, not published):** v0.1.15/build 21, source merge `9a9b471`
+  ([PR #96](https://github.com/rafaeltorresng/rasc/pull/96)), DMG
+  `Rasc-0.1.15-updater.dmg`, SHA-256
+  `145d4a94759233f91e50bd1200b07749a4759a440efd33a86558623edac2e443`, with six
+  `Rasc21-*` deltas (builds 15–20). Local `xcodebuild test` passed. Deep
+  codesign, LLC, main-app no-network, and `VoiceModelDownloader.xpc`
+  `network.client` checks passed. Staging appcast verification passed with
+  OpenSSL 3 on `PATH`; seed the working feed from the live eight-entry production
+  appcast before publishing. Clean-machine Sparkle UI, post-deploy smoke, and
+  macOS 14–25 remain open. See [RELEASE-NOTES-v0.1.15.md](RELEASE-NOTES-v0.1.15.md).
 - **Published:** v0.1.14/build 20, source on
   [PR #94](https://github.com/rafaeltorresng/rasc/pull/94) (the personalization
   merge from #93 plus the version bump), DMG `Rasc-0.1.14-updater.dmg`, SHA-256

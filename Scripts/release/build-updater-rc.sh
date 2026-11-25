@@ -59,6 +59,8 @@ CHECKSUM_PATH="${DMG_PATH}.sha256"
 
 SPARKLE_FRAMEWORK_SOURCE="${ROOT_DIR}/Vendor/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework"
 SPARKLE_ENTITLEMENTS_SOURCE="${ROOT_DIR}/Rasc/Rasc.sparkle.entitlements"
+VOICE_DOWNLOADER_ENTITLEMENTS="${ROOT_DIR}/VoiceModelDownloader/VoiceModelDownloader.entitlements"
+VOICE_DOWNLOADER_XPC_REL="Contents/XPCServices/com.rafaeltorres.rasc.VoiceModelDownloader.xpc"
 SPARKLE_TOOLS_BIN="${ROOT_DIR}/build/sparkle-tools/bin"
 SPARKLE_ACCOUNT="${SPARKLE_ACCOUNT:-rasc-sparkle}"
 
@@ -168,6 +170,27 @@ fi
 
 echo "==> Copying app to ${RC_APP_PATH}..."
 ditto "${BUILT_APP}" "${RC_APP_PATH}"
+
+VOICE_DOWNLOADER_XPC="${RC_APP_PATH}/${VOICE_DOWNLOADER_XPC_REL}"
+if [[ -d "${VOICE_DOWNLOADER_XPC}" ]]; then
+  if [[ ! -f "${VOICE_DOWNLOADER_ENTITLEMENTS}" ]]; then
+    echo "error: VoiceModelDownloader entitlements not found at ${VOICE_DOWNLOADER_ENTITLEMENTS}" >&2
+    exit 1
+  fi
+  echo "==> Re-signing VoiceModelDownloader.xpc (xcodebuild applies Sparkle entitlements to every target)..."
+  codesign --force --sign - --options runtime \
+    --entitlements "${VOICE_DOWNLOADER_ENTITLEMENTS}" \
+    "${VOICE_DOWNLOADER_XPC}"
+  VOICE_ENTITLEMENTS_OUT="$(codesign -d --entitlements :- "${VOICE_DOWNLOADER_XPC}" 2>/dev/null)"
+  if ! grep -q 'network.client' <<< "${VOICE_ENTITLEMENTS_OUT}"; then
+    echo "error: VoiceModelDownloader.xpc must carry com.apple.security.network.client" >&2
+    exit 1
+  fi
+  if grep -q 'device.audio-input' <<< "${VOICE_ENTITLEMENTS_OUT}"; then
+    echo "error: VoiceModelDownloader.xpc must not inherit the main app's Sparkle entitlements" >&2
+    exit 1
+  fi
+fi
 
 embed_and_sign_sparkle() {
   local app="$1"
@@ -282,6 +305,15 @@ ENTITLEMENTS_OUT="$(codesign -d --entitlements :- "${RC_APP_PATH}" 2>/dev/null)"
 if grep -q 'network.client' <<< "${ENTITLEMENTS_OUT}"; then
   echo "error: the main app must not have com.apple.security.network.client" >&2
   exit 1
+fi
+
+if [[ -d "${VOICE_DOWNLOADER_XPC}" ]]; then
+  echo "==> Confirming VoiceModelDownloader.xpc network entitlement after LLC re-sign..."
+  VOICE_ENTITLEMENTS_OUT="$(codesign -d --entitlements :- "${VOICE_DOWNLOADER_XPC}" 2>/dev/null)"
+  if ! grep -q 'network.client' <<< "${VOICE_ENTITLEMENTS_OUT}"; then
+    echo "error: VoiceModelDownloader.xpc lost com.apple.security.network.client after re-sign" >&2
+    exit 1
+  fi
 fi
 
 echo "==> Packaging DMG..."
