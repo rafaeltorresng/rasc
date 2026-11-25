@@ -165,6 +165,18 @@ final class VoiceModelDownloaderService: NSObject, VoiceModelDownloaderProtocol,
         return parts.allSatisfy { !$0.isEmpty && $0 != "." && $0 != ".." }
     }
 
+    private static func isAllowedRedirectURL(_ url: URL?) -> Bool {
+        guard let url,
+              url.scheme?.lowercased() == "https",
+              let host = url.host?.lowercased() else {
+            return false
+        }
+        return host == "huggingface.co"
+            || host.hasSuffix(".huggingface.co")
+            || host == "hf.co"
+            || host.hasSuffix(".hf.co")
+    }
+
     private static func remoteURL(revision: String, relativePath: String) -> URL? {
         var allowed = CharacterSet.urlPathAllowed
         allowed.remove(charactersIn: "?#")
@@ -183,12 +195,12 @@ extension VoiceModelDownloaderService: URLSessionDataDelegate {
         newRequest request: URLRequest,
         completionHandler: @escaping (URLRequest?) -> Void
     ) {
-        guard request.url?.scheme?.lowercased() == "https" else {
+        guard Self.isAllowedRedirectURL(request.url) else {
             if let state = lock.withLock({ activeTasks[task.taskIdentifier] }) {
                 state.httpError = NSError(
                     domain: VoiceModelDownloaderConstants.errorDomain,
                     code: VoiceModelDownloaderConstants.invalidResponseCode,
-                    userInfo: [NSLocalizedDescriptionKey: "Blocked non-HTTPS redirect."]
+                    userInfo: [NSLocalizedDescriptionKey: "Blocked untrusted redirect host."]
                 )
             }
             completionHandler(nil)
