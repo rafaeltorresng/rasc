@@ -146,13 +146,12 @@ for (name, color) in [("rasc-dark", graphite), ("rasc-light", warmPaper)] {
     }
 }
 
-// Menu bar stays a monochrome template, now using the approved mark.
+// Menu bar stays a monochrome template at native 22 pt status-bar height (1:1 pixels,
+// ~17 pt mark height) so NSStatusBarButton does not downscale a 32 pt asset.
 for scale in [1, 2] {
-    let edge = 32 * scale
+    let edge = 22 * scale
     let output = context(edge)
-    // Match the visual weight of standard macOS status items: the mark occupies
-    // roughly 24 pt inside the 32 pt template instead of nearly filling it.
-    let inset = CGFloat(edge) / 5
+    let inset = 2.5 * CGFloat(scale)
     drawSymbol(in: output,
                rect: CGRect(x: inset, y: inset,
                             width: CGFloat(edge) - inset * 2,
