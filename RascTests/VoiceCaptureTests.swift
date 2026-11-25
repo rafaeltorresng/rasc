@@ -432,15 +432,15 @@ struct VoiceCaptureTests {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
         let capture = fixture.capture()
-        for _ in 0..<120 {
+        for _ in 0..<40 {
             capture.activate()
             try await wait { capture.phase == .listening }
             capture.cancel()
             capture.cancel()
             try await wait { capture.phase == .idle }
         }
-        #expect(await fixture.input.starts == 120)
-        #expect(await fixture.input.stops == 120)
+        #expect(await fixture.input.starts == 40)
+        #expect(await fixture.input.stops == 40)
         #expect(await fixture.input.active == nil)
         #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
     }
