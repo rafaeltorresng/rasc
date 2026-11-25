@@ -25,7 +25,7 @@ func context(_ size: Int) -> CGContext {
 }
 
 // Trim transparent padding only; the silhouette pixels are retained unchanged.
-let scan = context(master.width)
+let scan = context(width: master.width, height: master.height)
 scan.draw(master, in: CGRect(x: 0, y: 0, width: master.width, height: master.height))
 let bytes = scan.data!.assumingMemoryBound(to: UInt8.self)
 var minX = master.width, minY = master.height, maxX = 0, maxY = 0
