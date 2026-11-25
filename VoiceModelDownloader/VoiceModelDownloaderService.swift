@@ -178,6 +178,30 @@ final class VoiceModelDownloaderService: NSObject, VoiceModelDownloaderProtocol,
 extension VoiceModelDownloaderService: URLSessionDataDelegate {
     func urlSession(
         _ session: URLSession,
+        task: URLSessionTask,
+        willPerformHTTPRedirection response: HTTPURLResponse,
+        newRequest request: URLRequest,
+        completionHandler: @escaping (URLRequest?) -> Void
+    ) {
+        guard request.url?.scheme?.lowercased() == "https" else {
+            if let state = lock.withLock({ activeTasks[task.taskIdentifier] }) {
+                state.httpError = NSError(
+                    domain: VoiceModelDownloaderConstants.errorDomain,
+                    code: VoiceModelDownloaderConstants.invalidResponseCode,
+                    userInfo: [NSLocalizedDescriptionKey: "Blocked non-HTTPS redirect."]
+                )
+            }
+            completionHandler(nil)
+            return
+        }
+        var sanitized = request
+        sanitized.setValue(nil, forHTTPHeaderField: "Authorization")
+        sanitized.setValue(nil, forHTTPHeaderField: "Cookie")
+        completionHandler(sanitized)
+    }
+
+    func urlSession(
+        _ session: URLSession,
         dataTask: URLSessionDataTask,
         didReceive response: URLResponse,
         completionHandler: @escaping (URLSession.ResponseDisposition) -> Void
@@ -223,6 +247,16 @@ extension VoiceModelDownloaderService: URLSessionDataDelegate {
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         guard let state = lock.withLock({ activeTasks[dataTask.taskIdentifier] }),
               let handle = state.writeHandle else { return }
+        guard state.receivedBytes + Int64(data.count) <= state.expectedBytes else {
+            try? FileManager.default.removeItem(at: state.partialURL)
+            state.httpError = NSError(
+                domain: VoiceModelDownloaderConstants.errorDomain,
+                code: VoiceModelDownloaderConstants.sizeMismatchCode,
+                userInfo: [NSLocalizedDescriptionKey: "Downloaded file exceeded expected size."]
+            )
+            dataTask.cancel()
+            return
+        }
         do {
             try handle.write(contentsOf: data)
             state.receivedBytes += Int64(data.count)

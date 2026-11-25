@@ -137,8 +137,9 @@ enum VoiceModelAssets {
         let storage = try storage()
         try fm.createDirectory(at: storage, withIntermediateDirectories: true)
 
-        if let capacity = try? storage.resourceValues(forKeys: [.volumeAvailableCapacityKey]).volumeAvailableCapacity,
-           Int64(capacity) < totalBytes + 500_000_000 {
+        let capacity = (try? storage.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey]).volumeAvailableCapacityForImportantUsage)
+            ?? (try? storage.resourceValues(forKeys: [.volumeAvailableCapacityKey]).volumeAvailableCapacity).map(Int64.init)
+        if let capacity, capacity < totalBytes * 2 + 200_000_000 {
             throw VoiceModel.PreparationError.lowDiskSpace
         }
 
@@ -262,6 +263,7 @@ private final class VoiceModelDownloadProgressReceiver: NSObject, VoiceModelDown
     private let totalBytes: Int64
     private let onProgress: @Sendable (Int64, Int64) -> Void
     private var bytesByPath: [String: Int64] = [:]
+    private var lastReportedBytes: Int64 = -1
 
     init(totalBytes: Int64, onProgress: @escaping @Sendable (Int64, Int64) -> Void) {
         self.totalBytes = totalBytes
@@ -269,19 +271,24 @@ private final class VoiceModelDownloadProgressReceiver: NSObject, VoiceModelDown
     }
 
     func didSetInitialBytes(_ bytes: Int64, forPath relativePath: String) {
-        let sum = lock.withLock {
+        let report: Int64? = lock.withLock {
             bytesByPath[relativePath] = bytes
-            return bytesByPath.values.reduce(0, +)
+            let sum = min(bytesByPath.values.reduce(0, +), totalBytes)
+            lastReportedBytes = sum
+            return sum
         }
-        onProgress(min(sum, totalBytes), totalBytes)
+        if let report { onProgress(report, totalBytes) }
     }
 
     func didReceiveBytes(_ delta: Int64, forPath relativePath: String) {
-        let sum = lock.withLock {
+        let report: Int64? = lock.withLock {
             bytesByPath[relativePath, default: 0] += delta
-            return bytesByPath.values.reduce(0, +)
+            let sum = min(bytesByPath.values.reduce(0, +), totalBytes)
+            guard sum >= totalBytes || sum - lastReportedBytes >= 262_144 else { return nil }
+            lastReportedBytes = sum
+            return sum
         }
-        onProgress(min(sum, totalBytes), totalBytes)
+        if let report { onProgress(report, totalBytes) }
     }
 }
 
