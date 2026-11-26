@@ -30,6 +30,7 @@ final class HomeSession {
     private(set) var hasMoreSearchResults = false
 
     private(set) var showsHistoryHint = false
+    private(set) var focusSearchRequestID: Int = 0
 
     private let repository: NoteRepository
     private let prepareForDuplicate: @MainActor (UUID) async throws -> Void
@@ -90,6 +91,10 @@ final class HomeSession {
         showsHistoryHint = false
     }
 
+    func requestSearchFocus() {
+        focusSearchRequestID &+= 1
+    }
+
     var visibleBrowseGroups: [HomeBrowseGroup] {
         browseGroups.map { group in
             guard group.kind == .kept, !showsAllKept else { return group }
@@ -132,6 +137,17 @@ final class HomeSession {
         reloadTask?.cancel()
         reloadTask = nil
         await performReload()
+    }
+
+    /// Releases cached browse/search arrays when Home is hidden while preserving
+    /// search state, selection markers, and Undo discard receipts.
+    func releaseCachedNotesForHiddenWindow() {
+        reloadTask?.cancel()
+        reloadTask = nil
+        browseGroups = []
+        searchResults = []
+        hasMoreSearchResults = false
+        isLoading = false
     }
 
     func scheduleReload() {

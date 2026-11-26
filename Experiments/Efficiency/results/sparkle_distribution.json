@@ -1,0 +1,283 @@
+{
+  "label": "sparkle_distribution",
+  "generated_at": "2026-11-26T18:32:18-0300",
+  "environment": {
+    "commit": "c30101f",
+    "machine_cpu": "Apple M3 Pro",
+    "memory_bytes": 19327352832,
+    "macos_version": "26.5.1",
+    "macos_build": "25F80",
+    "xcode": "Xcode 26.2 / Build version 17C52",
+    "bundle_id": "com.rafaeltorres.rasc.efficiency",
+    "is_sandboxed": true,
+    "personal_db_unchanged": true,
+    "screen_locked": false,
+    "sparkle_distribution": true
+  },
+  "disk_footprint": {
+    "app_bundle": {
+      "app_du_kib": 45468,
+      "app_du_mib": 44.4,
+      "total_file_bytes": 46207958,
+      "macos_binary_bytes": 42393696,
+      "frameworks_bytes": 3121648,
+      "xpc_services_bytes": 311225,
+      "resources_bytes": 358582
+    },
+    "speech_model_bytes": 652304885,
+    "speech_model_mib": 622.09
+  },
+  "launch": {
+    "runs": [
+      {
+        "run": 0,
+        "peak_cpu_pct": 75.73,
+        "time_to_idle_s": 0.21,
+        "settled_footprint_mib": 25.49,
+        "settled_rss_mib": 107.52,
+        "cum_cpu_ms_8s": 206.67,
+        "pkg_idle_wkups_8s": 0
+      },
+      {
+        "run": 1,
+        "peak_cpu_pct": 80.78,
+        "time_to_idle_s": 0.83,
+        "settled_footprint_mib": 24.8,
+        "settled_rss_mib": 100.28,
+        "cum_cpu_ms_8s": 228.02,
+        "pkg_idle_wkups_8s": 0
+      },
+      {
+        "run": 2,
+        "peak_cpu_pct": 81.77,
+        "time_to_idle_s": 0.83,
+        "settled_footprint_mib": 25.13,
+        "settled_rss_mib": 107.25,
+        "cum_cpu_ms_8s": 227.59,
+        "pkg_idle_wkups_8s": 0
+      },
+      {
+        "run": 3,
+        "peak_cpu_pct": 73.27,
+        "time_to_idle_s": 0.83,
+        "settled_footprint_mib": 25.3,
+        "settled_rss_mib": 107.39,
+        "cum_cpu_ms_8s": 226.78,
+        "pkg_idle_wkups_8s": 0
+      },
+      {
+        "run": 4,
+        "peak_cpu_pct": 77.02,
+        "time_to_idle_s": 0.83,
+        "settled_footprint_mib": 25.2,
+        "settled_rss_mib": 107.31,
+        "cum_cpu_ms_8s": 222.33,
+        "pkg_idle_wkups_8s": 0
+      }
+    ],
+    "peak_cpu_pct": {
+      "min": 73.27,
+      "p50": 77.02,
+      "max": 81.77
+    },
+    "time_to_idle_s": {
+      "min": 0.21,
+      "p50": 0.83,
+      "max": 0.83
+    },
+    "settled_footprint_mib": {
+      "min": 24.8,
+      "p50": 25.2,
+      "max": 25.49
+    },
+    "settled_rss_mib": {
+      "min": 100.28,
+      "p50": 107.31,
+      "max": 107.52
+    },
+    "cum_cpu_ms_8s": {
+      "min": 206.67,
+      "p50": 226.78,
+      "max": 228.02
+    },
+    "pkg_idle_wkups_8s": {
+      "min": 0,
+      "p50": 0,
+      "max": 0
+    }
+  },
+  "idle_voice_off": {
+    "summary": {
+      "label": "idle_voice_off",
+      "sample_count": 90,
+      "elapsed_s": 89.31,
+      "active_elapsed_s": 89.31,
+      "wall_elapsed_s": 89.31,
+      "detected_sleep_events": 0,
+      "total_sleep_gap_s": 0,
+      "phys_footprint_mib": {
+        "start": 25.2,
+        "end": 25.24,
+        "min": 25.17,
+        "p50": 25.19,
+        "p95": 25.24,
+        "max": 25.24,
+        "mean": 25.2,
+        "slope_mib_per_min": 0.0348,
+        "slope_mib_per_hour": 2.0894
+      },
+      "recovery_delta_mib": {
+        "from_peak_mib": 0.0,
+        "from_start_mib": 0.04
+      },
+      "lifetime_max_phys_footprint_mib": 25.41,
+      "rss_mib": {
+        "min": 107.05,
+        "p50": 107.06,
+        "p95": 107.11,
+        "max": 107.11
+      },
+      "neural_footprint_mib": {
+        "p50": 0.0,
+        "max": 0.0,
+        "lifetime_max": 0.0
+      },
+      "cpu_pct": {
+        "mean": 0.0026,
+        "p50": 0.0,
+        "p95": 0.0123,
+        "max": 0.0617
+      },
+      "cumulative_cpu_ms": 2.29,
+      "pkg_idle_wkups_total": 0,
+      "pkg_idle_wkups_per_s_mean": 0.0,
+      "pkg_idle_wkups_per_s_p50": 0.0,
+      "interrupt_wkups_total": 3,
+      "interrupt_wkups_per_s_mean": 0.0336,
+      "interrupt_wkups_per_s_p50": 0.0,
+      "disk_read_bytes": 0,
+      "disk_written_bytes": 0,
+      "logical_writes_bytes": 0,
+      "disk_read_mib": 0.0,
+      "disk_written_mib": 0.0,
+      "logical_writes_mib": 0.0,
+      "pageins_delta": 0,
+      "xnu_cpu_energy_j": 0.0004,
+      "xnu_cpu_power_mw_mean": 0.0,
+      "xnu_cpu_power_mw_p50": 0.0
+    },
+    "diagnostics_start": {
+      "captured_at": "2026-11-26T18:28:30-0300",
+      "prefix": "idle_voice_off_start",
+      "footprint_cli": "25 MB",
+      "leaks_count": 288,
+      "leaks_bytes": 14400,
+      "open_fds": 44,
+      "related_processes": [
+        "15596 13833 109648   0.1   0:00.22 /tmp/rasc-efficiency-build/Shipping/Rasc.app/Contents/MacOS/Rasc"
+      ]
+    },
+    "diagnostics_end": {
+      "captured_at": "2026-11-26T18:30:06-0300",
+      "prefix": "idle_voice_off_end",
+      "footprint_cli": "25 MB",
+      "leaks_count": 288,
+      "leaks_bytes": 14400,
+      "open_fds": 44,
+      "related_processes": [
+        "15596 13833 109664   0.0   0:00.23 /tmp/rasc-efficiency-build/Shipping/Rasc.app/Contents/MacOS/Rasc"
+      ]
+    }
+  },
+  "idle_voice_on": {
+    "summary": {
+      "label": "idle_voice_on",
+      "sample_count": 90,
+      "elapsed_s": 89.343,
+      "active_elapsed_s": 89.343,
+      "wall_elapsed_s": 89.344,
+      "detected_sleep_events": 0,
+      "total_sleep_gap_s": 0,
+      "phys_footprint_mib": {
+        "start": 49.13,
+        "end": 49.16,
+        "min": 49.13,
+        "p50": 49.16,
+        "p95": 49.2,
+        "max": 49.2,
+        "mean": 49.16,
+        "slope_mib_per_min": 0.0269,
+        "slope_mib_per_hour": 1.6125
+      },
+      "recovery_delta_mib": {
+        "from_peak_mib": -0.04,
+        "from_start_mib": 0.03
+      },
+      "lifetime_max_phys_footprint_mib": 63.52,
+      "rss_mib": {
+        "min": 125.59,
+        "p50": 125.67,
+        "p95": 125.7,
+        "max": 125.7
+      },
+      "neural_footprint_mib": {
+        "p50": 11.81,
+        "max": 11.81,
+        "lifetime_max": 598.44
+      },
+      "cpu_pct": {
+        "mean": 0.002,
+        "p50": 0.0,
+        "p95": 0.0072,
+        "max": 0.0478
+      },
+      "cumulative_cpu_ms": 1.78,
+      "pkg_idle_wkups_total": 0,
+      "pkg_idle_wkups_per_s_mean": 0.0,
+      "pkg_idle_wkups_per_s_p50": 0.0,
+      "interrupt_wkups_total": 2,
+      "interrupt_wkups_per_s_mean": 0.0224,
+      "interrupt_wkups_per_s_p50": 0.0,
+      "disk_read_bytes": 0,
+      "disk_written_bytes": 0,
+      "logical_writes_bytes": 0,
+      "disk_read_mib": 0.0,
+      "disk_written_mib": 0.0,
+      "logical_writes_mib": 0.0,
+      "pageins_delta": 0,
+      "xnu_cpu_energy_j": 0.0004,
+      "xnu_cpu_power_mw_mean": 0.0,
+      "xnu_cpu_power_mw_p50": 0.0
+    },
+    "diagnostics_start": {
+      "captured_at": "2026-11-26T18:30:40-0300",
+      "prefix": "idle_voice_on_start",
+      "footprint_cli": "49 MB",
+      "leaks_count": 288,
+      "leaks_bytes": 14400,
+      "open_fds": 48,
+      "related_processes": [
+        "16360 13833 128608   0.0   0:03.86 /tmp/rasc-efficiency-build/Shipping/Rasc.app/Contents/MacOS/Rasc"
+      ]
+    },
+    "diagnostics_end": {
+      "captured_at": "2026-11-26T18:32:13-0300",
+      "prefix": "idle_voice_on_end",
+      "footprint_cli": "49 MB",
+      "leaks_count": 288,
+      "leaks_bytes": 14400,
+      "open_fds": 48,
+      "related_processes": [
+        "16360 13833 121216   0.0   0:03.87 /tmp/rasc-efficiency-build/Shipping/Rasc.app/Contents/MacOS/Rasc"
+      ]
+    }
+  },
+  "llc_audit": {
+    "codesign_strict_verified": true,
+    "has_library_load_constraints": true,
+    "main_app_no_network_entitlement": true,
+    "voice_downloader_xpc_has_network_entitlement": true,
+    "voice_downloader_xpc_no_audio_input": true,
+    "sparkle_arm64_cdhash": "0e66f4ed0b19cb8b52fd8063740ba80e1481366a"
+  }
+}

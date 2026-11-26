@@ -1,0 +1,994 @@
+{
+  "baseline_commit": "1cee496",
+  "optimized_commit": "2a1bddf",
+  "optimized_screen_locked": false,
+  "metrics": {
+    "app_bundle_mib": {
+      "before": 40.47,
+      "after": 40.54,
+      "delta": 0.07,
+      "delta_pct": 0.17,
+      "unit": "MiB"
+    },
+    "launch_time_to_idle_p50_s": {
+      "before": 0.6,
+      "after": 0.74,
+      "delta": 0.14,
+      "delta_pct": 23.33,
+      "unit": "s"
+    },
+    "launch_settled_footprint_p50_mib": {
+      "before": 22.38,
+      "after": 24.59,
+      "delta": 2.21,
+      "delta_pct": 9.87,
+      "unit": "MiB"
+    },
+    "idle_voice_off_footprint_p50_mib": {
+      "before": 22.41,
+      "after": 24.42,
+      "delta": 2.01,
+      "delta_pct": 8.97,
+      "unit": "MiB"
+    },
+    "idle_voice_off_cpu_mean_pct": {
+      "before": 0.2531,
+      "after": 0.0024,
+      "delta": -0.2507,
+      "delta_pct": -99.05,
+      "unit": "%"
+    },
+    "idle_voice_off_wkups_per_s": {
+      "before": 0.0449,
+      "after": 0.0,
+      "delta": -0.0449,
+      "delta_pct": -100.0,
+      "unit": "/s"
+    },
+    "idle_voice_on_footprint_p50_mib": {
+      "before": 48.64,
+      "after": 50.17,
+      "delta": 1.53,
+      "delta_pct": 3.15,
+      "unit": "MiB"
+    },
+    "idle_voice_on_cpu_mean_pct": {
+      "before": 0.0022,
+      "after": 0.0017,
+      "delta": -0.0005,
+      "delta_pct": -22.73,
+      "unit": "%"
+    },
+    "idle_voice_on_wkups_per_s": {
+      "before": 0.0,
+      "after": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "unit": "/s"
+    },
+    "workday_peak_footprint_mib": {
+      "before": 294.99,
+      "after": 143.97,
+      "delta": -151.02,
+      "delta_pct": -51.19,
+      "unit": "MiB"
+    },
+    "workday_cooldown_end_footprint_mib": {
+      "before": 189.22,
+      "after": 63.7,
+      "delta": -125.52,
+      "delta_pct": -66.34,
+      "unit": "MiB"
+    },
+    "workday_endurance_slope_mib_per_min": {
+      "before": -3.8885,
+      "after": -26.6247,
+      "delta": -22.7362,
+      "delta_pct": 584.7,
+      "unit": "MiB/min"
+    },
+    "workday_cum_cpu_ms": {
+      "before": 66961.56,
+      "after": 22336.04,
+      "delta": -44625.52,
+      "delta_pct": -66.64,
+      "unit": "ms"
+    },
+    "workday_xnu_cpu_energy_j": {
+      "before": 206.513,
+      "after": 53.1334,
+      "delta": -153.3796,
+      "delta_pct": -74.27,
+      "unit": "J"
+    },
+    "workday_cooldown_leaks": {
+      "before": 288.0,
+      "after": 288.0,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "unit": "leaks"
+    }
+  },
+  "replications": {
+    "n": 3,
+    "chosen_representative_rep": 1,
+    "metrics": {
+      "launch_time_to_idle_p50_s": {
+        "min": 0.73,
+        "p25": 0.735,
+        "median": 0.74,
+        "p75": 0.75,
+        "max": 0.76,
+        "iqr": 0.015,
+        "values": [
+          0.74,
+          0.76,
+          0.73
+        ]
+      },
+      "launch_settled_fp_p50_mib": {
+        "min": 24.47,
+        "p25": 24.53,
+        "median": 24.59,
+        "p75": 24.655,
+        "max": 24.72,
+        "iqr": 0.125,
+        "values": [
+          24.59,
+          24.47,
+          24.72
+        ]
+      },
+      "idle_voice_off_fp_p50_mib": {
+        "min": 24.42,
+        "p25": 24.455,
+        "median": 24.49,
+        "p75": 24.51,
+        "max": 24.53,
+        "iqr": 0.055,
+        "values": [
+          24.42,
+          24.49,
+          24.53
+        ]
+      },
+      "idle_voice_off_rss_p50_mib": {
+        "min": 106.52,
+        "p25": 106.525,
+        "median": 106.53,
+        "p75": 106.65,
+        "max": 106.77,
+        "iqr": 0.125,
+        "values": [
+          106.53,
+          106.52,
+          106.77
+        ]
+      },
+      "idle_voice_off_cpu_mean_pct": {
+        "min": 0.0018,
+        "p25": 0.0021,
+        "median": 0.0024,
+        "p75": 0.0035,
+        "max": 0.0046,
+        "iqr": 0.0014,
+        "values": [
+          0.0024,
+          0.0018,
+          0.0046
+        ]
+      },
+      "idle_voice_off_wkups_s": {
+        "min": 0.0,
+        "p25": 0.0,
+        "median": 0.0,
+        "p75": 0.0,
+        "max": 0.0,
+        "iqr": 0.0,
+        "values": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "idle_voice_on_fp_p50_mib": {
+        "min": 42.45,
+        "p25": 46.31,
+        "median": 50.17,
+        "p75": 50.195,
+        "max": 50.22,
+        "iqr": 3.885,
+        "values": [
+          50.17,
+          42.45,
+          50.22
+        ]
+      },
+      "idle_voice_on_rss_p50_mib": {
+        "min": 115.75,
+        "p25": 119.665,
+        "median": 123.58,
+        "p75": 128.44,
+        "max": 133.3,
+        "iqr": 8.775,
+        "values": [
+          123.58,
+          115.75,
+          133.3
+        ]
+      },
+      "idle_voice_on_neural_p50_mib": {
+        "min": 11.81,
+        "p25": 11.81,
+        "median": 11.81,
+        "p75": 11.81,
+        "max": 11.81,
+        "iqr": 0.0,
+        "values": [
+          11.81,
+          11.81,
+          11.81
+        ]
+      },
+      "idle_voice_on_cpu_mean_pct": {
+        "min": 0.0013,
+        "p25": 0.0015,
+        "median": 0.0017,
+        "p75": 0.0019,
+        "max": 0.0022,
+        "iqr": 0.0004,
+        "values": [
+          0.0017,
+          0.0022,
+          0.0013
+        ]
+      },
+      "idle_voice_on_wkups_s": {
+        "min": 0.0,
+        "p25": 0.0,
+        "median": 0.0,
+        "p75": 0.0,
+        "max": 0.0,
+        "iqr": 0.0,
+        "values": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "workday_peak_fp_mib": {
+        "min": 140.09,
+        "p25": 141.625,
+        "median": 143.16,
+        "p75": 143.565,
+        "max": 143.97,
+        "iqr": 1.94,
+        "values": [
+          143.97,
+          143.16,
+          140.09
+        ]
+      },
+      "workday_cooldown_end_fp_mib": {
+        "min": 62.19,
+        "p25": 62.945,
+        "median": 63.7,
+        "p75": 75.875,
+        "max": 88.05,
+        "iqr": 12.93,
+        "values": [
+          63.7,
+          62.19,
+          88.05
+        ]
+      },
+      "workday_endurance_slope_mib_min": {
+        "min": -26.6247,
+        "p25": -25.5008,
+        "median": -24.3768,
+        "p75": -12.6311,
+        "max": -0.8854,
+        "iqr": 12.8697,
+        "values": [
+          -26.6247,
+          -24.3768,
+          -0.8854
+        ]
+      },
+      "home_open_p50_ms": {
+        "min": 3.7912,
+        "p25": 4.0238,
+        "median": 4.2563,
+        "p75": 4.2672,
+        "max": 4.278,
+        "iqr": 0.2434,
+        "values": [
+          3.7912,
+          4.278,
+          4.2563
+        ]
+      },
+      "home_close_p50_ms": {
+        "min": 4.8091,
+        "p25": 5.291,
+        "median": 5.7729,
+        "p75": 5.9744,
+        "max": 6.176,
+        "iqr": 0.6834,
+        "values": [
+          6.176,
+          4.8091,
+          5.7729
+        ]
+      },
+      "home_search_p50_ms": {
+        "min": 10.9067,
+        "p25": 11.2328,
+        "median": 11.559,
+        "p75": 11.9444,
+        "max": 12.3298,
+        "iqr": 0.7115,
+        "values": [
+          10.9067,
+          11.559,
+          12.3298
+        ]
+      },
+      "workday_cum_cpu_ms": {
+        "min": 19540.26,
+        "p25": 19560.805,
+        "median": 19581.35,
+        "p75": 20958.695,
+        "max": 22336.04,
+        "iqr": 1397.89,
+        "values": [
+          22336.04,
+          19540.26,
+          19581.35
+        ]
+      },
+      "workday_xnu_cpu_energy_j": {
+        "min": 42.5411,
+        "p25": 47.3421,
+        "median": 52.143,
+        "p75": 52.6382,
+        "max": 53.1334,
+        "iqr": 5.2961,
+        "values": [
+          53.1334,
+          52.143,
+          42.5411
+        ]
+      }
+    },
+    "per_rep": [
+      {
+        "launch_time_to_idle_p50_s": 0.74,
+        "launch_settled_fp_p50_mib": 24.59,
+        "idle_voice_off_fp_p50_mib": 24.42,
+        "idle_voice_off_rss_p50_mib": 106.53,
+        "idle_voice_off_cpu_mean_pct": 0.0024,
+        "idle_voice_off_wkups_s": 0.0,
+        "idle_voice_on_fp_p50_mib": 50.17,
+        "idle_voice_on_rss_p50_mib": 123.58,
+        "idle_voice_on_neural_p50_mib": 11.81,
+        "idle_voice_on_cpu_mean_pct": 0.0017,
+        "idle_voice_on_wkups_s": 0.0,
+        "workday_peak_fp_mib": 143.97,
+        "workday_cooldown_end_fp_mib": 63.7,
+        "workday_endurance_slope_mib_min": -26.6247,
+        "home_open_p50_ms": 3.791209,
+        "home_close_p50_ms": 6.175958,
+        "home_search_p50_ms": 10.906708,
+        "workday_cum_cpu_ms": 22336.04,
+        "workday_xnu_cpu_energy_j": 53.1334
+      },
+      {
+        "launch_time_to_idle_p50_s": 0.76,
+        "launch_settled_fp_p50_mib": 24.47,
+        "idle_voice_off_fp_p50_mib": 24.49,
+        "idle_voice_off_rss_p50_mib": 106.52,
+        "idle_voice_off_cpu_mean_pct": 0.0018,
+        "idle_voice_off_wkups_s": 0.0,
+        "idle_voice_on_fp_p50_mib": 42.45,
+        "idle_voice_on_rss_p50_mib": 115.75,
+        "idle_voice_on_neural_p50_mib": 11.81,
+        "idle_voice_on_cpu_mean_pct": 0.0022,
+        "idle_voice_on_wkups_s": 0.0,
+        "workday_peak_fp_mib": 143.16,
+        "workday_cooldown_end_fp_mib": 62.19,
+        "workday_endurance_slope_mib_min": -24.3768,
+        "home_open_p50_ms": 4.278042,
+        "home_close_p50_ms": 4.809083,
+        "home_search_p50_ms": 11.558958,
+        "workday_cum_cpu_ms": 19540.26,
+        "workday_xnu_cpu_energy_j": 52.143
+      },
+      {
+        "launch_time_to_idle_p50_s": 0.73,
+        "launch_settled_fp_p50_mib": 24.72,
+        "idle_voice_off_fp_p50_mib": 24.53,
+        "idle_voice_off_rss_p50_mib": 106.77,
+        "idle_voice_off_cpu_mean_pct": 0.0046,
+        "idle_voice_off_wkups_s": 0.0,
+        "idle_voice_on_fp_p50_mib": 50.22,
+        "idle_voice_on_rss_p50_mib": 133.3,
+        "idle_voice_on_neural_p50_mib": 11.81,
+        "idle_voice_on_cpu_mean_pct": 0.0013,
+        "idle_voice_on_wkups_s": 0.0,
+        "workday_peak_fp_mib": 140.09,
+        "workday_cooldown_end_fp_mib": 88.05,
+        "workday_endurance_slope_mib_min": -0.8854,
+        "home_open_p50_ms": 4.256334,
+        "home_close_p50_ms": 5.772875,
+        "home_search_p50_ms": 12.329791,
+        "workday_cum_cpu_ms": 19581.35,
+        "workday_xnu_cpu_energy_j": 42.5411
+      }
+    ]
+  },
+  "sparkle_distribution": {
+    "label": "sparkle_distribution",
+    "generated_at": "2026-11-26T18:32:18-0300",
+    "environment": {
+      "commit": "c30101f",
+      "machine_cpu": "Apple M3 Pro",
+      "memory_bytes": 19327352832,
+      "macos_version": "26.5.1",
+      "macos_build": "25F80",
+      "xcode": "Xcode 26.2 / Build version 17C52",
+      "bundle_id": "com.rafaeltorres.rasc.efficiency",
+      "is_sandboxed": true,
+      "personal_db_unchanged": true,
+      "screen_locked": false,
+      "sparkle_distribution": true
+    },
+    "disk_footprint": {
+      "app_bundle": {
+        "app_du_kib": 45468,
+        "app_du_mib": 44.4,
+        "total_file_bytes": 46207958,
+        "macos_binary_bytes": 42393696,
+        "frameworks_bytes": 3121648,
+        "xpc_services_bytes": 311225,
+        "resources_bytes": 358582
+      },
+      "speech_model_bytes": 652304885,
+      "speech_model_mib": 622.09
+    },
+    "launch": {
+      "runs": [
+        {
+          "run": 0,
+          "peak_cpu_pct": 75.73,
+          "time_to_idle_s": 0.21,
+          "settled_footprint_mib": 25.49,
+          "settled_rss_mib": 107.52,
+          "cum_cpu_ms_8s": 206.67,
+          "pkg_idle_wkups_8s": 0
+        },
+        {
+          "run": 1,
+          "peak_cpu_pct": 80.78,
+          "time_to_idle_s": 0.83,
+          "settled_footprint_mib": 24.8,
+          "settled_rss_mib": 100.28,
+          "cum_cpu_ms_8s": 228.02,
+          "pkg_idle_wkups_8s": 0
+        },
+        {
+          "run": 2,
+          "peak_cpu_pct": 81.77,
+          "time_to_idle_s": 0.83,
+          "settled_footprint_mib": 25.13,
+          "settled_rss_mib": 107.25,
+          "cum_cpu_ms_8s": 227.59,
+          "pkg_idle_wkups_8s": 0
+        },
+        {
+          "run": 3,
+          "peak_cpu_pct": 73.27,
+          "time_to_idle_s": 0.83,
+          "settled_footprint_mib": 25.3,
+          "settled_rss_mib": 107.39,
+          "cum_cpu_ms_8s": 226.78,
+          "pkg_idle_wkups_8s": 0
+        },
+        {
+          "run": 4,
+          "peak_cpu_pct": 77.02,
+          "time_to_idle_s": 0.83,
+          "settled_footprint_mib": 25.2,
+          "settled_rss_mib": 107.31,
+          "cum_cpu_ms_8s": 222.33,
+          "pkg_idle_wkups_8s": 0
+        }
+      ],
+      "peak_cpu_pct": {
+        "min": 73.27,
+        "p50": 77.02,
+        "max": 81.77
+      },
+      "time_to_idle_s": {
+        "min": 0.21,
+        "p50": 0.83,
+        "max": 0.83
+      },
+      "settled_footprint_mib": {
+        "min": 24.8,
+        "p50": 25.2,
+        "max": 25.49
+      },
+      "settled_rss_mib": {
+        "min": 100.28,
+        "p50": 107.31,
+        "max": 107.52
+      },
+      "cum_cpu_ms_8s": {
+        "min": 206.67,
+        "p50": 226.78,
+        "max": 228.02
+      },
+      "pkg_idle_wkups_8s": {
+        "min": 0,
+        "p50": 0,
+        "max": 0
+      }
+    },
+    "idle_voice_off": {
+      "summary": {
+        "label": "idle_voice_off",
+        "sample_count": 90,
+        "elapsed_s": 89.31,
+        "active_elapsed_s": 89.31,
+        "wall_elapsed_s": 89.31,
+        "detected_sleep_events": 0,
+        "total_sleep_gap_s": 0,
+        "phys_footprint_mib": {
+          "start": 25.2,
+          "end": 25.24,
+          "min": 25.17,
+          "p50": 25.19,
+          "p95": 25.24,
+          "max": 25.24,
+          "mean": 25.2,
+          "slope_mib_per_min": 0.0348,
+          "slope_mib_per_hour": 2.0894
+        },
+        "recovery_delta_mib": {
+          "from_peak_mib": 0.0,
+          "from_start_mib": 0.04
+        },
+        "lifetime_max_phys_footprint_mib": 25.41,
+        "rss_mib": {
+          "min": 107.05,
+          "p50": 107.06,
+          "p95": 107.11,
+          "max": 107.11
+        },
+        "neural_footprint_mib": {
+          "p50": 0.0,
+          "max": 0.0,
+          "lifetime_max": 0.0
+        },
+        "cpu_pct": {
+          "mean": 0.0026,
+          "p50": 0.0,
+          "p95": 0.0123,
+          "max": 0.0617
+        },
+        "cumulative_cpu_ms": 2.29,
+        "pkg_idle_wkups_total": 0,
+        "pkg_idle_wkups_per_s_mean": 0.0,
+        "pkg_idle_wkups_per_s_p50": 0.0,
+        "interrupt_wkups_total": 3,
+        "interrupt_wkups_per_s_mean": 0.0336,
+        "interrupt_wkups_per_s_p50": 0.0,
+        "disk_read_bytes": 0,
+        "disk_written_bytes": 0,
+        "logical_writes_bytes": 0,
+        "disk_read_mib": 0.0,
+        "disk_written_mib": 0.0,
+        "logical_writes_mib": 0.0,
+        "pageins_delta": 0,
+        "xnu_cpu_energy_j": 0.0004,
+        "xnu_cpu_power_mw_mean": 0.0,
+        "xnu_cpu_power_mw_p50": 0.0
+      },
+      "diagnostics_start": {
+        "captured_at": "2026-11-26T18:28:30-0300",
+        "prefix": "idle_voice_off_start",
+        "footprint_cli": "25 MB",
+        "leaks_count": 288,
+        "leaks_bytes": 14400,
+        "open_fds": 44,
+        "related_processes": [
+          "15596 13833 109648   0.1   0:00.22 /tmp/rasc-efficiency-build/Shipping/Rasc.app/Contents/MacOS/Rasc"
+        ]
+      },
+      "diagnostics_end": {
+        "captured_at": "2026-11-26T18:30:06-0300",
+        "prefix": "idle_voice_off_end",
+        "footprint_cli": "25 MB",
+        "leaks_count": 288,
+        "leaks_bytes": 14400,
+        "open_fds": 44,
+        "related_processes": [
+          "15596 13833 109664   0.0   0:00.23 /tmp/rasc-efficiency-build/Shipping/Rasc.app/Contents/MacOS/Rasc"
+        ]
+      }
+    },
+    "idle_voice_on": {
+      "summary": {
+        "label": "idle_voice_on",
+        "sample_count": 90,
+        "elapsed_s": 89.343,
+        "active_elapsed_s": 89.343,
+        "wall_elapsed_s": 89.344,
+        "detected_sleep_events": 0,
+        "total_sleep_gap_s": 0,
+        "phys_footprint_mib": {
+          "start": 49.13,
+          "end": 49.16,
+          "min": 49.13,
+          "p50": 49.16,
+          "p95": 49.2,
+          "max": 49.2,
+          "mean": 49.16,
+          "slope_mib_per_min": 0.0269,
+          "slope_mib_per_hour": 1.6125
+        },
+        "recovery_delta_mib": {
+          "from_peak_mib": -0.04,
+          "from_start_mib": 0.03
+        },
+        "lifetime_max_phys_footprint_mib": 63.52,
+        "rss_mib": {
+          "min": 125.59,
+          "p50": 125.67,
+          "p95": 125.7,
+          "max": 125.7
+        },
+        "neural_footprint_mib": {
+          "p50": 11.81,
+          "max": 11.81,
+          "lifetime_max": 598.44
+        },
+        "cpu_pct": {
+          "mean": 0.002,
+          "p50": 0.0,
+          "p95": 0.0072,
+          "max": 0.0478
+        },
+        "cumulative_cpu_ms": 1.78,
+        "pkg_idle_wkups_total": 0,
+        "pkg_idle_wkups_per_s_mean": 0.0,
+        "pkg_idle_wkups_per_s_p50": 0.0,
+        "interrupt_wkups_total": 2,
+        "interrupt_wkups_per_s_mean": 0.0224,
+        "interrupt_wkups_per_s_p50": 0.0,
+        "disk_read_bytes": 0,
+        "disk_written_bytes": 0,
+        "logical_writes_bytes": 0,
+        "disk_read_mib": 0.0,
+        "disk_written_mib": 0.0,
+        "logical_writes_mib": 0.0,
+        "pageins_delta": 0,
+        "xnu_cpu_energy_j": 0.0004,
+        "xnu_cpu_power_mw_mean": 0.0,
+        "xnu_cpu_power_mw_p50": 0.0
+      },
+      "diagnostics_start": {
+        "captured_at": "2026-11-26T18:30:40-0300",
+        "prefix": "idle_voice_on_start",
+        "footprint_cli": "49 MB",
+        "leaks_count": 288,
+        "leaks_bytes": 14400,
+        "open_fds": 48,
+        "related_processes": [
+          "16360 13833 128608   0.0   0:03.86 /tmp/rasc-efficiency-build/Shipping/Rasc.app/Contents/MacOS/Rasc"
+        ]
+      },
+      "diagnostics_end": {
+        "captured_at": "2026-11-26T18:32:13-0300",
+        "prefix": "idle_voice_on_end",
+        "footprint_cli": "49 MB",
+        "leaks_count": 288,
+        "leaks_bytes": 14400,
+        "open_fds": 48,
+        "related_processes": [
+          "16360 13833 121216   0.0   0:03.87 /tmp/rasc-efficiency-build/Shipping/Rasc.app/Contents/MacOS/Rasc"
+        ]
+      }
+    },
+    "llc_audit": {
+      "codesign_strict_verified": true,
+      "has_library_load_constraints": true,
+      "main_app_no_network_entitlement": true,
+      "voice_downloader_xpc_has_network_entitlement": true,
+      "voice_downloader_xpc_no_audio_input": true,
+      "sparkle_arm64_cdhash": "0e66f4ed0b19cb8b52fd8063740ba80e1481366a"
+    }
+  },
+  "long_running_smoke": {
+    "idle_detached_smoke_summary": {
+      "run_dir": "/tmp/rasc-longrun-smoke-idle",
+      "profile": "idle-24h-voice-on",
+      "generated_at": "2026-11-26T19:11:37-0300",
+      "manifest": {
+        "profile": "idle-24h-voice-on",
+        "started_at": "2026-11-26T19:11:01-0300",
+        "bundle_id": "com.rafaeltorres.rasc.longrun",
+        "sparkle_distribution": false,
+        "prevent_idle_sleep": false,
+        "screen_locked_at_start": false,
+        "soak_duration_seconds": 28800.0,
+        "idle_duration_seconds": 3600.0,
+        "cycle_interval_seconds": 900.0,
+        "cooldown_seconds": 300.0,
+        "sample_interval_soak_s": 2.0,
+        "sample_interval_idle_s": 2.0,
+        "diag_interval_seconds": 1800.0,
+        "apps": {
+          "shipping_app": "/tmp/rasc-longrun-smoke-idle/apps/Shipping/Rasc.app"
+        },
+        "model_revision": "3b9d38a93d606f84011e5a0a669b7ea146375a22"
+      },
+      "status": {
+        "state": "stopped",
+        "supervisor_pid": 30906,
+        "screen_locked_at_end": false,
+        "updated_at": "2026-11-26T19:11:37-0300"
+      },
+      "personal_db_unchanged": true,
+      "stages": {
+        "idle_voice_on": {
+          "sample_summary": {
+            "label": "idle_voice_on",
+            "sample_count": 11,
+            "elapsed_s": 20.068,
+            "active_elapsed_s": 20.068,
+            "wall_elapsed_s": 20.068,
+            "detected_sleep_events": 0,
+            "total_sleep_gap_s": 0,
+            "phys_footprint_mib": {
+              "start": 63.27,
+              "end": 49.31,
+              "min": 49.31,
+              "p50": 49.34,
+              "p95": 63.27,
+              "max": 63.27,
+              "mean": 51.89,
+              "slope_mib_per_min": -34.3331,
+              "slope_mib_per_hour": -2059.9867
+            },
+            "recovery_delta_mib": {
+              "from_peak_mib": -13.96,
+              "from_start_mib": -13.96
+            },
+            "lifetime_max_phys_footprint_mib": 63.78,
+            "rss_mib": {
+              "min": 121.22,
+              "p50": 121.27,
+              "p95": 694.55,
+              "max": 698.61
+            },
+            "neural_footprint_mib": {
+              "p50": 11.81,
+              "max": 598.44,
+              "lifetime_max": 598.44
+            },
+            "cpu_pct": {
+              "mean": 1.2691,
+              "p50": 0.0006,
+              "p95": 6.9479,
+              "max": 12.5792
+            },
+            "cumulative_cpu_ms": 254.69,
+            "pkg_idle_wkups_total": 0,
+            "pkg_idle_wkups_per_s_mean": 0.0,
+            "pkg_idle_wkups_per_s_p50": 0.0,
+            "interrupt_wkups_total": 5,
+            "interrupt_wkups_per_s_mean": 0.2492,
+            "interrupt_wkups_per_s_p50": 0.0,
+            "disk_read_bytes": 43171840,
+            "disk_written_bytes": 36519936,
+            "logical_writes_bytes": 44929024,
+            "disk_read_mib": 41.172,
+            "disk_written_mib": 34.828,
+            "logical_writes_mib": 42.848,
+            "pageins_delta": 4435,
+            "xnu_cpu_energy_j": 0.877,
+            "xnu_cpu_power_mw_mean": 43.7,
+            "xnu_cpu_power_mw_p50": 0.01
+          },
+          "in_app_summary": {},
+          "latest_leaks": {}
+        }
+      }
+    },
+    "soak_smoke_summary": {
+      "run_dir": "/tmp/rasc-longrun-smoke-soak",
+      "profile": "soak-8h",
+      "generated_at": "2026-11-26T19:10:55-0300",
+      "manifest": {
+        "profile": "soak-8h",
+        "started_at": "2026-11-26T19:08:20-0300",
+        "bundle_id": "com.rafaeltorres.rasc.longrun",
+        "sparkle_distribution": false,
+        "prevent_idle_sleep": false,
+        "screen_locked_at_start": false,
+        "soak_duration_seconds": 150.0,
+        "idle_duration_seconds": 86400.0,
+        "cycle_interval_seconds": 45.0,
+        "cooldown_seconds": 25.0,
+        "sample_interval_soak_s": 2.0,
+        "sample_interval_idle_s": 2.0,
+        "diag_interval_seconds": 120.0,
+        "apps": {
+          "bench_app": "/tmp/rasc-longrun-smoke-soak/apps/Bench/Rasc.app"
+        },
+        "model_revision": "3b9d38a93d606f84011e5a0a669b7ea146375a22"
+      },
+      "status": {
+        "state": "completed",
+        "supervisor_pid": 30101,
+        "screen_locked_at_end": false,
+        "updated_at": "2026-11-26T19:10:55-0300"
+      },
+      "personal_db_unchanged": true,
+      "stages": {
+        "soak": {
+          "sample_summary": {
+            "label": "soak",
+            "sample_count": 76,
+            "elapsed_s": 152.131,
+            "active_elapsed_s": 152.131,
+            "wall_elapsed_s": 152.171,
+            "detected_sleep_events": 0,
+            "total_sleep_gap_s": 0,
+            "phys_footprint_mib": {
+              "start": 0.08,
+              "end": 60.11,
+              "min": 0.08,
+              "p50": 60.11,
+              "p95": 82.68,
+              "max": 84.97,
+              "mean": 64.12,
+              "slope_mib_per_min": -1.9463,
+              "slope_mib_per_hour": -116.7767
+            },
+            "recovery_delta_mib": {
+              "from_peak_mib": -24.86,
+              "from_start_mib": 60.03
+            },
+            "lifetime_max_phys_footprint_mib": 111.52,
+            "rss_mib": {
+              "min": 0.03,
+              "p50": 117.07,
+              "p95": 690.67,
+              "max": 734.12
+            },
+            "neural_footprint_mib": {
+              "p50": 11.81,
+              "max": 598.44,
+              "lifetime_max": 598.44
+            },
+            "cpu_pct": {
+              "mean": 4.7253,
+              "p50": 0.0388,
+              "p95": 31.4342,
+              "max": 73.6755
+            },
+            "cumulative_cpu_ms": 7188.71,
+            "pkg_idle_wkups_total": 4,
+            "pkg_idle_wkups_per_s_mean": 0.0263,
+            "pkg_idle_wkups_per_s_p50": 0.0,
+            "interrupt_wkups_total": 1449,
+            "interrupt_wkups_per_s_mean": 9.5247,
+            "interrupt_wkups_per_s_p50": 0.9994,
+            "disk_read_bytes": 693301248,
+            "disk_written_bytes": 590860288,
+            "logical_writes_bytes": 688570092,
+            "disk_read_mib": 661.184,
+            "disk_written_mib": 563.488,
+            "logical_writes_mib": 656.672,
+            "pageins_delta": 42868,
+            "xnu_cpu_energy_j": 20.9432,
+            "xnu_cpu_power_mw_mean": 137.67,
+            "xnu_cpu_power_mw_p50": 0.09
+          },
+          "in_app_summary": {
+            "refineExecuted": 3,
+            "voiceWarmPrepareMs": 0,
+            "voicePostSleepReprepareMs": 0,
+            "totalElapsedS": 152.762435375,
+            "homeRedacted": "~",
+            "ops": {
+              "soak_home_batch_undo": {
+                "maxMs": 193.700875,
+                "p50Ms": 183.134125,
+                "count": 2,
+                "meanMs": 188.41750000000002,
+                "p95Ms": 193.700875
+              },
+              "soak_seed_notes": {
+                "maxMs": 68.598042,
+                "p50Ms": 68.598042,
+                "count": 1,
+                "meanMs": 68.598042,
+                "p95Ms": 68.598042
+              },
+              "soak_scratchpad": {
+                "p50Ms": 34.617542,
+                "count": 9,
+                "maxMs": 569.613875,
+                "p95Ms": 569.613875,
+                "meanMs": 198.51609266666668
+              },
+              "soak_refine": {
+                "maxMs": 1736.503333,
+                "p50Ms": 1511.019333,
+                "count": 3,
+                "meanMs": 1577.1902776666666,
+                "p95Ms": 1736.503333
+              },
+              "soak_voice_dictate": {
+                "maxMs": 136.684875,
+                "p50Ms": 82.039292,
+                "count": 3,
+                "meanMs": 95.36873633333335,
+                "p95Ms": 136.684875
+              },
+              "soak_home_open": {
+                "maxMs": 64.690667,
+                "p50Ms": 29.044042,
+                "count": 3,
+                "meanMs": 39.875500333333335,
+                "p95Ms": 64.690667
+              },
+              "soak_home_search": {
+                "maxMs": 31.892292,
+                "p50Ms": 25.079292,
+                "count": 3,
+                "meanMs": 27.009236333333334,
+                "p95Ms": 31.892292
+              },
+              "soak_voice_scratchpad": {
+                "maxMs": 105.96575,
+                "p50Ms": 88.754333,
+                "count": 3,
+                "meanMs": 90.754486,
+                "p95Ms": 105.96575
+              },
+              "soak_home_close": {
+                "p50Ms": 272.296708,
+                "count": 3,
+                "maxMs": 280.25925,
+                "p95Ms": 280.25925,
+                "meanMs": 185.79033333333336
+              },
+              "soak_home_deferred_check": {
+                "p50Ms": 1,
+                "count": 3,
+                "maxMs": 1,
+                "p95Ms": 1,
+                "meanMs": 1
+              }
+            },
+            "bundleIdentifier": "com.rafaeltorres.rasc.longrun",
+            "voiceColdPrepareMs": 0,
+            "refineAvailability": "available",
+            "isSandboxed": true,
+            "noteCountAtEnd": 115
+          },
+          "latest_leaks": {
+            "file": "soak_t000120s_leaks.txt",
+            "leaks_count": 288,
+            "leaks_bytes": 14400
+          }
+        }
+      }
+    }
+  }
+}

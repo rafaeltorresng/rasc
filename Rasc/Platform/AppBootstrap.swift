@@ -171,6 +171,12 @@ final class AppBootstrap {
         homeWindowController?.isVisible == true
     }
 
+    #if RASC_EFFICIENCY_BENCHMARK
+    var benchmarkHomeController: HomeWindowController? {
+        homeWindowController
+    }
+    #endif
+
     func reloadHomeIfVisible() {
         homeWindowController?.reloadIfVisible()
     }

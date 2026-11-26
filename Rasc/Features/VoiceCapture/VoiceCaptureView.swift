@@ -61,7 +61,10 @@ final class VoiceCaptureWindows {
         }
     }
 
-    func hideStatus() { status?.orderOut(nil) }
+    func hideStatus() {
+        status?.orderOut(nil)
+        previousApp = nil
+    }
 
     func announce(_ phase: VoiceCapture.Phase) {
         guard let status, status.isVisible else { return }

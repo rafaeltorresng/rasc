@@ -1,0 +1,183 @@
+{
+  "run_dir": "/tmp/rasc-longrun-smoke-soak",
+  "profile": "soak-8h",
+  "generated_at": "2026-11-26T19:10:55-0300",
+  "manifest": {
+    "profile": "soak-8h",
+    "started_at": "2026-11-26T19:08:20-0300",
+    "bundle_id": "com.rafaeltorres.rasc.longrun",
+    "sparkle_distribution": false,
+    "prevent_idle_sleep": false,
+    "screen_locked_at_start": false,
+    "soak_duration_seconds": 150.0,
+    "idle_duration_seconds": 86400.0,
+    "cycle_interval_seconds": 45.0,
+    "cooldown_seconds": 25.0,
+    "sample_interval_soak_s": 2.0,
+    "sample_interval_idle_s": 2.0,
+    "diag_interval_seconds": 120.0,
+    "apps": {
+      "bench_app": "/tmp/rasc-longrun-smoke-soak/apps/Bench/Rasc.app"
+    },
+    "model_revision": "3b9d38a93d606f84011e5a0a669b7ea146375a22"
+  },
+  "status": {
+    "state": "completed",
+    "supervisor_pid": 30101,
+    "screen_locked_at_end": false,
+    "updated_at": "2026-11-26T19:10:55-0300"
+  },
+  "personal_db_unchanged": true,
+  "stages": {
+    "soak": {
+      "sample_summary": {
+        "label": "soak",
+        "sample_count": 76,
+        "elapsed_s": 152.131,
+        "active_elapsed_s": 152.131,
+        "wall_elapsed_s": 152.171,
+        "detected_sleep_events": 0,
+        "total_sleep_gap_s": 0,
+        "phys_footprint_mib": {
+          "start": 0.08,
+          "end": 60.11,
+          "min": 0.08,
+          "p50": 60.11,
+          "p95": 82.68,
+          "max": 84.97,
+          "mean": 64.12,
+          "slope_mib_per_min": -1.9463,
+          "slope_mib_per_hour": -116.7767
+        },
+        "recovery_delta_mib": {
+          "from_peak_mib": -24.86,
+          "from_start_mib": 60.03
+        },
+        "lifetime_max_phys_footprint_mib": 111.52,
+        "rss_mib": {
+          "min": 0.03,
+          "p50": 117.07,
+          "p95": 690.67,
+          "max": 734.12
+        },
+        "neural_footprint_mib": {
+          "p50": 11.81,
+          "max": 598.44,
+          "lifetime_max": 598.44
+        },
+        "cpu_pct": {
+          "mean": 4.7253,
+          "p50": 0.0388,
+          "p95": 31.4342,
+          "max": 73.6755
+        },
+        "cumulative_cpu_ms": 7188.71,
+        "pkg_idle_wkups_total": 4,
+        "pkg_idle_wkups_per_s_mean": 0.0263,
+        "pkg_idle_wkups_per_s_p50": 0.0,
+        "interrupt_wkups_total": 1449,
+        "interrupt_wkups_per_s_mean": 9.5247,
+        "interrupt_wkups_per_s_p50": 0.9994,
+        "disk_read_bytes": 693301248,
+        "disk_written_bytes": 590860288,
+        "logical_writes_bytes": 688570092,
+        "disk_read_mib": 661.184,
+        "disk_written_mib": 563.488,
+        "logical_writes_mib": 656.672,
+        "pageins_delta": 42868,
+        "xnu_cpu_energy_j": 20.9432,
+        "xnu_cpu_power_mw_mean": 137.67,
+        "xnu_cpu_power_mw_p50": 0.09
+      },
+      "in_app_summary": {
+        "refineExecuted": 3,
+        "voiceWarmPrepareMs": 0,
+        "voicePostSleepReprepareMs": 0,
+        "totalElapsedS": 152.762435375,
+        "homeRedacted": "~",
+        "ops": {
+          "soak_home_batch_undo": {
+            "maxMs": 193.700875,
+            "p50Ms": 183.134125,
+            "count": 2,
+            "meanMs": 188.41750000000002,
+            "p95Ms": 193.700875
+          },
+          "soak_seed_notes": {
+            "maxMs": 68.598042,
+            "p50Ms": 68.598042,
+            "count": 1,
+            "meanMs": 68.598042,
+            "p95Ms": 68.598042
+          },
+          "soak_scratchpad": {
+            "p50Ms": 34.617542,
+            "count": 9,
+            "maxMs": 569.613875,
+            "p95Ms": 569.613875,
+            "meanMs": 198.51609266666668
+          },
+          "soak_refine": {
+            "maxMs": 1736.503333,
+            "p50Ms": 1511.019333,
+            "count": 3,
+            "meanMs": 1577.1902776666666,
+            "p95Ms": 1736.503333
+          },
+          "soak_voice_dictate": {
+            "maxMs": 136.684875,
+            "p50Ms": 82.039292,
+            "count": 3,
+            "meanMs": 95.36873633333335,
+            "p95Ms": 136.684875
+          },
+          "soak_home_open": {
+            "maxMs": 64.690667,
+            "p50Ms": 29.044042,
+            "count": 3,
+            "meanMs": 39.875500333333335,
+            "p95Ms": 64.690667
+          },
+          "soak_home_search": {
+            "maxMs": 31.892292,
+            "p50Ms": 25.079292,
+            "count": 3,
+            "meanMs": 27.009236333333334,
+            "p95Ms": 31.892292
+          },
+          "soak_voice_scratchpad": {
+            "maxMs": 105.96575,
+            "p50Ms": 88.754333,
+            "count": 3,
+            "meanMs": 90.754486,
+            "p95Ms": 105.96575
+          },
+          "soak_home_close": {
+            "p50Ms": 272.296708,
+            "count": 3,
+            "maxMs": 280.25925,
+            "p95Ms": 280.25925,
+            "meanMs": 185.79033333333336
+          },
+          "soak_home_deferred_check": {
+            "p50Ms": 1,
+            "count": 3,
+            "maxMs": 1,
+            "p95Ms": 1,
+            "meanMs": 1
+          }
+        },
+        "bundleIdentifier": "com.rafaeltorres.rasc.longrun",
+        "voiceColdPrepareMs": 0,
+        "refineAvailability": "available",
+        "isSandboxed": true,
+        "noteCountAtEnd": 115
+      },
+      "latest_leaks": {
+        "file": "soak_t000120s_leaks.txt",
+        "leaks_count": 288,
+        "leaks_bytes": 14400
+      }
+    }
+  }
+}

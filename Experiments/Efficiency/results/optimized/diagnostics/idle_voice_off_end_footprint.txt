@@ -1,0 +1,47 @@
+======================================================================
+Rasc [21119]: 64-bit    Footprint: 24 MB (16384 bytes per page)
+======================================================================
+
+  Dirty      Clean  Reclaimable    Regions    Category
+    ---        ---          ---        ---    ---
+  16 MB        0 B          0 B         13    MALLOC_SMALL
+2261 KB        0 B          0 B        870    __DATA_DIRTY
+2108 KB     176 KB          0 B        968    __DATA
+1072 KB        0 B          0 B         12    MALLOC metadata
+ 640 KB        0 B          0 B         24    untagged (VM_ALLOCATE)
+ 609 KB        0 B          0 B          1    page table
+ 479 KB        0 B          0 B        632    __AUTH
+ 288 KB        0 B          0 B          6    stack
+ 287 KB        0 B          0 B       2538    unused dyld shared cache area
+ 272 KB        0 B          0 B          1    MALLOC_TINY
+ 208 KB        0 B          0 B         13    CoreAnimation
+ 128 KB        0 B          0 B          1    Accelerate image backing stores
+ 112 KB        0 B          0 B       1018    __AUTH_CONST
+ 112 KB        0 B          0 B          2    __TPRO_CONST
+  96 KB        0 B          0 B          2    CoreUI image data
+  64 KB        0 B          0 B          2    IOAccelerator
+  48 KB     304 KB          0 B       1027    __DATA_CONST
+  48 KB        0 B          0 B          3    CoreGraphics
+  48 KB        0 B          0 B          3    IOKit
+  32 KB        0 B          0 B          1    Activity Tracing
+  32 KB        0 B          0 B          2    CG image
+  16 KB        0 B          0 B          1    MALLOC_NANO
+  16 KB        0 B          0 B          2    IOAccelerator (graphics)
+  16 KB        0 B          0 B          1    tag 22
+  16 KB        0 B          0 B          1    os_alloc_once
+  16 KB        0 B          0 B          1    Foundation
+  16 KB        0 B          0 B          1    ColorSync
+    0 B        0 B        80 KB          1    SQLite page cache
+    0 B      22 MB          0 B         36    mapped file
+    0 B    6592 KB          0 B          5    __LINKEDIT
+    0 B    4688 KB          0 B       1049    __TEXT
+    0 B        0 B          0 B          1    __LLVM_COV
+    0 B        0 B          0 B          1    __FONT_DATA
+    0 B        0 B          0 B          1    __CTF
+    ---        ---          ---        ---    ---
+  24 MB      34 MB        80 KB       8242    TOTAL
+
+Auxiliary data:
+    phys_footprint: 24 MB
+    phys_footprint_peak: 25 MB
+

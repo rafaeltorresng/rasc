@@ -1,73 +1,37 @@
 # Application performance evaluation
 
-**Scope.** Rasc app-level resource use on **Release** builds representative of distribution. **Not extrapolated** to hardware/OS not tested. **No user data.** Round4 + prior M13A/Round3. **Energy/thermal not measured** (no `powermetrics`, Power Profiler not permitted) — stated, not inferred.
+**Scope.** Rasc app-level resource use on **Release** builds representative of distribution (`App Sandbox` enabled, no telemetry, no background network). **Not extrapolated** to hardware/OS not tested. **No user data.** Combines controlled `n=3` Release efficiency replications ([EVERYDAY-EFFICIENCY.md](EVERYDAY-EFFICIENCY.md)), Sparkle + Library Load Constraints auditing, and non-blocking long-running smoke harnesses with Round 3 / Round 4 / M13A benchmarks. **Full-SoC wall energy/thermal not measured** (`sudo powermetrics` unavailable; Xcode `Power Profiler` unsupported on macOS) — XNU per-process CPU energy (`ri_energy_nj`) is reported where applicable.
 
-## Environment (this round + reused)
+## Environment & Packaging Variants
 
-- Mac15,6 M3 Pro 11 cores 18 GB; macOS 26.5.1 (25F80); Xcode 26.2; Rasc **0.1.16 build 22**; **Release** (ad-hoc signed, unsigned here, **sandboxed**, no updater in local build; distributed artifact sandboxed + no network + Sparkle in updater build).
-- **Physical memory footprint** vs **RSS** vs **model on disk** vs **auxiliary processes** distinguished.
-- **App size:** Release `.app` **39 MB** (this round). Speech model **separate 652,304,885 bytes (~622 MiB)** under `Application Support/Rasc/VoiceModels/<rev>`. Voice model downloader XPC separate, transient. **No bundled model in standard build** (preview builds bundle it; not measured). No third-party persistent helper.
-- **Core ML cache** extra disk possible (Round3 measured 3.6 GB after sweeping configs; not production single-pack; not measured this round).
+- `Mac15,6` Apple M3 Pro (11 cores, 18 GiB RAM); macOS `26.5.1` (`25F80`); Xcode `26.2` (`17C52`); Rasc **0.1.16 build 22** (`perf/everyday-efficiency`, `screen_locked: false`); **Release (`-O`)**.
+- **Standard local Release `.app`:** **`40.54 MiB`** (`41,516 KiB` / `42,367,708 B`), ad-hoc signed with `Rasc.entitlements`, no bundled Sparkle.
+- **Sparkle distribution Release `.app`:** **`44.40 MiB`** (`45,468 KiB` / `46,207,958 B`), embeds `Sparkle.framework` (`3.12 MB`) pinned via `Has Library Load Constraints` (`arm64 CDHash`), zero `network.client` on main app, isolated `VoiceModelDownloader.xpc`.
+- **Optional Speech model on disk:** **`652,304,885` bytes (`622.09 MiB`)** stored separately under `Application Support/Rasc/VoiceModels/<rev>` only when the user opts into Voice. Zero persistent background daemons.
 
-## This round measured (Release, verified; DB backup + restored)
+## Verified Release Resource States (`n=3` Medians & Sparkle Audit, `Mac15,6`)
 
-| State | Physical footprint | RSS | CPU | Notes |
+| State | Physical footprint (`phys_footprint`) | RSS | CPU / Wakeups | Notes |
 |---|---:|---:|---|---|
-| **Idle, no window, 5 s after launch** | **63 MB** (`footprint`) | ~**746 MB** @5 s | startup spike → idle | mmap/file-backed inflate RSS; **footprint ≠ RSS**. Voice model **not loaded** (Voice Capture not triggered). |
+| **Launch settle (`n=5` cold starts, `n=3` reps)** | **`24.59 MiB`** median `@8 s` (`24.47–24.72`) | **`106.53 MiB`** median | `78.39%` peak → idle in **`0.74 s`** median | Unmodified Release (`25.20 MiB` / `0.83 s` on Sparkle + LLC build). |
+| **Idle, no window, Voice Off (`90 s` @ 1 Hz)** | **`24.49 MiB`** median (`24.42–24.53`) | **`106.53 MiB`** median | **`0.0024%`** CPU · **`0.000 pkg_wkup/s`** · `0.01 mW` | Zero background polling; `25.19 MiB` / `0.0026%` CPU on Sparkle + LLC. |
+| **Idle, no window, Voice On (`90 s` @ 1 Hz)** | **`50.17 MiB`** median (`42.45–50.22`) | **`123.58 MiB`** median | **`0.0017%`** CPU · **`0.000 pkg_wkup/s`** · `0.00 mW` | Core ML warm (`11.81 MiB` steady / `598.44 MiB` max `neural`); `49.16 MiB` on Sparkle + LLC. |
+| **Idle, `Option` modifier active (`45 s` @ 1 Hz, `rep_1`)** | **`42.44 MiB`** p50 | **`118.81 MiB`** p50 | **`0.0048%`** CPU · `0.068 int_wkup/s` · `0.01 mW` | Down from `0.5471%` CPU & `10.89 int_wkup/s` after candidate-only scroll monitoring. |
+| **Home open / search / close (`n=20`, `n=3` medians)** | `41.80 MiB` p50 open/search (`rep_1`) | `~140–170 MiB` | `open 4.26 ms` · `search 11.56 ms` · `close 5.77 ms` | Deferred `2.0 s` teardown eliminates `396.37 ms` close regression & keeps `LazyVStack` open speed. |
+| **Workday endurance (`~4 min`, `n=3` medians)** | **`143.16 MiB`** peak (`294.99 MiB` before) | `~191 MiB` p50 (`rep_1`) | **`19.58 s`** cum CPU (`66.96 s` before) | **`−51.5%`** peak footprint, **`−70.8%`** CPU time, **`−74.7%`** XNU CPU energy (`52.14 J`). |
+| **Post-workload cooldown (`60 s` idle, `n=3` medians)** | **`63.70 MiB`** end (`189.22 MiB` before) | `~160 MiB` | **`0.0048%`** mean CPU (`rep_1`) | **`−66.3%`** cooldown RAM; `CoreAnimation` **`256 KB (16)`** vs `20 MB (855)`; `288` system-only framework cycles (`14.1 KiB`), `0` Rasc leaks. |
 
-**Caveat:** single sample; not p50/p95; not long-running; not with Voice model; not with Home; **restored container backup after.**
+## Startup, Persistence, Voice & Long-Running Summary
 
-## Reused checked-in evidence (not re-run; see validity in evidence audit)
+- **Long-running smoke validations (`run_long_running.py`):** Completed `soak-8h` smoke (`152.1 s`, `60.11 MiB` end after `84.97 MiB` peak = `−24.86 MiB` recovery delta, `3/3` deferred Home releases verified, `3×` Voice/Refine bursts) and detached `idle-24h-voice-on` smoke (`start --detach` → live `status` → graceful `SIGTERM` `stop` flushing `49.31 MiB` end / `0.0 pkg_wkup/s`), preserving personal DBs untouched. Multi-hour `8h` + `24h` data awaits completion of the detached `full-32h` run.
+- **Persistence (`AppReliabilityScaleTests` + SQLite):** `10 / 100 / 1,000` notes bootstrap in `6.8–8.8 ms`, FTS5 search `0.94–1.74 ms`, note switch `0.39–0.45 ms`, autosave `0.70–1.34 ms`; post-225-note workday `Rasc.sqlite` is `192,512 B` with `0 B` WAL/SHM after checkpoint.
+- **Voice lifecycle:** Warm transcription `55.65–56.32 ms p50` / `106–113 ms p95` (`rep_1` Release); cold prepare `11.96 s` (`0.04 ms` warm); releases cleanly on sleep/memory pressure and compacts short `<50%` `MicBuffer` allocations off the CoreAudio callback.
+- **Refine (Apple Foundation Models):** On-device `SystemLanguageModel`, `1,094.66 ms p50` / `3,056.83 ms p95` across 6 sequential invocations in `rep_1`; Capture/Keep/Search never depend on Refine.
 
-### Startup & app shell (M13A + AppDiagnostics; note: not Release-p50)
-`AppReliabilityScaleTests` + M13A `performance.json` (temp SQLite, dev machine, **not shipping guarantee**):
+## Not Measured / Cannot Claim
 
-| Note count | bootstrap | recentNoteLoad | search | noteSwitch | autosave |
-|---:|---:|---:|---:|---:|---:|
-| 10 | 4.35 ms | 0.28 | 1.02 | 0.0 | 0.49 |
-| 100 | 4.42 | 0.39 | 1.02 | 0.001 | 0.79 |
-| **1000** | **5.91** | **0.58** | **1.67** | **0.0** | **0.58** |
+- **Full-SoC wall power / battery hours / thermal watts:** `sudo powermetrics` requires root and Xcode `Power Profiler` does not run on macOS.
+- **Multi-hour 8h / 24h totals before run completion:** Smoke runs validate the harness; do not cite `8h` soak or `24h` idle results until `build/efficiency-long-running/<run-id>/summary.json` is produced.
+- **Other hardware / OS / interactive physical desktop scenarios:** 8 GiB Macs, M1/M2/M4, Intel, macOS 14/15, live third-party hotkeys, physical mic routes, OS TCC prompts, fullscreen Spaces/multi-monitor focus, and VoiceOver traversal.
 
-p50/p95 across n=3 counts (not app-launch p50). **`AppDiagnostics.bootstrapStarted/Ready/Failed`** logs `durationMs`. **`AppReliabilityScaleTests` re-run this round: pass.** **Scratchpad opening / Home first-frame / search field latency on Release p50/p95 not independently re-measured.**
-
-### Voice Capture model lifecycle (docs + Round3; not re-run full Release matrix)
-- **Model size** 652,304,885 bytes; ~25 MB after load; peak ~59–77 MB; **released** on idle `retention`, memory pressure, sleep, disable, remove; **re-prepared** proactively after constraint; **CPU+ANE** default; CPU-only trade-off **Round3** (load 3.47 s vs 16.85 s; 157/168 identical; WER Δ small; WER ~+0.3–1.5 pts; not re-run); **CPU+GPU ~1 GB**; **not re-measured.**
-- **Cold/warm** Round3 (signed study, not Release app): first external acquisition 23.42 s; first `MLModel.load` 16.56 s; warm-disk 333 ms + 140 ms; new signed process 333 ms + 75 ms; cold first capture ~13.85 s; post-idle reload 19.54 s vs 209 ms; probe 18.09 s first vs 201 ms; **needs Release + reproduction.** Round4 CLI `model.prepare()` after `release()`: **11,339.71 ms (11.34 s)** on initial fresh-binary run (`fleurs-60`) vs **107.73 ms** warm-OS-cache follow-up (`perturbed-75`); **not full-app cold.**
-- **Batch 168-clip** Round3: ~681 MB RSS, ~77 MB peak footprint, 6.77 s user + 3.06 s sys; not leak proof; **not re-run.**
-- **Round4 app-code eval:** separate process; footprint not separately captured per-clip; **not app UI.**
-- **This phase's changes (#98/#99/#100) add negligible memory;** modifier monitor tiny; multi-selection O(selected) set; VoiceTextInsertion transient; no new model. **Not measured numerically.**
-
-### Persistence (GRDB/SQLite; not re-run full perf this round)
-- `AppReliabilityScaleTests` re-run pass. `NoteRepository.delete(ids:)` single transaction + atomic restore; `exportSnapshot`; FTS; **no DB reset**; migrations preserve; `AppDatabase`. M13A + tests. **Multi-select doesn't change DB schema.** No new persistence. **Batch discard = one transaction (new); not perf-measured.**
-
-### Search (local FTS; not re-run perf this round)
-FTS5 `unicode61(diacritics:.remove)`, prefixes 2/3/4; **no semantic/AI**; limit 500; Quick Search 12; Home `fetchAllNonDeleted` + group; M13A ~1.0→1.67 ms. **Home multi-selection doesn't re-fetch per selected.** **Not re-measured.**
-
-### Refine
-Existing `Evals/Refine/` + M13A + re-run smoke (Round4). **Release app Refine latency not re-measured;** on-device Foundation Models separate; no extra memory attributed; **not claimed.**
-
-## Application states
-
-| State | Evidence | Not measured |
-|---|---|---|
-| **Startup** | M13A bootstrap; `AppDiagnostics`; this-round idle 5 s | Release p50/p95 to first frame; cold disk |
-| **Scratchpad open** | PanelController tests; Round3; M13A note-switch | Release p50/p95 |
-| **Home** | M13A; HomeSnapshot/Home tests; multi-select tests | Release p50/p95; large-N render |
-| **Search** | M13A; FTS tests | Release p50/p95; 500-cap |
-| **Persistence** | scale tests; NOTE tests; batch txn | large DB; WAL |
-| **Voice Capture** | Round3+4; lifecycle tests | physical mic; energy; lower-memory Mac |
-| **Adaptive model lifecycle** | docs + lifecycle stress tests | full Release sleep/pressure on hardware |
-| **Memory / CPU / energy / idle** | this-round idle 63 MB; Round3; M13A; **no energy** | long-running; other hardware; idle voice-on vs off p50 |
-| **Resource reclamation** | voice release; `releaseAfterCapture`; tests | proof no leak; aux processes after |
-
-## Not measured / cannot claim
-
-- **Energy/Joules/thermal**; `powermetrics` privileges; Power Profiler. **"Idle 0% when hidden"** previously observed (Nov-3 audit, 0.1.3) but **not re-measured;** a prior `18% CPU idle` observation on 0.1.3 is **stale** and not current. **Don't claim.**
-- **Other hardware** (M1/M4, 8 GB, Intel for app; Voice needs Apple silicon + macOS 26); **macOS 14** (Voice N/A); **memory-constrained**.
-- **Long-running leak-freedom.** **Auxiliary processes** only transient XPC downloader; not measured. **Neural Engine residency** not apportioned.
-- **Release p50/p95** broadly; this round Release idle single sample + M13A dev + Round3 signed study.
-- **Auto-Keep** not in shipping. **No telemetry** (nothing to measure). **Network** none for recognition; model download measured Round3.
-
-## Honest bottom line
-
-Rasc is a **small native app + separate 622 MiB model**; **local SQLite; no background network; no telemetry; voice model reclaimed under pressure; fast persistence at 1k notes; verbatim voice ~sub-second warm on M3 Pro; Refine on-device separate.** We have **not** proven lower resource use than any competitor, **not** measured energy, **not** proven no leaks, and **not** reproduced cold-start p95 on Release at scale. Existing evidence is strong for *this* hardware + small app; reproduction scripts in repo.
+See [EVERYDAY-EFFICIENCY.md](EVERYDAY-EFFICIENCY.md) and [Experiments/Efficiency/METHODOLOGY.md](../../Experiments/Efficiency/METHODOLOGY.md) for full details.

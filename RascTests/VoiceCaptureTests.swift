@@ -1138,6 +1138,18 @@ struct VoiceCaptureTests {
         #expect(measured.realTimeFactor == 0.0075)
     }
 
+    @Test func micBufferCompactsShortRecordingExcessCapacityAfterStop() {
+        let rate = 48_000.0
+        let buffer = MicBuffer(rate: rate)
+        let sampleCount = 24_000 // 0.5 s vs 90 s (4,320,000) capacity
+        let input = (0..<sampleCount).map { Float($0 % 97) * 0.001 }
+        input.withUnsafeBufferPointer { buffer.append($0) }
+
+        let audio = buffer.audio()
+        #expect(audio.samples == input)
+        #expect(audio.samples.capacity < Int(rate * 90) / 2)
+    }
+
     @Test func dictateInsertsIntoInAppKeyWindowEditorAndKeepsClipboardAndLocalCopy() async throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
@@ -1274,6 +1286,7 @@ struct VoiceCaptureTests {
             accessibilityTrusted: Bool? = nil,
             pasteboard: NSPasteboard = .general,
             insertResult: VoiceTextInsertion.Result? = nil,
+            insertInCurrentApp: Bool = false,
             decode: @escaping @Sendable (VoiceAudio) async throws -> String = { _ in "Talvez não fazer o deploy ainda." }
         ) -> VoiceCapture {
             defaults.set(enabled, forKey: VoiceCapture.preferenceKey)
@@ -1310,7 +1323,8 @@ struct VoiceCaptureTests {
                 cancelConfirmationTimeout: cancelConfirmationTimeout,
                 accessibilityTrusted: resolvedAccessibilityTrusted,
                 pasteboard: pasteboard,
-                insertText: resolvedInsertText
+                insertText: resolvedInsertText,
+                insertInCurrentApp: { _ in insertInCurrentApp }
             )
             capture.connect(repository: repository)
             return capture

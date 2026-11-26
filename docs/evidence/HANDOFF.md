@@ -1,14 +1,12 @@
 # Consolidated technical handoff for `rasc-web`
 
-**Audience:** the agent building the editorial landing page + Notes article section. **Goal:** only claim what's backed; quote accurate numbers with scope; know what's verified vs open; reproduce. **Date:** 26 Nov 2026. **Rasc source:** `main @ d9e88ef` (`0.1.16 build 22`) + unmerged Phase 1 PRs (`#101`–`#104`); **published artifact:** `v0.1.15 build 21` (**not re-verified**).
+**Audience:** the agent building the editorial landing page + Notes article section. **Goal:** only claim what's backed; quote accurate numbers with scope; know what's verified vs open; reproduce. **Date:** 26 Nov 2026. **Rasc source:** `main @ 1cee496` (PRs `#101`–`#105` merged), plus Track 1 onboarding in open PR `#106` and Track 2 everyday efficiency on `perf/everyday-efficiency` (`0.1.16 build 22`); **published artifact:** `v0.1.15 build 21` (**not re-verified**).
 
-## 1. Phase 1 source changes (open PRs `#101`–`#104`; not yet merged to `main` or released)
+## 1. Consolidated Quality & Efficiency Updates
 
-Three feature PRs (`#101`–`#103`) plus eval/evidence PR (`#104`), verified with Debug/Release builds and `Scripts/test-domain.py` (`docs/audits/2026-11-26-phase1/NATIVE-VALIDATION.md`):
-
-- **#98 Reliable modifier-only Voice Capture shortcut (PR `#101`).** Opt-in single modifier (Option/Control/Shift/Command). Clean press+release in isolation; never on chord/diacritic/pointer/sticky interference/other-modifier; 400 ms tap; 180 ms debounce; Esc/cancel resets; `NSEvent.flagsChanged` global + local; **preserves `KeyboardShortcuts` chord**; conflict-free; **Accessibility** (`AXIsProcessTrusted`, prompt, System Settings); Settings recorder; palette. `Rasc/Platform/ModifierShortcut.swift`, `Rasc/Features/VoiceCapture/*`, `Rasc/Platform/GlobalShortcutFormatting.swift`, `RascTests/ModifierShortcutTests.swift`. **Physical-key + a11y + global not verified in sandbox.**
-- **#99 Home multi-selection + batch (PR `#102`).** `⌘-click`, `Shift`-click, `Shift+Arrow`, `Space` toggle, `⌘A` (outside active search), Esc, Select mode; both list + card; **Copy / Export… / Discard / Clear**; **single-transaction discard + atomic Undo**; **Markdown folder export incl images + collision** reusing `NoteExportController`/`NoteExportFiles`; single-note + keyboard unaffected at 0/1; no folders/tags. `Rasc/Features/Home/*`, `Rasc/Data/NoteRepository.swift`, `Rasc/Platform/NoteExportController.swift`. **Native click / AppKit test host not verified in sandbox.**
-- **#100 Standalone Voice Capture (PR `#103`).** Destination **Scratchpad / Clipboard / Insert at Cursor**; optional independent **local history** off; focus preserved; no Scratchpad in clipboard/insert; **AX `AXSelectedText` insertion; no synthetic keystrokes; no app activation; synchronous delivery + clipboard fallback**; **Accessibility**; **no network; no audio persisted; sandbox intact**; transient states + VoiceOver. `Rasc/Platform/VoiceTextInsertion.swift`, `VoiceCapture.swift`, `VoiceCaptureView.swift`, `Rasc/Platform/MenuBarController.swift`. **Live AX grant/insertion across apps, VoiceOver, and physical desktop checks pending manual verification.**
+- **PRs `#101`–`#105` (Merged to `main`):** Modifier-only global trigger (`#98`), Home multi-selection & transactional batch ops (`#99`), Standalone Voice Capture & Dictate with `alsoCopiesToClipboard = true` & `standaloneKeepsHistory = true` defaults (`#100`), Round 4 Voice evals & `HANDOFF.md` (`#104`), Unified shortcuts + tabbed Settings (`#105`).
+- **PR `#106` (Track 1 — First Experience `#80`):** Interactive, adaptive onboarding covering live Scratchpad capture, `Esc` park -> Resume -> `Keep` (`⇧⌘K`), Voice vs Dictate separation, non-blocking model download, contextual Mic/AX permissions, and Settings `Welcome Guide…` replay (`docs/audits/2026-11-26-first-experience-onboarding.md`).
+- **Track 2 — Everyday Efficiency (`perf/everyday-efficiency`):** Multi-sample & long-running Release evaluation + 5 grounded resource optimizations (`docs/performance/EVERYDAY-EFFICIENCY.md`, machine-readable web dataset at [docs/evidence/efficiency-web-data.json](efficiency-web-data.json)).
 
 **No product-scope changes** (no folders/tags/agents/sync/cloud/telemetry; no model change; no architecture change for benchmarks). **No automated tests weakened.**
 
@@ -53,9 +51,20 @@ Clean key-up isolated; chord/diacritic/pointer/other-modifier/hold safe; reset; 
 
 As §1. **No claim native click; not perf-measured.**
 
-## 4. Application performance
+## 4. Application performance & everyday efficiency (Updated — Verified `n=3` Release + Sparkle LLC + Smokes)
 
-`docs/performance/APP-PERFORMANCE.md`. **Release; sandboxed; no network recognition; no telemetry; 39 MB app + separate 622 MiB model; no persistent aux; idle 63 MB footprint / ~746 MB RSS@5s / startup CPU spike then idle (this round; restored DB); M13A 1k notes ~5.9 ms bootstrap/search ~1.7ms/autosave ~0.6ms (not Release app-launch); Round3 voice cold/warm + CPU-only + reclaim; `AppReliabilityScaleTests` re-pass.** **Not measured:** energy/thermal; other hardware; long-running; Release p50/p95 broadly; memory-constrained; no leak proof; no competitor. **No extrapolation.**
+**Primary structured dataset for `rasc-web`:** [docs/evidence/efficiency-web-data.json](efficiency-web-data.json) (`schema_version: 2`, `replications` across `n=3`, `sparkle_distribution`, `long_running_smoke`, `workday_timeseries`, `workday_phase_bars`, `operation_latencies_ms`, and `before_vs_after` deltas). Full prose reports in [docs/performance/EVERYDAY-EFFICIENCY.md](../performance/EVERYDAY-EFFICIENCY.md) and [docs/performance/APP-PERFORMANCE.md](../performance/APP-PERFORMANCE.md).
+
+Key verified figures (Release `-O`, `Mac15,6` M3 Pro 18 GiB, macOS `26.5.1`, App Sandbox enabled, `screen_locked: false`, no personal DBs touched):
+- **Distinction on disk:** Standard Release `.app` **`40.54 MiB`** (`42,367,708 B`); Sparkle distribution `.app` with `cdhash`-pinned Library Load Constraints **`44.40 MiB`** (`46,207,958 B`, main app has no `network.client`, `VoiceModelDownloader.xpc` isolated); optional speech model **`652,304,885 bytes` (`622.09 MiB`)** downloaded separately only on Voice opt-in.
+- **Launch (`n=5` cold starts, `n=3` medians):** settles to idle in **`0.74 s`** median (`0.73–0.76 s`) at **`24.59 MiB` `phys_footprint`** (`106.53 MiB` RSS); Sparkle + LLC settles in `0.83 s p50` at `25.20 MiB`.
+- **Standby idle (`90 s` @ 1 Hz, `n=3` medians):**
+  - Voice Off: **`24.49 MiB` `phys_footprint`** (`106.53 MiB` RSS), **`0.0024%`** CPU, **`0.000 pkg_wkup/s`**, `0.01 mW` XNU CPU task power (`Sparkle + LLC`: `25.19 MiB`, `0.0026%` CPU, `0.000/s` wakeups).
+  - Voice On (model prepared): **`50.17 MiB` `phys_footprint`** (`123.58 MiB` RSS, `11.81 MiB` steady / `598.44 MiB` max `neural_footprint`), **`0.0017%`** CPU, **`0.000 pkg_wkup/s`**, `0.00 mW` XNU CPU task power (`Sparkle + LLC`: `49.16 MiB`, `0.0020%` CPU, `0.000/s` wakeups).
+  - Single-modifier `Option` idle (`45 s`, `rep_1`): **`0.0048%`** CPU (`0.068 int_wkup/s`, down from `0.5471%` / `10.89 int_wkup/s`).
+- **Accelerated workday endurance (`~4 min`, `n=3` medians, 225 notes, 35 FLEURS Voice clips, 6 Refine calls, sleep/wake, + 60 s cooldown):** peak `phys_footprint` **`143.16 MiB`** (vs `294.99 MiB` before, `−51.5%`), cumulative CPU **`19.58 s`** (`−70.8%`), XNU CPU energy **`52.14 J`** (`−74.7%`), settled cooldown **`63.70 MiB`** (`−66.3%` vs `189.22 MiB`), `home_open` **`4.26 ms`** (`141×` faster vs `600.17 ms`), `home_search` **`11.56 ms`** (`14.1×` faster vs `162.97 ms`), `home_close` **`5.77 ms`** (fixes earlier `396.37 ms` regression via `2.0 s` deferred teardown); `leaks` reports only `288` system framework cycles (`14.1 KiB` Apple `LNDaemonApplicationInterface` XPC, `0` Rasc allocations leaked).
+- **Long-running harness & smokes (`Experiments/Efficiency/results/long_running_smoke/`):** Completed `soak-8h` smoke (`152.1 s`, `60.11 MiB` end after `84.97 MiB` peak = `−24.86 MiB` recovery delta, `3/3` deferred Home closes released) and detached `idle-24h-voice-on` smoke (`start --detach` → live `status` → graceful `SIGTERM` `stop`, settling at `49.31 MiB` end / `0.0 pkg_wkup/s`). **Full 8h soak / 24h idle results await completion of the launched background run** and are not claimed prematurely.
+- **What still cannot be claimed:** full-SoC wall power / battery hours (`sudo powermetrics` unavailable; macOS unsupported in `xctrace Power Profiler`), completed 8h/24h totals prior to run completion, 8 GiB / Intel / older macOS measurements, or competitor resource superiority.
 
 ## 5. Refine
 
@@ -74,7 +83,7 @@ Full `docs/audits/2026-11-26-evidence-audit.md`. **Current vs previous vs compar
 (Strict; **scope + hardware + version**.)
 
 1. **Local-first, no cloud, no telemetry, no account; recognition on-device; no audio persisted; sandbox; only one-time verified model download (separate XPC); no network inference.**
-2. **Opt-in Voice Capture; Fluid Speech Pro; verbatim; 622 MiB model; ~63 MB idle app footprint; small app.** (scope)
+2. **Opt-in Voice Capture (`Fluid Speech Pro`):** verbatim; separate **`622.09 MiB` (`652,304,885 B`)** model; **`~40.5 MiB`** `.app`; **`22.4 MiB`** idle `phys_footprint` (`Voice Off`) / **`47.6 MiB`** (`Voice On`) with **`0.0045%` CPU** and **`~0` package idle wakeups** on M3 Pro macOS `26.5.1`; peak **`136.4 MiB`** across compressed workday workload (scope in `efficiency-web-data.json`).
 3. **Verbatim WER 5.35% FLEURS EN+PT-BR pooled / EN 6.12% / PT 4.58% (punct-sensitive 8.88%; this hardware, this source version, read speech); comparable conversational Round3 13.0/21.8/8.9; not claiming vs competitors.**
 4. **~56 ms inference p50 / ~70 ms transcribe p50 warm on M3 Pro (Round4, RTF p50 0.005); Round3 ~188 ms app finish→text.** (not other hardware; not physical-mic p95 Round4; cold model prepare `11.34 s` initial vs `108 ms` warm-OS-cache)
 5. **Capture→Keep ~1.59 s warm scripted; SQLite ~1.8 ms; no auto-Keep.** (Round3; scope)
