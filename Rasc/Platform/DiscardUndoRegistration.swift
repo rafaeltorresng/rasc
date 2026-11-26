@@ -5,16 +5,18 @@ import Foundation
 @MainActor
 final class DiscardUndoRegistration {
     private weak var manager: UndoManager?
+    private let actionName: String
     private let perform: @MainActor () -> Void
 
-    init(manager: UndoManager, perform: @escaping @MainActor () -> Void) {
+    init(manager: UndoManager, actionName: String = "Discard Thought", perform: @escaping @MainActor () -> Void) {
         self.manager = manager
+        self.actionName = actionName
         self.perform = perform
     }
 
     func register() {
         manager?.registerUndo(withTarget: self) { registration in registration.perform() }
-        manager?.setActionName("Discard Thought")
+        manager?.setActionName(actionName)
     }
 
     func invalidate() {

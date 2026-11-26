@@ -35,7 +35,7 @@ struct HomeView: View {
     let onNoteDiscarded: (UUID) -> Void
     let onNoteUnkept: (UUID) -> Void
     let onExportThought: (UUID) -> Void
-    /// Batch export of an explicit selection. Defaults to single-note export per id.
+    /// Batch export of an explicit selection.
     var onExportSelected: (Set<UUID>) -> Void = { _ in }
     @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
@@ -129,22 +129,31 @@ struct HomeView: View {
                 }
             }
             if session.selectedCount > 0 {
-                HomeBatchActionsBar(
-                    session: session,
-                    undoManager: undoManager,
-                    onNoteDiscarded: onNoteDiscarded,
-                    onExportSelected: { ids in onExportSelected(ids) },
-                    onCopy: { message in
-                        copyFeedback = message
-                        copyFeedbackTask?.cancel()
-                        copyFeedbackTask = Task { @MainActor in
-                            try? await Task.sleep(for: .seconds(3))
-                            guard !Task.isCancelled else { return }
-                            copyFeedback = nil
-                        }
-                    },
-                    onError: { message in session.actionErrorMessage = message }
-                )
+                homeContentColumn {
+                    HomeBatchActionsBar(
+                        session: session,
+                        undoManager: undoManager,
+                        onNoteDiscarded: onNoteDiscarded,
+                        onExportSelected: { ids in onExportSelected(ids) },
+                        onCopy: { message in
+                            session.actionErrorMessage = nil
+                            retryAction = nil
+                            copyFeedback = message
+                            copyFeedbackTask?.cancel()
+                            copyFeedbackTask = Task { @MainActor in
+                                try? await Task.sleep(for: .seconds(3))
+                                guard !Task.isCancelled else { return }
+                                copyFeedback = nil
+                            }
+                        },
+                        onDiscardSucceeded: {
+                            session.actionErrorMessage = nil
+                            retryAction = nil
+                        },
+                        onError: { message in session.actionErrorMessage = message }
+                    )
+                }
+                .padding(.bottom, 8)
             }
             if let error = session.actionErrorMessage {
                 HStack(spacing: 12) {
@@ -190,35 +199,48 @@ struct HomeView: View {
         .onChange(of: copyFeedback) { _, message in
             if let message { RascAccessibility.announce(message) }
         }
-        .onChange(of: session.selectedCount) { _, count in
-            if count > 0 { RascAccessibility.announce("\(count) selected") }
-            else { RascAccessibility.announce("Selection cleared") }
+        .onChange(of: session.selectedCount) { oldCount, count in
+            if count > 0 {
+                RascAccessibility.announce("\(count) selected")
+            } else if oldCount > 0 && !session.hasUndoableDiscard {
+                RascAccessibility.announce("Selection cleared")
+            }
         }
         .onChange(of: session.lastDiscard) { _, receipt in
             if receipt != nil { RascAccessibility.announce("Thought discarded. Undo is available.") }
         }
-        .onKeyPress(.upArrow) {
+        .onChange(of: session.lastDiscardBatch) { _, batch in
+            guard !batch.isEmpty else { return }
+            let message = batch.count == 1
+                ? "Thought discarded. Undo is available."
+                : "\(batch.count) thoughts discarded. Undo is available."
+            RascAccessibility.announce(message)
+        }
+        .onKeyPress(keys: [.upArrow, .downArrow, .leftArrow, .rightArrow], phases: .down) { press in
             guard !searchIsFocused else { return .ignored }
+            let direction: HomeSession.NavigationDirection? = switch press.key {
+            case .upArrow: .up
+            case .downArrow: .down
+            case .leftArrow: .left
+            case .rightArrow: .right
+            default: nil
+            }
+            guard let direction else { return .ignored }
             listIsFocused = true
-            session.moveSelection(.up, columns: activeGridColumns)
+            if press.modifiers.contains(.shift) {
+                session.extendSelection(direction, columns: activeGridColumns)
+            } else {
+                session.moveSelection(direction, columns: activeGridColumns)
+            }
             return .handled
         }
-        .onKeyPress(.downArrow) {
-            guard !searchIsFocused else { return .ignored }
-            listIsFocused = true
-            session.moveSelection(.down, columns: activeGridColumns)
-            return .handled
-        }
-        .onKeyPress(.leftArrow) {
-            guard !searchIsFocused else { return .ignored }
-            listIsFocused = true
-            session.moveSelection(.left, columns: activeGridColumns)
-            return .handled
-        }
-        .onKeyPress(.rightArrow) {
-            guard !searchIsFocused else { return .ignored }
-            listIsFocused = true
-            session.moveSelection(.right, columns: activeGridColumns)
+        .onKeyPress(.space, phases: .down) { press in
+            guard !searchIsFocused,
+                  listIsFocused,
+                  session.isSelectionMode || session.selectedCount > 0,
+                  press.modifiers.isEmpty,
+                  let id = session.selectedNoteID else { return .ignored }
+            session.toggleSelection(id)
             return .handled
         }
         .onKeyPress(.return) {
@@ -227,7 +249,8 @@ struct HomeView: View {
             return .handled
         }
         .onKeyPress(KeyEquivalent("a"), phases: .down) { press in
-            guard listIsFocused, !searchIsFocused, press.modifiers.contains(.command) else { return .ignored }
+            guard !searchIsFocused, press.modifiers == .command else { return .ignored }
+            listIsFocused = true
             session.selectAllVisible()
             return .handled
         }
@@ -437,16 +460,21 @@ struct HomeView: View {
         for notes: [Note],
         showsKeptIndicator: Bool = true
     ) -> some View {
-        LazyVGrid(
+        let showSelectionIndicators = session.isSelectionMode || session.selectedCount > 0
+        return LazyVGrid(
             columns: cardGridItems,
             alignment: .leading,
             spacing: HomeLayout.gridSpacing
         ) {
             ForEach(Array(notes.enumerated()), id: \.element.id) { _, note in
+                let multiSelected = session.selectedNoteIDs.contains(note.id)
+                let keyboardFocused = session.selectedNoteID == note.id
                 HomeNoteCardView(
                     note: note,
-                    isSelected: isNoteSelected(note.id),
+                    isSelected: showSelectionIndicators ? multiSelected : keyboardFocused,
+                    isKeyboardFocused: keyboardFocused,
                     isSelectionMode: session.isSelectionMode,
+                    showsSelectionIndicator: showSelectionIndicators,
                     showsKeptIndicator: showsKeptIndicator,
                     timestamp: session.formattedTimestamp(for: note),
                     searchQuery: session.searchQuery,
@@ -469,12 +497,17 @@ struct HomeView: View {
         for notes: [Note],
         showsKeptIndicator: Bool = true
     ) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
+        let showSelectionIndicators = session.isSelectionMode || session.selectedCount > 0
+        return VStack(alignment: .leading, spacing: 0) {
             ForEach(Array(notes.enumerated()), id: \.element.id) { index, note in
+                let multiSelected = session.selectedNoteIDs.contains(note.id)
+                let keyboardFocused = session.selectedNoteID == note.id
                 HomeNoteRowView(
                     note: note,
-                    isSelected: isNoteSelected(note.id),
+                    isSelected: showSelectionIndicators ? multiSelected : keyboardFocused,
+                    isKeyboardFocused: keyboardFocused,
                     isSelectionMode: session.isSelectionMode,
+                    showsSelectionIndicator: showSelectionIndicators,
                     showsKeptIndicator: showsKeptIndicator,
                     timestamp: session.formattedTimestamp(for: note),
                     searchQuery: session.searchQuery,
@@ -582,10 +615,6 @@ struct HomeView: View {
         }
     }
 
-    private func isNoteSelected(_ id: UUID) -> Bool {
-        session.selectedNoteID == id || session.selectedNoteIDs.contains(id)
-    }
-
     private func isKeptSection(_ group: HomeBrowseGroup) -> Bool {
         if case .kept = group.kind {
             return true
@@ -669,7 +698,9 @@ struct ThoughtSearchField: View {
 private struct HomeNoteRowView: View {
     let note: Note
     let isSelected: Bool
+    var isKeyboardFocused: Bool = false
     var isSelectionMode: Bool = false
+    var showsSelectionIndicator: Bool = false
     let showsKeptIndicator: Bool
     let timestamp: String
     let searchQuery: String
@@ -724,12 +755,20 @@ private struct HomeNoteRowView: View {
         .animation(RascMotion.selection(reduceMotion: reduceMotion), value: isSelected)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
-        .accessibilityHint("Press Return to open")
+        .accessibilityHint(showsSelectionIndicator ? "Press Space to select or deselect" : "Press Return to open")
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private var rowContent: some View {
         HStack(alignment: .firstTextBaseline, spacing: 10) {
+            if showsSelectionIndicator {
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(isSelected ? Color.primary : palette.metadataText(for: colorScheme))
+                    .accessibilityHidden(true)
+                    .frame(width: 16)
+            }
+
             Image(systemName: "bookmark.fill")
                 .font(.system(size: 10, weight: .semibold))
                 .foregroundStyle(palette.metadataText(for: colorScheme))
@@ -778,6 +817,13 @@ private struct HomeNoteRowView: View {
             } else if isHovered {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .fill(palette.subtleFill(for: colorScheme))
+            }
+        }
+        .overlay {
+            if showsSelectionIndicator && isKeyboardFocused && !isSelected {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .strokeBorder(palette.focus(for: colorScheme).opacity(0.7), lineWidth: 1.25)
+                    .allowsHitTesting(false)
             }
         }
     }
@@ -1019,7 +1065,9 @@ private struct HomeViewModeToggle: View {
 private struct HomeNoteCardView: View {
     let note: Note
     let isSelected: Bool
+    var isKeyboardFocused: Bool = false
     var isSelectionMode: Bool = false
+    var showsSelectionIndicator: Bool = false
     let showsKeptIndicator: Bool
     let timestamp: String
     let searchQuery: String
@@ -1071,12 +1119,21 @@ private struct HomeNoteCardView: View {
         .animation(RascMotion.selection(reduceMotion: reduceMotion), value: isSelected)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
-        .accessibilityHint("Press Return to open")
+        .accessibilityHint(showsSelectionIndicator ? "Press Space to select or deselect" : "Press Return to open")
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private var cardContent: some View {
         HStack(alignment: .top, spacing: 9) {
+            if showsSelectionIndicator {
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(isSelected ? Color.primary : palette.metadataText(for: colorScheme))
+                    .frame(width: 16)
+                    .padding(.top, 1.5)
+                    .accessibilityHidden(true)
+            }
+
             Image(systemName: "bookmark.fill")
                 .font(.system(size: 10, weight: .semibold))
                 .foregroundStyle(palette.metadataText(for: colorScheme))
@@ -1143,6 +1200,10 @@ private struct HomeNoteCardView: View {
                     // Behind the content, matching the row rendering; this is
                     // decoration and must never intercept touches.
                     RascTransientSelectionBackground(cornerRadius: HomeLayout.gridItemCornerRadius)
+                        .allowsHitTesting(false)
+                } else if showsSelectionIndicator && isKeyboardFocused {
+                    RoundedRectangle(cornerRadius: HomeLayout.gridItemCornerRadius, style: .continuous)
+                        .strokeBorder(palette.focus(for: colorScheme).opacity(0.7), lineWidth: 1.25)
                         .allowsHitTesting(false)
                 }
             }
@@ -1248,6 +1309,7 @@ struct HomeBatchActionsBar: View {
     let onNoteDiscarded: (UUID) -> Void
     let onExportSelected: (Set<UUID>) -> Void
     let onCopy: (String) -> Void
+    var onDiscardSucceeded: () -> Void = {}
     let onError: (String) -> Void
 
     @Environment(\.rascPalette) private var palette
@@ -1276,9 +1338,14 @@ struct HomeBatchActionsBar: View {
         .font(.callout)
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
-        .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(palette.subtleFill(for: colorScheme)))
-        .padding(.horizontal, HomeLayout.horizontalPadding)
-        .padding(.bottom, 8)
+        .background {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(palette.subtleFill(for: colorScheme))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(palette.border(for: colorScheme).opacity(0.66), lineWidth: 1)
+                }
+        }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Batch actions, \(session.selectedCount) selected")
     }
@@ -1288,12 +1355,32 @@ struct HomeBatchActionsBar: View {
         Task {
             defer { isWorking = false }
             do {
-                let text = try await session.copySelectedText()
-                guard !text.isEmpty else { return }
+                let payload = try await session.batchCopyPayload()
+                guard payload.noteCount > 0 else { return }
+                if let single = payload.singleDocument, single.hasImages {
+                    try await NoteHandoff.copy(single)
+                    let imageCount = single.parts.filter { if case .image = $0 { true } else { false } }.count
+                    let imageOnly = imageCount == 1 && single.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    onCopy(imageOnly ? "Image copied." : "Copied with images. Paste into a rich-text app.")
+                    return
+                }
+                guard !payload.text.isEmpty else {
+                    if payload.includesImages {
+                        onError("Selected thoughts contain only images. Copy or export individually.")
+                    }
+                    return
+                }
                 let pasteboard = NSPasteboard.general
                 pasteboard.clearContents()
-                pasteboard.setString(text, forType: .string)
-                onCopy(session.selectedCount == 1 ? "Copied." : "Copied \(session.selectedCount) thoughts.")
+                guard pasteboard.setString(payload.text, forType: .string) else {
+                    onError("Couldn't copy the selected thoughts.")
+                    return
+                }
+                if payload.includesImages {
+                    onCopy("Copied text from \(payload.noteCount) thoughts (images omitted).")
+                } else {
+                    onCopy(payload.noteCount == 1 ? "Copied." : "Copied \(payload.noteCount) thoughts.")
+                }
             } catch {
                 onError("Couldn't copy the selected thoughts.")
             }
@@ -1302,12 +1389,12 @@ struct HomeBatchActionsBar: View {
 
     private func discardSelected() {
         isWorking = true
-        let ids = session.selectedNoteIDs
         Task {
             defer { isWorking = false }
             do {
-                try await session.discardSelected(undoManager: undoManager)
-                for id in ids { onNoteDiscarded(id) }
+                let receipts = try await session.discardSelected(undoManager: undoManager)
+                for receipt in receipts { onNoteDiscarded(receipt.noteID) }
+                onDiscardSucceeded()
             } catch {
                 onError("Couldn't discard the selected thoughts. They are still available.")
             }

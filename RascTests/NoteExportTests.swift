@@ -154,6 +154,28 @@ struct NoteExportTests {
         #expect(exported.text.contains("before image"))
     }
 
+    @Test
+    func selectedScopeBatchExportIncludesMixedImagesAndResolvesTitleCollisions() async throws {
+        let fixture = try Fixture()
+        defer { fixture.remove() }
+        let mixed = try await fixture.repository.createScratch(document: .init(parts: [.text("Project idea"), Self.image]))
+        let duplicateTitle = try await fixture.repository.createScratch(content: "Project idea\nSecond take")
+        _ = try await fixture.repository.createScratch(content: "Unselected note")
+
+        let snapshots = try await fixture.repository.exportSnapshot(for: .selected([mixed.id, duplicateTitle.id]))
+        let folder = try await NoteExportFiles.writeFolder(
+            snapshots, repository: fixture.repository, in: fixture.directory, named: "Rasc Thoughts"
+        )
+        let manifest = try Self.readManifest(folder)
+        #expect(manifest.notes.count == 2)
+        #expect(Set(manifest.notes.map(\.id)) == [mixed.id, duplicateTitle.id])
+        #expect(Set(manifest.notes.map(\.file)).count == 2)
+        let mixedEntry = try #require(manifest.notes.first { $0.id == mixed.id })
+        let imagePart = try #require(mixedEntry.parts?.first { $0.image != nil })
+        let imagePath = try #require(imagePart.image)
+        #expect(FileManager.default.fileExists(atPath: folder.appending(path: imagePath).path))
+    }
+
     private static let png = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
     private static let image: NoteDocument.Part = .image(data: png, typeIdentifier: "public.png")
 

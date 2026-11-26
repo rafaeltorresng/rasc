@@ -54,6 +54,7 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
 
         let hostingController = NSHostingController(rootView: contentView)
         let window = self.window ?? makeWindow()
+        (window as? HomeWindow)?.homeSession = session
         window.contentViewController = hostingController
 
         positionWindowIfNeeded(window)
@@ -100,12 +101,13 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
     }
 
     private func makeWindow() -> NSWindow {
-        let window = NSWindow(
+        let window = HomeWindow(
             contentRect: NSRect(origin: .zero, size: RascWindowMetrics.homeDefault),
             styleMask: [.titled, .closable, .resizable, .miniaturizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
+        window.homeSession = session
         window.delegate = self
         window.title = "Rasc"
         window.titleVisibility = .hidden
@@ -162,5 +164,24 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
                 }
             }
         )
+    }
+}
+
+private final class HomeWindow: NSWindow {
+    weak var homeSession: HomeSession?
+
+    @objc override func selectAll(_ sender: Any?) {
+        if firstResponder is NSText {
+            NSApp.sendAction(#selector(NSText.selectAll(_:)), to: firstResponder, from: sender)
+            return
+        }
+        homeSession?.selectAllVisible()
+    }
+
+    override func validateUserInterfaceItem(_ item: any NSValidatedUserInterfaceItem) -> Bool {
+        if item.action == #selector(selectAll(_:)), !(firstResponder is NSText) {
+            return homeSession?.displayedNotes.isEmpty == false
+        }
+        return super.validateUserInterfaceItem(item)
     }
 }

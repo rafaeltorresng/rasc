@@ -523,34 +523,39 @@ actor NoteRepository {
                     .filter(Note.Columns.deletedAt == nil)
                     .updateAll(database, [Note.Columns.deletedAt.set(to: deletedAt)])
                 if count == 1 {
-                    let receipt = NoteDiscardReceipt(noteID: id, deletedAt: deletedAt)
-                    receipts.append(receipt)
-                    discardReceipts[id] = receipt
+                    receipts.append(NoteDiscardReceipt(noteID: id, deletedAt: deletedAt))
                 }
             }
             return receipts
         }
+        for receipt in receipts { discardReceipts[receipt.noteID] = receipt }
         return receipts
     }
 
     func restoreDiscards(_ receipts: [NoteDiscardReceipt]) throws -> [Note] {
         guard !receipts.isEmpty else { return [] }
-        return try database.write { database in
-            for receipt in receipts {
-                guard discardReceipts[receipt.noteID] == receipt else { throw PersistenceError.staleContent }
-            }
+        guard Set(receipts.map(\.noteID)).count == receipts.count else {
+            throw PersistenceError.staleContent
+        }
+        for receipt in receipts {
+            guard discardReceipts[receipt.noteID] == receipt else { throw PersistenceError.staleContent }
+        }
+        let restored = try database.write { database in
             var restored: [Note] = []
             for receipt in receipts {
                 let count = try Note
                     .filter(Note.Columns.id == receipt.noteID)
                     .filter(Note.Columns.deletedAt == receipt.deletedAt)
                     .updateAll(database, [Note.Columns.deletedAt.set(to: nil)])
-                guard count == 1 else { throw PersistenceError.staleContent }
-                discardReceipts[receipt.noteID] = nil
-                if let note = try Note.fetchOne(database, key: receipt.noteID) { restored.append(note) }
+                guard count == 1, let note = try Note.fetchOne(database, key: receipt.noteID) else {
+                    throw PersistenceError.staleContent
+                }
+                restored.append(note)
             }
             return restored
         }
+        for receipt in receipts { discardReceipts[receipt.noteID] = nil }
+        return restored
     }
 
     func restoreDiscard(_ receipt: NoteDiscardReceipt) throws -> Note {

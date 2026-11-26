@@ -489,6 +489,190 @@ struct HomeSessionTests {
         do { _ = try await repository.restoreDiscards(receipts) } catch { rethrown = true }
         #expect(rethrown)
     }
+
+    @MainActor
+    @Test
+    func emptySearchClearsSelectionAndSelectionMode() async throws {
+        let repository = try makeRepository()
+        let note = try await repository.createScratch(content: "alpha thought")
+        let session = HomeSession(repository: repository)
+        await session.reloadImmediately()
+
+        session.toggleSelection(note.id)
+        #expect(session.isSelectionMode)
+        #expect(session.selectedCount == 1)
+
+        session.searchQuery = "zzznomatch"
+        await session.reloadImmediately()
+        #expect(session.displayedNotes.isEmpty)
+        #expect(session.selectedCount == 0)
+        #expect(session.selectionAnchorID == nil)
+        #expect(!session.isSelectionMode)
+    }
+
+    @MainActor
+    @Test
+    func toggleKeptVisibilityPrunesNewlyHiddenKeptNotesFromSelection() async throws {
+        let repository = try makeRepository()
+        for index in 0..<(HomeLifecycleGrouping.keptSectionLimit + 2) {
+            let note = try await repository.createScratch(content: "kept \(index)")
+            _ = try await repository.keep(id: note.id)
+        }
+        let session = HomeSession(repository: repository)
+        session.showsAllKept = true
+        await session.reloadImmediately()
+        session.selectAllVisible()
+        #expect(session.selectedCount == HomeLifecycleGrouping.keptSectionLimit + 2)
+
+        session.toggleKeptVisibility()
+        #expect(!session.showsAllKept)
+        #expect(session.selectedCount == HomeLifecycleGrouping.keptSectionLimit)
+        #expect(session.selectedNoteIDs == Set(session.displayedNotes.map(\.id)))
+    }
+
+    @MainActor
+    @Test
+    func shiftClickAnchorsOnFirstCallAndSelectsExactVisibleRange() async throws {
+        let repository = try makeRepository()
+        var ids: [UUID] = []
+        for index in 0..<5 { ids.append(try await repository.createScratch(content: "note \(index)").id) }
+        let session = HomeSession(repository: repository)
+        await session.reloadImmediately()
+        let orderedIDs = session.displayedNotes.map(\.id)
+
+        session.selectNote(orderedIDs[1])
+        session.extendSelectionTo(orderedIDs[3])
+        #expect(session.selectionAnchorID == orderedIDs[1])
+        #expect(session.selectedNoteIDs == Set(orderedIDs[1...3]))
+
+        // Extending from the original anchor in the opposite direction includes [0...1] as well.
+        session.extendSelectionTo(orderedIDs[0])
+        #expect(session.selectedNoteIDs == Set(orderedIDs[0...3]))
+    }
+
+    @MainActor
+    @Test
+    func keyboardShiftArrowExtendsSelectionAlongVisibleOrder() async throws {
+        let repository = try makeRepository()
+        for index in 0..<4 { _ = try await repository.createScratch(content: "note \(index)") }
+        let session = HomeSession(repository: repository)
+        await session.reloadImmediately()
+        let orderedIDs = session.displayedNotes.map(\.id)
+
+        session.selectNote(orderedIDs[0])
+        session.extendSelection(.down, columns: 1)
+        #expect(session.selectedNoteIDs == Set(orderedIDs[0...1]))
+        session.extendSelection(.down, columns: 1)
+        #expect(session.selectedNoteIDs == Set(orderedIDs[0...2]))
+        #expect(session.selectedNoteID == orderedIDs[2])
+        #expect(session.isSelectionMode)
+    }
+
+    @MainActor
+    @Test
+    func singleDiscardAfterBatchDiscardClearsStaleBatchUndo() async throws {
+        let repository = try makeRepository()
+        let a = try await repository.createScratch(content: "first")
+        let b = try await repository.createScratch(content: "second")
+        let c = try await repository.createScratch(content: "third")
+        let session = HomeSession(repository: repository)
+        await session.reloadImmediately()
+
+        session.toggleSelection(a.id)
+        session.toggleSelection(b.id)
+        let batchReceipts = try await session.discardSelected()
+        #expect(batchReceipts.count == 2)
+        #expect(session.lastDiscardBatch.count == 2)
+
+        try await session.discardNote(id: c.id)
+        #expect(session.lastDiscardBatch.isEmpty)
+        #expect(session.lastDiscard?.noteID == c.id)
+
+        await session.undoDiscard()
+        let remaining = try await repository.fetchAllNonDeleted()
+        #expect(remaining.map(\.id) == [c.id])
+    }
+
+    @MainActor
+    @Test
+    func undoDiscardBatchRestoresKeptNotesBeyondCapAndRestoresSelectionMode() async throws {
+        let repository = try makeRepository()
+        var keptIDs: [UUID] = []
+        for index in 0..<(HomeLifecycleGrouping.keptSectionLimit + 2) {
+            let note = try await repository.createScratch(content: "kept \(index)")
+            _ = try await repository.keep(id: note.id)
+            keptIDs.append(note.id)
+        }
+        let session = HomeSession(repository: repository)
+        await session.reloadImmediately()
+
+        let visibleSubset = Array(session.displayedNotes.prefix(2))
+        for note in visibleSubset { session.toggleSelection(note.id) }
+        try await session.discardSelected()
+        #expect(session.selectedCount == 0)
+
+        await session.undoDiscardBatch()
+        #expect(session.showsAllKept)
+        #expect(session.isSelectionMode)
+        #expect(session.selectedNoteIDs == Set(visibleSubset.map(\.id)))
+        #expect(session.selectedNoteID != nil)
+    }
+
+    @MainActor
+    @Test
+    func repositoryRestoreDiscardsRollsBackAtomicallyOnStaleReceipt() async throws {
+        let repository = try makeRepository()
+        let a = try await repository.createScratch(content: "alpha")
+        let b = try await repository.createScratch(content: "beta")
+        let receipts = try await repository.delete(ids: [a.id, b.id])
+        let staleReceipt = NoteDiscardReceipt(noteID: b.id, deletedAt: .distantPast)
+
+        var threw = false
+        do {
+            _ = try await repository.restoreDiscards([receipts[0], staleReceipt])
+        } catch {
+            threw = true
+        }
+        #expect(threw)
+        // Neither note should be restored if one receipt in the batch is stale.
+        #expect(try await repository.fetchAllNonDeleted().isEmpty)
+        // Original valid receipts remain intact and restorable.
+        let restored = try await repository.restoreDiscards(receipts)
+        #expect(restored.count == 2)
+        #expect(try await repository.fetchAllNonDeleted().count == 2)
+    }
+
+    @MainActor
+    @Test
+    func batchCopyPayloadHandlesMixedNotesAndSingleImageSelection() async throws {
+        let repository = try makeRepository()
+        let png = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==")!
+        let imageOnly = try await repository.createScratch(document: .init(parts: [.image(data: png, typeIdentifier: "public.png")]))
+        let textFirst = try await repository.createScratch(content: "alpha")
+        let textSecond = try await repository.createScratch(content: "beta")
+        let session = HomeSession(repository: repository)
+        await session.reloadImmediately()
+
+        // Single image-only selection preserves singleDocument for rich copy.
+        session.toggleSelection(imageOnly.id)
+        let singlePayload = try await session.batchCopyPayload()
+        #expect(singlePayload.noteCount == 1)
+        #expect(singlePayload.includesImages)
+        #expect(singlePayload.singleDocument?.hasImages == true)
+
+        // Multi-note selection strips empty image-only fragments and separates text notes cleanly.
+        session.toggleSelection(textFirst.id)
+        session.toggleSelection(textSecond.id)
+        let multiPayload = try await session.batchCopyPayload()
+        #expect(multiPayload.noteCount == 3)
+        #expect(multiPayload.includesImages)
+        #expect(multiPayload.singleDocument == nil)
+        #expect(!multiPayload.text.hasPrefix("\n\n---\n\n"))
+        #expect(!multiPayload.text.hasSuffix("\n\n---\n\n"))
+        #expect(multiPayload.text.contains("alpha"))
+        #expect(multiPayload.text.contains("beta"))
+        #expect(multiPayload.text.components(separatedBy: "\n\n---\n\n").count == 2)
+    }
 }
 
 @Suite
