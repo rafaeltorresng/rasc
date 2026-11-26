@@ -1150,6 +1150,99 @@ struct VoiceCaptureTests {
         #expect(audio.samples.capacity < Int(rate * 90) / 2)
     }
 
+    @Test func dictateInsertsIntoInAppKeyWindowEditorAndKeepsClipboardAndLocalCopy() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 320, height: 120),
+            styleMask: [.titled],
+            backing: .buffered,
+            defer: false
+        )
+        let textView = NSTextView(frame: NSRect(x: 0, y: 0, width: 320, height: 120))
+        textView.isEditable = true
+        window.contentView = textView
+        window.makeFirstResponder(textView)
+
+        let capture = VoiceCapture(
+            preferences: fixture.defaults,
+            supported: true,
+            input: .init(
+                authorization: { .authorized },
+                requestAccess: { true },
+                start: { id, route in await fixture.input.start(id, audible: true, route: route) },
+                stop: { id in await fixture.input.stop(id) }
+            ),
+            presentWindows: false,
+            speech: .init(
+                assetsAvailable: { true },
+                prepare: {},
+                transcribe: { _, ready in
+                    await ready()
+                    return "Hello inline dictation"
+                },
+                release: {}
+            ),
+            accessibilityTrusted: { false },
+            pasteboard: pasteboard,
+            insertText: { _, _, _ in
+                Issue.record("External AX fallback should not run when in-app editor accepted text")
+                return .copiedToClipboard(.noTargetApplication)
+            },
+            insertInCurrentApp: { text in
+                VoiceTextInsertion.insertIntoWindowEditor(text, window: window)
+            }
+        )
+        capture.setEnabled(true)
+        capture.connect(repository: fixture.repository)
+
+        capture.activate(intent: .dictate)
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .insertedAndCopied }
+
+        #expect(textView.string == "Hello inline dictation")
+        #expect(pasteboard.string(forType: .string) == "Hello inline dictation")
+        let saved = try await fixture.repository.fetchAllNonDeleted()
+        #expect(saved.map(\.content) == ["Hello inline dictation"])
+    }
+
+    @Test func enableAndDownloadIfMissingTransitionsUncheckedThroughCheckToDownload() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let probe = DownloadStateProbe()
+
+        let capture = fixture.capture(
+            enabled: false,
+            speech: .init(
+                assetsAvailable: { probe.available },
+                hasInstalledAssets: { probe.installed },
+                downloadSizeBytes: { 652_304_885 },
+                download: { progress in
+                    progress(326_152_442, 652_304_885)
+                    try? await Task.sleep(for: .milliseconds(30))
+                    probe.markInstalled()
+                },
+                prepare: { probe.recordPrepare() },
+                transcribe: { _, _ in "" },
+                release: { probe.recordRelease() }
+            )
+        )
+
+        capture.enableAndDownloadIfMissing()
+        #expect(capture.enabled)
+        try await wait {
+            if case .downloading = capture.setup { return true }
+            return false
+        }
+        try await wait { capture.setup == .installed }
+        #expect(probe.installed)
+        #expect(probe.prepares == 1)
+    }
+
     private func wait(until predicate: () -> Bool) async throws {
         let deadline = ContinuousClock.now.advanced(by: .seconds(10))
         while !predicate(), ContinuousClock.now < deadline {

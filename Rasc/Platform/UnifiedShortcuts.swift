@@ -841,6 +841,7 @@ final class UnifiedShortcutRecorderModel: ObservableObject {
 /// single modifier tap (`⌥`, `⌃`, `⇧`, `⌘`) cleanly inside SwiftUI.
 struct UnifiedShortcutRecorder: View {
     let action: GlobalShortcutAction
+    let store: GlobalShortcutStore
     var prominent: Bool = false
     var showsValidationError: Bool = true
     var showsClearButton: Bool = true
@@ -849,20 +850,23 @@ struct UnifiedShortcutRecorder: View {
 
     init(
         action: GlobalShortcutAction,
+        store: GlobalShortcutStore = .shared,
         prominent: Bool = false,
         showsValidationError: Bool = true,
         showsClearButton: Bool = true
     ) {
         self.action = action
+        self.store = store
         self.prominent = prominent
         self.showsValidationError = showsValidationError
         self.showsClearButton = showsClearButton
-        _model = StateObject(wrappedValue: UnifiedShortcutRecorderModel(action: action))
+        _model = StateObject(wrappedValue: UnifiedShortcutRecorderModel(action: action, store: store))
     }
 
     var body: some View {
         UnifiedShortcutControl(
             action: action,
+            store: store,
             model: model,
             prominent: prominent,
             showsValidationError: showsValidationError,
@@ -874,6 +878,7 @@ struct UnifiedShortcutRecorder: View {
 /// Companion settings row with title, optional subtitle, recorder, Reset, and inline error.
 struct UnifiedShortcutRow: View {
     let action: GlobalShortcutAction
+    let store: GlobalShortcutStore
     let title: String
     let subtitle: String?
     var showsRestoreDefault: Bool = true
@@ -881,22 +886,25 @@ struct UnifiedShortcutRow: View {
 
     @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
-    @ObservedObject private var store = GlobalShortcutStore.shared
+    @ObservedObject private var observedStore: GlobalShortcutStore
     @StateObject private var model: UnifiedShortcutRecorderModel
 
     init(
         action: GlobalShortcutAction,
+        store: GlobalShortcutStore = .shared,
         title: String? = nil,
         subtitle: String? = nil,
         showsRestoreDefault: Bool = true,
         onRestore: (() -> Void)? = nil
     ) {
         self.action = action
+        self.store = store
         self.title = title ?? action.title
         self.subtitle = subtitle ?? action.subtitle
         self.showsRestoreDefault = showsRestoreDefault
         self.onRestore = onRestore
-        _model = StateObject(wrappedValue: UnifiedShortcutRecorderModel(action: action))
+        _observedStore = ObservedObject(wrappedValue: store)
+        _model = StateObject(wrappedValue: UnifiedShortcutRecorderModel(action: action, store: store))
     }
 
     var body: some View {
@@ -914,13 +922,14 @@ struct UnifiedShortcutRow: View {
                 HStack(spacing: 6) {
                     UnifiedShortcutControl(
                         action: action,
+                        store: store,
                         model: model,
                         prominent: false,
                         showsValidationError: false,
                         showsClearButton: true
                     )
 
-                    if showsRestoreDefault && !store.isUsingDefault(for: action) && !model.isRecording {
+                    if showsRestoreDefault && !observedStore.isUsingDefault(for: action) && !model.isRecording {
                         Button("Reset") {
                             model.errorMessage = nil
                             if !store.restoreDefault(for: action) {
@@ -947,6 +956,7 @@ struct UnifiedShortcutRow: View {
 
 private struct UnifiedShortcutControl: View {
     let action: GlobalShortcutAction
+    @ObservedObject var store: GlobalShortcutStore
     @ObservedObject var model: UnifiedShortcutRecorderModel
     let prominent: Bool
     let showsValidationError: Bool
@@ -954,7 +964,6 @@ private struct UnifiedShortcutControl: View {
 
     @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
-    @ObservedObject private var store = GlobalShortcutStore.shared
 
     private var currentTrigger: GlobalShortcutTrigger? {
         store.trigger(for: action)

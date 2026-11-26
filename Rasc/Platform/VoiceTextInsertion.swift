@@ -129,6 +129,21 @@ enum VoiceTextInsertion {
         return pasteboard.setString(text, forType: .string)
     }
 
+    /// Inserts `text` at the current caret when `window` holds an editable `NSTextView`
+    /// first responder (such as an in-app SwiftUI `TextField` field editor).
+    @MainActor
+    static func insertIntoWindowEditor(_ text: String, window: NSWindow?) -> Bool {
+        guard !text.isEmpty,
+              let window,
+              let textView = window.firstResponder as? NSTextView,
+              textView.isEditable
+        else {
+            return false
+        }
+        textView.insertText(text, replacementRange: textView.selectedRange())
+        return true
+    }
+
     private static func focusedElement(of appElement: AXUIElement) -> AXUIElement? {
         var value: CFTypeRef?
         let status = AXUIElementCopyAttributeValue(appElement, focusedElementAttribute as CFString, &value)
