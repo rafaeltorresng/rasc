@@ -1,30 +1,31 @@
 ======================================================================
-Rasc [62535]: 64-bit    Footprint: 41 MB (16384 bytes per page)
+Rasc [22747]: 64-bit    Footprint: 42 MB (16384 bytes per page)
 ======================================================================
 
   Dirty      Clean  Reclaimable    Regions    Category
     ---        ---          ---        ---    ---
-  32 MB        0 B          0 B         12    MALLOC_SMALL
-2330 KB        0 B          0 B        870    __DATA_DIRTY
-2265 KB     128 KB          0 B        968    __DATA
- 912 KB        0 B          0 B         11    MALLOC metadata
- 641 KB        0 B          0 B          1    page table
+  33 MB        0 B          0 B         15    MALLOC_SMALL
+2314 KB        0 B          0 B        870    __DATA_DIRTY
+2249 KB     144 KB          0 B        968    __DATA
+1104 KB        0 B          0 B         12    MALLOC metadata
  640 KB        0 B          0 B         25    untagged (VM_ALLOCATE)
+ 625 KB        0 B          0 B          1    page table
  495 KB        0 B          0 B        632    __AUTH
  302 KB        0 B          0 B       2538    unused dyld shared cache area
- 288 KB        0 B          0 B         10    stack
- 272 KB        0 B          0 B          2    CoreUI image data
- 256 KB        0 B          0 B          1    MALLOC_TINY
- 176 KB        0 B          0 B         11    CoreAnimation
+ 272 KB        0 B          0 B         10    stack
+ 272 KB        0 B          0 B          1    MALLOC_TINY
+ 208 KB        0 B          0 B         13    CoreAnimation
  128 KB        0 B          0 B          1    Accelerate image backing stores
  112 KB        0 B          0 B       1018    __AUTH_CONST
  112 KB        0 B          0 B          2    __TPRO_CONST
+  96 KB        0 B          0 B          2    CoreUI image data
   64 KB        0 B          0 B          2    IOAccelerator
   48 KB     304 KB          0 B       1027    __DATA_CONST
-  48 KB        0 B          0 B          4    IOKit
+  48 KB        0 B          0 B          3    CG image
+  48 KB        0 B          0 B          3    CoreGraphics
+  48 KB        0 B          0 B          6    IOKit
   32 KB        0 B          0 B          1    Activity Tracing
-  32 KB        0 B          0 B          2    CoreGraphics
-  16 KB        0 B          0 B          1    MALLOC_NANO
+  32 KB        0 B          0 B          1    MALLOC_NANO
   16 KB        0 B          0 B          2    IOAccelerator (graphics)
   16 KB        0 B          0 B          1    tag 22
   16 KB        0 B          0 B          1    os_alloc_once
@@ -34,16 +35,16 @@ Rasc [62535]: 64-bit    Footprint: 41 MB (16384 bytes per page)
     0 B        0 B        80 KB          1    SQLite page cache
     0 B      22 MB          0 B         41    mapped file
     0 B    6592 KB          0 B          5    __LINKEDIT
-    0 B    5104 KB          0 B       1049    __TEXT
+    0 B    5072 KB          0 B       1049    __TEXT
     0 B        0 B          0 B          1    __LLVM_COV
     0 B        0 B          0 B          1    __FONT_DATA
-    0 B        0 B          0 B          6    IOSurface
+    0 B        0 B          0 B          7    IOSurface
     0 B        0 B          0 B          1    __CTF
     ---        ---          ---        ---    ---
-  41 MB      45 MB       588 MB       8255    TOTAL
+  42 MB      46 MB       588 MB       8268    TOTAL
 
 Auxiliary data:
     neural_peak: 598 MB
-    phys_footprint: 41 MB
-    phys_footprint_peak: 42 MB
+    phys_footprint: 42 MB
+    phys_footprint_peak: 43 MB
 

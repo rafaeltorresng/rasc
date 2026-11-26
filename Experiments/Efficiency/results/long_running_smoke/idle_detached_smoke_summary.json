@@ -1,0 +1,96 @@
+{
+  "run_dir": "/tmp/rasc-longrun-smoke-idle",
+  "profile": "idle-24h-voice-on",
+  "generated_at": "2026-11-26T19:11:37-0300",
+  "manifest": {
+    "profile": "idle-24h-voice-on",
+    "started_at": "2026-11-26T19:11:01-0300",
+    "bundle_id": "com.rafaeltorres.rasc.longrun",
+    "sparkle_distribution": false,
+    "prevent_idle_sleep": false,
+    "screen_locked_at_start": false,
+    "soak_duration_seconds": 28800.0,
+    "idle_duration_seconds": 3600.0,
+    "cycle_interval_seconds": 900.0,
+    "cooldown_seconds": 300.0,
+    "sample_interval_soak_s": 2.0,
+    "sample_interval_idle_s": 2.0,
+    "diag_interval_seconds": 1800.0,
+    "apps": {
+      "shipping_app": "/tmp/rasc-longrun-smoke-idle/apps/Shipping/Rasc.app"
+    },
+    "model_revision": "3b9d38a93d606f84011e5a0a669b7ea146375a22"
+  },
+  "status": {
+    "state": "stopped",
+    "supervisor_pid": 30906,
+    "screen_locked_at_end": false,
+    "updated_at": "2026-11-26T19:11:37-0300"
+  },
+  "personal_db_unchanged": true,
+  "stages": {
+    "idle_voice_on": {
+      "sample_summary": {
+        "label": "idle_voice_on",
+        "sample_count": 11,
+        "elapsed_s": 20.068,
+        "active_elapsed_s": 20.068,
+        "wall_elapsed_s": 20.068,
+        "detected_sleep_events": 0,
+        "total_sleep_gap_s": 0,
+        "phys_footprint_mib": {
+          "start": 63.27,
+          "end": 49.31,
+          "min": 49.31,
+          "p50": 49.34,
+          "p95": 63.27,
+          "max": 63.27,
+          "mean": 51.89,
+          "slope_mib_per_min": -34.3331,
+          "slope_mib_per_hour": -2059.9867
+        },
+        "recovery_delta_mib": {
+          "from_peak_mib": -13.96,
+          "from_start_mib": -13.96
+        },
+        "lifetime_max_phys_footprint_mib": 63.78,
+        "rss_mib": {
+          "min": 121.22,
+          "p50": 121.27,
+          "p95": 694.55,
+          "max": 698.61
+        },
+        "neural_footprint_mib": {
+          "p50": 11.81,
+          "max": 598.44,
+          "lifetime_max": 598.44
+        },
+        "cpu_pct": {
+          "mean": 1.2691,
+          "p50": 0.0006,
+          "p95": 6.9479,
+          "max": 12.5792
+        },
+        "cumulative_cpu_ms": 254.69,
+        "pkg_idle_wkups_total": 0,
+        "pkg_idle_wkups_per_s_mean": 0.0,
+        "pkg_idle_wkups_per_s_p50": 0.0,
+        "interrupt_wkups_total": 5,
+        "interrupt_wkups_per_s_mean": 0.2492,
+        "interrupt_wkups_per_s_p50": 0.0,
+        "disk_read_bytes": 43171840,
+        "disk_written_bytes": 36519936,
+        "logical_writes_bytes": 44929024,
+        "disk_read_mib": 41.172,
+        "disk_written_mib": 34.828,
+        "logical_writes_mib": 42.848,
+        "pageins_delta": 4435,
+        "xnu_cpu_energy_j": 0.877,
+        "xnu_cpu_power_mw_mean": 43.7,
+        "xnu_cpu_power_mw_p50": 0.01
+      },
+      "in_app_summary": {},
+      "latest_leaks": {}
+    }
+  }
+}

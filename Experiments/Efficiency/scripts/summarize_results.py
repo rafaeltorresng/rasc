@@ -190,8 +190,8 @@ def main() -> None:
             "speech_model_separate_bytes": o["disk_footprint"]["speech_model_bytes"],
             "speech_model_separate_mib": o["disk_footprint"]["speech_model_mib"],
             "note": (
-                "Standard local Release Rasc.app does not embed Sparkle or the 622 MiB speech model; "
-                "GitHub Release builds embed Sparkle + cdhash-pinned Library Load Constraints (~26 MiB), "
+                "Standard local Release Rasc.app (~40.5 MiB) does not embed Sparkle or the 622 MiB speech model; "
+                "GitHub Release builds embed Sparkle + cdhash-pinned Library Load Constraints (~44.4 MiB), "
                 "and the speech model remains an opt-in one-time download."
             ),
         },

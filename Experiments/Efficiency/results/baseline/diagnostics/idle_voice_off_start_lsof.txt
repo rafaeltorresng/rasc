@@ -1,5 +1,5 @@
 COMMAND   PID       USER   FD   TYPE DEVICE  SIZE/OFF                NODE NAME
-Rasc    50232 rafatorres  cwd    DIR   1,18       416            95216203 /Users/rafatorres/Library/Containers/com.rafaeltorres.rasc.efficiency/Data
+Rasc    50232 rafatorres  cwd    DIR   1,18       416            95216203 ~/Library/Containers/com.rafaeltorres.rasc.efficiency/Data
 Rasc    50232 rafatorres  txt    REG   1,18  41413776            95256129 /private/tmp/rasc-efficiency-build/Shipping/Rasc.app/Contents/MacOS/Rasc
 Rasc    50232 rafatorres  txt    REG   1,18     73064            95120765 /Library/Preferences/Logging/.plist-cache.AujWyRNL
 Rasc    50232 rafatorres  txt    REG   1,18       110 1152921500312103377 /System/Library/CoreServices/SystemVersion.bundle/English.lproj/SystemVersion.strings
@@ -41,4 +41,4 @@ Rasc    50232 rafatorres  txt    REG   1,18    223892 1152921500312142368 /Syste
 Rasc    50232 rafatorres    0u   CHR   16,0    0t1147                6835 /dev/ttys000
 Rasc    50232 rafatorres    1u   CHR    3,2       0t0                 339 /dev/null
 Rasc    50232 rafatorres    2u   CHR    3,2       0t0                 339 /dev/null
-Rasc    50232 rafatorres    3u   REG   1,18    192512            95262745 /Users/rafatorres/Library/Containers/com.rafaeltorres.rasc.efficiency/Data/Library/Application Support/Rasc/Rasc.sqlite
+Rasc    50232 rafatorres    3u   REG   1,18    192512            95262745 ~/Library/Containers/com.rafaeltorres.rasc.efficiency/Data/Library/Application Support/Rasc/Rasc.sqlite

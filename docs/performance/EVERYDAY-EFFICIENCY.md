@@ -1,141 +1,114 @@
-# Everyday Efficiency — Long-Running Resource Evaluation
+# Everyday Efficiency — Resource & Responsiveness Evaluation
 
 **Date:** 2026-11-26  
 **Branch:** `perf/everyday-efficiency` (from `main @ 1cee496`)  
 **Hardware / OS:** Apple M3 Pro (`Mac15,6`, 11 cores, 18 GiB RAM) · macOS `26.5.1` (`25F80`) · Xcode `26.2` (`17C52`)  
-**Builds:** Sandboxed Release (`-O`) `com.rafaeltorres.rasc.efficiency` (unmodified shipping binary for bundle/launch/idle; `-DRASC_EFFICIENCY_BENCHMARK` strictly opt-in for the automated 8-phase workday endurance run). Zero personal database files modified (`verified`).
+**Session & Builds:** Sandboxed Release (`-O`) `com.rafaeltorres.rasc.efficiency` with desktop unlocked (`screen_locked: false`). Unmodified shipping binary (standard + Sparkle LLC distribution) tested alongside `-DRASC_EFFICIENCY_BENCHMARK` workday (`n=3` replications) and `--run-soak-bench` runners. Zero personal SQLite database files modified (`verified`).
 
 ---
 
 ## 1. Executive Summary
 
-Evaluating Rasc under Release conditions confirmed both strong architectural fundamentals in its standby shell and concrete inefficiencies under sustained Home usage and modifier-shortcut monitoring:
+Evaluating Rasc across `n=3` controlled Release replications, Sparkle + Library Load Constraints packaging, and non-blocking long-running smoke harnesses confirmed ultra-quiet idle behavior and fixed both Home retention bloat and synchronous close latency:
 
-- **Standby footprint & idle wakeups (Unmodified Shipping Release):**
-  - **Voice disabled:** **`22.44 MiB`** p50 physical footprint (`104.09 MiB` RSS), **`0.0045%`** mean CPU, **`0.011/s`** package idle wakeups, **`0.01 mW`** XNU CPU task power, `0` Rasc memory leaks.
-  - **Voice enabled & prepared:** **`47.59 MiB`** p50 physical footprint (`117.11 MiB` RSS, `11.81 MiB` steady / `598.44 MiB` lifetime-peak `neural_footprint`), **`0.0045%`** mean CPU, **`0.0/s`** package idle wakeups (`0` over `90 s`), **`0.08 mW`** XNU CPU power.
-  - **On-disk size separation:** Release `.app` bundle is **`40.5 MiB`** (`41,476 KiB`); the `Fluid Speech Pro` Core ML model is a separate opt-in **`652,304,885 bytes` (`622.09 MiB`)** pack, not bundled in standard downloads.
-- **Real issues uncovered & resolved:**
-  1. **Eager SwiftUI `VStack` in `HomeView.noteList`** caused `Home` opening (`600 ms p50`), FTS search (`163 ms p50`), `AttributeGraph`/`CoreAnimation` retention (`20 MB` / `855` CA regions), and `294.99 MiB` peak footprint under repeated workday loops.
-  2. **Closed `HomeWindowController` retained its SwiftUI `NSHostingController` & note arrays** indefinitely while hidden (`189.22 MiB` after 60 s cooldown).
-  3. **Always-on `.scrollWheel` event monitor in `ModifierShortcutMonitor`** triggered **`10.89` interrupt wakeups/s** and **`0.55%` CPU** at idle (`240.77 ms` CPU over 45 s) whenever a single-modifier Voice trigger (`Option`) was configured, even while no modifier key was pressed.
-  4. **Hidden `PanelController` work & uncoalesced timer**: display/activation/occlusion handlers evaluated `CGWindowListCopyWindowInfo` even when the panel was hidden, and `occlusionTimer` ran without kernel coalescing `tolerance`.
-  5. **`MicBuffer` 90 s preallocation retention**: short recordings (`0.5–10 s`) kept the full `~17 MB` preallocated `[Float]` capacity through audio conversion until `retryAudio` cleared.
-- **Measured Before → After impact (identical Release hardware & workload):**
-  - Workday peak `phys_footprint`: **`294.99 MiB` → `136.38 MiB` (`−53.77%`)**
-  - Post-workload cooldown `phys_footprint`: **`189.22 MiB` → `92.44 MiB` (`−51.15%`)**
-  - Workday cumulative CPU time: **`66,961.56 ms` → `17,237.96 ms` (`−74.26%`)**
-  - Workday XNU CPU task energy: **`206.51 J` → `38.40 J` (`−81.40%`)**
-  - Home open latency (`n=20`): **`600.17 ms` → `24.47 ms` p50 (`24.5×` faster)**
-  - Home search latency (`n=20`): **`162.97 ms` → `17.06 ms` p50 (`9.6×` faster)**
-  - Single-modifier idle CPU (`45 s`): **`0.5471%` → `0.0014%` (`−99.7%`, interrupt wakeups `10.89/s` → `0.14/s`)**
-  - Voice transcription (`55–56 ms p50` warm) and Apple Intelligence Refine (`1,081 ms p50`) preserved **with zero latency or accuracy regression**.
-
----
-
-## 2. Architecture Audit & Grounded Optimizations
-
-| Optimization | File(s) | Root Cause Found | Fix Implemented |
-|---|---|---|---|
-| **1. Lazy Home list rendering** | [HomeView.swift:501](../../Rasc/Features/Home/HomeView.swift#L501) | Default `.list` view mode used eager `VStack`, instantiating every row's `AttributeGraph` / `RascSearchMatch` / `CoreImage` / `CoreAnimation` tree on open and search. | Switched `noteList` container to `LazyVStack(alignment: .leading, spacing: 0)`. `LazyVGrid` (Cards mode) and section headers unchanged. |
-| **2. Reclaim hidden Home view & cache** | [HomeSession.swift:137-146](../../Rasc/Features/Home/HomeSession.swift#L137-L146), [HomeWindowController.swift:81-112](../../Rasc/Features/Home/HomeWindowController.swift#L81-L112) | Closing Home via `orderOut` kept `NSHostingController<HomeView>` + full `browseGroups`/`searchResults` alive in RAM indefinitely. | Added `releaseCachedNotesForHiddenWindow()` (preserving `searchQuery`, selection state, and Undo discard receipts) + `window.contentViewController = nil` in `close()` / `windowShouldClose(_:)`, plus separate `NotificationCenter` / `NSWorkspace` observer cleanup in `deinit`. |
-| **3. Candidate-only `.scrollWheel` monitoring** | [ModifierShortcut.swift:175-330](../../Rasc/Platform/ModifierShortcut.swift#L175-L330) | `ModifierShortcutMonitor` kept global/local `.scrollWheel` monitors active continuously whenever a single-modifier trigger was enabled, firing handlers on every scroll tick across macOS. | Moved `.scrollWheel` into transient `globalScrollMonitor` / `localScrollMonitor` armed strictly while a configured modifier tap candidate is held down (`candidateStartedAt != nil`) and torn down immediately on release/interference/reset/suspend/stop/deinit. |
-| **4. Hidden `PanelController` short-circuit & timer coalescing** | [PanelController.swift:63-91](../../Rasc/Platform/PanelController.swift#L63-L91), [PanelController.swift:658-735](../../Rasc/Platform/PanelController.swift#L658-L735) | `updatePanelLevel()` ran `CGWindowListCopyWindowInfo` even when hidden; display observers revalidated hidden panels; `occlusionTimer` lacked `tolerance`; observers lacked `deinit`. | Guarded `updatePanelLevel(force:)` & display observers on `panel.isVisible`, skipped redundant `CGWindowListCopyWindowInfo` when `homeIsVisible && NSApp.isActive`, added `timer.tolerance = 0.15`, and cleaned observers/monitors in `deinit`. |
-| **5. Compact `MicBuffer` tail after recording stops** | [VoiceMicrophone.swift:142-158](../../Rasc/Features/VoiceCapture/VoiceMicrophone.swift#L142-L158), [VoiceCaptureView.swift:64-67](../../Rasc/Features/VoiceCapture/VoiceCaptureView.swift#L64-L67) | `MicBuffer` preallocates 90 s of audio (`~17 MB` at 48 kHz) so the real-time CoreAudio tap never allocates, and previously kept the full backing array capacity afterward. | When `< 50%` of capacity was recorded, `MicBuffer.audio()` now compacts off the audio callback via `storage.withUnsafeBufferPointer { Array($0) }` and clears `storage = []`; `VoiceCaptureWindows.hideStatus()` clears `previousApp = nil`. |
+- **Standby footprint & idle wakeups (Unmodified Shipping Release, `n=3` unlocked medians):**
+  - **Voice disabled (`90 s`):** **`24.49 MiB`** p50 `phys_footprint` (`24.42–24.53 MiB`, `106.53 MiB` RSS), **`0.0024%`** mean CPU, **`0.000/s`** package idle wakeups, **`0.01 mW`** XNU CPU power.
+  - **Voice enabled & prepared (`90 s`):** **`50.17 MiB`** p50 `phys_footprint` (`42.45–50.22 MiB`, `123.58 MiB` RSS, `11.81 MiB` steady / `598.44 MiB` lifetime-peak `neural_footprint`), **`0.0017%`** mean CPU, **`0.000/s`** package idle wakeups (`0` over `90 s`), **`0.00 mW`** XNU CPU power (`0.1 mJ`).
+  - **On-disk bundle separation:** Standard local Release `.app` is **`40.54 MiB`** (`41,516 KiB` / `42,367,708 B`). Sparkle distribution with `cdhash`-pinned Library Load Constraints is **`44.40 MiB`** (`45,468 KiB` / `46,207,958 B`). The `Fluid Speech Pro` Core ML pack (`652,304,885 B` / `622.09 MiB`) is never bundled inside `.app` and downloads once only on explicit opt-in via isolated `VoiceModelDownloader.xpc`.
+- **Root-cause optimizations & post-optimization `home_close` fix:**
+  1. **Lazy Home list rendering (`LazyVStack`):** Replaced eager `VStack` in [HomeView.swift:501](../../Rasc/Features/Home/HomeView.swift#L501), cutting `home_open` from `600.17 ms` to **`4.26 ms` median** (`3.79–4.28 ms`) and `home_search` from `162.97 ms` to **`11.56 ms` median** (`10.91–12.33 ms`).
+  2. **Deferred Home teardown (`2.0 s` grace + memory-pressure flush):** Earlier synchronous `window.contentViewController = nil` inside `close()`/`windowShouldClose(_:)` triggered `396.37 ms` p50 AppKit/TSM stalls on active closes. Moving `releaseHiddenContent(of:)` onto a cancellable `2.0 s` deferred task with `NSHostingController` reuse, `HomeSession.focusSearchRequestID` focus refresh, and immediate `DispatchSourceMemoryPressure` eviction brought `home_close` back to **`5.77 ms` median** (`4.81–6.18 ms`, vs `6.63 ms` baseline) while cutting cooldown footprint even further to **`63.70 MiB` median** (`62.19–88.05 MiB`, **`−66.3%`** vs `189.22 MiB` baseline) and `CoreAnimation` regions from `20 MB (855)` to **`256 KB (16)`**.
+  3. **Candidate-only `.scrollWheel` monitoring (`ModifierShortcutMonitor`):** Armed global/local `.scrollWheel` monitors strictly while a configured modifier candidate is held down (`Option` idle CPU dropped from `0.5471%` / `10.89 int_wkup/s` to **`0.0048%`** / **`0.068 int_wkup/s`** in representative `rep_1`).
+  4. **Hidden `PanelController` short-circuit & timer coalescing:** Guarded `CGWindowListCopyWindowInfo` and display observers on `panel.isVisible`, added `occlusionTimer.tolerance = 0.15`, and cleaned observers in `deinit`.
+  5. **`MicBuffer` compaction & status window cleanup:** Compacted `<50%` buffers off the CoreAudio callback upon stop instead of retaining `~17 MB` preallocated capacity, and cleared `previousApp = nil` when hiding `VoiceCaptureWindows`.
+- **Measured Before (`1cee496`) → After (`2a1bddf`, `n=3` unlocked medians):**
+  - Workday peak `phys_footprint`: **`294.99 MiB` → `143.16 MiB` median** (`140.09–143.97 MiB`, **`−51.5%`**)
+  - Post-workload cooldown `phys_footprint`: **`189.22 MiB` → `63.70 MiB` median** (`62.19–88.05 MiB`, **`−66.3%`**)
+  - Workday cumulative CPU time: **`66,961.56 ms` → `19,581.35 ms` median** (`−70.8%`)
+  - Workday XNU CPU energy: **`206.51 J` → `52.14 J` median** (`−74.7%`)
+  - `home_open` (`n=20`): **`600.17 ms` → `4.26 ms` median** (`3.79–4.28 ms`, **`141×` faster**)
+  - `home_close` (`n=20`): **`6.63 ms` baseline** / `396.37 ms` pre-fix → **`5.77 ms` median** (`4.81–6.18 ms`)
+  - `home_search` (`n=20`): **`162.97 ms` → `11.56 ms` median** (`10.91–12.33 ms`, **`14.1×` faster**)
 
 ---
 
-## 3. Empirical Results: Before vs After (Release Builds)
+## 2. Empirical Results (`n=3` Replications + Sparkle + Smokes)
 
-### 3.1 Bundle & Disk Breakdown
+### 2.1 Multi-Replication Stability (`n=3`, `results/optimized/replications.json`)
 
-| Artifact | Baseline (`1cee496`) | Optimized | Notes |
+| Metric | Baseline (`1cee496`) | Optimized Median (`rep_1..rep_3`) | Min – Max (IQR) |
 |---|---:|---:|---|
-| Release `.app` size (`du -sk`) | `41,444 KiB` (`40.47 MiB`) | `41,476 KiB` (`40.50 MiB`) | Includes Sparkle-free main binary (`41.4 MiB`), GRDB/deps, `VoiceModelDownloader.xpc` (`311 KB`). |
-| Speech model (`Fluid Speech Pro`) | `652,304,885 B` (`622.09 MiB`) | `652,304,885 B` (`622.09 MiB`) | Opt-in external pack; **0 bytes bundled in `.app`**. |
-| SQLite post-225-note workday | `Rasc.sqlite` `192,512 B` · WAL `0 B` · SHM `0 B` | `Rasc.sqlite` `192,512 B` · WAL `0 B` · SHM `0 B` | FTS5 `unicode61` index included; WAL cleanly checkpointed at exit. |
+| Launch to idle p50 (`<1.5%` CPU) | `0.60 s` | **`0.74 s`** | `0.73–0.76 s` (`0.015`) |
+| Launch settled `phys_footprint` (`@8 s`) | `22.38 MiB` | **`24.59 MiB`** | `24.47–24.72 MiB` (`0.13`) |
+| Idle Voice Off `phys_footprint` p50 | `22.41 MiB` | **`24.49 MiB`** | `24.42–24.53 MiB` (`0.06`) |
+| Idle Voice Off CPU / pkg wkup | `0.2531%` / `0.045/s` | **`0.0024%` / `0.000/s`** | `0.0018–0.0046%` / `0.0–0.0/s` |
+| Idle Voice On `phys_footprint` p50 | `48.64 MiB` | **`50.17 MiB`** | `42.45–50.22 MiB` (`3.89`) |
+| Idle Voice On `neural_footprint` p50 | `11.81 MiB` | **`11.81 MiB`** | `11.81–11.81 MiB` (`0.00`) |
+| Idle Voice On CPU / pkg wkup | `0.0022%` / `0.000/s` | **`0.0017%` / `0.000/s`** | `0.0013–0.0022%` / `0.0–0.0/s` |
+| Workday peak `phys_footprint` | `294.99 MiB` | **`143.16 MiB`** | `140.09–143.97 MiB` (`1.94`) |
+| Post-cooldown `phys_footprint` end | `189.22 MiB` | **`63.70 MiB`** | `62.19–88.05 MiB` (`12.93`) |
+| Endurance OLS slope | `−3.89 MiB/min` | **`−24.38 MiB/min`** | `−26.62` to `−0.89` (`12.87`) |
+| `home_open` p50 | `600.17 ms` | **`4.26 ms`** | `3.79–4.28 ms` (`0.24`) |
+| `home_search` p50 | `162.97 ms` | **`11.56 ms`** | `10.91–12.33 ms` (`0.71`) |
+| `home_close` p50 | `6.63 ms` | **`5.77 ms`** | `4.81–6.18 ms` (`0.68`) |
+| Workday cumulative CPU ms | `66,961.56 ms` | **`19,581.35 ms`** | `19,540–22,336 ms` (`1,398`) |
+| Workday XNU CPU task energy | `206.51 J` | **`52.14 J`** | `42.54–53.13 J` (`5.30`) |
 
-### 3.2 Cold Startup (`n=5` Unmodified Shipping Release Runs)
+### 2.2 Representative `rep_1` Per-Operation Breakdown vs Baseline
 
-| Metric | Baseline (min / p50 / max) | Optimized (min / p50 / max) |
-|---|---|---|
-| Peak launch CPU % | `68.24` / `68.82` / `74.17%` | `60.75` / `67.53` / `79.97%` |
-| Time to idle (`<1.5%` CPU) | `0.20` / `0.60` / `0.70 s` | `0.20` / `0.51` / `0.70 s` |
-| Settled `phys_footprint` (`@8 s`) | `22.17` / `22.38` / `22.39 MiB` | `22.22` / `22.44` / `22.67 MiB` |
-| Settled `RSS` (`@8 s`) | `103.73` / `103.92` / `103.95 MiB` | `103.83` / `104.02` / `104.28 MiB` |
-| Cumulative CPU (first `8 s`) | `174.22` / `195.28` / `207.77 ms` | `169.54` / `178.09` / `204.76 ms` |
-| Package idle wakeups (`8 s`) | `0` / `1` / `2` | `0` / `1` / `3` |
+| Operation | Count | Baseline (p50 / p95 ms) | Optimized `rep_1` (p50 / p95 ms) | Notes |
+|---|---:|---:|---:|---|
+| `home_open` | 20 | `600.17` / `640.63` | **`3.79` / `7.16`** | Warm reused VC + `LazyVStack` (`10.48 ms` max) |
+| `home_search` | 20 | `162.97` / `667.15` | **`10.91` / `21.73`** | FTS5 + lazy row tree |
+| `home_close` *(note 1)* | 20 | `6.63` / `501.02` | **`6.18` / `506.28`** | Fixes `396.37 ms` p50 synchronous teardown stall |
+| `home_batch_copy_discard_undo` | 10 | `541.43` / `699.44` | **`195.60` / `224.26`** | **`−63.9%` p50** |
+| `endurance_home_cycle` | 20 | `1,219.88` / `1,449.53` | **`56.92` / `573.09`** | **`−95.3%` p50** (`178.13 ms` mean) |
+| `scratchpad_cycle` | 30 | `45.15` / `529.78` | **`39.90` / `523.43`** | TextKit + SQLite autosave |
+| `voice_scratchpad_transcribe` | 8 | `56.00` / `128.61` | **`55.65` / `106.49`** | On-device `Fluid Speech Pro` |
+| `voice_dictate_transcribe` | 7 | `61.11` / `118.88` | **`56.32` / `112.89`** | Clipboard + local copy preserved |
+| `endurance_voice` | 20 | `78.82` / `608.38` | **`86.56` / `168.10`** | **`−72.4%` p95** |
+| `voiceColdPrepareMs` | 1 | `16,673.85 ms` | **`11,960.07 ms`** | Initial Core ML load (`0.041 ms` warm) |
+| `refine_invoke` | 6 | `1,090.43` / `3,221.04` | **`1,094.66` / `3,056.83`** | On-device Apple Foundation Models |
 
-### 3.3 Steady Idle Windows (Unmodified Shipping Release Binary)
+*(Note 1: `p95Ms` `506.28 ms` reflects occasional WindowServer/TSM focus fences on unlocked macOS also observed in baseline `501.02 ms` p95; deferred teardown runs safely `2.0 s` later when hidden.)*
 
-| State | `phys_footprint` p50 | RSS p50 | `neural` p50 / max | CPU mean | Cum CPU | `pkg_idle_wkup/s` | `interrupt_wkup/s` | XNU CPU power |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| **Idle — Voice Off (`90 s`) Before** | `22.41 MiB` | `103.02 MiB` | `0.0 / 0.0 MiB` | `0.2531%` | `225.23 ms` | `0.045/s` | `3.685/s` | `0.61 mW` |
-| **Idle — Voice Off (`90 s`) After** | **`22.44 MiB`** | `104.09 MiB` | `0.0 / 0.0 MiB` | **`0.0045%`** | **`3.98 ms`** | **`0.011/s`** | **`0.067/s`** | **`0.01 mW`** |
-| **Idle — Voice On (`90 s`) Before** | `48.64 MiB` | `123.66 MiB` | `11.81 / 598.44 MiB` | `0.0022%` | `1.97 ms` | `0.000/s` | `0.023/s` | `0.03 mW` |
-| **Idle — Voice On (`90 s`) After** | **`47.59 MiB`** | `117.11 MiB` | `11.81 / 598.44 MiB` | **`0.0045%`** | **`4.01 ms`** | **`0.000/s`** | **`0.067/s`** | **`0.08 mW`** |
-| **Idle — `Option` Modifier (`45 s`) Before** | `40.38 MiB` | `123.59 MiB` | `11.81 / 598.44 MiB` | `0.5471%` | `240.77 ms` | `0.114/s` | `10.885/s` | `1.76 mW` |
-| **Idle — `Option` Modifier (`45 s`) After** | **`37.63 MiB`** | `114.14 MiB` | `11.81 / 598.44 MiB` | **`0.0014%`** | **`0.61 ms`** | **`0.000/s`** | **`0.136/s`** | **`0.02 mW`** |
+### 2.3 Sparkle Distribution + Library Load Constraints Audit (`results/sparkle_distribution.json`)
 
-*(Note: Voice Off baseline's slightly higher `0.2531%` mean CPU reflected background desktop scroll/activation churn on the live workstation during that 90 s sample, whereas Voice On settled at `0.0022%–0.0045%` and Modifier-only idle dropped `99.7%` after isolating `.scrollWheel` monitoring.)*
+- **Signing & Entitlements Verified (`codesign --verify --deep --strict`):**
+  - `Has Library Load Constraints: true` (`cdhash` pinning `arm64` `Sparkle.framework` slice `0e66f4ed0b19cb8b52fd8063740ba80e1481366a`).
+  - Main app carries **no** `com.apple.security.network.client`; `com.rafaeltorres.rasc.VoiceModelDownloader.xpc` keeps `com.apple.security.network.client` and **no** `device.audio-input`.
+- **Disk footprint:** **`44.40 MiB`** (`45,468 KiB` / `46,207,958 B`; includes `3.12 MB` `Sparkle.framework`, `42.39 MB` main binary, `311 KB` XPC, `359 KB` resources); `622.09 MiB` speech model remains external.
+- **Launch & Idle (`n=5` launches, `90 s` windows, `screen_locked: false`):**
+  - Cold launch: `0.83 s` p50 to idle, `25.20 MiB` p50 `phys_footprint` (`107.31 MiB` RSS), `0` pkg idle wakeups over 8 s.
+  - Idle Voice Off: **`25.19 MiB`** p50 `phys_footprint` (`107.06 MiB` RSS), **`0.0026%`** CPU, **`0.000/s`** pkg idle wakeups, `0.00 mW` XNU CPU power.
+  - Idle Voice On: **`49.16 MiB`** p50 `phys_footprint` (`125.67 MiB` RSS, `11.81 MiB` `neural`), **`0.0020%`** CPU, **`0.000/s`** pkg idle wakeups, `0.00 mW` XNU CPU power.
 
-### 3.4 8-Phase Workday Endurance Suite (Before vs After)
+### 2.4 Non-Blocking Long-Running Infrastructure & Smoke Validation (`results/long_running_smoke/`)
 
-| Phase / Metric | Baseline | Optimized | Delta |
-|---|---:|---:|---:|
-| **Peak `phys_footprint` (`lifetime_max`)** | `294.99 MiB` | **`136.38 MiB`** | **`−158.61 MiB` (−53.8%)** |
-| **Total cumulative CPU time** | `66,961.56 ms` | **`17,237.96 ms`** | **`−49,723.60 ms` (−74.3%)** |
-| **Total XNU CPU task energy** | `206.51 J` | **`38.40 J`** | **`−168.11 J` (−81.4%)** |
-| **Phase: `seed_and_idle_voice_off` p50 FP** | `22.84 MiB` (`0.56%` CPU) | **`22.70 MiB` (`0.02%` CPU)** | `−0.14 MiB` |
-| **Phase: `scratchpad_capture_loop` (30×) p50 FP** | `26.63 MiB` (`20.07%` CPU) | **`26.74 MiB` (`19.59%` CPU)** | `+0.11 MiB` |
-| **Phase: `home_search_loop` (20×) p50 FP / max** | `78.70` / `94.52 MiB` (`77.96%` CPU) | **`35.85` / `36.08 MiB` (`21.93%` CPU)** | **`−54.5%` FP · `−71.9%` CPU** |
-| **Phase: `home_batch_ops` (10×) p50 FP** | `102.69 MiB` | **`50.16 MiB`** | **`−51.2%` FP** |
-| **Phase: `voice_capture_and_dictate` (15× + 30s) p50 / max FP** | `188.20` / `215.09 MiB` | **`81.19` / `106.20 MiB`** | **`−56.9%` p50 FP** |
-| **Phase: `refine_on_device` (6× Foundation Models) p50 FP** | `162.81 MiB` | **`84.05 MiB`** | **`−48.4%` FP** |
-| **Phase: `sleep_wake_and_memory_pressure` p50 FP** | `162.83 MiB` | **`85.63 MiB`** | `−47.4%` FP |
-| **Phase: `workday_endurance_loop` (60× mixed) p50 / max FP** | `228.26` / `293.41 MiB` (`43.58%` CPU) | **`119.06` / `126.16 MiB` (`12.92%` CPU)** | **`−47.8%` p50 · `−57.0%` peak · `−70.4%` CPU** |
-| **Endurance loop memory slope (OLS)** | `−3.89 MiB/min` | **`−25.63 MiB/min`** (reclaiming) | Zero upward drift |
-| **Phase: `post_workload_cooldown` (60 s idle) end FP / CPU** | `189.22 MiB` / `0.68%` | **`92.44 MiB` / `0.21%`** | **`−51.2%` FP (`CoreAnimation` `20 MB → 448 KB`)** |
+To distinguish `~4–5 min` accelerated suites from multi-hour macOS residency, [run_long_running.py](../../Experiments/Efficiency/scripts/run_long_running.py) + `--run-soak-bench` provide reproducible detached `8h` soak and `24h` Voice-On idle monitoring (`build/efficiency-long-running/<run-id>/`):
 
-### 3.5 Per-Operation Latency (p50 / p95 ms)
-
-| Operation | Count | Baseline (p50 / p95 ms) | Optimized (p50 / p95 ms) | Delta p50 |
-|---|---:|---:|---:|---:|
-| `home_open` | 20 | `600.17` / `640.63` | **`24.47` / `40.20`** | **`−95.9%` (`24.5×` faster)** |
-| `home_search` | 20 | `162.97` / `667.15` | **`17.06` / `24.80`** | **`−89.5%` (`9.6×` faster)** |
-| `home_close` *(note 1)* | 20 | `6.63` / `501.02` | `396.37` / `517.08` | SwiftUI teardown runs synchronously on explicit hide |
-| `home_batch_copy_discard_undo` | 10 | `541.43` / `699.44` | **`183.72` / `239.81`** | **`−66.1%`** |
-| `endurance_home_cycle` (open+search+close) | 20 | `1,219.88` / `1,449.53` | **`61.51` / `219.36`** | **`−95.0%` (`19.8×` faster)** |
-| `scratchpad_cycle` | 30 | `45.15` / `529.78` | `51.43` / `533.10` | Unchanged |
-| `endurance_scratchpad` | 60 | `40.14` / `938.41` | `37.50` / `520.52` | `-6.6%` (`-44.5%` p95) |
-| `voice_scratchpad_transcribe` | 8 | `56.00` / `128.61` | **`55.11` / `105.87`** | Unchanged |
-| `voice_dictate_transcribe` | 7 | `61.11` / `118.88` | **`56.29` / `105.91`** | Unchanged |
-| `endurance_voice` | 20 | `78.82` / `608.38` | **`79.89` / `136.15`** | **`−77.6%` p95** |
-| `voiceColdPrepareMs` | 1 | `16,673.85 ms` | `15,816.01 ms` | Initial Core ML load (`VoiceModel`) |
-| `voiceWarmPrepareMs` | 1 | `0.013 ms` | `0.016 ms` | Already prepared |
-| `sleep_wake_cycle` | 1 | `2,080.92 ms` | `2,081.12 ms` | Includes intentional `1.5 s` post-wake delay |
-| `refine_invoke` (Apple Intelligence) | 6 | `1,090.43` / `3,221.04` | `1,081.05` / `3,046.71` | On-device `SystemLanguageModel` |
-
-*(Note 1: `home_close` runs `releaseHiddenContent` which sets `window.contentViewController = nil` to drop `HomeView`'s SwiftUI tree (~396 ms after an already-awaited full unfiltered `reloadImmediately()`), cutting steady cooldown `CoreAnimation` from `20 MB` / `855` regions to `448 KB` / `14` regions while combined `endurance_home_cycle` drops `1,220 ms` to `61.5 ms` p50.)*
+- **Completed `soak-8h` smoke (`152.1 s`, `2 s` streaming CSV + periodic `120 s` diagnostics):** Executed 3 full cycles (`Scratchpad`, `Home` open/search/batch/close + `3/3` verified `2 s` deferred teardown releases, `Voice` Scratchpad & Dictate clips, `3×` on-device `Refine`). Settled from `84.97 MiB` max to **`60.11 MiB` end** (`−24.86 MiB` recovery delta; `slope −116.78 MiB/h`; `4.73%` mean CPU; `0.026 pkg_wkup/s`; `20.94 J` XNU CPU energy; `personal_db_unchanged: true`).
+- **Detached `idle-24h-voice-on` smoke (`start --detach`, live `status`, `stop` via `SIGTERM`):** Confirmed background `supervisor_pid` + `child_pid` liveness, graceful signal shutdown flushing `20.1 s` post-settle samples (`49.31 MiB` end / `49.34 MiB` p50 `phys_footprint`, `11.81 MiB` `neural`, `0.000/s` pkg idle wakeups, `personal_db_unchanged: true`).
+- Full `8h` soak + `24h` idle metrics are reported only once the detached multi-hour run finishes; smoke runs validate correctness, isolation, signal safety, and telemetry fidelity without claiming 8h/24h totals prematurely.
 
 ---
 
-## 4. Leaks, VM Categories & Auxiliary Processes
+## 3. Leaks, VM Categories & Auxiliary Processes
 
 - **Memory leaks (`leaks` tool):**
-  - Across every inspected window (`idle_voice_off`, `idle_voice_on`, `idle_modifier_on`, `workday_cooldown`), `leaks` reported **zero Rasc allocations**.
-  - All `192–288` cycles (`~9.6–14.4 KB` total) originate inside Apple's `AppIntents` framework (`NSXPCConnection` / `LNDaemonApplicationInterface` / `LNProcessInstanceRegistryClient` internal retain cycle triggered during `Rasc.app` launch/metadata indexing).
-- **VM breakdown at post-workload cooldown (`footprint` optimized vs baseline):**
-  - `CoreAnimation`: `20 MB (855 regions)` → **`448 KB (14 regions)` (`−97.8%`)**
-  - `CG image` + `CoreImage`: `3,584 KB (224)` + `3,568 KB (223)` → **`0 B`**
-  - `MALLOC_SMALL` dirty: `173 MB` → **`73 MB`** (dominated by Core ML / Foundation Models frameworks once warmed in-process)
-  - `SQLite page cache`: `128 KB` reclaimable, `16 KB` dirty.
-- **Auxiliary processes (`ps`):** No persistent background daemons, agents, or helpers; only `com.rafaeltorres.rasc.VoiceModelDownloader.xpc` runs transiently during an explicit opt-in model download.
+  - Across `idle_voice_off`, `idle_voice_on`, `idle_modifier_on`, `workday_cooldown`, `sparkle_distribution`, and `soak_t000120s`, `leaks` reported **zero Rasc-owned leaks**.
+  - All `288` reported nodes (`14,400 bytes` / `14.1 KiB`) trace to Apple's system framework `NSXPCConnection` / `LNDaemonApplicationInterface` (`AppIntents` metadata daemon retain cycle, identical to baseline `288`).
+- **VM breakdown at `rep_1` cooldown (`/usr/bin/footprint`: `59 MB` total):**
+  - `CoreAnimation`: `20 MB (855 regions)` → **`256 KB (16 regions)`**
+  - `CG image` + `CoreImage`: `3,584 KB (224)` + `3,568 KB (223)` → **`48 KB (3)`** + **`0 B`**
+  - `MALLOC_SMALL`: `173 MB` → **`46 MB`**
+- **Auxiliary processes:** Zero persistent daemons/helpers; `VoiceModelDownloader.xpc` runs only on explicit download.
 
 ---
 
-## 5. Limitations & Open Manual Desktop Checks
+## 4. Limitations & Open Manual Desktop Checks
 
-1. **Whole-SoC energy / thermal / battery impact:** Not measured (`sudo powermetrics` needs interactive root authentication; Apple's `xctrace Power Profiler` template does not support macOS). XNU `ri_energy_nj` covers CPU task energy only.
-2. **Physical hardware & live macOS integration:** Live physical keyboard taps (`Option` modifier tap across third-party apps), physical microphone capture with Bluetooth/USB route changes, live TCC Microphone/Accessibility approval flows, external app `AXSelectedText` insertion, multi-monitor/Spaces focus, and VoiceOver traversal still require interactive desktop checks.
-3. **Hardware scope:** Results reflect `Mac15,6` M3 Pro (18 GiB, macOS `26.5.1`). Do not extrapolate verbatim to 8 GiB Apple silicon Macs, Intel Macs, or macOS 14/15.
+1. **Whole-SoC power / thermal / battery hours:** Not measured (`sudo powermetrics` unavailable; Xcode `Power Profiler` unsupported on macOS). XNU `ri_energy_nj` reflects per-process CPU energy only.
+2. **Multi-hour `8h` / `24h` totals:** Infrastructure and smoke tests are verified, and a detached `full-32h` run starts outside CI; multi-hour drift/sleep-wake numbers await completion of that run.
+3. **Interactive desktop checks:** Live third-party modifier key taps, physical Bluetooth/USB audio routing, OS TCC modal approvals, external AX insertion, fullscreen Spaces/multi-monitor transitions, and VoiceOver traversal still require interactive macOS desktop testing.
+4. **Hardware scope:** Results reflect `Mac15,6` M3 Pro (18 GiB, macOS `26.5.1`). Do not extrapolate verbatim to 8 GiB Apple silicon Macs, Intel Macs, or macOS 14/15.

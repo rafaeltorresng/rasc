@@ -51,19 +51,20 @@ Clean key-up isolated; chord/diacritic/pointer/other-modifier/hold safe; reset; 
 
 As §1. **No claim native click; not perf-measured.**
 
-## 4. Application performance & everyday efficiency (Updated — Release Measurements)
+## 4. Application performance & everyday efficiency (Updated — Verified `n=3` Release + Sparkle LLC + Smokes)
 
-**Primary structured dataset for `rasc-web`:** [docs/evidence/efficiency-web-data.json](efficiency-web-data.json) (`schema_version: 1`, chart-ready `workday_timeseries`, `workday_phase_bars`, `operation_latencies_ms`, and `before_vs_after` deltas). Full prose report in [docs/performance/EVERYDAY-EFFICIENCY.md](../performance/EVERYDAY-EFFICIENCY.md) and summary in [docs/performance/APP-PERFORMANCE.md](../performance/APP-PERFORMANCE.md).
+**Primary structured dataset for `rasc-web`:** [docs/evidence/efficiency-web-data.json](efficiency-web-data.json) (`schema_version: 2`, `replications` across `n=3`, `sparkle_distribution`, `long_running_smoke`, `workday_timeseries`, `workday_phase_bars`, `operation_latencies_ms`, and `before_vs_after` deltas). Full prose reports in [docs/performance/EVERYDAY-EFFICIENCY.md](../performance/EVERYDAY-EFFICIENCY.md) and [docs/performance/APP-PERFORMANCE.md](../performance/APP-PERFORMANCE.md).
 
-Key verified figures (Release `-O`, `Mac15,6` M3 Pro 18 GiB, macOS `26.5.1`, App Sandbox enabled, no user DBs):
-- **Distinction on disk:** Release `.app` bundle **`40.5 MiB`** (`42,326,236` bytes); optional speech model **`652,304,885` bytes (`622.09 MiB`)** downloaded separately only on Voice opt-in.
-- **Launch (`n=5` cold starts):** peaks `67.5%` CPU p50, settles to idle in **`0.51 s` p50** at **`22.44 MiB` `phys_footprint`** (`104.02 MiB` RSS).
-- **Standby idle (`90 s` @ 1 Hz):**
-  - Voice Off: **`22.44 MiB` `phys_footprint`** p50 (`104.09 MiB` RSS), **`0.0045%`** CPU, `0.011 pkg_wkup/s`, `0.01 mW` XNU CPU task power, `0` Rasc leaks.
-  - Voice On (model prepared): **`47.59 MiB` `phys_footprint`** p50 (`117.11 MiB` RSS, `11.81 MiB` steady / `598.44 MiB` peak `neural_footprint`), **`0.0045%`** CPU, **`0.000 pkg_wkup/s`**, `0.08 mW` XNU CPU task power, `0` Rasc leaks.
-  - Single-modifier `Option` idle (`45 s`): **`0.0014%`** CPU (`0.136 int_wkup/s`, down from `0.547%` / `10.89 int_wkup/s`).
-- **8-phase workday endurance (`~4 min`, 225 notes, 35 FLEURS Voice clips, 6 Refine calls, sleep/wake, pressure, + 60 s cooldown):** peak `phys_footprint` **`136.38 MiB`** (down `−53.8%` from `294.99 MiB`), cumulative CPU `17.24 s` (`−74.3%`), XNU CPU energy `38.40 J` (`−81.4%`), settled cooldown **`92.44 MiB`** (`−51.2%`), Home open `24.47 ms p50` (`24.5×` faster), Home search `17.06 ms p50` (`9.6×` faster).
-- **What still cannot be claimed:** full-SoC wall power / battery hours (`sudo powermetrics` unavailable; macOS unsupported in `xctrace Power Profiler`), 8 GiB / Intel / older macOS measurements, or competitor resource superiority.
+Key verified figures (Release `-O`, `Mac15,6` M3 Pro 18 GiB, macOS `26.5.1`, App Sandbox enabled, `screen_locked: false`, no personal DBs touched):
+- **Distinction on disk:** Standard Release `.app` **`40.54 MiB`** (`42,367,708 B`); Sparkle distribution `.app` with `cdhash`-pinned Library Load Constraints **`44.40 MiB`** (`46,207,958 B`, main app has no `network.client`, `VoiceModelDownloader.xpc` isolated); optional speech model **`652,304,885 bytes` (`622.09 MiB`)** downloaded separately only on Voice opt-in.
+- **Launch (`n=5` cold starts, `n=3` medians):** settles to idle in **`0.74 s`** median (`0.73–0.76 s`) at **`24.59 MiB` `phys_footprint`** (`106.53 MiB` RSS); Sparkle + LLC settles in `0.83 s p50` at `25.20 MiB`.
+- **Standby idle (`90 s` @ 1 Hz, `n=3` medians):**
+  - Voice Off: **`24.49 MiB` `phys_footprint`** (`106.53 MiB` RSS), **`0.0024%`** CPU, **`0.000 pkg_wkup/s`**, `0.01 mW` XNU CPU task power (`Sparkle + LLC`: `25.19 MiB`, `0.0026%` CPU, `0.000/s` wakeups).
+  - Voice On (model prepared): **`50.17 MiB` `phys_footprint`** (`123.58 MiB` RSS, `11.81 MiB` steady / `598.44 MiB` max `neural_footprint`), **`0.0017%`** CPU, **`0.000 pkg_wkup/s`**, `0.00 mW` XNU CPU task power (`Sparkle + LLC`: `49.16 MiB`, `0.0020%` CPU, `0.000/s` wakeups).
+  - Single-modifier `Option` idle (`45 s`, `rep_1`): **`0.0048%`** CPU (`0.068 int_wkup/s`, down from `0.5471%` / `10.89 int_wkup/s`).
+- **Accelerated workday endurance (`~4 min`, `n=3` medians, 225 notes, 35 FLEURS Voice clips, 6 Refine calls, sleep/wake, + 60 s cooldown):** peak `phys_footprint` **`143.16 MiB`** (vs `294.99 MiB` before, `−51.5%`), cumulative CPU **`19.58 s`** (`−70.8%`), XNU CPU energy **`52.14 J`** (`−74.7%`), settled cooldown **`63.70 MiB`** (`−66.3%` vs `189.22 MiB`), `home_open` **`4.26 ms`** (`141×` faster vs `600.17 ms`), `home_search` **`11.56 ms`** (`14.1×` faster vs `162.97 ms`), `home_close` **`5.77 ms`** (fixes earlier `396.37 ms` regression via `2.0 s` deferred teardown); `leaks` reports only `288` system framework cycles (`14.1 KiB` Apple `LNDaemonApplicationInterface` XPC, `0` Rasc allocations leaked).
+- **Long-running harness & smokes (`Experiments/Efficiency/results/long_running_smoke/`):** Completed `soak-8h` smoke (`152.1 s`, `60.11 MiB` end after `84.97 MiB` peak = `−24.86 MiB` recovery delta, `3/3` deferred Home closes released) and detached `idle-24h-voice-on` smoke (`start --detach` → live `status` → graceful `SIGTERM` `stop`, settling at `49.31 MiB` end / `0.0 pkg_wkup/s`). **Full 8h soak / 24h idle results await completion of the launched background run** and are not claimed prematurely.
+- **What still cannot be claimed:** full-SoC wall power / battery hours (`sudo powermetrics` unavailable; macOS unsupported in `xctrace Power Profiler`), completed 8h/24h totals prior to run completion, 8 GiB / Intel / older macOS measurements, or competitor resource superiority.
 
 ## 5. Refine
 

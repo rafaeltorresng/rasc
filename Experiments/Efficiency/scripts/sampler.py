@@ -196,12 +196,13 @@ def capture_diagnostics(pid: int, out_dir: Path, prefix: str) -> dict[str, Any]:
         summary["leaks_count"] = int(ml.group(1))
         summary["leaks_bytes"] = int(ml.group(2))
 
-    lsof_txt = run_text(["lsof", "-n", "-p", str(pid)])
+    home_str = str(Path.home())
+    lsof_txt = run_text(["lsof", "-n", "-p", str(pid)]).replace(home_str, "~")
     (out_dir / f"{prefix}_lsof.txt").write_text(lsof_txt)
     lsof_lines = [ln for ln in lsof_txt.splitlines() if ln.strip()]
     summary["open_fds"] = max(0, len(lsof_lines) - 1)
 
-    ps_txt = run_text(["ps", "-Ao", "pid,ppid,rss,pcpu,time,comm"])
+    ps_txt = run_text(["ps", "-Ao", "pid,ppid,rss,pcpu,time,comm"]).replace(home_str, "~")
     related = [
         ln.strip()
         for ln in ps_txt.splitlines()

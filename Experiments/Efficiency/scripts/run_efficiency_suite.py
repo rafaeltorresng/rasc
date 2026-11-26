@@ -46,21 +46,25 @@ MODEL_CANDIDATES = [
 WORK_ROOT = Path("/tmp/rasc-efficiency-build")
 
 
-def snapshot_personal_dbs() -> dict[str, tuple[int, int] | None]:
-    out: dict[str, tuple[int, int] | None] = {}
+def snapshot_personal_dbs() -> dict[str, list[int] | None]:
+    out: dict[str, list[int] | None] = {}
     for p in PERSONAL_DBS:
         if p.exists():
             st = p.stat()
-            out[str(p)] = (st.st_mtime_ns, st.st_size)
+            out[str(p)] = [st.st_mtime_ns, st.st_size]
         else:
             out[str(p)] = None
     return out
 
 
-def verify_personal_dbs_unchanged(before: dict[str, tuple[int, int] | None]) -> None:
+def verify_personal_dbs_unchanged(before: dict[str, Any]) -> None:
+    normalized_before = {
+        k: (list(v) if isinstance(v, (list, tuple)) else v)
+        for k, v in before.items()
+    }
     after = snapshot_personal_dbs()
-    if before != after:
-        raise RuntimeError(f"Personal database modified! before={before} after={after}")
+    if normalized_before != after:
+        raise RuntimeError(f"Personal database modified! before={normalized_before} after={after}")
 
 
 def find_voice_model_source() -> Path:
