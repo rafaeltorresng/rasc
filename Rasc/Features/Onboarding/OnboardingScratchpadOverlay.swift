@@ -29,33 +29,36 @@ struct OnboardingScratchpadOverlay: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-                if let unavailable = guidance.unavailablePresentation {
-                    unavailableView(unavailable)
-                        .transition(.opacity)
-                } else if guidance.showEmptyHint && editorText.isEmpty && showDelayedEmptyHint {
-                    emptyHint
-                        .transition(hintTransition)
-                } else if guidance.showRefineHint || guidance.showEscapeHint {
-                    VStack(alignment: .leading, spacing: 6) {
-                        if guidance.showRefineHint {
-                            hintRow(
-                                symbol: InternalShortcutStore.shared.displayString(for: .refine),
-                                text: "Refine"
-                            )
-                        }
-                        if guidance.showEscapeHint {
-                            hintRow(
-                                symbol: RascShortcutCatalog.hideScratchpad.shortcut,
-                                text: "Hide and continue later"
-                            )
-                        }
+            if let unavailable = guidance.unavailablePresentation {
+                unavailableView(unavailable)
+                    .transition(.opacity)
+            } else if guidance.isResumeBeat {
+                resumeGuidanceView
+                    .transition(hintTransition)
+            } else if guidance.showEmptyHint && editorText.isEmpty && showDelayedEmptyHint {
+                emptyHint
+                    .transition(hintTransition)
+            } else if (guidance.canShowRefineHint && guidance.showRefineHint) || guidance.showEscapeHint {
+                VStack(alignment: .leading, spacing: 6) {
+                    if guidance.canShowRefineHint && guidance.showRefineHint {
+                        hintRow(
+                            symbol: InternalShortcutStore.shared.displayString(for: .refine),
+                            text: "Refine (optional)"
+                        )
                     }
-                        .transition(hintTransition)
+                    if guidance.showEscapeHint {
+                        hintRow(
+                            symbol: RascShortcutCatalog.hideScratchpad.shortcut,
+                            text: "Autosaved — hide and continue later"
+                        )
+                    }
                 }
+                .transition(hintTransition)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
         .allowsHitTesting(guidance.unavailablePresentation != nil)
         .animation(RascMotion.surface(reduceMotion: reduceMotion), value: guidance)
         .onAppear {
@@ -81,10 +84,42 @@ struct OnboardingScratchpadOverlay: View {
     }
 
     private var emptyHint: some View {
-        Text("Anything unfinished is enough.")
+        Text("Anything unfinished is enough. Type a fragment to try it.")
             .font(.caption)
             .foregroundStyle(palette.metadataText(for: colorScheme))
-            .accessibilityLabel("Anything unfinished is enough.")
+            .accessibilityLabel("Anything unfinished is enough. Type a fragment to try it.")
+    }
+
+    private var resumeGuidanceView: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Still right where you left it.")
+                .font(.caption.weight(.medium))
+                .foregroundStyle(palette.secondaryText(for: colorScheme))
+
+            HStack(spacing: 14) {
+                if guidance.showKeepHint {
+                    HStack(spacing: 7) {
+                        ShortcutKeycapView(
+                            label: InternalShortcutStore.shared.displayString(for: .keep),
+                            style: .compact
+                        )
+                        Text("Keep (finish thought)")
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(palette.keepAccent(for: colorScheme))
+                    }
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 3)
+                    .background(palette.keepFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("Keep, \(InternalShortcutStore.shared.displayString(for: .keep)), finish thought")
+                }
+
+                hintRow(
+                    symbol: RascShortcutCatalog.hideScratchpad.shortcut,
+                    text: "Leave unfinished"
+                )
+            }
+        }
     }
 
     @ViewBuilder
@@ -163,12 +198,11 @@ struct OnboardingScratchpadOverlay: View {
         guard !showDelayedEmptyHint else { return }
 
         emptyHintTask = Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(400))
+            try? await Task.sleep(for: .milliseconds(250))
             guard !Task.isCancelled, guidance.showEmptyHint, editorText.isEmpty else { return }
             withAnimation(RascMotion.surface(reduceMotion: reduceMotion)) {
                 showDelayedEmptyHint = true
             }
         }
     }
-
 }

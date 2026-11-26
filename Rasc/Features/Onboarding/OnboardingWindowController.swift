@@ -2,8 +2,9 @@ import AppKit
 import SwiftUI
 
 @MainActor
-final class OnboardingWindowController {
+final class OnboardingWindowController: NSObject, NSWindowDelegate {
     private var window: NSWindow?
+    var onWindowClosedByUser: (() -> Void)?
 
     func show(coordinator: OnboardingCoordinator) {
         let contentView = RascAppearanceView { OnboardingView(coordinator: coordinator) }
@@ -26,7 +27,8 @@ final class OnboardingWindowController {
     }
 
     func close() {
-        window?.close()
+        window?.orderOut(nil)
+        window?.contentViewController = nil
         window = nil
     }
 
@@ -34,20 +36,26 @@ final class OnboardingWindowController {
         window?.makeFirstResponder(nil)
     }
 
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        onWindowClosedByUser?()
+        return false
+    }
+
     private func makeWindow() -> NSWindow {
         let window = NSWindow(
             contentRect: NSRect(origin: .zero, size: RascWindowMetrics.onboarding),
-            styleMask: [.titled, .closable, .fullSizeContentView],
+            styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
+        window.delegate = self
         window.title = "Rasc"
         window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
         window.isReleasedWhenClosed = false
         window.isMovableByWindowBackground = true
-        window.minSize = RascWindowMetrics.onboarding
-        window.maxSize = RascWindowMetrics.onboarding
+        window.minSize = NSSize(width: 560, height: 480)
+        window.maxSize = NSSize(width: 820, height: 640)
         window.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
         return window
     }

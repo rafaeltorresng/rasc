@@ -10,6 +10,10 @@ struct OnboardingStore {
     static let refineSkippedKey = "onboardingRefineSkipped"
     static let historyHintDismissedKey = "onboardingHistoryHintDismissed"
     static let homeVisitCountKey = "onboardingHomeVisitCount"
+    static let focusKey = "onboardingFocus"
+    static let resumeCompletedKey = "onboardingResumeCompleted"
+    static let practiceKeptKey = "onboardingPracticeKept"
+    static let voiceOptedInKey = "onboardingVoiceOptedIn"
 
     private let userDefaults: UserDefaults
 
@@ -66,6 +70,34 @@ struct OnboardingStore {
         nonmutating set { userDefaults.set(newValue, forKey: Self.refineSkippedKey) }
     }
 
+    var resumeCompleted: Bool {
+        get { userDefaults.bool(forKey: Self.resumeCompletedKey) }
+        nonmutating set { userDefaults.set(newValue, forKey: Self.resumeCompletedKey) }
+    }
+
+    var practiceKept: Bool {
+        get { userDefaults.bool(forKey: Self.practiceKeptKey) }
+        nonmutating set { userDefaults.set(newValue, forKey: Self.practiceKeptKey) }
+    }
+
+    var voiceOptedIn: Bool {
+        get { userDefaults.bool(forKey: Self.voiceOptedInKey) }
+        nonmutating set { userDefaults.set(newValue, forKey: Self.voiceOptedInKey) }
+    }
+
+    var focus: OnboardingFocus? {
+        get {
+            userDefaults.string(forKey: Self.focusKey).flatMap(OnboardingFocus.init(rawValue:))
+        }
+        nonmutating set {
+            if let newValue {
+                userDefaults.set(newValue.rawValue, forKey: Self.focusKey)
+            } else {
+                userDefaults.removeObject(forKey: Self.focusKey)
+            }
+        }
+    }
+
     var historyHintDismissed: Bool {
         get { userDefaults.bool(forKey: Self.historyHintDismissedKey) }
         nonmutating set { userDefaults.set(newValue, forKey: Self.historyHintDismissedKey) }
@@ -107,6 +139,8 @@ struct OnboardingStore {
         migrationApplied = false
         historyHintDismissed = false
         homeVisitCount = 0
+        focus = nil
+        voiceOptedIn = false
         clearTransientState()
     }
 
@@ -114,6 +148,8 @@ struct OnboardingStore {
         meaningfulTextEntered = false
         refineAttempted = false
         refineSkipped = false
+        resumeCompleted = false
+        practiceKept = false
         captureSubstep = .waitingForShortcut
     }
 

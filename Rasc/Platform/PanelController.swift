@@ -208,6 +208,20 @@ final class PanelController: NSObject, NSWindowDelegate {
         presentPanel()
     }
 
+    func reopenCurrentScratchForOnboarding() async {
+        if !panel.isVisible {
+            do {
+                try await session.restore()
+            } catch {
+                if session.saveErrorMessage == nil {
+                    session.markLoadFailed()
+                }
+            }
+        }
+
+        presentPanel()
+    }
+
     func openCommandPalette() async {
         if !panel.isVisible {
             do {
@@ -233,6 +247,7 @@ final class PanelController: NSObject, NSWindowDelegate {
     func keepActiveNote() async {
         do {
             let outcome = try await session.keepActiveNote()
+            onboardingDelegate?.sessionDidKeepNote()
             if outcome == .keptShouldHide {
                 try? await Task.sleep(for: .milliseconds(450))
                 await hide()
