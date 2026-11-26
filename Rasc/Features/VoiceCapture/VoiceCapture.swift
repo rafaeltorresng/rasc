@@ -103,6 +103,9 @@ final class VoiceCapture: ObservableObject {
     @Published private(set) var phase: Phase = .idle
     @Published private(set) var setup: Setup = .unchecked
     @Published private(set) var shortcutIsActive = false
+    @Published private(set) var modifierShortcut: ModifierShortcut?
+    @Published private(set) var modifierShortcutIsActive = false
+    @Published private(set) var modifierShortcutHasAccess = true
     let inputLevel = VoiceInputLevel()
     @Published private(set) var canRetryAudio = false
     @Published private(set) var awaitingMicrophonePermission = false
@@ -114,6 +117,9 @@ final class VoiceCapture: ObservableObject {
     private let speech: Speech
     private let modelTimeout: Duration
     private let presentWindows: Bool
+    private let modifierStore: ModifierShortcutStore
+    private let accessibilityTrusted: @Sendable () -> Bool
+    private lazy var modifierMonitor = ModifierShortcutMonitor()
     private var repository: NoteRepository?
     private lazy var windows = VoiceCaptureWindows(capture: self)
     private var handlesShortcut = false
@@ -164,7 +170,9 @@ final class VoiceCapture: ObservableObject {
         input: Input = .microphone(),
         presentWindows: Bool = true,
         speech: Speech = .local(),
-        modelTimeout: Duration = .seconds(35)
+        modelTimeout: Duration = .seconds(35),
+        modifierStore: ModifierShortcutStore = .shared,
+        accessibilityTrusted: @escaping @Sendable () -> Bool = { ModifierShortcutAccess.isTrusted }
     ) {
         self.preferences = preferences
         support = supported
@@ -173,6 +181,9 @@ final class VoiceCapture: ObservableObject {
         self.presentWindows = presentWindows
         self.speech = speech
         self.modelTimeout = modelTimeout
+        self.modifierStore = modifierStore
+        self.accessibilityTrusted = accessibilityTrusted
+        modifierShortcut = modifierStore.shortcut
     }
 
     func connect(repository: NoteRepository) {
@@ -183,9 +194,11 @@ final class VoiceCapture: ObservableObject {
         if !enabled { KeyboardShortcuts.disable(.voiceCapture) }
         KeyboardShortcuts.onKeyDown(for: .voiceCapture) { [weak self] in
             Self.logger.debug("Global Voice Capture shortcut received")
+            self?.noteExternalChordInput()
             self?.activate(fromShortcut: true)
         }
         refreshShortcut()
+        refreshModifierShortcut()
     }
 
     func setEnabled(_ value: Bool) {
@@ -209,12 +222,54 @@ final class VoiceCapture: ObservableObject {
             wakeObserver = nil
             pressure?.cancel()
             pressure = nil
+            modifierMonitor.stop()
+            modifierShortcutIsActive = false
             Task { if !enabled { await speech.release() } }
             cancel()
         }
     }
 
+    /// Assign (or clear) the modifier-only global trigger. Kept independent of
+    /// the `KeyboardShortcuts` chord binding; a user can use either or both.
+    func setModifierShortcut(_ shortcut: ModifierShortcut?) {
+        modifierStore.set(shortcut)
+        modifierShortcut = modifierStore.shortcut
+        refreshModifierShortcut()
+    }
+
+    func refreshModifierShortcut() {
+        modifierShortcut = modifierStore.shortcut
+        let hadAccess = modifierShortcutHasAccess
+        let hasAccess = accessibilityTrusted()
+        modifierShortcutHasAccess = hasAccess
+        guard support, presentWindows else { return }
+        guard enabled, let shortcut = modifierStore.shortcut else {
+            modifierMonitor.stop()
+            modifierShortcutIsActive = false
+            return
+        }
+        if hasAccess, !hadAccess { modifierMonitor.stop() }
+        modifierMonitor.start(shortcut: shortcut) { [weak self] in
+            self?.activate(fromShortcut: true)
+        }
+        modifierShortcutIsActive = modifierMonitor.isRunning
+    }
+
+    /// Suppress modifier triggering while a settings recorder is capturing a key.
+    func setModifierShortcutRecording(_ recording: Bool) {
+        modifierMonitor.isSuspended = recording
+    }
+
+    func resetModifierShortcutState() {
+        modifierMonitor.reset()
+    }
+
+    func noteExternalChordInput() {
+        modifierMonitor.noteOtherKeyDown()
+    }
+
     func refreshShortcut() {
+        refreshModifierShortcut()
         guard handlesShortcut else { return }
         if enabled {
             KeyboardShortcuts.enable(.voiceCapture)
@@ -229,7 +284,10 @@ final class VoiceCapture: ObservableObject {
         guard enabled, shortcutIsActive,
               let shortcut = KeyboardShortcuts.getShortcut(for: .voiceCapture),
               KeyboardShortcuts.Shortcut(event: event) == shortcut else { return false }
-        if !event.isARepeat { activate(fromShortcut: true) }
+        if !event.isARepeat {
+            noteExternalChordInput()
+            activate(fromShortcut: true)
+        }
         return true
     }
 
@@ -714,6 +772,7 @@ final class VoiceCapture: ObservableObject {
     }
 
     func cancel() {
+        modifierMonitor.reset()
         switch phase {
         case .checking, .starting, .listening, .finishing, .waitingForModel, .transcribing:
             let owner = id
@@ -745,6 +804,7 @@ final class VoiceCapture: ObservableObject {
     }
 
     private func dismiss() {
+        modifierMonitor.reset()
         resetInput()
         id = nil
         activatedAt = nil

@@ -158,6 +158,8 @@
 		EE0000000000000000000002 /* NoteExportFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0000000000000000000002 /* NoteExportFiles.swift */; };
 		EE0000000000000000000003 /* NoteExportController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0000000000000000000003 /* NoteExportController.swift */; };
 		EE0000000000000000000004 /* NoteExportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0000000000000000000004 /* NoteExportTests.swift */; };
+		0B00000000000000000000A2 /* ModifierShortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B00000000000000000000A1 /* ModifierShortcut.swift */; };
+		0B00000000000000000000A4 /* ModifierShortcutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B00000000000000000000A3 /* ModifierShortcutTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -344,6 +346,8 @@
 		EF0000000000000000000002 /* NoteExportFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/NoteExportFiles.swift; sourceTree = SOURCE_ROOT; };
 		EF0000000000000000000003 /* NoteExportController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/NoteExportController.swift; sourceTree = SOURCE_ROOT; };
 		EF0000000000000000000004 /* NoteExportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteExportTests.swift; sourceTree = "<group>"; };
+		0B00000000000000000000A1 /* ModifierShortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/ModifierShortcut.swift; sourceTree = SOURCE_ROOT; };
+		0B00000000000000000000A3 /* ModifierShortcutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifierShortcutTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -455,6 +459,7 @@
 				020000000000000000000030 /* OnboardingWindowController.swift */,
 				020000000000000000000031 /* OnboardingScratchpadOverlay.swift */,
 				020000000000000000000032 /* GlobalShortcutFormatting.swift */,
+				0B00000000000000000000A1 /* ModifierShortcut.swift */,
 				020000000000000000000033 /* RascOrb.swift */,
 				020000000000000000000037 /* RascMotion.swift */,
 				02000000000000000000003C /* RascSurfaceShell.swift */,
@@ -529,6 +534,7 @@
 				020000000000000000000096 /* HomeViewModeTests.swift */,
 				020000000000000000000099 /* RefinePreviewModeTests.swift */,
 				020000000000000000000098 /* HomeSnapshotTests.swift */,
+				0B00000000000000000000A3 /* ModifierShortcutTests.swift */,
 				02000000000000000000004B /* SettingsWindowPresentationTests.swift */,
 				02000000000000000000004D /* BetaFeedbackTests.swift */,
 				020000000000000000000058 /* RefineReliabilityTests.swift */,
@@ -756,6 +762,7 @@
 				010000000000000000000030 /* OnboardingWindowController.swift in Sources */,
 				010000000000000000000031 /* OnboardingScratchpadOverlay.swift in Sources */,
 				010000000000000000000032 /* GlobalShortcutFormatting.swift in Sources */,
+				0B00000000000000000000A2 /* ModifierShortcut.swift in Sources */,
 				010000000000000000000033 /* RascOrb.swift in Sources */,
 				010000000000000000000037 /* RascMotion.swift in Sources */,
 				01000000000000000000003D /* RascSurfaceShell.swift in Sources */,
@@ -841,6 +848,7 @@
 				010000000000000000000096 /* HomeViewModeTests.swift in Sources */,
 				010000000000000000000099 /* RefinePreviewModeTests.swift in Sources */,
 				010000000000000000000098 /* HomeSnapshotTests.swift in Sources */,
+				0B00000000000000000000A4 /* ModifierShortcutTests.swift in Sources */,
 				01000000000000000000007B /* AppReliabilityLifecycleTests.swift in Sources */,
 				01000000000000000000007C /* AppReliabilityScaleTests.swift in Sources */,
 				01000000000000000000007F /* ThoughtCompletionTests.swift in Sources */,

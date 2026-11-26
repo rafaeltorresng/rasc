@@ -13,8 +13,29 @@ enum GlobalShortcutFormatting {
     }
 
     static func currentVoiceShortcutDisplay() -> String {
-        guard VoiceCapture.shared.shortcutIsActive else { return "" }
-        return KeyboardShortcuts.getShortcut(for: .voiceCapture)?.description ?? ""
+        let chord = KeyboardShortcuts.getShortcut(for: .voiceCapture)?.description
+        return voiceShortcutDisplay(
+            modifier: VoiceCapture.shared.modifierShortcut,
+            modifierActive: VoiceCapture.shared.modifierShortcutIsActive,
+            chord: chord,
+            chordActive: VoiceCapture.shared.shortcutIsActive
+        )
+    }
+
+    static func voiceShortcutDisplay(
+        modifier: ModifierShortcut?,
+        modifierActive: Bool,
+        chord: String?,
+        chordActive: Bool
+    ) -> String {
+        var parts: [String] = []
+        if let modifier, modifierActive {
+            parts.append(modifier.displayString)
+        }
+        if chordActive, let chord, !chord.isEmpty {
+            parts.append(chord)
+        }
+        return parts.joined(separator: " or ")
     }
 
     static func hasValidToggleShortcut() -> Bool {
@@ -168,9 +189,13 @@ private struct GlobalShortcutChangeObserver: ViewModifier {
     let action: () -> Void
 
     func body(content: Content) -> some View {
-        content.onReceive(NotificationCenter.default.publisher(for: GlobalShortcutChange.notification)) { _ in
-            action()
-        }
+        content
+            .onReceive(NotificationCenter.default.publisher(for: GlobalShortcutChange.notification)) { _ in
+                action()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: ModifierShortcutStore.didChange)) { _ in
+                action()
+            }
     }
 }
 

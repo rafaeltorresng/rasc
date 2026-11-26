@@ -260,6 +260,7 @@ struct VoiceCaptureSettings: View {
                     if KeyboardShortcuts.getShortcut(for: .voiceCapture) != nil, !capture.shortcutIsActive {
                         detail("This shortcut is unavailable. Choose a different shortcut or start recording here.")
                     }
+                    ModifierShortcutRecorder(capture: capture)
                     recordingActions
                 }
                 detail("Speak a thought and continue in Scratchpad. Transcription stays on this Mac.")
@@ -404,5 +405,92 @@ struct VoiceCaptureSettings: View {
         } else {
             panel.begin(completionHandler: selected)
         }
+    }
+}
+
+/// Optional modifier-only trigger. Independent of the `KeyboardShortcuts`
+/// chord recorder; a user may use either or both. Modifier taps are only
+/// recognized when pressed and released in isolation, never as part of a chord.
+struct ModifierShortcutRecorder: View {
+    @ObservedObject var capture: VoiceCapture
+    @Environment(\.rascPalette) private var palette
+    @Environment(\.colorScheme) private var scheme
+    @StateObject private var recorder = ModifierShortcutRecorderModel()
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Modifier-only trigger")
+                    detail("Tap a modifier key on its own to start and finish. Chords and held keys are ignored.")
+                }
+                Spacer(minLength: 8)
+                if let shortcut = capture.modifierShortcut {
+                    ShortcutKeycapView(label: shortcut.displayString, style: .compact)
+                        .accessibilityLabel("\(shortcut.displayName) assigned")
+                } else {
+                    Text("Off")
+                        .font(.caption)
+                        .foregroundStyle(palette.secondaryText(for: scheme))
+                }
+                if recorder.isRecording {
+                    Button("Cancel") { cancelRecording() }
+                        .accessibilityLabel("Cancel modifier shortcut recording")
+                } else {
+                    Button("Record…") { startRecording() }
+                        .accessibilityLabel("Record a modifier-only shortcut")
+                }
+                if capture.modifierShortcut != nil, !recorder.isRecording {
+                    Button("Clear") { clearShortcut() }
+                        .accessibilityLabel("Clear modifier-only shortcut")
+                }
+            }
+            if recorder.isRecording {
+                detail("Tap one modifier key (Option, Control, Shift, or Command), or press Esc to cancel.")
+            }
+            if let shortcut = capture.modifierShortcut {
+                if !capture.modifierShortcutIsActive {
+                    detail("This modifier trigger is not currently monitored.")
+                } else if !capture.modifierShortcutHasAccess {
+                    VStack(alignment: .leading, spacing: 6) {
+                        detail("Tapping \(shortcut.displayName) inside Rasc works. To use it in other apps, allow Rasc in Accessibility.")
+                        HStack(spacing: 8) {
+                            Button("Allow Rasc…") {
+                                ModifierShortcutAccess.request()
+                                capture.refreshModifierShortcut()
+                            }
+                            Button("Open Accessibility Settings…") { ModifierShortcutAccess.openSettings() }
+                        }
+                    }
+                }
+            }
+        }
+        .font(.callout)
+        .accessibilityElement(children: .contain)
+        .onDisappear { cancelRecording() }
+    }
+
+    private func startRecording() {
+        capture.setModifierShortcutRecording(true)
+        recorder.begin { [weak capture] shortcut in
+            capture?.setModifierShortcut(shortcut)
+            capture?.setModifierShortcutRecording(false)
+        }
+    }
+
+    private func cancelRecording() {
+        recorder.cancel()
+        capture.setModifierShortcutRecording(false)
+    }
+
+    private func clearShortcut() {
+        capture.setModifierShortcut(nil)
+    }
+
+    private func detail(_ text: String) -> some View {
+        Text(text)
+            .font(.caption)
+            .foregroundStyle(palette.secondaryText(for: scheme))
+            .fixedSize(horizontal: false, vertical: true)
     }
 }
