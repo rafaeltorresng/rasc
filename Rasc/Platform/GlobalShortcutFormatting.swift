@@ -13,8 +13,14 @@ enum GlobalShortcutFormatting {
     }
 
     static func currentVoiceShortcutDisplay() -> String {
-        guard VoiceCapture.shared.shortcutIsActive else { return "" }
-        return KeyboardShortcuts.getShortcut(for: .voiceCapture)?.description ?? ""
+        var parts: [String] = []
+        if let modifier = VoiceCapture.shared.modifierShortcut, VoiceCapture.shared.modifierShortcutIsActive {
+            parts.append(modifier.displayString)
+        }
+        if VoiceCapture.shared.shortcutIsActive, let chord = KeyboardShortcuts.getShortcut(for: .voiceCapture)?.description, !chord.isEmpty {
+            parts.append(chord)
+        }
+        return parts.joined(separator: " or ")
     }
 
     static func hasValidToggleShortcut() -> Bool {
