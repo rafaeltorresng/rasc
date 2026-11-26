@@ -36,14 +36,14 @@ enum VoiceCaptureOutput: String, CaseIterable, Codable, Sendable, Identifiable {
 /// Direct text insertion into another application through the Accessibility API.
 /// Never activates or steals focus; never posts synthetic keystrokes.
 enum VoiceTextInsertion {
-    enum Result: Equatable {
+    enum Result: Equatable, Sendable {
         /// The app accepted an AXSelectedText insertion at the cursor.
         case inserted
         /// Text was placed on the clipboard instead.
         case copiedToClipboard(Reason)
     }
 
-    enum Reason: Equatable {
+    enum Reason: Equatable, Sendable {
         case noAccessibilityPermission
         case noTargetApplication
         case noFocusedTextField
@@ -60,12 +60,13 @@ enum VoiceTextInsertion {
     static func insert(
         _ text: String,
         target: NSRunningApplication?,
-        pasteboard: NSPasteboard = .general
+        pasteboard: NSPasteboard = .general,
+        isTrusted: @Sendable () -> Bool = { AXIsProcessTrusted() }
     ) -> Result {
         guard !text.isEmpty else {
             return .copiedToClipboard(.emptyText)
         }
-        guard AXIsProcessTrusted() else {
+        guard isTrusted() else {
             copy(text, to: pasteboard)
             return .copiedToClipboard(.noAccessibilityPermission)
         }

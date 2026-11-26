@@ -167,11 +167,12 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         default: capture.enabled ? "Start Voice Capture" : "Voice Capture…"
         }
         voiceItems[0].isEnabled = switch phase {
-        case .idle, .listening, .ready, .issue: true
+        case .idle, .listening, .ready, .copied, .inserted, .copiedFallback, .issue: true
         default: false
         }
+        voiceItems[1].title = phase == .copiedFallback ? "Dismiss Voice Capture" : "Cancel Voice Capture"
         voiceItems[1].isHidden = switch phase {
-        case .checking, .starting, .listening, .finishing, .transcribing, .waitingForModel, .issue: false
+        case .checking, .starting, .listening, .finishing, .transcribing, .waitingForModel, .copiedFallback, .issue: false
         default: true
         }
     }

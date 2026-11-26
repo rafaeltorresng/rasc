@@ -106,6 +106,7 @@ final class VoiceCapture: ObservableObject {
     @Published private(set) var phase: Phase = .idle
     @Published private(set) var setup: Setup = .unchecked
     @Published private(set) var shortcutIsActive = false
+    @Published private(set) var modifierShortcut: ModifierShortcut?
     @Published private(set) var modifierShortcutIsActive = false
     @Published private(set) var modifierShortcutHasAccess = true
     @Published private(set) var output: VoiceCaptureOutput
@@ -122,7 +123,9 @@ final class VoiceCapture: ObservableObject {
     private let modelTimeout: Duration
     private let presentWindows: Bool
     private let modifierStore: ModifierShortcutStore
+    private let accessibilityTrusted: @Sendable () -> Bool
     private let pasteboard: NSPasteboard
+    private let insertText: @MainActor @Sendable (String, NSRunningApplication?, NSPasteboard) -> VoiceTextInsertion.Result
     private lazy var modifierMonitor = ModifierShortcutMonitor()
     private var repository: NoteRepository?
     private lazy var windows = VoiceCaptureWindows(capture: self)
@@ -148,6 +151,7 @@ final class VoiceCapture: ObservableObject {
     private var captureWasInterrupted = false
     private var targetApplication: NSRunningApplication?
     private var deliveryDismissTask: Task<Void, Never>?
+    private var standaloneHistoryTask: Task<Void, Never>?
     private var lastActivation: ContinuousClock.Instant?
     private var activatedAt: ContinuousClock.Instant?
 
@@ -158,10 +162,6 @@ final class VoiceCapture: ObservableObject {
     var canChangeEnabled: Bool {
         setup != .importing && phase != .saving && phase != .opening && pendingTranscript == nil
     }
-
-    /// The configured modifier-only trigger, if any. Independent of the
-    /// `KeyboardShortcuts` chord binding for `.voiceCapture`.
-    var modifierShortcut: ModifierShortcut? { modifierStore.shortcut }
 
     var hasUnsavedAudio: Bool {
         phase == .listening || phase == .finishing || retryAudio != nil
@@ -182,7 +182,11 @@ final class VoiceCapture: ObservableObject {
         speech: Speech = .local(),
         modelTimeout: Duration = .seconds(35),
         modifierStore: ModifierShortcutStore = .shared,
-        pasteboard: NSPasteboard = .general
+        accessibilityTrusted: @escaping @Sendable () -> Bool = { ModifierShortcutAccess.isTrusted },
+        pasteboard: NSPasteboard = .general,
+        insertText: @escaping @MainActor @Sendable (String, NSRunningApplication?, NSPasteboard) -> VoiceTextInsertion.Result = {
+            VoiceTextInsertion.insert($0, target: $1, pasteboard: $2)
+        }
     ) {
         self.preferences = preferences
         support = supported
@@ -192,7 +196,11 @@ final class VoiceCapture: ObservableObject {
         self.speech = speech
         self.modelTimeout = modelTimeout
         self.modifierStore = modifierStore
+        self.accessibilityTrusted = accessibilityTrusted
         self.pasteboard = pasteboard
+        self.insertText = insertText
+        modifierShortcut = modifierStore.shortcut
+        modifierShortcutHasAccess = accessibilityTrusted()
         output = VoiceCaptureOutput(rawValue: preferences.string(forKey: Self.outputPreferenceKey) ?? "") ?? .scratchpad
         standaloneKeepsHistory = preferences.bool(forKey: Self.standaloneHistoryPreferenceKey)
     }
@@ -205,6 +213,7 @@ final class VoiceCapture: ObservableObject {
         if !enabled { KeyboardShortcuts.disable(.voiceCapture) }
         KeyboardShortcuts.onKeyDown(for: .voiceCapture) { [weak self] in
             Self.logger.debug("Global Voice Capture shortcut received")
+            self?.noteExternalChordInput()
             self?.activate(fromShortcut: true)
         }
         refreshShortcut()
@@ -243,14 +252,16 @@ final class VoiceCapture: ObservableObject {
     /// the `KeyboardShortcuts` chord binding; a user can use either or both.
     func setModifierShortcut(_ shortcut: ModifierShortcut?) {
         modifierStore.set(shortcut)
+        modifierShortcut = modifierStore.shortcut
         refreshModifierShortcut()
     }
 
     func refreshModifierShortcut() {
-        guard support, presentWindows else { return }
+        modifierShortcut = modifierStore.shortcut
         let hadAccess = modifierShortcutHasAccess
-        let hasAccess = ModifierShortcutAccess.isTrusted
+        let hasAccess = accessibilityTrusted()
         modifierShortcutHasAccess = hasAccess
+        guard support, presentWindows else { return }
         guard enabled, let shortcut = modifierStore.shortcut else {
             modifierMonitor.stop()
             modifierShortcutIsActive = false
@@ -285,15 +296,24 @@ final class VoiceCapture: ObservableObject {
 
     /// True when Accessibility is required for the current output mode.
     var outputNeedsAccessibility: Bool {
-        output == .insertAtCursor && !ModifierShortcutAccess.isTrusted
+        output == .insertAtCursor && !modifierShortcutHasAccess
     }
 
     func requestAccessibilityForInsertion() {
         ModifierShortcutAccess.request()
+        refreshModifierShortcut()
     }
 
     func openAccessibilitySettings() {
         ModifierShortcutAccess.openSettings()
+    }
+
+    func resetModifierShortcutState() {
+        modifierMonitor.reset()
+    }
+
+    func noteExternalChordInput() {
+        modifierMonitor.noteOtherKeyDown()
     }
 
     func refreshShortcut() {
@@ -312,7 +332,10 @@ final class VoiceCapture: ObservableObject {
         guard enabled, shortcutIsActive,
               let shortcut = KeyboardShortcuts.getShortcut(for: .voiceCapture),
               KeyboardShortcuts.Shortcut(event: event) == shortcut else { return false }
-        if !event.isARepeat { activate(fromShortcut: true) }
+        if !event.isARepeat {
+            noteExternalChordInput()
+            activate(fromShortcut: true)
+        }
         return true
     }
 
@@ -529,6 +552,9 @@ final class VoiceCapture: ObservableObject {
         case .ready:
             transition(.opening)
             operation = Task { await openSavedScratch() }
+        case .copied, .inserted, .copiedFallback:
+            dismiss()
+            begin()
         default:
             break
         }
@@ -545,6 +571,7 @@ final class VoiceCapture: ObservableObject {
             return
         }
         activatedAt = .now
+        targetApplication = NSWorkspace.shared.frontmostApplication.flatMap { $0 == .current ? nil : $0 }
         transition(.checking)
         if presentWindows { windows.showStatus() }
         observeResources()
@@ -581,7 +608,9 @@ final class VoiceCapture: ObservableObject {
             transition(.starting)
             // Remember where dictation started. Focus is never stolen; insertion
             // follows the app that is frontmost at finish, falling back to this.
-            targetApplication = NSWorkspace.shared.frontmostApplication.flatMap { $0 == .current ? nil : $0 }
+            if let frontmost = NSWorkspace.shared.frontmostApplication, frontmost != .current {
+                targetApplication = frontmost
+            }
             let input = self.input
             do {
                 let audio = try await input.start(token) { [weak self] in
@@ -769,15 +798,14 @@ final class VoiceCapture: ObservableObject {
             await saveAndOpenScratch()
         case .clipboard:
             pendingTranscript = nil
-            await saveStandaloneIfNeeded(text)
             VoiceTextInsertion.copy(text, to: pasteboard)
             transition(.copied)
             scheduleDeliveryDismiss(.copied, after: .milliseconds(1400))
+            enqueueStandaloneHistoryIfNeeded(text)
         case .insertAtCursor:
             pendingTranscript = nil
-            await saveStandaloneIfNeeded(text)
             let app = currentTargetApplication()
-            let result = VoiceTextInsertion.insert(text, target: app, pasteboard: pasteboard)
+            let result = insertText(text, app, pasteboard)
             switch result {
             case .inserted:
                 transition(.inserted)
@@ -786,18 +814,23 @@ final class VoiceCapture: ObservableObject {
                 // Honest fallback: text is on the clipboard, keep the capsule up.
                 transition(.copiedFallback)
             }
+            enqueueStandaloneHistoryIfNeeded(text)
         }
     }
 
     /// Saves a copy in Rasc's local store only when the user asked for standalone history.
-    private func saveStandaloneIfNeeded(_ text: String) async {
+    private func enqueueStandaloneHistoryIfNeeded(_ text: String) {
         guard standaloneKeepsHistory, let repository else { return }
-        do {
-            _ = try await repository.createScratch(content: text)
-            onNotesChanged?()
-        } catch {
-            // Standalone history must never block delivery of the transcript.
-            Self.logger.error("Standalone history save failed")
+        let previous = standaloneHistoryTask
+        standaloneHistoryTask = Task { [weak self] in
+            await previous?.value
+            do {
+                _ = try await repository.createScratch(content: text)
+                self?.onNotesChanged?()
+            } catch {
+                // Standalone history must never block delivery of the transcript.
+                Self.logger.error("Standalone history save failed")
+            }
         }
     }
 
@@ -840,6 +873,7 @@ final class VoiceCapture: ObservableObject {
     }
 
     func flushForTermination() async -> Bool {
+        await standaloneHistoryTask?.value
         if phase == .copied || phase == .inserted || phase == .copiedFallback { return true }
         if phase == .saving || phase == .opening {
             await operation?.value
@@ -856,6 +890,7 @@ final class VoiceCapture: ObservableObject {
     }
 
     func cancel() {
+        modifierMonitor.reset()
         switch phase {
         case .checking, .starting, .listening, .finishing, .waitingForModel, .transcribing:
             let owner = id
@@ -890,6 +925,7 @@ final class VoiceCapture: ObservableObject {
         deliveryDismissTask?.cancel()
         deliveryDismissTask = nil
         targetApplication = nil
+        modifierMonitor.reset()
         resetInput()
         id = nil
         activatedAt = nil

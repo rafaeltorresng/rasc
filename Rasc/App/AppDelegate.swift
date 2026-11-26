@@ -112,6 +112,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
             #endif
         }
 
+        KeyboardShortcuts.onKeyDown(for: .toggleScratchpad) {
+            VoiceCapture.shared.noteExternalChordInput()
+        }
         KeyboardShortcuts.onKeyUp(for: .toggleScratchpad) { [weak self] in
             Task { @MainActor in
                 guard let self else { return }
@@ -126,6 +129,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
             }
         }
 
+        KeyboardShortcuts.onKeyDown(for: .toggleHome) {
+            VoiceCapture.shared.noteExternalChordInput()
+        }
         KeyboardShortcuts.onKeyUp(for: .toggleHome) { [weak self] in
             Task { @MainActor in
                 await self?.bootstrap.toggleHome()

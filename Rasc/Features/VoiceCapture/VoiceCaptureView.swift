@@ -161,7 +161,7 @@ struct VoiceStatusView: View {
         case .ready: "Thought saved"
         case .copied: "Copied"
         case .inserted: "Inserted"
-        case .copiedFallback: "Copied - press Command V"
+        case .copiedFallback: "Copied — press ⌘V"
         case .saving: "Saving thought…"
         case .opening: "Opening Scratchpad…"
         case .issue(.permission): "Microphone access needed"
@@ -274,7 +274,7 @@ struct VoiceCaptureSettings: View {
                     VoiceCaptureOutputSettings(capture: capture)
                     recordingActions
                 }
-                detail("Speak a thought and continue in Scratchpad. Transcription stays on this Mac.")
+                detail("Transcription stays on this Mac. Audio stays in memory and is never sent off-device.")
             } else {
                 detail("Voice Capture requires an Apple silicon Mac with macOS 26 or later.")
             }
@@ -463,7 +463,7 @@ struct ModifierShortcutRecorder: View {
                 }
             }
             if recorder.isRecording {
-                detail("Press one modifier key: Option, Control, Shift, or Command.")
+                detail("Tap one modifier key (Option, Control, Shift, or Command), or press Esc to cancel.")
             }
             if let shortcut = capture.modifierShortcut {
                 if !capture.modifierShortcutIsActive {
@@ -471,8 +471,13 @@ struct ModifierShortcutRecorder: View {
                 } else if !capture.modifierShortcutHasAccess {
                     VStack(alignment: .leading, spacing: 6) {
                         detail("Tapping \(shortcut.displayName) inside Rasc works. To use it in other apps, allow Rasc in Accessibility.")
-                        Button("Open Accessibility Settings…") { ModifierShortcutAccess.openSettings() }
-                        Button("Allow Rasc…") { ModifierShortcutAccess.request() }
+                        HStack(spacing: 8) {
+                            Button("Allow Rasc…") {
+                                ModifierShortcutAccess.request()
+                                capture.refreshModifierShortcut()
+                            }
+                            Button("Open Accessibility Settings…") { ModifierShortcutAccess.openSettings() }
+                        }
                     }
                 }
             }
@@ -539,16 +544,20 @@ struct VoiceCaptureOutputSettings: View {
                 detail("Keeps a local copy of each transcript as an unfinished thought. Off by default.")
             }
 
-            if capture.output == .insertAtCursor {
-                if !ModifierShortcutAccess.isTrusted {
+            if capture.outputNeedsAccessibility {
+                if capture.modifierShortcut != nil, capture.modifierShortcutIsActive {
+                    detail("Direct insertion also needs Accessibility access (use the buttons above). Without it, Rasc copies to the clipboard instead.")
+                } else {
                     VStack(alignment: .leading, spacing: 6) {
                         detail("Direct insertion needs Accessibility access. Without it, Rasc copies to the clipboard instead.")
-                        Button("Open Accessibility Settings…") { capture.openAccessibilitySettings() }
-                        Button("Allow Rasc…") { capture.requestAccessibilityForInsertion() }
+                        HStack(spacing: 8) {
+                            Button("Allow Rasc…") { capture.requestAccessibilityForInsertion() }
+                            Button("Open Accessibility Settings…") { capture.openAccessibilitySettings() }
+                        }
                     }
-                } else {
-                    detail("Accessibility access is on. Rasc never steals focus; it inserts into the app you're using.")
                 }
+            } else if capture.output == .insertAtCursor {
+                detail("Accessibility access is on. Rasc never steals focus; it inserts into the app you're using.")
             }
         }
         .font(.callout)
