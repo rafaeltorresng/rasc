@@ -160,6 +160,7 @@
 		EE0000000000000000000004 /* NoteExportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0000000000000000000004 /* NoteExportTests.swift */; };
 		0B00000000000000000000A2 /* ModifierShortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B00000000000000000000A1 /* ModifierShortcut.swift */; };
 		0B00000000000000000000A4 /* ModifierShortcutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B00000000000000000000A3 /* ModifierShortcutTests.swift */; };
+		0B00000000000000000000B2 /* VoiceTextInsertion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B00000000000000000000B1 /* VoiceTextInsertion.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -348,6 +349,7 @@
 		EF0000000000000000000004 /* NoteExportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteExportTests.swift; sourceTree = "<group>"; };
 		0B00000000000000000000A1 /* ModifierShortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/ModifierShortcut.swift; sourceTree = SOURCE_ROOT; };
 		0B00000000000000000000A3 /* ModifierShortcutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifierShortcutTests.swift; sourceTree = "<group>"; };
+		0B00000000000000000000B1 /* VoiceTextInsertion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Platform/VoiceTextInsertion.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -460,6 +462,7 @@
 				020000000000000000000031 /* OnboardingScratchpadOverlay.swift */,
 				020000000000000000000032 /* GlobalShortcutFormatting.swift */,
 				0B00000000000000000000A1 /* ModifierShortcut.swift */,
+				0B00000000000000000000B1 /* VoiceTextInsertion.swift */,
 				020000000000000000000033 /* RascOrb.swift */,
 				020000000000000000000037 /* RascMotion.swift */,
 				02000000000000000000003C /* RascSurfaceShell.swift */,
@@ -763,6 +766,7 @@
 				010000000000000000000031 /* OnboardingScratchpadOverlay.swift in Sources */,
 				010000000000000000000032 /* GlobalShortcutFormatting.swift in Sources */,
 				0B00000000000000000000A2 /* ModifierShortcut.swift in Sources */,
+				0B00000000000000000000B2 /* VoiceTextInsertion.swift in Sources */,
 				010000000000000000000033 /* RascOrb.swift in Sources */,
 				010000000000000000000037 /* RascMotion.swift in Sources */,
 				01000000000000000000003D /* RascSurfaceShell.swift in Sources */,

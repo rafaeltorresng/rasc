@@ -11,6 +11,73 @@ import Testing
 @MainActor
 @Suite(.serialized)
 struct VoiceCaptureTests {
+    @Test func outputPreferenceDefaultsToScratchpadAndPersists() throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let capture = fixture.capture(enabled: false)
+        #expect(capture.output == .scratchpad)
+        #expect(!capture.standaloneKeepsHistory)
+        capture.setOutput(.insertAtCursor)
+        #expect(capture.output == .insertAtCursor)
+        capture.setOutput(.clipboard)
+        #expect(capture.output == .clipboard)
+        #expect(fixture.defaults.string(forKey: VoiceCapture.outputPreferenceKey) == "clipboard")
+        capture.setStandaloneKeepsHistory(true)
+        #expect(capture.standaloneKeepsHistory)
+        #expect(fixture.defaults.bool(forKey: VoiceCapture.standaloneHistoryPreferenceKey))
+    }
+
+    @Test func clipboardModeCopiesTranscriptWithoutSavingNoteOrOpeningScratch() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let capture = fixture.capture(presentWindows: false, pasteboard: pasteboard)
+        capture.setOutput(.clipboard)
+        var openedScratch = false
+        capture.onOpenScratch = { _, _ in openedScratch = true; return true }
+        capture.activate()
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .copied }
+        #expect(pasteboard.string(forType: .string) == "Talvez não fazer o deploy ainda.")
+        #expect(!openedScratch)
+        #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
+    }
+
+    @Test func clipboardModeSavesStandaloneHistoryOnlyWhenEnabled() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let capture = fixture.capture(presentWindows: false, pasteboard: pasteboard)
+        capture.setOutput(.clipboard)
+        capture.setStandaloneKeepsHistory(true)
+        capture.activate()
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .copied }
+        let notes = try await fixture.repository.fetchAllNonDeleted()
+        #expect(notes.map(\.content) == ["Talvez não fazer o deploy ainda."])
+        #expect(!notes[0].isKept)
+    }
+
+    @Test func insertModeFallsBackToClipboardWhenInsertionUnavailable() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let capture = fixture.capture(presentWindows: false, pasteboard: pasteboard)
+        capture.setOutput(.insertAtCursor)
+        capture.activate()
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        // No accessible target application in tests; must fall back cleanly.
+        try await wait { capture.phase == .copiedFallback }
+        #expect(pasteboard.string(forType: .string) == "Talvez não fazer o deploy ainda.")
+        #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
+    }
+
     @Test func assignedShortcutRegistersOnlyWhileVoiceCaptureIsEnabled() throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
@@ -725,6 +792,7 @@ struct VoiceCaptureTests {
             presentWindows: Bool = false,
             speech: VoiceCapture.Speech? = nil,
             modelTimeout: Duration = .seconds(35),
+            pasteboard: NSPasteboard = .general,
             decode: @escaping @Sendable (VoiceAudio) async throws -> String = { _ in "Talvez não fazer o deploy ainda." }
         ) -> VoiceCapture {
             defaults.set(enabled, forKey: VoiceCapture.preferenceKey)
@@ -741,7 +809,8 @@ struct VoiceCaptureTests {
                     await ready()
                     return try await decode(audio)
                 }, release: {}),
-                modelTimeout: modelTimeout
+                modelTimeout: modelTimeout,
+                pasteboard: pasteboard
             )
             capture.connect(repository: repository)
             return capture
