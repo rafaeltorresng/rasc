@@ -11,6 +11,158 @@ import Testing
 @MainActor
 @Suite(.serialized)
 struct VoiceCaptureTests {
+    @Test func outputPreferenceDefaultsToScratchpadAndPersists() throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let capture = fixture.capture(enabled: false)
+        #expect(capture.output == .scratchpad)
+        #expect(!capture.standaloneKeepsHistory)
+        capture.setOutput(.insertAtCursor)
+        #expect(capture.output == .insertAtCursor)
+        capture.setOutput(.clipboard)
+        #expect(capture.output == .clipboard)
+        #expect(fixture.defaults.string(forKey: VoiceCapture.outputPreferenceKey) == "clipboard")
+        capture.setStandaloneKeepsHistory(true)
+        #expect(capture.standaloneKeepsHistory)
+        #expect(fixture.defaults.bool(forKey: VoiceCapture.standaloneHistoryPreferenceKey))
+    }
+
+    @Test func clipboardModeCopiesTranscriptWithoutSavingNoteOrOpeningScratch() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let capture = fixture.capture(presentWindows: false, pasteboard: pasteboard)
+        capture.setOutput(.clipboard)
+        var openedScratch = false
+        capture.onOpenScratch = { _, _ in openedScratch = true; return true }
+        capture.activate()
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .copied }
+        #expect(pasteboard.string(forType: .string) == "Talvez não fazer o deploy ainda.")
+        #expect(!openedScratch)
+        #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
+    }
+
+    @Test func clipboardModeSavesStandaloneHistoryOnlyWhenEnabled() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let capture = fixture.capture(presentWindows: false, pasteboard: pasteboard)
+        capture.setOutput(.clipboard)
+        capture.setStandaloneKeepsHistory(true)
+        capture.activate()
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .copied }
+        #expect(pasteboard.string(forType: .string) == "Talvez não fazer o deploy ainda.")
+        #expect(await capture.flushForTermination())
+        let notes = try await fixture.repository.fetchAllNonDeleted()
+        #expect(notes.map(\.content) == ["Talvez não fazer o deploy ainda."])
+        #expect(!notes[0].isKept)
+    }
+
+    @Test func insertModeFallsBackToClipboardWhenInsertionUnavailable() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let capture = fixture.capture(presentWindows: false, pasteboard: pasteboard)
+        capture.setOutput(.insertAtCursor)
+        capture.activate()
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        // No accessible target application in tests; must fall back cleanly.
+        try await wait { capture.phase == .copiedFallback }
+        #expect(pasteboard.string(forType: .string) == "Talvez não fazer o deploy ainda.")
+        #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
+        capture.cancel()
+        try await wait { capture.phase == .idle }
+    }
+
+    @Test func insertModeTransitionsToInsertedAndAllowsImmediateRestart() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let capture = fixture.capture(
+            presentWindows: false,
+            pasteboard: pasteboard,
+            insertResult: .inserted
+        )
+        capture.setOutput(.insertAtCursor)
+        capture.activate()
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .inserted }
+        #expect(pasteboard.string(forType: .string) == nil)
+        #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
+
+        capture.activate()
+        try await wait { capture.phase == .listening }
+        capture.cancel()
+        try await wait { capture.phase == .idle }
+    }
+
+    @Test func flushForTerminationWaitsForPendingStandaloneHistorySave() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let gate = NoteRepositoryTestGate()
+        await fixture.repository.installTestGate(gate)
+        let capture = fixture.capture(presentWindows: false, pasteboard: pasteboard)
+        capture.setOutput(.clipboard)
+        capture.setStandaloneKeepsHistory(true)
+
+        capture.activate()
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        // Clipboard delivery must not block on SQLite standalone history persistence.
+        try await wait { capture.phase == .copied }
+        #expect(pasteboard.string(forType: .string) == "Talvez não fazer o deploy ainda.")
+
+        let flushTask = Task { await capture.flushForTermination() }
+        await gate.waitForFirstEntry()
+        gate.release()
+        let flushed = await flushTask.value
+        #expect(flushed)
+        let notes = try await fixture.repository.fetchAllNonDeleted()
+        #expect(notes.map(\.content) == ["Talvez não fazer o deploy ainda."])
+    }
+
+    @Test func voiceTextInsertionHandlesEmptyTrustAndMissingTarget() {
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+
+        #expect(VoiceTextInsertion.insert("", target: nil, pasteboard: pasteboard, isTrusted: { true }) == .copiedToClipboard(.emptyText))
+        #expect(pasteboard.string(forType: .string) == nil)
+
+        #expect(VoiceTextInsertion.insert("Sem permissão", target: nil, pasteboard: pasteboard, isTrusted: { false }) == .copiedToClipboard(.noAccessibilityPermission))
+        #expect(pasteboard.string(forType: .string) == "Sem permissão")
+
+        #expect(VoiceTextInsertion.insert("Sem alvo", target: nil, pasteboard: pasteboard, isTrusted: { true }) == .copiedToClipboard(.noTargetApplication))
+        #expect(pasteboard.string(forType: .string) == "Sem alvo")
+
+        #expect(VoiceTextInsertion.insert("Próprio app", target: .current, pasteboard: pasteboard, isTrusted: { true }) == .copiedToClipboard(.noTargetApplication))
+        #expect(pasteboard.string(forType: .string) == "Próprio app")
+    }
+
+    @Test func outputNeedsAccessibilityTracksOutputAndTrustState() throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let untrusted = fixture.capture(enabled: false, accessibilityTrusted: false)
+        #expect(!untrusted.outputNeedsAccessibility)
+        untrusted.setOutput(.insertAtCursor)
+        #expect(untrusted.outputNeedsAccessibility)
+
+        let trusted = fixture.capture(enabled: false, accessibilityTrusted: true)
+        trusted.setOutput(.insertAtCursor)
+        #expect(!trusted.outputNeedsAccessibility)
+    }
+
     @Test func assignedShortcutRegistersOnlyWhileVoiceCaptureIsEnabled() throws {
         let fixture = try Fixture()
         defer { fixture.cleanUp() }
@@ -725,9 +877,26 @@ struct VoiceCaptureTests {
             presentWindows: Bool = false,
             speech: VoiceCapture.Speech? = nil,
             modelTimeout: Duration = .seconds(35),
+            accessibilityTrusted: Bool? = nil,
+            pasteboard: NSPasteboard = .general,
+            insertResult: VoiceTextInsertion.Result? = nil,
             decode: @escaping @Sendable (VoiceAudio) async throws -> String = { _ in "Talvez não fazer o deploy ainda." }
         ) -> VoiceCapture {
             defaults.set(enabled, forKey: VoiceCapture.preferenceKey)
+            let resolvedAccessibilityTrusted: @Sendable () -> Bool =
+                if let accessibilityTrusted {
+                    { accessibilityTrusted }
+                } else {
+                    { ModifierShortcutAccess.isTrusted }
+                }
+            let resolvedInsertText: @MainActor @Sendable (String, NSRunningApplication?, NSPasteboard) -> VoiceTextInsertion.Result =
+                if let insertResult {
+                    { @MainActor _, _, _ in insertResult }
+                } else {
+                    { @MainActor text, target, pasteboard in
+                        VoiceTextInsertion.insert(text, target: target, pasteboard: pasteboard)
+                    }
+                }
             let capture = VoiceCapture(
                 preferences: defaults, supported: true,
                 input: .init(
@@ -741,7 +910,10 @@ struct VoiceCaptureTests {
                     await ready()
                     return try await decode(audio)
                 }, release: {}),
-                modelTimeout: modelTimeout
+                modelTimeout: modelTimeout,
+                accessibilityTrusted: resolvedAccessibilityTrusted,
+                pasteboard: pasteboard,
+                insertText: resolvedInsertText
             )
             capture.connect(repository: repository)
             return capture

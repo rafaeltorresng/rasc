@@ -67,6 +67,9 @@ final class VoiceCaptureWindows {
         case .waitingForModel: message = "Preparing speech"
         case .transcribing: message = "Transcribing"
         case .ready: message = "Thought saved. Open Scratchpad."
+        case .copied: message = "Transcript copied."
+        case .inserted: message = "Inserted at cursor."
+        case .copiedFallback: message = "Insertion unavailable. Transcript copied. Paste with Command V."
         case .issue(let issue): message = issue.message
         default: return
         }
@@ -140,6 +143,8 @@ struct VoiceStatusView: View {
             action(issue == .persistence ? "Discard capture" : "Dismiss", icon: "xmark") { capture.cancel() }
         case .checking, .starting, .finishing, .waitingForModel, .transcribing:
             action("Cancel recording", icon: "xmark", call: { capture.cancel() })
+        case .copied, .inserted, .copiedFallback:
+            action("Dismiss", icon: "xmark") { capture.cancel() }
         default: EmptyView()
         }
     }
@@ -154,6 +159,9 @@ struct VoiceStatusView: View {
         case .transcribing: "Transcribing…"
         case .stopping: "Cancelling…"
         case .ready: "Thought saved"
+        case .copied: "Copied"
+        case .inserted: "Inserted"
+        case .copiedFallback: "Copied — press ⌘V"
         case .saving: "Saving thought…"
         case .opening: "Opening Scratchpad…"
         case .issue(.permission): "Microphone access needed"
@@ -171,6 +179,8 @@ struct VoiceStatusView: View {
     private var icon: String {
         switch capture.phase {
         case .ready: "checkmark"
+        case .copied, .inserted: "checkmark"
+        case .copiedFallback: "doc.on.clipboard"
         case .listening, .finishing: "mic.fill"
         case .waitingForModel, .transcribing, .saving, .opening: "ellipsis"
         case .issue(.noSpeech): "waveform.slash"
@@ -261,9 +271,10 @@ struct VoiceCaptureSettings: View {
                         detail("This shortcut is unavailable. Choose a different shortcut or start recording here.")
                     }
                     ModifierShortcutRecorder(capture: capture)
+                    VoiceCaptureOutputSettings(capture: capture)
                     recordingActions
                 }
-                detail("Speak a thought and continue in Scratchpad. Transcription stays on this Mac.")
+                detail("Transcription stays on this Mac. Audio stays in memory and is never sent off-device.")
             } else {
                 detail("Voice Capture requires an Apple silicon Mac with macOS 26 or later.")
             }
@@ -289,6 +300,12 @@ struct VoiceCaptureSettings: View {
             Button("Cancel Recording", role: .cancel) { capture.cancel() }
         case .ready:
             captureButton("Open Scratchpad")
+        case .copied:
+            detail("Copied to clipboard.")
+        case .inserted:
+            detail("Inserted at cursor.")
+        case .copiedFallback:
+            detail("Insertion unavailable; copied to clipboard. Press Command V.")
         case .saving, .opening:
             detail("Opening your thought in Scratchpad…")
         case .checking, .starting:
@@ -485,6 +502,66 @@ struct ModifierShortcutRecorder: View {
 
     private func clearShortcut() {
         capture.setModifierShortcut(nil)
+    }
+
+    private func detail(_ text: String) -> some View {
+        Text(text)
+            .font(.caption)
+            .foregroundStyle(palette.secondaryText(for: scheme))
+            .fixedSize(horizontal: false, vertical: true)
+    }
+}
+
+/// Standalone Voice Capture output. `.scratchpad` is the default; clipboard and
+/// insert-at-cursor modes keep focus, don't open Scratchpad, and can't require
+/// network. Local history is an independent, opt-in preference.
+struct VoiceCaptureOutputSettings: View {
+    @ObservedObject var capture: VoiceCapture
+    @Environment(\.rascPalette) private var palette
+    @Environment(\.colorScheme) private var scheme
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Picker("Destination", selection: Binding(
+                get: { capture.output },
+                set: { capture.setOutput($0) }
+            )) {
+                ForEach(VoiceCaptureOutput.allCases) { output in
+                    Text(output.title).tag(output)
+                }
+            }
+            .pickerStyle(.menu)
+            .accessibilityLabel("Transcript destination")
+            .accessibilityHint(capture.output.detail)
+
+            detail(capture.output.detail)
+
+            if capture.output != .scratchpad {
+                Toggle("Save standalone transcripts in Rasc", isOn: Binding(
+                    get: { capture.standaloneKeepsHistory },
+                    set: { capture.setStandaloneKeepsHistory($0) }
+                ))
+                detail("Keeps a local copy of each transcript as an unfinished thought. Off by default.")
+            }
+
+            if capture.outputNeedsAccessibility {
+                if capture.modifierShortcut != nil, capture.modifierShortcutIsActive {
+                    detail("Direct insertion also needs Accessibility access (use the buttons above). Without it, Rasc copies to the clipboard instead.")
+                } else {
+                    VStack(alignment: .leading, spacing: 6) {
+                        detail("Direct insertion needs Accessibility access. Without it, Rasc copies to the clipboard instead.")
+                        HStack(spacing: 8) {
+                            Button("Allow Rasc…") { capture.requestAccessibilityForInsertion() }
+                            Button("Open Accessibility Settings…") { capture.openAccessibilitySettings() }
+                        }
+                    }
+                }
+            } else if capture.output == .insertAtCursor {
+                detail("Accessibility access is on. Rasc never steals focus; it inserts into the app you're using.")
+            }
+        }
+        .font(.callout)
+        .accessibilityElement(children: .contain)
     }
 
     private func detail(_ text: String) -> some View {
