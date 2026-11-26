@@ -1286,6 +1286,7 @@ struct VoiceCaptureTests {
             accessibilityTrusted: Bool? = nil,
             pasteboard: NSPasteboard = .general,
             insertResult: VoiceTextInsertion.Result? = nil,
+            insertInCurrentApp: Bool = false,
             decode: @escaping @Sendable (VoiceAudio) async throws -> String = { _ in "Talvez não fazer o deploy ainda." }
         ) -> VoiceCapture {
             defaults.set(enabled, forKey: VoiceCapture.preferenceKey)
@@ -1322,7 +1323,8 @@ struct VoiceCaptureTests {
                 cancelConfirmationTimeout: cancelConfirmationTimeout,
                 accessibilityTrusted: resolvedAccessibilityTrusted,
                 pasteboard: pasteboard,
-                insertText: resolvedInsertText
+                insertText: resolvedInsertText,
+                insertInCurrentApp: { _ in insertInCurrentApp }
             )
             capture.connect(repository: repository)
             return capture
