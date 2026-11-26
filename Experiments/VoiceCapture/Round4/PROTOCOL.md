@@ -23,7 +23,7 @@ Reproducible. No private data. No forced ranking.
 `scripts/perturb.py`, balanced EN+PT subset, **12 base + variants**. Reference unchanged.
 
 - `trailing_silence_3s`, `leading_silence_2s` → **pauses/silence**
-- `added_noise_m15db` → **background noise**, white noise added at **−15 dB SNR** (speech RMS preserved; simple one-pole pink mix; deterministic seed 4567)
+- `added_noise_m15db` → **background noise**, synthetic one-pole pink-filtered noise added at **+15 dB SNR** (speech RMS preserved; noise RMS `10 ** (-15 / 20)` relative to speech; deterministic seed 4567; historical filename suffix `noise_m15db`)
 - `tempo_fast_1p25`, `tempo_slow_0p8` → **speaking rate** (ffmpeg `atempo`; reference unchanged; pitch preserved-ish)
 - **non-speech controls:** `silence_1s`, `silence_3s`, `click_only` (no reference)
 
@@ -41,9 +41,9 @@ Round3 held-out, same app-code path, same scoring: **AMI IHM EN 64**, **Tarsila 
 ## Scoring
 
 - **WER** = word edits / reference words; **NFC + casefold + curly-quote + dash normalization + punctuation strip**; standard Levenshtein. **Pooled** (not per-clip average).
-- **CER** = char edits / reference chars (stripped).
-- **werPunctuationSensitivePercent** = WER keeping punctuation tokens.
-- **Punctuation retention:** reference vs hypothesis punctuation-mark counts.
+- **CER (normalized)** (`cerPercent`) = char edits / reference chars under the same normalization (whitespace collapsed); **`cerRawPercent`** = exact raw char edits / trimmed raw reference chars.
+- **`werPunctuationSensitivePercent`** = WER including standalone punctuation tokens (`[^\w\s]`).
+- **Punctuation marks:** raw reference vs hypothesis punctuation-mark counts.
 - **Empty transcripts** + **non-speech outcomes** + **errors** reported, never dropped.
 - **Semantic fidelity:** not auto-scored; Round3 human-readable semantic findings + a manual inspection of this round's outputs; **no independent adjudication panel**.
 - **Editing effort:** **not measured** (no human edits); WER + punctuation as proxies. Round3 notes editing-effort measurement still open. Monologue's "estimated edits" is a separate, vendor, AI-editor metric (see competitive doc) — **not used**.
@@ -54,11 +54,11 @@ Round3 held-out, same app-code path, same scoring: **AMI IHM EN 64**, **Tarsila 
 
 Measured inside the **actual production `VoiceModel.transcribe`** + app boundary, not a reimplementation. **`ContinuousClock`.**
 
-- **Initialization:** `model.prepare()` **cold** (release + reload; fresh process where noted) vs **warm**; `modelLoadMs`; Core ML specialization re-trigger risk documented. `manager.initialize(models:)` per capture = `initializeMs`.
-- **Inference:** `manager.transcribe` = `inferenceMs`. **Finalization/cleanup:** `manager.cleanup` = `cleanupMs`. **Total** `transcribeTotalMs`.
-- **Transcribe-internal split** via `VoiceModel.TranscriptionTiming`.
+- **Initialization:** `model.prepare()` **cold** (release + reload; fresh process where noted) vs **warm**; `modelLoadMs` (until model ready before callback) and `modelReadyMs`. Core ML specialization re-trigger risk documented. `audioPrepareMs` = `mono16k()` resample + 1 s pad + `AsrManager()` instantiation inside `transcribe`. `manager.initialize(models:)` per capture = `initializeMs`.
+- **Inference:** `manager.transcribe` = `inferenceMs`. **Finalization/cleanup:** `manager.cleanup` = `cleanupMs`. **Total** `transcribeTotalMs`. (`audioLoadMs` = external WAV disk read in eval CLI, excluded from `transcribeTotalMs`.)
+- **Transcribe-internal split** via `VoiceModel.TranscriptionTiming`. `summary.json` percentiles are computed strictly over `speechRows` (excluding non-speech controls).
 - **Text delivery:** clipboard write + AX insertion measured separately (native probe); **SQLite save** Round3 ~1.8 ms; **app full pipeline** Round3. **Mic + compositor** excluded here; Round3 measures physical framing.
-- **RTF** = inferenceMs / (audioSeconds*1000); lower faster. **Not clamped.**
+- **RTF** = `inferenceMs / (audioSeconds * 1000)` using unpadded clip duration; lower is faster. **Not clamped.**
 - **p50/p95:** sorted; p95 = `ceil(0.95*n)-1`. **Cold vs warm.** **n** reported.
 - **This round:** app-code eval `n=60`, `n=75`, `n=72`. **Physical-mic end-to-end p50/p95 not measured this round; Round3 `n=168` + `n=6`.**
 - **Not extrapolated** to other hardware/OS.
@@ -69,7 +69,7 @@ Warm model (prepared once) + cold variant; no network; no other apps; fresh app 
 
 ## Native validation
 
-Per `docs/NATIVE-UI-VALIDATION.md`. **Automated:** full domain suite + native window suites (Xcode; LaunchServices in this sandbox cannot launch the test runner; `Scripts/test-domain.py` used); Release + Debug builds. **Native, verified this round:** Release app launch + idle resource sample (then restored DB backup); **AX `AXSelectedText` insertion into TextEdit** native probe. **Not claimed (need physical user + hardware + a11y):** physical key chords incl modifier-only; Accessibility grant for Rasc; global trigger across apps; focus across Spaces/fullscreen/Stage Manager/multi-monitor; **VoiceOver**; **Full Keyboard Access**; **Bluetooth**; **sleep/wake** on active capture; **microphone permission** grant + **Sparkle** continuity; **app-switching mid-recording** insertion target; **CLI verbatim output equals Release app output** (tested Debug; Release build verified, output not diffed); **Core ML cache** on fresh machine; **energy**. **Home multi-selection native click** not claimed.
+Per `docs/NATIVE-UI-VALIDATION.md` and `docs/audits/2026-11-26-phase1/NATIVE-VALIDATION.md`. **Automated locally:** Debug + Release builds (`CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM=`) and `Scripts/test-domain.py` pass; AppKit `xcodebuild test` runner compiles `RascTests` but cannot launch in this sandbox (`IDELaunchErrorDomain Code=20`, `IDELaunchServicesLauncher`; runs on CI `macos-26`), and `Scripts/test-native.sh` hits an XPC bundle-id copy mismatch (`VoiceModelDownloader.xpc`). **Not claimed (need physical user + hardware + interactive Accessibility/desktop session):** physical key chords incl modifier-only; live Accessibility grant; global trigger across apps; live AX insertion app-switch matrix; focus across Spaces/fullscreen/Stage Manager/multi-monitor; **VoiceOver**; **Full Keyboard Access**; **Bluetooth**; **sleep/wake** on active capture; **microphone permission** grant + **Sparkle** continuity; **CLI verbatim output equals Release app output** (eval CLI is `DEBUG`-only; Release build compiled separately); **Core ML cache** on fresh machine; **energy**; **Home multi-selection native click**.
 
 ## Reproduce
 

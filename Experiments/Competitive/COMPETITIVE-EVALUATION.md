@@ -25,7 +25,7 @@ Every claim has a source. "Vendor" = company's own page. "Third-party" = indepen
 - **Model / architecture:** proprietary; not published. Vendor.
 - **Published accuracy:** Third-party **Voice Arena Dictation Bench**: Wispr Flow **79.31% ZER / 0.40% AMEND** (US English, 759 clips, 5 LLM judges, macOS; rank 3). Third-party **Codictate** (Wispr Flow 1.6.8/1.6.774, M4 Max, FLEURS + LibriSpeech): pooled word accuracy ~93.0%; English clean 96.0%; noisy 93.3%. Vendor pricing pages do not publish WER. **Different metrics; not directly comparable to Rasc verbatim WER.**
 - **Published latency:** Codictate reports Wispr Flow response time ~**88 ms/s** wait-per-audio-second, median clip ~**401 ms**, p90 ~**653 ms** (English clean); **not comparable** to Codictate's own adapter-boundary timing for local models; Codictate states the two are timed differently. Wispr "streams while you speak." Wispr Flow is measured "over the network."
-- **Feature set:** global shortcut, **push-to-talk**, **modifier-only trigger** (`⌥ + space` default in Superwhisper; Wispr has custom shortcuts), **direct insertion + clipboard**, **100+ languages + translation**, **custom vocabulary**, formatting modes, **notes/meetings**, MCP/API. **Auto-Keep / auto-send** is *not* something Rasc offers and, per Rasc's own Round 3 evidence, should not be added. Vendor.
+- **Feature set:** global shortcut, **push-to-talk**, **chord and/or modifier triggers** (`⌥ + Space` default chord in Superwhisper; custom shortcuts in Wispr), **direct insertion + clipboard**, **100+ languages + translation**, **custom vocabulary**, formatting modes, **notes/meetings**, MCP/API. **Auto-Keep / auto-send** is *not* something Rasc offers and, per Rasc's own Round 3 evidence, should not be added. Vendor.
 - **Direct evaluation feasibility:** not feasible without a paid account + cloud + same audio; closed-source. Research-only comparison possible via published benchmarks. See below.
 
 ### Superwhisper
@@ -128,7 +128,7 @@ Do **not** mix these. They measure different things:
 | **"Word accuracy"** | `1 - WER` under a specific normalizer | Codictate |
 | **Latency definitions differ** | adapter-boundary vs UI-observed paste vs streaming vs API | Codictate (states two timings differ); Monologue (API); Rasc (app boundary + model inner split) |
 
-**Conclusion:** A verbatim, no-formatting tool like Rasc cannot be ranked on ZER/AMEND without a separate formatting step. Comparing Rasc WER 5.35% (FLEURS) to Wispr ZER 79.31% would be misleading.
+**Conclusion:** A verbatim, no-formatting tool like Rasc cannot be ranked on ZER/AMEND without a separate formatting step. Comparing Rasc punctuation-insensitive WER 5.35% (or punctuation-sensitive 8.88%) on FLEURS to Wispr ZER 79.31% would be misleading.
 
 ## Resource efficiency
 
@@ -191,9 +191,9 @@ Wispr Flow, Superwhisper (product incl. formatting; local Whisper extractable bu
 
 - Voice Capture is **opt-in, on-device, verbatim, no network inference, audio in memory only, no cloud fallback.**
 - **Fluid Speech Pro** revision `3b9d38a…`, 652,304,885 bytes, SHA-256-verified, Core ML CPU+ANE, batch, 16 kHz, no hint, no streaming/vocab rescoring.
-- **Verbatim WER** on real human speech (this round): FLEURS-EN 30 + PT-BR 30, pooled **5.35%** (EN 6.12 / PT 4.58); Round3 held-out conversational **13.0 EN / 21.8 PT / 8.9 mixed**; **+silence +5.7%**; **−15 dB noise +8.5%**; **speaking-rate ± ~1%**; non-speech rejected; (results in Round4 + Round3).
-- **Latency** (this round, app code, M3 Pro, warm): inference p50 ~75 ms, transcribe-total p50 ~91 ms, RTF ~0.006; model prepare warm ~0.02 ms; **cold** app-level + previous rounds (Round3 ~19.5 s cold reload worst; probe 18 s first; 201 ms warm; **needs reproduction on Release**).
-- **Standalone Voice Capture (#100):** Clipboard + Insert-at-cursor; AX `AXSelectedText` insertion verified natively (TextEdit, accents); clipboard fallback; no focus steal; no Scratchpad; optional local history off by default; sandbox/privacy unchanged.
+- **Verbatim WER** on real human speech (this round): FLEURS-EN 30 + PT-BR 30, pooled **5.35% WER** (EN 6.12% / PT 4.58%; norm CER 2.05% / raw CER 3.03%; **punctuation-sensitive WER 8.88%**); Round3 held-out conversational **13.0% EN / 21.8% PT / 8.9% mixed**; perturbations vs `6.38%` subset base: **pauses/silence 5.67%** (−0.71 pts), **+15 dB SNR pink-filtered noise 8.51%** (+2.13 pts), **speaking-rate ± 7.45%** (+1.06 pts); non-speech rejected; (results in Round4 + Round3).
+- **Latency** (this round, app code, M3 Pro, warm, n=60): inference p50 **55.7 ms** (p95 107.8 ms), transcribe-total p50 **69.9 ms** (p95 126.3 ms, incl. `audioPrepare` 12.9 ms p50), RTF p50 **0.005** (p95 0.008); model prepare warm ~0.02 ms; **cold** `model.prepare()` after `release()`: **11.34 s** initial run (`fleurs-60`) vs **108 ms** warm-OS-cache follow-up (`perturbed-75`); previous Round3 cold reload ~19.5 s worst / probe 18.09 s first / 201 ms warm; **needs reproduction on Release.**
+- **Standalone Voice Capture (#100):** Clipboard + Insert-at-cursor; AX `AXSelectedText` insertion + clipboard fallback tested in unit/domain suite; no focus steal; no Scratchpad; optional local history off by default; sandbox/privacy unchanged. **Live TCC grant / multi-app AX insertion pending manual verification.**
 - **Modifier-only shortcut (#98):** clean-tap recognizer unit-tested; chord-safe; Accessibility requirement surfaced; local + global. **Global trigger not verified without Accessibility grant in this environment.**
 - **Home multi-selection (#99):** domain + persistence tests; **native click verification not claimed.**
 

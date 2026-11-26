@@ -1,14 +1,14 @@
 # Consolidated technical handoff for `rasc-web`
 
-**Audience:** the agent building the editorial landing page + Notes article section. **Goal:** only claim what's backed; quote accurate numbers with scope; know what's verified vs open; reproduce. **Date:** 26 Nov 2026. **Rasc source:** 0.1.16 build 22 + phase; **published artifact** v0.1.15 build 21; **not re-verified**.
+**Audience:** the agent building the editorial landing page + Notes article section. **Goal:** only claim what's backed; quote accurate numbers with scope; know what's verified vs open; reproduce. **Date:** 26 Nov 2026. **Rasc source:** `main @ d9e88ef` (`0.1.16 build 22`) + unmerged Phase 1 PRs (`#101`–`#104`); **published artifact:** `v0.1.15 build 21` (**not re-verified**).
 
-## 1. What shipped this phase (source; not necessarily shipped artifact)
+## 1. Phase 1 source changes (open PRs `#101`–`#104`; not yet merged to `main` or released)
 
-Three end-to-end issues on scoped branches, domain + native-build tested:
+Three feature PRs (`#101`–`#103`) plus eval/evidence PR (`#104`), verified with Debug/Release builds and `Scripts/test-domain.py` (`docs/audits/2026-11-26-phase1/NATIVE-VALIDATION.md`):
 
-- **#98 Reliable modifier-only Voice Capture shortcut.** Opt-in single modifier (Option/Control/Shift/Command). Clean press+release in isolation; never on chord/diacritic/pointer/other-modifier; 400 ms tap; 180 ms debounce; Esc/cancel resets; `NSEvent.flagsChanged` global + local; **preserves `KeyboardShortcuts` chord**; conflict-free; **Accessibility** (`AXIsProcessTrusted`, prompt, System Settings); Settings recorder; palette. `Rasc/Platform/ModifierShortcut.swift`, `Rasc/Features/VoiceCapture/*`, `Rasc/Platform/GlobalShortcutFormatting.swift`, `RascTests/ModifierShortcutTests.swift`. **Physical-key + a11y + global not verified in sandbox.**
-- **#99 Home multi-selection + batch.** `⌘-click`, `Shift`-click, `⌘A`, Esc, Select mode; both list + card; **Copy / Export… / Discard / Clear**; **single-transaction discard + atomic Undo**; **Markdown folder export incl images + collision** reusing `NoteExportController`/`NoteExportFiles`; single-note + keyboard unaffected at 0/1; no folders/tags. `Rasc/Features/Home/*`, `Rasc/Data/NoteRepository.swift`, `Rasc/Platform/NoteExportController.swift`. **Native click not claimed.**
-- **#100 Standalone Voice Capture.** Destination **Scratchpad / Clipboard / Insert at Cursor**; optional independent **local history** off; focus preserved; no Scratchpad in clipboard/insert; **AX `AXSelectedText` insertion; no synthetic keystrokes; no app activation; clipboard fallback**; **Accessibility**; **no network; no audio persisted; sandbox intact**; transient states + VoiceOver. `Rasc/Platform/VoiceTextInsertion.swift`, `VoiceCapture.swift`, `VoiceCaptureView.swift`. **Native AX→TextEdit verified; AS grant/VoiceOver/physical not.**
+- **#98 Reliable modifier-only Voice Capture shortcut (PR `#101`).** Opt-in single modifier (Option/Control/Shift/Command). Clean press+release in isolation; never on chord/diacritic/pointer/sticky interference/other-modifier; 400 ms tap; 180 ms debounce; Esc/cancel resets; `NSEvent.flagsChanged` global + local; **preserves `KeyboardShortcuts` chord**; conflict-free; **Accessibility** (`AXIsProcessTrusted`, prompt, System Settings); Settings recorder; palette. `Rasc/Platform/ModifierShortcut.swift`, `Rasc/Features/VoiceCapture/*`, `Rasc/Platform/GlobalShortcutFormatting.swift`, `RascTests/ModifierShortcutTests.swift`. **Physical-key + a11y + global not verified in sandbox.**
+- **#99 Home multi-selection + batch (PR `#102`).** `⌘-click`, `Shift`-click, `Shift+Arrow`, `Space` toggle, `⌘A` (outside active search), Esc, Select mode; both list + card; **Copy / Export… / Discard / Clear**; **single-transaction discard + atomic Undo**; **Markdown folder export incl images + collision** reusing `NoteExportController`/`NoteExportFiles`; single-note + keyboard unaffected at 0/1; no folders/tags. `Rasc/Features/Home/*`, `Rasc/Data/NoteRepository.swift`, `Rasc/Platform/NoteExportController.swift`. **Native click / AppKit test host not verified in sandbox.**
+- **#100 Standalone Voice Capture (PR `#103`).** Destination **Scratchpad / Clipboard / Insert at Cursor**; optional independent **local history** off; focus preserved; no Scratchpad in clipboard/insert; **AX `AXSelectedText` insertion; no synthetic keystrokes; no app activation; synchronous delivery + clipboard fallback**; **Accessibility**; **no network; no audio persisted; sandbox intact**; transient states + VoiceOver. `Rasc/Platform/VoiceTextInsertion.swift`, `VoiceCapture.swift`, `VoiceCaptureView.swift`, `Rasc/Platform/MenuBarController.swift`. **Live AX grant/insertion across apps, VoiceOver, and physical desktop checks pending manual verification.**
 
 **No product-scope changes** (no folders/tags/agents/sync/cloud/telemetry; no model change; no architecture change for benchmarks). **No automated tests weakened.**
 
@@ -31,19 +31,19 @@ Capture instant + no AI; local-first SQLite; **no silent off-device**; external 
 ### Accuracy (verbatim; this round + comparable)
 
 **Round4 FLEURS real human, actual app code, M3 Pro, warm (n=60):**
-- pooled **WER 5.354%**, CER 3.025%, punct-sensitive ~5.367%, **no empty**; **EN 6.122% / PT-BR 4.581%.**
-- **+silence ~+0; −15 dB noise +~2.1 pts (8.51 vs 6.38 base); speaking-rate ± ~+1.1 pt; non-speech rejected.** (failed mis-scaled noise probe disclosed.)
+- pooled **WER 5.354%**, norm CER **2.054%** (raw CER **3.025%**), punct-sensitive WER **8.884%**, **no empty**; **EN 6.122% / PT-BR 4.581%** (punct-sensitive: EN 11.020% / PT-BR 6.695%).
+- Perturbations vs `6.383%` subset base: **pauses/silence 5.674%** (−0.709 pts); **+15 dB SNR pink-filtered noise 8.511%** (+2.128 pts); **speaking-rate ± 7.447%** (+1.064 pts); **non-speech rejected**. (failed mis-scaled noise probe disclosed.)
 - **Round3 comparable (not re-run): conversational EN meeting 13.00 / PT-BR conv 21.82 / read PT-EN mixed 8.89.** **Spontaneous multi-speaker code-switch not measured.**
 - **Languages:** EN + PT-BR strong; **no hint**; **not claiming** other languages. **Proper names/numbers/technical** mostly retained but **not perfect**; **negation loss can occur**; **`<unk>`** can appear; **punctuation not always restored**; **not claiming ready-to-send.**
 - **Semantic fidelity not independently human-adjudicated. Editing effort not measured.** **Verbatim ≠ Refine.**
 
 ### Latency (M3 Pro; not other hardware)
 
-**Round4 actual app code, warm, n=60:** inference **p50 ~75 / p95 ~141 ms**; transcribe-total **p50 ~91 / p95 ~164 ms**; **RTF ~0.005–0.008**; init ~16 ms; cleanup ~0.08 ms; model-ready ~0; **+audio read/resample ~63 ms p50 (not in total).** **Cold** same-process ~280 ms; **Round3 cold ~18–19.5 s worst; not re-measured Release.** **Round3 app end-to-end (comparable n=6 warm, excl mic/compositor/human): Finish→text ~188 ms, DB ~1.8 ms, Start→Keep ~1.59 s.** **Standalone delivery:** clipboard ~ms; **AX insertion ~ms native probe**; SQLite ~1.8 ms (Round3). **Physical-mic app-level p50/p95 not measured in Round4.** **Init/finalization/text-delivery p50/p95** partly; see Round4. **Not claiming ms across hardware.**
+**Round4 actual app code, warm, n=60:** inference **p50 55.75 ms / p95 107.85 ms**; transcribe-total **p50 69.90 ms / p95 126.34 ms** (includes `audioPrepare` **12.89 ms p50**); **RTF p50 0.005 / p95 0.008**; init **0.03 ms**; cleanup **0.05 ms**; model-load/ready **0.01 ms**; **external WAV disk read `audioLoad` 41.36 ms p50 (not in total).** **Cold** `model.prepare()` after `release()`: **11.34 s** (`11,339.71 ms`) initial run (`fleurs-60`) vs **107.73 ms** warm-OS-cache follow-up (`perturbed-75`); **Round3 cold ~18–19.5 s worst; not re-measured Release.** **Round3 app end-to-end (comparable n=6 warm, excl mic/compositor/human): Finish→text ~188 ms, DB ~1.8 ms, Start→Keep ~1.59 s.** **Standalone delivery:** clipboard ~ms; AX insertion in unit tests + pending live desktop matrix; SQLite ~1.8 ms (Round3). **Physical-mic app-level p50/p95 not measured in Round4.** **Not claiming ms across hardware.**
 
 ### Standalone #100 complete behavior (verified scope)
 
-- Scratchpad(default)/Clipboard/Insert; no focus steal; non-activating capsule; no Scratchpad in 2 standalone; **AX target mem + app-switch follows frontmost-at-finish fallback mem; no keystrokes; no activate; AX trust + fallback; `.noFocusedTextField`/`.insertionFailed`/`.noTargetApplication`/`.noAccessibilityPermission`; transient `.copied/.inserted/.copiedFallback` + VoiceOver; `.copiedFallback` kept.** **history off.** **No audio persisted; memory only; no network; sandbox.** **Recover `.persistence`; retry; cancel resets (#98).** **Not verified:** physical app-switch insertion; every app's AX; AS grant; VoiceOver; focus Spaces.
+- Scratchpad(default)/Clipboard/Insert; no focus steal; non-activating capsule; no Scratchpad in 2 standalone; **AX target mem + app-switch follows frontmost-at-finish fallback mem; no keystrokes; no activate; AX trust + fallback; `.noFocusedTextField`/`.insertionFailed`/`.noTargetApplication`/`.noAccessibilityPermission`; transient `.copied/.inserted/.copiedFallback` + VoiceOver; `.copiedFallback` kept; synchronous delivery + `flushForTermination` awaits standalone-history write.** **history off.** **No audio persisted; memory only; no network; sandbox.** **Recover `.persistence`; retry; cancel resets (#98).** **Not verified:** physical app-switch insertion; every app's AX; AS grant; VoiceOver; focus Spaces.
 
 ### Modifier #98 complete behavior
 
@@ -75,13 +75,13 @@ Full `docs/audits/2026-11-26-evidence-audit.md`. **Current vs previous vs compar
 
 1. **Local-first, no cloud, no telemetry, no account; recognition on-device; no audio persisted; sandbox; only one-time verified model download (separate XPC); no network inference.**
 2. **Opt-in Voice Capture; Fluid Speech Pro; verbatim; 622 MiB model; ~63 MB idle app footprint; small app.** (scope)
-3. **Verbatim WER 5.35% FLEURS EN+PT-BR pooled / EN 6.12 / PT 4.58 (this hardware, this version, read speech); comparable conversational Round3 13.0/21.8/8.9; not claiming vs competitors.**
-4. **~75 ms inference p50 / ~91 ms transcribe p50 warm on M3 Pro (Round4); RTF ~0.006; Round3 ~188 ms app finish→text.** (not other hardware; not physical-mic p95 Round4)
+3. **Verbatim WER 5.35% FLEURS EN+PT-BR pooled / EN 6.12% / PT 4.58% (punct-sensitive 8.88%; this hardware, this source version, read speech); comparable conversational Round3 13.0/21.8/8.9; not claiming vs competitors.**
+4. **~56 ms inference p50 / ~70 ms transcribe p50 warm on M3 Pro (Round4, RTF p50 0.005); Round3 ~188 ms app finish→text.** (not other hardware; not physical-mic p95 Round4; cold model prepare `11.34 s` initial vs `108 ms` warm-OS-cache)
 5. **Capture→Keep ~1.59 s warm scripted; SQLite ~1.8 ms; no auto-Keep.** (Round3; scope)
 6. **Refine explicit on-device; no cloud; original safe; not perfect.** (scope)
 7. **#98 modifier-only reliable unit-tested; chord-safe; preserves chord; AX.** (physical not claimed)
 8. **#99 multi-select + batch; single-transaction discard + Undo; Markdown export incl images.** (native not claimed)
-9. **#100 Scratchpad/Clipboard/Insert; AX insertion + clipboard fallback; focus; no network; optional local history off; AX probe verified.** (grant/VoiceOver not claimed)
+9. **#100 Scratchpad/Clipboard/Insert; AX insertion + clipboard fallback; focus; no network; optional local history off.** (verified in unit tests and builds; live TCC/external-app/VoiceOver checks pending)
 10. **Reproducible scripts + raw results + provenance.** **Open source MIT.**
 
 ## 9. Claims we cannot yet substantiate
@@ -96,7 +96,7 @@ Anything in `docs/audits/2026-11-26-evidence-audit.md` §7. Specifically: **beat
 
 ## 11. Screenshots & demonstrations
 
-- **This phase:** no new screenshots; **native AX probe** + tests. **Prior native** `docs/audits/2026-11-13-visual/**`, `docs/validation/**`, Round3 `visual/**` + `capture-review-keep.mp4`, `docs/images/scratchpad.png`. **Round3 study app screenshots NOT shipping Rasc.** **Not re-verified; not focus/a11y proof.**
+- **This phase:** no new screenshots; Debug/Release builds, `Scripts/test-domain.py`, and Round 4 `--run-voice-evals` verified (`docs/audits/2026-11-26-phase1/NATIVE-VALIDATION.md`). **Prior native** `docs/audits/2026-11-13-visual/**`, `docs/validation/**`, Round3 `visual/**` + `capture-review-keep.mp4`, `docs/images/scratchpad.png`. **Round3 study app screenshots NOT shipping Rasc.** **Not re-verified; not focus/a11y proof.**
 - **rasc-web agent:** use **current** shipping screenshots only with scope; **don't** reuse study-app as shipping; **don't** claim native-verified a11y. **Physical screenshots not produced this round.**
 
 ## 12. Limitations

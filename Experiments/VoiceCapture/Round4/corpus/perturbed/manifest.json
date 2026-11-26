@@ -38,7 +38,7 @@
     "durationSeconds": 8.36,
     "license": "CC-BY 4.0 (Google FLEURS)",
     "variant": "added_noise_m15db",
-    "variantNote": "white noise added at -15 dB SNR; reference unchanged",
+    "variantNote": "pink-filtered noise added at +15 dB SNR (noise -15 dB relative to speech RMS); reference unchanged",
     "baseId": "en_us-000001664",
     "referenceUnchanged": true
   },
@@ -152,7 +152,7 @@
     "durationSeconds": 11.1,
     "license": "CC-BY 4.0 (Google FLEURS)",
     "variant": "added_noise_m15db",
-    "variantNote": "white noise added at -15 dB SNR; reference unchanged",
+    "variantNote": "pink-filtered noise added at +15 dB SNR (noise -15 dB relative to speech RMS); reference unchanged",
     "baseId": "en_us-000001683",
     "referenceUnchanged": true
   },
@@ -266,7 +266,7 @@
     "durationSeconds": 8.76,
     "license": "CC-BY 4.0 (Google FLEURS)",
     "variant": "added_noise_m15db",
-    "variantNote": "white noise added at -15 dB SNR; reference unchanged",
+    "variantNote": "pink-filtered noise added at +15 dB SNR (noise -15 dB relative to speech RMS); reference unchanged",
     "baseId": "en_us-000001697",
     "referenceUnchanged": true
   },
@@ -380,7 +380,7 @@
     "durationSeconds": 13.26,
     "license": "CC-BY 4.0 (Google FLEURS)",
     "variant": "added_noise_m15db",
-    "variantNote": "white noise added at -15 dB SNR; reference unchanged",
+    "variantNote": "pink-filtered noise added at +15 dB SNR (noise -15 dB relative to speech RMS); reference unchanged",
     "baseId": "en_us-000001719",
     "referenceUnchanged": true
   },
@@ -494,7 +494,7 @@
     "durationSeconds": 11.74,
     "license": "CC-BY 4.0 (Google FLEURS)",
     "variant": "added_noise_m15db",
-    "variantNote": "white noise added at -15 dB SNR; reference unchanged",
+    "variantNote": "pink-filtered noise added at +15 dB SNR (noise -15 dB relative to speech RMS); reference unchanged",
     "baseId": "en_us-000001724",
     "referenceUnchanged": true
   },
@@ -608,7 +608,7 @@
     "durationSeconds": 13.68,
     "license": "CC-BY 4.0 (Google FLEURS)",
     "variant": "added_noise_m15db",
-    "variantNote": "white noise added at -15 dB SNR; reference unchanged",
+    "variantNote": "pink-filtered noise added at +15 dB SNR (noise -15 dB relative to speech RMS); reference unchanged",
     "baseId": "en_us-000001732",
     "referenceUnchanged": true
   },
@@ -722,7 +722,7 @@
     "durationSeconds": 10.14,
     "license": "CC-BY 4.0 (Google FLEURS)",
     "variant": "added_noise_m15db",
-    "variantNote": "white noise added at -15 dB SNR; reference unchanged",
+    "variantNote": "pink-filtered noise added at +15 dB SNR (noise -15 dB relative to speech RMS); reference unchanged",
     "baseId": "pt_br-000001674",
     "referenceUnchanged": true
   },
@@ -836,7 +836,7 @@
     "durationSeconds": 16.56,
     "license": "CC-BY 4.0 (Google FLEURS)",
     "variant": "added_noise_m15db",
-    "variantNote": "white noise added at -15 dB SNR; reference unchanged",
+    "variantNote": "pink-filtered noise added at +15 dB SNR (noise -15 dB relative to speech RMS); reference unchanged",
     "baseId": "pt_br-000001678",
     "referenceUnchanged": true
   },
@@ -950,7 +950,7 @@
     "durationSeconds": 5.76,
     "license": "CC-BY 4.0 (Google FLEURS)",
     "variant": "added_noise_m15db",
-    "variantNote": "white noise added at -15 dB SNR; reference unchanged",
+    "variantNote": "pink-filtered noise added at +15 dB SNR (noise -15 dB relative to speech RMS); reference unchanged",
     "baseId": "pt_br-000001679",
     "referenceUnchanged": true
   },
@@ -1064,7 +1064,7 @@
     "durationSeconds": 13.26,
     "license": "CC-BY 4.0 (Google FLEURS)",
     "variant": "added_noise_m15db",
-    "variantNote": "white noise added at -15 dB SNR; reference unchanged",
+    "variantNote": "pink-filtered noise added at +15 dB SNR (noise -15 dB relative to speech RMS); reference unchanged",
     "baseId": "pt_br-000001684",
     "referenceUnchanged": true
   },
@@ -1178,7 +1178,7 @@
     "durationSeconds": 12.36,
     "license": "CC-BY 4.0 (Google FLEURS)",
     "variant": "added_noise_m15db",
-    "variantNote": "white noise added at -15 dB SNR; reference unchanged",
+    "variantNote": "pink-filtered noise added at +15 dB SNR (noise -15 dB relative to speech RMS); reference unchanged",
     "baseId": "pt_br-000001686",
     "referenceUnchanged": true
   },
@@ -1292,7 +1292,7 @@
     "durationSeconds": 12.18,
     "license": "CC-BY 4.0 (Google FLEURS)",
     "variant": "added_noise_m15db",
-    "variantNote": "white noise added at -15 dB SNR; reference unchanged",
+    "variantNote": "pink-filtered noise added at +15 dB SNR (noise -15 dB relative to speech RMS); reference unchanged",
     "baseId": "pt_br-000001693",
     "referenceUnchanged": true
   },

@@ -16,7 +16,7 @@ def run(args):
     subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", *args, "-y"], check=True)
 
 
-def add_white_noise(src: Path, dest: Path, snr_db: float):
+def add_pink_noise(src: Path, dest: Path, snr_db: float):
     import array, math, random, wave
     with wave.open(str(src), "rb") as wav:
         params = wav.getparams()
@@ -82,10 +82,10 @@ def main():
         d = audio_dir / f"{stem}__leading_silence_2s.wav"
         run(["-i", str(src_audio), "-af", "adelay=2000|2000", "-ar", str(RATE), "-ac", "1", "-sample_fmt", "s16", str(d)])
         variants["leading_silence_2s"] = (d, "pauses-silence", "2 s silence prepended")
-        # added white noise at a measured -15 dB SNR (speech RMS preserved)
+        # added synthetic pink-filtered noise at +15 dB SNR (noise RMS = speech RMS * 10^(-15/20))
         d = audio_dir / f"{stem}__noise_m15db.wav"
-        add_white_noise(src_audio, d, snr_db=15.0)
-        variants["added_noise_m15db"] = (d, "background-noise", "white noise added at -15 dB SNR; reference unchanged")
+        add_pink_noise(src_audio, d, snr_db=15.0)
+        variants["added_noise_m15db"] = (d, "background-noise", "pink-filtered noise added at +15 dB SNR (noise -15 dB relative to speech RMS); reference unchanged")
         # faster speech
         d = audio_dir / f"{stem}__tempo_fast_1p25.wav"
         run(["-i", str(src_audio), "-af", "atempo=1.25", "-ar", str(RATE), "-ac", "1", "-sample_fmt", "s16", str(d)])

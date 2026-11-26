@@ -15,12 +15,20 @@ from pathlib import Path
 PUNCT = re.compile(r"[^\w\s]", re.UNICODE)
 
 
-def tokenize(text, strip_punctuation=True):
+def normalize_text(text):
     text = unicodedata.normalize("NFC", text or "").casefold().replace("’", "'").replace("‘", "'")
     text = re.sub(r"[–—]", " ", text)
+    text = PUNCT.sub(" ", text)
+    return " ".join(text.split())
+
+
+def tokenize(text, strip_punctuation=True):
+    text = unicodedata.normalize("NFC", text or "").casefold().replace("’", "'").replace("‘", "'")
     if strip_punctuation:
+        text = re.sub(r"[–—]", " ", text)
         text = PUNCT.sub(" ", text)
-    return re.findall(r"[^\W_]+(?:'[^\W_]+)*", text, flags=re.UNICODE)
+        return re.findall(r"[^\W_]+(?:'[^\W_]+)*", text, flags=re.UNICODE)
+    return re.findall(r"[^\W_]+(?:'[^\W_]+)*|[^\w\s]", text, flags=re.UNICODE)
 
 
 def edits(reference, hypothesis):
@@ -66,11 +74,15 @@ def main():
         ref_words = sum(len(tokenize(r["reference"], True)) for r in subset)
         hyp_words = sum(len(tokenize(r["transcript"], True)) for r in subset)
         edit_total = sum(edits(tokenize(r["reference"], True), tokenize(r["transcript"], True)) for r in subset)
-        ref_chars = sum(len((r["reference"] or "").strip()) for r in subset)
-        char_edits = sum(edits(list((r["reference"] or "").strip()), list((r["transcript"] or "").strip())) for r in subset)
+        norm_refs = [normalize_text(r["reference"]) for r in subset]
+        norm_hyps = [normalize_text(r["transcript"]) for r in subset]
+        ref_chars = sum(len(x) for x in norm_refs)
+        char_edits = sum(edits(list(a), list(b)) for a, b in zip(norm_refs, norm_hyps))
+        raw_ref_chars = sum(len((r["reference"] or "").strip()) for r in subset)
+        raw_char_edits = sum(edits(list((r["reference"] or "").strip()), list((r["transcript"] or "").strip())) for r in subset)
         raw_edits = sum(edits(tokenize(r["reference"], False), tokenize(r["transcript"], False)) for r in subset)
         raw_ref = sum(len(tokenize(r["reference"], False)) for r in subset)
-        # punctuation retention: reference punctuation marks that reappear in hypothesis
+        # punctuation counts (reference vs hypothesis tokens)
         ref_punct = sum(len(PUNCT.findall(r["reference"] or "")) for r in subset)
         hyp_punct = sum(len(PUNCT.findall(r["transcript"] or "")) for r in subset)
         return {
@@ -80,25 +92,33 @@ def main():
             "wordEdits": edit_total,
             "werPercent": round(100 * edit_total / ref_words, 3) if ref_words else None,
             "cerPercent": round(100 * char_edits / ref_chars, 3) if ref_chars else None,
+            "cerRawPercent": round(100 * raw_char_edits / raw_ref_chars, 3) if raw_ref_chars else None,
             "werPunctuationSensitivePercent": round(100 * raw_edits / raw_ref, 3) if raw_ref else None,
             "referencePunctuationMarks": ref_punct,
             "hypothesisPunctuationMarks": hyp_punct,
             "emptyTranscripts": sum(1 for r in subset if not (r["transcript"] or "").strip()),
         }
 
+    variants = defaultdict(list)
+    for r in scored:
+        if "__" in r["id"]:
+            variants[r["id"].split("__", 1)[1]].append(r)
+
     report = {
         "overall": score(scored),
         "groups": {k: score(v) for k, v in sorted(groups.items())},
+        **({"variants": {k: score(v) for k, v in sorted(variants.items())}} if variants else {}),
         "nonSpeechOutcomes": {r["id"]: r.get("transcript", "").strip() for r in rows if not (r.get("reference") or "").strip()},
         "errors": {r["id"]: r["error"] for r in rows if r.get("error")},
         "latencyMs": {
             "modelLoad": stats([r["modelLoadMs"] for r in scored]),
             "modelReady": stats([r["modelReadyMs"] for r in scored]),
+            "audioPrepare": stats([r.get("audioPrepareMs") for r in scored]),
             "initialize": stats([r["initializeMs"] for r in scored]),
             "inference": stats([r["inferenceMs"] for r in scored]),
             "cleanup": stats([r["cleanupMs"] for r in scored]),
             "transcribeTotal": stats([r["transcribeTotalMs"] for r in scored]),
-            "audioResample": stats([r["audioResampleMs"] for r in scored]),
+            "audioLoad": stats([r.get("audioLoadMs", r.get("audioResampleMs")) for r in scored]),
         },
         "realTimeFactor": stats([r["realTimeFactor"] for r in scored if r.get("realTimeFactor") is not None]),
         "repetitions": len({r["repetition"] for r in rows}),

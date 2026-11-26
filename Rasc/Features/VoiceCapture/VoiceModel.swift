@@ -302,6 +302,7 @@ actor VoiceModel {
     struct TranscriptionTiming: Sendable, Codable, Equatable {
         var modelLoadMs: Double = 0
         var modelReadyMs: Double = 0
+        var audioPrepareMs: Double = 0
         var initializeMs: Double = 0
         var inferenceMs: Double = 0
         var cleanupMs: Double = 0
@@ -403,6 +404,7 @@ actor VoiceModel {
         let taskStart = ContinuousClock.now
         let task = Task {
             let models = try await preparedModel()
+            let loadedAt = ContinuousClock.now
             try Task.checkCancellation()
             await modelReady()
             let readyAt = ContinuousClock.now
@@ -423,13 +425,14 @@ actor VoiceModel {
                 let cleaned = ContinuousClock.now
                 Self.logger.debug("Local transcription: \(Self.milliseconds(since: start), privacy: .public) ms")
                 lastTiming = TranscriptionTiming(
-                    modelLoadMs: Self.ms(taskStart.duration(to: readyAt)),
+                    modelLoadMs: Self.ms(taskStart.duration(to: loadedAt)),
                     modelReadyMs: Self.ms(taskStart.duration(to: readyAt)),
-                    initializeMs: Self.ms(readyAt.duration(to: initialized)),
+                    audioPrepareMs: Self.ms(readyAt.duration(to: start)),
+                    initializeMs: Self.ms(start.duration(to: initialized)),
                     inferenceMs: Self.ms(initialized.duration(to: inferred)),
                     cleanupMs: Self.ms(inferred.duration(to: cleaned)),
                     totalMs: Self.ms(taskStart.duration(to: cleaned)),
-                    audioSeconds: Double(samples.count) / 16000.0
+                    audioSeconds: audio.seconds
                 )
                 return result.text
             } catch {

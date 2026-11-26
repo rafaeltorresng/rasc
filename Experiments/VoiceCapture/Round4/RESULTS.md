@@ -8,29 +8,29 @@
 
 Google FLEURS `test`, 30 en_us + 30 pt_br, 16 kHz mono, warm model, no hint, verbatim. **Pooled.**
 
-| Slice | Clips | Ref words | Edits | **WER %** | CER % | WER punct-sensitive % | Ref punct | Hyp punct | Empty |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **All** | 60 | 1270 | 68 | **5.354** | 3.025 | 5.367 | 188 | 167 | 0 |
-| English (en_us) | 30 | 637 | 39 | **6.122** | 3.452 | 6.142 | 102 | 78 | 0 |
-| Brazilian Portuguese (pt_br) | 30 | 633 | 29 | **4.581** | 2.588 | 4.589 | 86 | 89 | 0 |
+| Slice | Clips | Ref words | Edits | **WER %** | Norm CER % | Raw CER % | WER punct-sensitive % | Ref punct | Hyp punct | Empty |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| **All** | 60 | 1270 | 68 | **5.354** | 2.054 | 3.025 | **8.884** | 188 | 167 | 0 |
+| English (en_us) | 30 | 637 | 39 | **6.122** | 2.189 | 3.452 | **11.020** | 102 | 78 | 0 |
+| Brazilian Portuguese (pt_br) | 30 | 633 | 29 | **4.581** | 1.915 | 2.588 | **6.695** | 86 | 89 | 0 |
 
 ### Controlled perturbations (n=72 speech + 3 non-speech; real human + perturbation; reference unchanged)
 
-| Condition | Clips | WER % | CER % | vs base (read speech ~6.4% on this subset) |
-|---|---:|---:|---:|---|
-| base (read speech) | 12 | 6.383 | 3.329 | — |
-| **+3 s trailing silence** | 12 | (in pauses-silence) | | ~0 |
-| **+2 s leading silence** | 12 | (in pauses-silence) | | ~0 |
-| **pauses / silence (combined)** | 24 | **5.674** | 2.881 | **+~0** |
-| **−15 dB added white noise** | 12 | **8.511** | 4.097 | **+~2.1 pts** vs base on this subset; see noise note |
-| **tempo faster (atempo=1.25)** | 12 | (in speaking-rate) | | ~0 |
-| **tempo slower (atempo=0.8)** | 12 | (in speaking-rate) | | ~0 |
-| **speaking rate ±** | 24 | **7.447** | 3.425 | **+~1.1 pt** |
-| overall perturbed | 72 | 6.856 | 3.340 | — |
+| Condition | Clips | **WER %** | Norm CER % | Raw CER % | Punct-sens WER % | Δ vs base (`6.383%` on this subset) |
+|---|---:|---:|---:|---:|---:|---|
+| base (read speech) | 12 | 6.383 | 2.489 | 3.329 | 10.559 | — |
+| **+3 s trailing silence** | 12 | **6.383** | 2.358 | 3.137 | 10.248 | **0.000 pts** |
+| **+2 s leading silence** | 12 | **4.965** | 1.965 | 2.625 | 7.453 | **−1.418 pts** |
+| **pauses / silence (combined)** | 24 | **5.674** | 2.161 | 2.881 | 8.851 | **−0.709 pts** |
+| **+15 dB SNR pink-filtered noise** | 12 | **8.511** | 3.340 | 4.097 | 11.801 | **+2.128 pts** (noise −15 dB below speech) |
+| **tempo faster (atempo=1.25)** | 12 | **6.738** | 2.816 | 3.585 | 11.180 | **+0.355 pts** |
+| **tempo slower (atempo=0.8)** | 12 | **8.156** | 2.620 | 3.265 | 11.180 | **+1.773 pts** |
+| **speaking rate ± (combined)** | 24 | **7.447** | 2.718 | 3.425 | 11.180 | **+1.064 pts** |
+| overall perturbed | 72 | 6.856 | 2.598 | 3.340 | 10.404 | — |
 
 **Non-speech controls:** `silence_1s`, `silence_3s`, `click_only` → **empty transcript**; in shipping app `VoiceCapture` additionally rejects `<0.07 s activity`, no-letter/no-number, and `.noSpeech`. No hallucination observed on silence in this round (Round3 reported occasional empties on short PT fragments; Fluid 4/64 empty PT vs Ultra 0; not re-measured).
 
-**Noise note.** Our first noise attempt (mis-scaled) gave 47% WER on this subset; corrected **−15 dB SNR** gives **8.511%** (vs **6.383%** base on the same subset, +~2.1 pts; vs **5.354%** FLEURS pooled, +~3.2 pts). Numbers above use corrected noise. **We do not hide the failed probe.**
+**Noise note.** `scripts/perturb.py` synthesizes one-pole low-pass ("pink-ish") noise scaled to **+15 dB SNR** (`rms * 10**(-15/20)`, i.e. noise 15 dB quieter than speech; suffix `noise_m15db`). Our earlier mis-scaled noise probe gave ~47% WER on this subset; corrected **+15 dB SNR** gives **8.511%** (vs **6.383%** base on the same subset, **+2.128 pts**; vs **5.354%** FLEURS pooled, **+3.157 pts**). Numbers above use corrected noise. **We do not hide the failed probe.**
 
 ### Comparable previous round (same model revision + app path; not re-run; pooled WER, punctuation-insensitive)
 
@@ -61,15 +61,16 @@ Bootstrap intervals (Fluid − Ultra): PT −3.51…+1.54, EN −9.33…+1.13, m
 
 | Stage | p50 | p95 | note |
 |---|---:|---:|---|
-| model prepare **warm** | 0.015 | 0.030 | already loaded |
-| model prepare **cold** (release+reload, same process) | — | ~280 ms | warm disk; **Round3 cold ~18–19.5 s worst; not re-measured on Release** |
-| model-ready (in `transcribe`) | 0.015 | 0.030 | model already loaded |
-| `manager.initialize` (per capture) | 15.9 | 22.8 | `initializeMs` |
-| **inference** (`manager.transcribe`) | **74.955** | **141.185** | `inferenceMs` |
-| finalization / `cleanup` | 0.074 | 0.13 | |
-| **transcribe total** | **91.367** | **164.074** | `transcribeTotalMs` |
-| audio read + `mono16k` resample (standalone; not in total) | 62.655 | 89.842 | app does inside `transcribe`; measured separately |
-| **real-time factor (inference / audio)** | **0.007** | **0.010** | n=60; **not clamped**; **~140× real time** |
+| model prepare **warm** (`run.json`) | 0.020 | — | already loaded (`warmLoadMs`: `0.020 ms` fleurs-60 / `0.017 ms` perturbed-75) |
+| model prepare **cold** (`release()` + `prepare()`) | — | — | **11,339.71 ms (11.34 s)** on first fresh-binary run (`fleurs-60`); **107.73 ms** warm-OS-cache follow-up (`perturbed-75`); Round3 ~18–19.5 s worst; needs Release reproduction |
+| model load / model-ready (warm per-clip) | 0.012 | 0.014 | `modelLoadMs` p50 `0.012` / p95 `0.013`; `modelReadyMs` p50 `0.012` / p95 `0.014` |
+| `audioPrepare` (`mono16k` + 1 s pad + `AsrManager()`) | **12.888** | **17.936** | measured inside `VoiceModel.transcribe` (`mean 12.726 ms`) |
+| `manager.initialize` (per capture) | **0.034** | **0.036** | `initializeMs` |
+| **inference** (`manager.transcribe`) | **55.749** | **107.849** | `inferenceMs` (`mean 61.135 ms`) |
+| finalization / `cleanup` | **0.050** | **0.059** | `cleanupMs` |
+| **transcribe total** | **69.900** | **126.344** | `transcribeTotalMs` (includes `audioPrepare`) |
+| `audioLoad` (WAV disk read in CLI; not in total) | 41.364 | 59.878 | `audioLoadMs`; standalone file I/O in eval runner |
+| **real-time factor (`inferenceMs / audioSeconds`)** | **0.005** | **0.008** | n=60 (`p50 0.00533`, `p95 0.00810`, `max 0.011`); **not clamped** |
 
 n=60. **Short-input 1 s pad** applied. **No streaming.** **Not app-level p50/p95.**
 
@@ -87,23 +88,13 @@ Shortcut→microphone + finish→transcript logged by shipping app; **physical-m
 
 ### Standalone Voice Capture (#100) delivery
 
-- **Clipboard:** `NSPasteboard.clearContents` + `setString` ~**µs–ms**; no Scratchpad; **no network.** No focus steal. Unit-tested.
-- **Insert at cursor (AX):** `AXUIElementCopyAttributeValue(AXFocusedUIElement)` + `AXUIElementIsAttributeSettable(AXSelectedText)` + `AXUIElementSetAttributeValue(AXSelectedText)`; native probe into TextEdit ~**ms**; **no synthetic keystrokes; no app activation.** Fallback clipboard. **Permission grant not verified in sandbox.**
+- **Standalone Voice Capture (#100) delivery:** Clipboard (`NSPasteboard.clearContents` + `setString`) and Accessibility `AXSelectedText` insertion (`VoiceTextInsertion.insert`, no synthetic keystrokes, no app activation, clipboard fallback) are verified via unit/domain tests; live external-app delivery latencies and TCC permission/focus transitions across Spaces/fullscreen require manual macOS verification (`docs/audits/2026-11-26-phase1/NATIVE-VALIDATION.md`).
 - **SQLite (scratchpad mode):** Round3 ~1.8 ms + scratchpad flush; not re-measured Round4; app opens Scratchpad after save; **recovery** retries.
 - **Text delivery p50/p95 on a real frontmost app not measured in Round4.**
 
-## 4. New feature validation (#98, #99, #100)
+## 4. New feature validation (#98, #99, #100 — unmerged Phase 1 PRs `#101`–`#103`)
 
-### #98 Modifier-only shortcuts
-- `ModifierTapRecognizer` pure + **unit tests**: isolated tap fires; **chord** (other key down, e.g. `⌥\`, `⌘⌥\`, diacritic), **other modifier down**, **pointer**, **>400 ms hold**, **non-configured**, **reset**, **repeat**; never fires on release-only. 
-- `NSEvent.flagsChanged` **global + local**; **clean key-up only**; 180 ms activation debounce; **Esc / cancel resets**; **KeyboardShortcuts chord preserved**; conflict-free vs other globals; `AXIsProcessTrusted` + prompt + System Settings; Settings recorder. 
-- **Not verified:** physical key chords; Accessibility grant; global across apps; VoiceOver. **Manual checklist** below.
-
-### #99 Home multi-selection
-- `⌘-click`, `Shift`-click range, `⌘A`, Esc, Select mode; batch **Copy / Export… / Discard / Clear**; **single transaction** `delete(ids:)` + atomic `restoreDiscards` Undo; **`NoteExportController.exportSelectedThoughts`** + `NoteExportFiles.writeFolder` images + collision; single-note + keyboard **unaffected at 0/1**. **Domain/persistence tests pass.** **Native click not claimed.**
-
-### #100 Standalone Voice Capture
-- Scratchpad / Clipboard / Insert; optional history off; focus; fallback; sandbox. **Unit tests + native AX probe.** See Round4 README §Standalone. **Physical/VoiceOver/AS not claimed.**
+See `docs/audits/2026-11-26-phase1/NATIVE-VALIDATION.md` for per-PR verification details. In summary, domain/persistence/session tests and Debug+Release builds pass on each PR (`#101`–`#103`), while physical keyboard/modifier interaction, native AppKit click/focus/VoiceOver, and live TCC Accessibility/microphone permission flows are pending GitHub Actions `macos-26` CI / manual interactive desktop checks (`xcodebuild test` cannot launch the test runner in this sandbox due to `IDELaunchErrorDomain Code=20`).
 
 ## 5. Refine revalidation (existing evidence reviewed + re-run)
 

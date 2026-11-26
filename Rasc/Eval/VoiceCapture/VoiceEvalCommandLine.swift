@@ -4,7 +4,7 @@ import Foundation
 
 /// DEBUG-only, on-disk evaluation of the *actual* production voice pipeline.
 ///
-/// Invoked as `Rasc.app/Contents/MacOS/Rasc --run-voice-evals --corpus <manifest.json> --output <dir> [--repetitions N] [--cold] [--no-pad]`.
+/// Invoked as `Rasc.app/Contents/MacOS/Rasc --run-voice-evals --corpus <manifest.json> --output <dir> [--repetitions N] [--cold]`.
 ///
 /// Uses `VoiceModel` + `VoiceAudio` exactly as the app does. No network, no
 /// private data; the caller supplies an explicit corpus manifest. Emits JSONL
@@ -48,7 +48,8 @@ enum VoiceEvalCommandLine {
         let inferenceMs: Double
         let cleanupMs: Double
         let transcribeTotalMs: Double
-        let audioResampleMs: Double
+        let audioLoadMs: Double
+        let audioPrepareMs: Double
         let realTimeFactor: Double?
         let error: String?
     }
@@ -66,7 +67,7 @@ enum VoiceEvalCommandLine {
                 .appending(path: "rasc-voice-eval-\(UUID().uuidString)").path)
             let repetitions = max(1, Int(value("--repetitions") ?? "1") ?? 1)
             let cold = args.contains("--cold")
-            let padShortInput = !args.contains("--no-pad")
+            let padShortInput = true
             let corpusRoot = URL(fileURLWithPath: corpusPath).deletingLastPathComponent()
 
             let manifest = try JSONDecoder().decode([CorpusEntry].self, from: Data(contentsOf: URL(fileURLWithPath: corpusPath)))
@@ -98,12 +99,6 @@ enum VoiceEvalCommandLine {
                         let loadMs = Self.ms(loadStart.duration(to: .now))
                         let audio = VoiceAudio(samples: samples, rate: sampleRate, peak: 1, activitySeconds: Double(samples.count) / sampleRate)
 
-                        let resampleStart = ContinuousClock.now
-                        let mono16k = try audio.mono16k()
-                        var padded = mono16k
-                        if padShortInput, padded.count < 16_000 { padded.append(contentsOf: repeatElement(0, count: 16_000 - padded.count)) }
-                        let resampleMs = Self.ms(resampleStart.duration(to: .now))
-
                         if cold { await model.release() }
                         let transcribeStart = ContinuousClock.now
                         let text = try await model.transcribe(audio, modelReady: {})
@@ -114,19 +109,18 @@ enum VoiceEvalCommandLine {
                             id: entry.id, repetition: repetition,
                             language: entry.language, category: entry.category, reference: entry.reference,
                             transcript: text, audioSeconds: audio.seconds, inputSampleRate: sampleRate,
-                            cold: cold || repetition == 1,
+                            cold: cold,
                             modelLoadMs: timing.modelLoadMs, modelReadyMs: timing.modelReadyMs,
                             initializeMs: timing.initializeMs, inferenceMs: timing.inferenceMs, cleanupMs: timing.cleanupMs,
-                            transcribeTotalMs: totalMs, audioResampleMs: resampleMs + loadMs,
+                            transcribeTotalMs: totalMs, audioLoadMs: loadMs, audioPrepareMs: timing.audioPrepareMs,
                             realTimeFactor: timing.realTimeFactor, error: nil
                         )
-                        _ = padded // padded measurement reported; app pads inside VoiceModel
                     } catch {
                         row = ResultRow(
                             id: entry.id, repetition: repetition, language: entry.language, category: entry.category,
                             reference: entry.reference, transcript: "", audioSeconds: entry.durationSeconds ?? 0, inputSampleRate: 0,
                             cold: cold, modelLoadMs: 0, modelReadyMs: 0, initializeMs: 0, inferenceMs: 0, cleanupMs: 0,
-                            transcribeTotalMs: 0, audioResampleMs: 0, realTimeFactor: nil, error: String(describing: error)
+                            transcribeTotalMs: 0, audioLoadMs: 0, audioPrepareMs: 0, realTimeFactor: nil, error: String(describing: error)
                         )
                     }
                     rows.append(row)
@@ -145,7 +139,7 @@ enum VoiceEvalCommandLine {
                 os: ProcessInfo.processInfo.operatingSystemVersionString,
                 machine: ProcessInfo.processInfo.environment["RASC_EVAL_MACHINE"] ?? "?",
                 modelRevision: VoiceModelAssets.revision,
-                modelPath: (try? VoiceModelAssets.availableFolder().path) ?? "?",
+                modelPath: Self.redactedPath((try? VoiceModelAssets.availableFolder().path) ?? "?"),
                 modelBytes: VoiceModelAssets.totalManifestBytes(),
                 configuration: "Core ML CPU + Neural Engine; batch; verbatim; 16 kHz mono; no language hint; trailing-zero pad to 1 s; no streaming; no vocabulary rescoring",
                 corpusEntries: manifest.count, repetitions: repetitions, cold: cold, padShortInput: padShortInput,
@@ -168,7 +162,7 @@ enum VoiceEvalCommandLine {
     }
 
     private struct Summary: Encodable {
-        let rows: Int, coldLoadMs: Double, warmLoadMs: Double, repetitions: Int, cold: Bool
+        let rows: Int, speechRows: Int, coldLoadMs: Double, warmLoadMs: Double, repetitions: Int, cold: Bool
         let inferenceMsP50: Double?, inferenceMsP95: Double?, transcribeTotalMsP50: Double?, transcribeTotalMsP95: Double?
         let realTimeFactorP50: Double?, realTimeFactorP95: Double?
         let errors: Int
@@ -182,15 +176,25 @@ enum VoiceEvalCommandLine {
             let p95 = sorted[min(sorted.count - 1, Int((Double(sorted.count) * 0.95).rounded(.up)) - 1)]
             return (p50, p95)
         }
-        let inference = rows.filter { $0.error == nil }.map(\.inferenceMs)
-        let total = rows.filter { $0.error == nil }.map(\.transcribeTotalMs)
-        let rtf = rows.compactMap(\.realTimeFactor)
+        let speech = rows.filter {
+            $0.error == nil && !($0.reference ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+        let inference = speech.map(\.inferenceMs)
+        let total = speech.map(\.transcribeTotalMs)
+        let rtf = speech.compactMap(\.realTimeFactor)
         let (i50, i95) = stats(inference)
         let (t50, t95) = stats(total)
         let (r50, r95) = stats(rtf)
-        return Summary(rows: rows.count, coldLoadMs: coldLoadMs, warmLoadMs: warmLoadMs, repetitions: repetitions, cold: cold,
+        return Summary(rows: rows.count, speechRows: speech.count, coldLoadMs: coldLoadMs, warmLoadMs: warmLoadMs,
+                       repetitions: repetitions, cold: cold,
                        inferenceMsP50: i50, inferenceMsP95: i95, transcribeTotalMsP50: t50, transcribeTotalMsP95: t95,
                        realTimeFactorP50: r50, realTimeFactorP95: r95, errors: rows.count(where: { $0.error != nil }))
+    }
+
+    private static func redactedPath(_ path: String) -> String {
+        let home = NSHomeDirectory()
+        guard path.hasPrefix(home) else { return path }
+        return "~" + path.dropFirst(home.count)
     }
 
     private static func ms(_ duration: Duration) -> Double {
