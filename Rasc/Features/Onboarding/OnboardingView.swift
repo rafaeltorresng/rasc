@@ -1,4 +1,3 @@
-import KeyboardShortcuts
 import SwiftUI
 
 private enum OnboardingLayout {
@@ -260,8 +259,27 @@ struct OnboardingView: View {
                     isPressed: coordinator.shortcutKeycapPressed
                 )
 
-                KeyboardShortcuts.Recorder("Press to change", name: .toggleScratchpad)
-                    .accessibilityLabel("Shortcut recorder")
+                UnifiedShortcutRecorder(
+                    action: .toggleScratchpad,
+                    prominent: true,
+                    showsValidationError: true,
+                    showsClearButton: false
+                )
+                .accessibilityLabel("Shortcut recorder")
+
+                if GlobalShortcutStore.shared.trigger(for: .toggleScratchpad)?.needsAccessibilityPermission == true,
+                   !ModifierShortcutAccess.isTrusted {
+                    HStack(spacing: 8) {
+                        Text("Allow Accessibility to trigger single-modifier shortcuts outside Rasc.")
+                            .font(.caption)
+                            .foregroundStyle(onboardingSecondaryText)
+                        Button("Allow…") {
+                            ModifierShortcutAccess.request()
+                        }
+                        .buttonStyle(.borderless)
+                        .font(.caption.weight(.medium))
+                    }
+                }
             }
             .padding(.horizontal, 26)
             .padding(.vertical, 22)

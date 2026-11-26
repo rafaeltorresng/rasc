@@ -2,7 +2,43 @@ import AppKit
 import ApplicationServices
 import Foundation
 
-/// Where a finished Voice Capture transcript is delivered.
+/// Deliberate voice workflow selected by the user.
+enum VoiceCaptureIntent: String, CaseIterable, Codable, Sendable, Identifiable {
+    /// Save an unfinished thought and open Scratchpad.
+    case scratchpad
+    /// Dictate directly into the focused app or clipboard without opening Scratchpad.
+    case dictate
+
+    var id: String { rawValue }
+}
+
+/// Primary delivery target when invoking Dictate.
+enum VoiceDictationDelivery: String, CaseIterable, Codable, Sendable, Identifiable {
+    /// Insert into the currently focused text field, falling back to clipboard.
+    case insertAtCursor
+    /// Copy directly to the clipboard without stealing focus.
+    case clipboard
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .insertAtCursor: "Insert at cursor"
+        case .clipboard: "Copy to clipboard"
+        }
+    }
+
+    var detail: String {
+        switch self {
+        case .insertAtCursor:
+            "Type into the focused text field when allowed, falling back to the clipboard if unavailable."
+        case .clipboard:
+            "Copy the transcript straight to the clipboard without opening Rasc or moving focus."
+        }
+    }
+}
+
+/// Where a finished Voice Capture transcript is delivered (legacy preference key).
 enum VoiceCaptureOutput: String, CaseIterable, Codable, Sendable, Identifiable {
     /// Save an unfinished thought and open Scratchpad. The historical default.
     case scratchpad
@@ -86,10 +122,11 @@ enum VoiceTextInsertion {
         return .copiedToClipboard(.insertionFailed)
     }
 
+    @discardableResult
     @MainActor
-    static func copy(_ text: String, to pasteboard: NSPasteboard = .general) {
+    static func copy(_ text: String, to pasteboard: NSPasteboard = .general) -> Bool {
         pasteboard.clearContents()
-        pasteboard.setString(text, forType: .string)
+        return pasteboard.setString(text, forType: .string)
     }
 
     private static func focusedElement(of appElement: AXUIElement) -> AXUIElement? {

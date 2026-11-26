@@ -28,7 +28,8 @@ final class AppBootstrap {
                         await self?.openSettings()
                     }
                 }
-                controller.onVoiceCapture = { VoiceCapture.shared.activate() }
+                controller.onVoiceCapture = { VoiceCapture.shared.activate(intent: .scratchpad) }
+                controller.onVoiceDictate = { VoiceCapture.shared.activate(intent: .dictate) }
                 controller.onVoiceCaptureShortcut = { VoiceCapture.shared.handleScratchpadShortcut($0) }
                 controller.onDidHide = { [weak self] in
                     self?.reloadHomeIfVisible()

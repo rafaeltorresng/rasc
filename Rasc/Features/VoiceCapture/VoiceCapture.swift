@@ -15,6 +15,9 @@ final class VoiceCapture: ObservableObject {
     static let preferenceKey = "voiceCaptureEnabled"
     static let outputPreferenceKey = "voiceCaptureOutput"
     static let standaloneHistoryPreferenceKey = "voiceCaptureStandaloneKeepsHistory"
+    static let dictationDeliveryPreferenceKey = "voiceDictationDelivery"
+    static let dictationAlsoClipboardPreferenceKey = "voiceDictationAlsoCopiesToClipboard"
+    static let dictationSaveCopyPreferenceKey = "voiceDictationSaveCopy"
     nonisolated static let isSupported: Bool = {
         #if arch(arm64)
         if #available(macOS 26.0, *) { return true }
@@ -25,7 +28,7 @@ final class VoiceCapture: ObservableObject {
     enum Phase: Equatable {
         case idle, checking, starting, listening, finishing, waitingForModel, transcribing, stopping
         case saving, opening, ready
-        case copied, inserted, copiedFallback
+        case copied, inserted, insertedAndCopied, copiedFallback
         case issue(Issue)
     }
 
@@ -104,23 +107,35 @@ final class VoiceCapture: ObservableObject {
     private static let logger = Logger(subsystem: "app.rasc", category: "VoiceCapture")
     @Published private(set) var enabled: Bool
     @Published private(set) var phase: Phase = .idle
+    @Published private(set) var activeIntent: VoiceCaptureIntent = .scratchpad
     @Published private(set) var setup: Setup = .unchecked
     @Published private(set) var shortcutIsActive = false
+    @Published private(set) var dictateShortcutIsActive = false
     @Published private(set) var modifierShortcut: ModifierShortcut?
     @Published private(set) var modifierShortcutIsActive = false
     @Published private(set) var modifierShortcutHasAccess = true
+    @Published private(set) var hasAccessibilityAccess = true
     @Published private(set) var output: VoiceCaptureOutput
+    @Published private(set) var dictationDelivery: VoiceDictationDelivery
+    @Published private(set) var dictationAlsoCopiesToClipboard: Bool
     @Published private(set) var standaloneKeepsHistory: Bool
     let inputLevel = VoiceInputLevel()
     @Published private(set) var canRetryAudio = false
     @Published private(set) var awaitingMicrophonePermission = false
     @Published private(set) var canRemoveInstalledModel = false
+    @Published private(set) var isConfirmingCancel = false
+    @Published private(set) var recordingElapsedSeconds = 0
+    @Published private(set) var confirmCancelDurationSeconds = 0
+    @Published private(set) var isEscapeCancelArmed = false
 
     private let preferences: UserDefaults
     private let support: Bool
     private let input: Input
     private let speech: Speech
     private let modelTimeout: Duration
+    private let cancelConfirmationThreshold: Duration
+    private let escapeConfirmGuard: Duration
+    private let cancelConfirmationTimeout: Duration
     private let presentWindows: Bool
     private let modifierStore: ModifierShortcutStore
     private let accessibilityTrusted: @Sendable () -> Bool
@@ -142,11 +157,13 @@ final class VoiceCapture: ObservableObject {
     private var releaseAfterCapture = false
     private var meter: Task<Void, Never>?
     private var audioExpiry: Task<Void, Never>?
+    private var cancelConfirmationTimeoutTask: Task<Void, Never>?
     private var id: UUID?
     private var decodeID: UUID?
     private var buffer: MicBuffer?
     private var retryAudio: VoiceAudio?
     private var pendingTranscript: String?
+    private var pendingConfirmedDelivery: (text: String, token: UUID)?
     private var capturedScratchID: UUID?
     private var captureWasInterrupted = false
     private var targetApplication: NSRunningApplication?
@@ -154,6 +171,10 @@ final class VoiceCapture: ObservableObject {
     private var standaloneHistoryTask: Task<Void, Never>?
     private var lastActivation: ContinuousClock.Instant?
     private var activatedAt: ContinuousClock.Instant?
+    private var recordingStartedAt: ContinuousClock.Instant?
+    private var confirmingCancelStartedAt: ContinuousClock.Instant?
+    private var recordedAudioDuration: Duration = .zero
+    private var legacyDefaultIntent: VoiceCaptureIntent?
 
     var modelDownloadSizeBytes: Int64 {
         speech.downloadSizeBytes()
@@ -173,6 +194,7 @@ final class VoiceCapture: ObservableObject {
 
     var onNotesChanged: (() -> Void)?
     var onOpenScratch: ((UUID, Bool) async -> Bool)?
+    var onRefreshGlobalModifiers: (() -> Void)?
 
     init(
         preferences: UserDefaults = .standard,
@@ -181,6 +203,9 @@ final class VoiceCapture: ObservableObject {
         presentWindows: Bool = true,
         speech: Speech = .local(),
         modelTimeout: Duration = .seconds(35),
+        cancelConfirmationThreshold: Duration = .seconds(30),
+        escapeConfirmGuard: Duration = .milliseconds(400),
+        cancelConfirmationTimeout: Duration = .seconds(6),
         modifierStore: ModifierShortcutStore = .shared,
         accessibilityTrusted: @escaping @Sendable () -> Bool = { ModifierShortcutAccess.isTrusted },
         pasteboard: NSPasteboard = .general,
@@ -195,26 +220,63 @@ final class VoiceCapture: ObservableObject {
         self.presentWindows = presentWindows
         self.speech = speech
         self.modelTimeout = modelTimeout
+        self.cancelConfirmationThreshold = cancelConfirmationThreshold
+        self.escapeConfirmGuard = escapeConfirmGuard
+        self.cancelConfirmationTimeout = cancelConfirmationTimeout
         self.modifierStore = modifierStore
         self.accessibilityTrusted = accessibilityTrusted
         self.pasteboard = pasteboard
         self.insertText = insertText
         modifierShortcut = modifierStore.shortcut
-        modifierShortcutHasAccess = accessibilityTrusted()
-        output = VoiceCaptureOutput(rawValue: preferences.string(forKey: Self.outputPreferenceKey) ?? "") ?? .scratchpad
-        standaloneKeepsHistory = preferences.bool(forKey: Self.standaloneHistoryPreferenceKey)
+        let trusted = accessibilityTrusted()
+        modifierShortcutHasAccess = trusted
+        hasAccessibilityAccess = trusted
+        let initialOutput = VoiceCaptureOutput(rawValue: preferences.string(forKey: Self.outputPreferenceKey) ?? "") ?? .scratchpad
+        output = initialOutput
+        if let storedDelivery = preferences.string(forKey: Self.dictationDeliveryPreferenceKey).flatMap(VoiceDictationDelivery.init(rawValue:)) {
+            dictationDelivery = storedDelivery
+        } else {
+            dictationDelivery = (initialOutput == .clipboard) ? .clipboard : .insertAtCursor
+        }
+        if preferences.object(forKey: Self.dictationAlsoClipboardPreferenceKey) != nil {
+            dictationAlsoCopiesToClipboard = preferences.bool(forKey: Self.dictationAlsoClipboardPreferenceKey)
+        } else {
+            dictationAlsoCopiesToClipboard = true
+        }
+        if preferences.object(forKey: Self.dictationSaveCopyPreferenceKey) != nil {
+            standaloneKeepsHistory = preferences.bool(forKey: Self.dictationSaveCopyPreferenceKey)
+        } else if preferences.object(forKey: Self.standaloneHistoryPreferenceKey) != nil {
+            standaloneKeepsHistory = preferences.bool(forKey: Self.standaloneHistoryPreferenceKey)
+        } else {
+            standaloneKeepsHistory = true
+        }
+        if initialOutput != .scratchpad && preferences.string(forKey: Self.dictationDeliveryPreferenceKey) == nil {
+            legacyDefaultIntent = .dictate
+        }
     }
 
     func connect(repository: NoteRepository) {
         self.repository = repository
+        if presentWindows && preferences === UserDefaults.standard {
+            GlobalShortcutStore.shared.migrateLegacyPreferencesIfNeeded()
+            reloadDictationPreferences()
+        }
         if enabled { checkSetup(prepare: true) }
         guard support, presentWindows, !handlesShortcut else { return }
         handlesShortcut = true
-        if !enabled { KeyboardShortcuts.disable(.voiceCapture) }
+        if !enabled {
+            KeyboardShortcuts.disable(.voiceCapture)
+            KeyboardShortcuts.disable(.voiceDictate)
+        }
         KeyboardShortcuts.onKeyDown(for: .voiceCapture) { [weak self] in
-            Self.logger.debug("Global Voice Capture shortcut received")
+            Self.logger.debug("Global Voice to Scratchpad shortcut received")
             self?.noteExternalChordInput()
-            self?.activate(fromShortcut: true)
+            self?.activate(intent: .scratchpad, fromShortcut: true)
+        }
+        KeyboardShortcuts.onKeyDown(for: .voiceDictate) { [weak self] in
+            Self.logger.debug("Global Dictate shortcut received")
+            self?.noteExternalChordInput()
+            self?.activate(intent: .dictate, fromShortcut: true)
         }
         refreshShortcut()
         refreshModifierShortcut()
@@ -227,6 +289,7 @@ final class VoiceCapture: ObservableObject {
         refreshShortcut()
         if value {
             checkSetup(prepare: true)
+            onRefreshGlobalModifiers?()
         } else {
             setupTask?.cancel()
             setupTask = nil
@@ -243,25 +306,48 @@ final class VoiceCapture: ObservableObject {
             pressure = nil
             modifierMonitor.stop()
             modifierShortcutIsActive = false
+            onRefreshGlobalModifiers?()
             Task { if !enabled { await speech.release() } }
             cancel()
         }
     }
 
-    /// Assign (or clear) the modifier-only global trigger. Kept independent of
-    /// the `KeyboardShortcuts` chord binding; a user can use either or both.
+    /// Assign (or clear) the modifier-only global trigger for Voice to Scratchpad.
     func setModifierShortcut(_ shortcut: ModifierShortcut?) {
         modifierStore.set(shortcut)
+        if modifierStore === ModifierShortcutStore.shared {
+            if let shortcut {
+                _ = GlobalShortcutStore.shared.set(.modifier(shortcut), for: .voiceScratchpad)
+            } else if GlobalShortcutStore.shared.trigger(for: .voiceScratchpad)?.asModifier != nil {
+                _ = GlobalShortcutStore.shared.set(nil, for: .voiceScratchpad)
+            }
+        }
         modifierShortcut = modifierStore.shortcut
         refreshModifierShortcut()
     }
 
     func refreshModifierShortcut() {
-        modifierShortcut = modifierStore.shortcut
+        let usesSharedStore = (modifierStore === ModifierShortcutStore.shared)
+        if usesSharedStore {
+            modifierShortcut = GlobalShortcutStore.shared.trigger(for: .voiceScratchpad)?.asModifier
+        } else {
+            modifierShortcut = modifierStore.shortcut
+        }
         let hadAccess = modifierShortcutHasAccess
         let hasAccess = accessibilityTrusted()
         modifierShortcutHasAccess = hasAccess
+        hasAccessibilityAccess = hasAccess
         guard support, presentWindows else { return }
+
+        if usesSharedStore {
+            modifierMonitor.stop()
+            onRefreshGlobalModifiers?()
+            modifierShortcutIsActive = enabled
+                && modifierShortcut != nil
+                && GlobalModifierDispatcher.shared.activeShortcut(for: .voiceScratchpad) != nil
+            return
+        }
+
         guard enabled, let shortcut = modifierStore.shortcut else {
             modifierMonitor.stop()
             modifierShortcutIsActive = false
@@ -277,26 +363,59 @@ final class VoiceCapture: ObservableObject {
     /// Suppress modifier triggering while a settings recorder is capturing a key.
     func setModifierShortcutRecording(_ recording: Bool) {
         modifierMonitor.isSuspended = recording
+        GlobalModifierDispatcher.shared.isSuspended = recording
     }
 
-    /// Choose where a finished transcript is delivered. `.scratchpad` is the default.
+    /// Legacy compatibility setter used by existing migration/voice tests.
     func setOutput(_ output: VoiceCaptureOutput) {
-        guard output != self.output else { return }
         self.output = output
         preferences.set(output.rawValue, forKey: Self.outputPreferenceKey)
+        switch output {
+        case .scratchpad:
+            legacyDefaultIntent = .scratchpad
+        case .clipboard:
+            legacyDefaultIntent = .dictate
+            setDictationDelivery(.clipboard)
+        case .insertAtCursor:
+            legacyDefaultIntent = .dictate
+            setDictationDelivery(.insertAtCursor)
+        }
     }
 
-    /// Independent preference for `.clipboard` / `.insertAtCursor` modes. Standalone
-    /// transcripts are never forced into Home when this is off.
+    func setDictationDelivery(_ delivery: VoiceDictationDelivery) {
+        guard delivery != dictationDelivery else { return }
+        dictationDelivery = delivery
+        preferences.set(delivery.rawValue, forKey: Self.dictationDeliveryPreferenceKey)
+    }
+
+    func setDictationAlsoCopiesToClipboard(_ value: Bool) {
+        guard value != dictationAlsoCopiesToClipboard else { return }
+        dictationAlsoCopiesToClipboard = value
+        preferences.set(value, forKey: Self.dictationAlsoClipboardPreferenceKey)
+    }
+
+    /// Independent preference for saving an extra local copy in Rasc during Dictate.
     func setStandaloneKeepsHistory(_ value: Bool) {
         guard value != standaloneKeepsHistory else { return }
         standaloneKeepsHistory = value
+        preferences.set(value, forKey: Self.dictationSaveCopyPreferenceKey)
         preferences.set(value, forKey: Self.standaloneHistoryPreferenceKey)
     }
 
-    /// True when Accessibility is required for the current output mode.
+    /// True when Accessibility is required for legacy `.output` insertion mode.
     var outputNeedsAccessibility: Bool {
         output == .insertAtCursor && !modifierShortcutHasAccess
+    }
+
+    /// True when Dictate is configured for `.insertAtCursor` without Accessibility permission.
+    var dictationInsertionNeedsAccessibility: Bool {
+        dictationDelivery == .insertAtCursor && !hasAccessibilityAccess
+    }
+
+    func refreshAccessibilityStatus() {
+        let trusted = accessibilityTrusted()
+        hasAccessibilityAccess = trusted
+        modifierShortcutHasAccess = trusted
     }
 
     func requestAccessibilityForInsertion() {
@@ -310,10 +429,12 @@ final class VoiceCapture: ObservableObject {
 
     func resetModifierShortcutState() {
         modifierMonitor.reset()
+        GlobalModifierDispatcher.shared.reset()
     }
 
     func noteExternalChordInput() {
         modifierMonitor.noteOtherKeyDown()
+        GlobalModifierDispatcher.shared.noteOtherKeyDown()
     }
 
     func refreshShortcut() {
@@ -321,22 +442,54 @@ final class VoiceCapture: ObservableObject {
         guard handlesShortcut else { return }
         if enabled {
             KeyboardShortcuts.enable(.voiceCapture)
+            KeyboardShortcuts.enable(.voiceDictate)
         } else {
             KeyboardShortcuts.disable(.voiceCapture)
+            KeyboardShortcuts.disable(.voiceDictate)
         }
         let active = KeyboardShortcuts.isEnabled(for: .voiceCapture)
         if shortcutIsActive != active { shortcutIsActive = active }
+        let dictateActive = KeyboardShortcuts.isEnabled(for: .voiceDictate)
+        if dictateShortcutIsActive != dictateActive { dictateShortcutIsActive = dictateActive }
     }
 
     func handleScratchpadShortcut(_ event: NSEvent) -> Bool {
-        guard enabled, shortcutIsActive,
-              let shortcut = KeyboardShortcuts.getShortcut(for: .voiceCapture),
-              KeyboardShortcuts.Shortcut(event: event) == shortcut else { return false }
-        if !event.isARepeat {
-            noteExternalChordInput()
-            activate(fromShortcut: true)
+        guard enabled else { return false }
+        let eventShortcut = KeyboardShortcuts.Shortcut(event: event)
+        if shortcutIsActive,
+           let scratch = KeyboardShortcuts.getShortcut(for: .voiceCapture),
+           eventShortcut == scratch {
+            if !event.isARepeat {
+                noteExternalChordInput()
+                activate(intent: .scratchpad, fromShortcut: true)
+            }
+            return true
         }
-        return true
+        if dictateShortcutIsActive,
+           let dictate = KeyboardShortcuts.getShortcut(for: .voiceDictate),
+           eventShortcut == dictate {
+            if !event.isARepeat {
+                noteExternalChordInput()
+                activate(intent: .dictate, fromShortcut: true)
+            }
+            return true
+        }
+        return false
+    }
+
+    private func reloadDictationPreferences() {
+        if let raw = preferences.string(forKey: Self.dictationDeliveryPreferenceKey),
+           let delivery = VoiceDictationDelivery(rawValue: raw) {
+            dictationDelivery = delivery
+        }
+        if preferences.object(forKey: Self.dictationAlsoClipboardPreferenceKey) != nil {
+            dictationAlsoCopiesToClipboard = preferences.bool(forKey: Self.dictationAlsoClipboardPreferenceKey)
+        }
+        if preferences.object(forKey: Self.dictationSaveCopyPreferenceKey) != nil {
+            standaloneKeepsHistory = preferences.bool(forKey: Self.dictationSaveCopyPreferenceKey)
+        } else if preferences.object(forKey: Self.standaloneHistoryPreferenceKey) != nil {
+            standaloneKeepsHistory = preferences.bool(forKey: Self.standaloneHistoryPreferenceKey)
+        }
     }
 
     func checkSetup(prepare: Bool = false) {
@@ -529,7 +682,7 @@ final class VoiceCapture: ObservableObject {
         }
     }
 
-    func activate(fromShortcut: Bool = false) {
+    func activate(intent: VoiceCaptureIntent? = nil, fromShortcut: Bool = false) {
         guard support else { return }
         guard enabled else {
             if !fromShortcut { SettingsNavigation.revealVoiceCapture() }
@@ -540,8 +693,10 @@ final class VoiceCapture: ObservableObject {
             if let lastActivation, lastActivation.duration(to: now) < .milliseconds(180) { return }
             lastActivation = now
         }
+        let resolvedIntent = intent ?? legacyDefaultIntent ?? .scratchpad
         switch phase {
         case .idle:
+            activeIntent = resolvedIntent
             begin()
         case .issue(.permission) where fromShortcut && needsMicrophoneAccess:
             if presentWindows { windows.showStatus() }
@@ -552,8 +707,9 @@ final class VoiceCapture: ObservableObject {
         case .ready:
             transition(.opening)
             operation = Task { await openSavedScratch() }
-        case .copied, .inserted, .copiedFallback:
+        case .copied, .inserted, .insertedAndCopied, .copiedFallback:
             dismiss()
+            activeIntent = resolvedIntent
             begin()
         default:
             break
@@ -641,6 +797,8 @@ final class VoiceCapture: ObservableObject {
                     if let activatedAt {
                         Self.logger.debug("Shortcut to microphone: \(Self.ms(activatedAt), privacy: .public) ms")
                     }
+                    recordingStartedAt = .now
+                    recordingElapsedSeconds = 0
                     transition(.listening)
                     prepareModel()
                 }
@@ -650,6 +808,12 @@ final class VoiceCapture: ObservableObject {
                 }
                 if phase == .listening {
                     inputLevel.update(state.rms)
+                    if let recordingStartedAt {
+                        let elapsed = Int((recordingStartedAt.duration(to: .now) / .seconds(1)).rounded(.towardZero))
+                        if elapsed != recordingElapsedSeconds {
+                            recordingElapsedSeconds = elapsed
+                        }
+                    }
                     if state.full {
                         finish(interrupted: true)
                         return
@@ -682,6 +846,12 @@ final class VoiceCapture: ObservableObject {
     func finish(interrupted: Bool = false) {
         guard phase == .listening || (interrupted && phase == .finishing),
               let token = id, let buffer else { return }
+        if !interrupted {
+            clearCancelConfirmation()
+        }
+        if let recordingStartedAt {
+            recordedAudioDuration = max(recordedAudioDuration, recordingStartedAt.duration(to: .now))
+        }
         operation?.cancel()
         transition(.finishing)
         meter?.cancel()
@@ -694,7 +864,9 @@ final class VoiceCapture: ObservableObject {
             guard owns(token) else { return }
             let audio = buffer.audio()
             self.buffer = nil
+            recordedAudioDuration = max(recordedAudioDuration, .seconds(audio.activitySeconds))
             guard audio.activitySeconds >= 0.07 else {
+                clearCancelConfirmation()
                 transition(.issue(interrupted ? .microphone : .noSpeech))
                 return
             }
@@ -709,6 +881,7 @@ final class VoiceCapture: ObservableObject {
         audioExpiry?.cancel()
         retryAudio = audio
         canRetryAudio = false
+        recordedAudioDuration = max(recordedAudioDuration, .seconds(audio.activitySeconds))
         transition(.finishing)
         let start = ContinuousClock.now
         slowPreparation = Task {
@@ -726,14 +899,21 @@ final class VoiceCapture: ObservableObject {
                 clearDecodeTimers()
                 releaseAudio()
                 guard text.contains(where: { $0.isLetter || $0.isNumber }) else {
+                    clearCancelConfirmation()
                     transition(.issue(.noSpeech))
                     return
                 }
                 pendingTranscript = text
                 Self.logger.debug("Finish to transcript: \(Self.ms(start), privacy: .public) ms")
+                if isConfirmingCancel {
+                    // Hold delivery until the user decides whether to Keep or Discard.
+                    pendingConfirmedDelivery = (text, token)
+                    return
+                }
                 await deliverTranscript(text, owner: token)
             } catch {
                 guard owns(token), decodeID == attempt else { return }
+                clearCancelConfirmation()
                 let issue: Issue = switch error as? VoiceModel.PreparationError {
                 case .lowDiskSpace: .lowDiskSpace
                 case .unavailable: .modelUnavailable
@@ -789,30 +969,37 @@ final class VoiceCapture: ObservableObject {
         }
     }
 
-    /// Deliver a finished transcript according to `output`. Focus is never stolen;
-    /// no window opens in `.clipboard` or `.insertAtCursor` modes.
+    /// Deliver a finished transcript according to `activeIntent` and `dictationDelivery`.
+    /// Focus is never stolen; no Scratchpad window opens in `.dictate` mode.
     private func deliverTranscript(_ text: String, owner token: UUID) async {
         guard owns(token) else { return }
-        switch output {
+        switch activeIntent {
         case .scratchpad:
-            await saveAndOpenScratch()
-        case .clipboard:
+            await saveAndOpenScratch(owner: token)
+        case .dictate:
             pendingTranscript = nil
-            VoiceTextInsertion.copy(text, to: pasteboard)
-            transition(.copied)
-            scheduleDeliveryDismiss(.copied, after: .milliseconds(1400))
-            enqueueStandaloneHistoryIfNeeded(text)
-        case .insertAtCursor:
-            pendingTranscript = nil
-            let app = currentTargetApplication()
-            let result = insertText(text, app, pasteboard)
-            switch result {
-            case .inserted:
-                transition(.inserted)
-                scheduleDeliveryDismiss(.inserted, after: .milliseconds(1400))
-            case .copiedToClipboard:
-                // Honest fallback: text is on the clipboard, keep the capsule up.
-                transition(.copiedFallback)
+            switch dictationDelivery {
+            case .clipboard:
+                VoiceTextInsertion.copy(text, to: pasteboard)
+                transition(.copied)
+                scheduleDeliveryDismiss(.copied, after: .milliseconds(1400))
+            case .insertAtCursor:
+                let app = currentTargetApplication()
+                let result = insertText(text, app, pasteboard)
+                switch result {
+                case .inserted:
+                    if dictationAlsoCopiesToClipboard {
+                        VoiceTextInsertion.copy(text, to: pasteboard)
+                        transition(.insertedAndCopied)
+                        scheduleDeliveryDismiss(.insertedAndCopied, after: .milliseconds(1400))
+                    } else {
+                        transition(.inserted)
+                        scheduleDeliveryDismiss(.inserted, after: .milliseconds(1400))
+                    }
+                case .copiedToClipboard:
+                    // Honest fallback: text is on the clipboard, keep the capsule up.
+                    transition(.copiedFallback)
+                }
             }
             enqueueStandaloneHistoryIfNeeded(text)
         }
@@ -848,7 +1035,8 @@ final class VoiceCapture: ObservableObject {
         }
     }
 
-    private func saveAndOpenScratch() async {
+    private func saveAndOpenScratch(owner token: UUID? = nil) async {
+        if let token { guard owns(token) else { return } }
         guard let repository, let transcript = pendingTranscript else { return }
         if phase != .saving { transition(.saving) }
         do {
@@ -874,7 +1062,9 @@ final class VoiceCapture: ObservableObject {
 
     func flushForTermination() async -> Bool {
         await standaloneHistoryTask?.value
-        if phase == .copied || phase == .inserted || phase == .copiedFallback { return true }
+        if phase == .copied || phase == .inserted || phase == .insertedAndCopied || phase == .copiedFallback {
+            return true
+        }
         if phase == .saving || phase == .opening {
             await operation?.value
         }
@@ -889,12 +1079,71 @@ final class VoiceCapture: ObservableObject {
         }
     }
 
+    /// Unified entrypoint for Escape or `✕` button clicks during active capture.
+    /// Recordings under `cancelConfirmationThreshold` (30s) cancel immediately;
+    /// longer recordings prompt for confirmation without interrupting capture or stealing focus.
+    func requestCancel(fromEscape: Bool = false) {
+        if isConfirmingCancel {
+            if fromEscape,
+               let started = confirmingCancelStartedAt,
+               started.duration(to: .now) < escapeConfirmGuard {
+                return
+            }
+            confirmDiscard()
+            return
+        }
+
+        switch phase {
+        case .checking, .starting:
+            cancel()
+        case .listening:
+            let elapsed = recordingElapsedDuration()
+            if elapsed >= cancelConfirmationThreshold {
+                beginCancelConfirmation(elapsed: elapsed)
+            } else {
+                cancel()
+            }
+        case .finishing, .waitingForModel, .transcribing:
+            let elapsed = max(recordedAudioDuration, recordingElapsedDuration())
+            if elapsed >= cancelConfirmationThreshold {
+                beginCancelConfirmation(elapsed: elapsed)
+            } else {
+                cancel()
+            }
+        case .issue, .ready, .copied, .inserted, .insertedAndCopied, .copiedFallback:
+            dismiss()
+        default:
+            break
+        }
+    }
+
+    func confirmDiscard() {
+        clearCancelConfirmation()
+        cancel()
+    }
+
+    func keepRecording() {
+        let heldDelivery = pendingConfirmedDelivery
+        clearCancelConfirmation()
+        if let heldDelivery, owns(heldDelivery.token) {
+            Task { [weak self] in
+                await self?.deliverTranscript(heldDelivery.text, owner: heldDelivery.token)
+            }
+        }
+    }
+
     func cancel() {
         modifierMonitor.reset()
+        GlobalModifierDispatcher.shared.reset()
+        clearCancelConfirmation()
+        pendingConfirmedDelivery = nil
         switch phase {
         case .checking, .starting, .listening, .finishing, .waitingForModel, .transcribing:
             let owner = id
             id = nil
+            decodeID = nil
+            pendingTranscript = nil
+            capturedScratchID = nil
             if awaitingMicrophonePermission, presentWindows { windows.restorePreviousApplicationAfterPermission() }
             awaitingMicrophonePermission = false
             operation?.cancel()
@@ -904,11 +1153,40 @@ final class VoiceCapture: ObservableObject {
                 if let owner { await input.stop(owner) }
                 dismiss()
             }
-        case .issue, .ready, .copied, .inserted, .copiedFallback:
+        case .issue, .ready, .copied, .inserted, .insertedAndCopied, .copiedFallback:
             dismiss()
         default:
             break
         }
+    }
+
+    private func recordingElapsedDuration() -> Duration {
+        guard let recordingStartedAt else { return .zero }
+        return max(.zero, recordingStartedAt.duration(to: .now))
+    }
+
+    private func beginCancelConfirmation(elapsed: Duration) {
+        confirmingCancelStartedAt = .now
+        confirmCancelDurationSeconds = max(1, Int((elapsed / .seconds(1)).rounded(.towardZero)))
+        isConfirmingCancel = true
+        if presentWindows {
+            windows.announceCancelConfirmation(seconds: confirmCancelDurationSeconds)
+        }
+        cancelConfirmationTimeoutTask?.cancel()
+        cancelConfirmationTimeoutTask = Task { [weak self] in
+            do { try await Task.sleep(for: self?.cancelConfirmationTimeout ?? .seconds(6)) } catch { return }
+            guard let self, self.isConfirmingCancel else { return }
+            self.keepRecording()
+        }
+    }
+
+    private func clearCancelConfirmation() {
+        cancelConfirmationTimeoutTask?.cancel()
+        cancelConfirmationTimeoutTask = nil
+        confirmingCancelStartedAt = nil
+        isConfirmingCancel = false
+        confirmCancelDurationSeconds = 0
+        pendingConfirmedDelivery = nil
     }
 
     func openMicrophoneSettings() {
@@ -922,13 +1200,18 @@ final class VoiceCapture: ObservableObject {
     }
 
     private func dismiss() {
+        clearCancelConfirmation()
         deliveryDismissTask?.cancel()
         deliveryDismissTask = nil
         targetApplication = nil
         modifierMonitor.reset()
+        GlobalModifierDispatcher.shared.reset()
         resetInput()
         id = nil
         activatedAt = nil
+        recordingStartedAt = nil
+        recordingElapsedSeconds = 0
+        recordedAudioDuration = .zero
         pendingTranscript = nil
         capturedScratchID = nil
         captureWasInterrupted = false
@@ -962,13 +1245,32 @@ final class VoiceCapture: ObservableObject {
 
     private func transition(_ next: Phase) {
         phase = next
+        updateEscapeInterceptor(for: next)
         switch next {
-        case .idle, .issue, .saving, .copied, .inserted, .copiedFallback:
+        case .idle, .issue, .saving, .copied, .inserted, .insertedAndCopied, .copiedFallback:
             if releaseAfterCapture { releaseModelWhenSafe() }
         default:
             break
         }
         if presentWindows { windows.announce(next) }
+    }
+
+    private func updateEscapeInterceptor(for phase: Phase) {
+        let shouldArm: Bool = switch phase {
+        case .checking, .starting, .listening, .finishing, .waitingForModel, .transcribing:
+            true
+        default:
+            false
+        }
+        isEscapeCancelArmed = shouldArm
+        guard presentWindows else { return }
+        if shouldArm {
+            ActiveCaptureEscapeInterceptor.shared.start { [weak self] in
+                self?.requestCancel(fromEscape: true)
+            }
+        } else {
+            ActiveCaptureEscapeInterceptor.shared.stop()
+        }
     }
 
     private static func ms(_ start: ContinuousClock.Instant) -> Int {

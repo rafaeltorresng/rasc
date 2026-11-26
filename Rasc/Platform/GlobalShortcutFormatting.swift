@@ -5,14 +5,17 @@ import SwiftUI
 @MainActor
 enum GlobalShortcutFormatting {
     static func currentToggleShortcutDisplay() -> String {
-        display(for: .toggleScratchpad)
+        GlobalShortcutStore.shared.displayString(for: .toggleScratchpad)
     }
 
     static func currentHomeShortcutDisplay() -> String {
-        display(for: .toggleHome)
+        GlobalShortcutStore.shared.displayString(for: .toggleHome)
     }
 
     static func currentVoiceShortcutDisplay() -> String {
+        if let trigger = GlobalShortcutStore.shared.trigger(for: .voiceScratchpad) {
+            return trigger.displayString
+        }
         let chord = KeyboardShortcuts.getShortcut(for: .voiceCapture)?.description
         return voiceShortcutDisplay(
             modifier: VoiceCapture.shared.modifierShortcut,
@@ -20,6 +23,10 @@ enum GlobalShortcutFormatting {
             chord: chord,
             chordActive: VoiceCapture.shared.shortcutIsActive
         )
+    }
+
+    static func currentDictateShortcutDisplay() -> String {
+        GlobalShortcutStore.shared.displayString(for: .voiceDictate)
     }
 
     static func voiceShortcutDisplay(
@@ -39,18 +46,11 @@ enum GlobalShortcutFormatting {
     }
 
     static func hasValidToggleShortcut() -> Bool {
-        KeyboardShortcuts.getShortcut(for: .toggleScratchpad) != nil
+        GlobalShortcutStore.shared.trigger(for: .toggleScratchpad) != nil
     }
 
     static func hasValidHomeShortcut() -> Bool {
-        KeyboardShortcuts.getShortcut(for: .toggleHome) != nil
-    }
-
-    private static func display(for name: KeyboardShortcuts.Name) -> String {
-        guard let shortcut = KeyboardShortcuts.getShortcut(for: name) else {
-            return "—"
-        }
-        return shortcut.description
+        GlobalShortcutStore.shared.trigger(for: .toggleHome) != nil
     }
 }
 
@@ -61,9 +61,10 @@ enum GlobalShortcutPolicy {
         excluding name: KeyboardShortcuts.Name
     ) -> KeyboardShortcuts.ValidationResult {
         let shortcuts: [(KeyboardShortcuts.Name, String)] = [
-            (.toggleScratchpad, "Toggle Scratchpad"),
-            (.toggleHome, "Toggle Home"),
-            (.voiceCapture, "Voice Capture"),
+            (.toggleScratchpad, GlobalShortcutAction.toggleScratchpad.title),
+            (.toggleHome, GlobalShortcutAction.toggleHome.title),
+            (.voiceCapture, GlobalShortcutAction.voiceScratchpad.title),
+            (.voiceDictate, GlobalShortcutAction.voiceDictate.title),
         ]
         for (other, title) in shortcuts where other != name {
             if case let .disallow(reason) = validation(proposed: proposed, other: other, otherTitle: title) {
@@ -194,6 +195,9 @@ private struct GlobalShortcutChangeObserver: ViewModifier {
                 action()
             }
             .onReceive(NotificationCenter.default.publisher(for: ModifierShortcutStore.didChange)) { _ in
+                action()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: GlobalShortcutStore.didChange)) { _ in
                 action()
             }
     }
@@ -392,16 +396,11 @@ final class InternalShortcutStore: ObservableObject {
     }
 
     private func conflictingGlobalTitle(_ shortcut: InternalShortcut) -> String? {
-        let pairs: [(KeyboardShortcuts.Name, String)] = [
-            (.toggleScratchpad, "Toggle Scratchpad"),
-            (.toggleHome, "Toggle Home"),
-            (.voiceCapture, "Voice Capture"),
-        ]
-        for (name, title) in pairs {
-            guard let global = KeyboardShortcuts.getShortcut(for: name) else { continue }
+        for action in GlobalShortcutAction.allCases {
+            guard case let .chord(global) = GlobalShortcutStore.shared.trigger(for: action) else { continue }
             let normalized = global.description.replacingOccurrences(of: " ", with: "")
             if normalized == shortcut.displayString {
-                return title
+                return action.title
             }
         }
         return nil

@@ -46,11 +46,13 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         menu.autoenablesItems = false
         menu.delegate = self
 
-        menu.addItem(makeItem(
+        let scratch = makeItem(
             title: "Open Scratch",
             action: #selector(openScratch),
             keyEquivalent: ""
-        ))
+        )
+        scratch.setShortcut(for: .toggleScratchpad)
+        menu.addItem(scratch)
         let home = makeItem(
             title: "Open Home",
             action: #selector(openRasc),
@@ -72,8 +74,9 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         ))
         if VoiceCapture.isSupported {
             voiceItems = [
-                makeItem(title: "Voice Capture…", action: #selector(voiceCapture), keyEquivalent: ""),
-                makeItem(title: "Cancel Voice Capture", action: #selector(cancelVoiceCapture), keyEquivalent: ""),
+                makeItem(title: "Voice to Scratchpad…", action: #selector(voiceToScratchpad), keyEquivalent: ""),
+                makeItem(title: "Dictate…", action: #selector(voiceDictate), keyEquivalent: ""),
+                makeItem(title: "Cancel Recording", action: #selector(cancelVoiceCapture), keyEquivalent: ""),
             ]
             voiceItems.forEach(menu.addItem)
         }
@@ -155,34 +158,95 @@ final class MenuBarController: NSObject, NSMenuDelegate {
 
     func menuWillOpen(_ menu: NSMenu) {
         KeyboardShortcuts.disable(.toggleScratchpad, .toggleHome)
-        guard voiceItems.count == 2 else { return }
+        GlobalModifierDispatcher.shared.isSuspended = true
+        guard voiceItems.count == 3 else { return }
         let capture = VoiceCapture.shared
         let phase = capture.phase
-        voiceItems[0].title = switch phase {
-        case .listening: "Finish Voice Capture"
-        case .ready: "Open Captured Thought"
-        case .issue(.permission) where capture.needsMicrophoneAccess: "Open Microphone Settings…"
-        case .issue where capture.canRetryAudio: "Retry Transcription"
-        case .issue: "Try Voice Capture Again"
-        default: capture.enabled ? "Start Voice Capture" : "Voice Capture…"
+
+        let scratchItem = voiceItems[0]
+        let dictateItem = voiceItems[1]
+        let cancelItem = voiceItems[2]
+
+        guard capture.enabled else {
+            scratchItem.title = "Set Up Voice…"
+            scratchItem.isEnabled = true
+            scratchItem.isHidden = false
+            dictateItem.isHidden = true
+            cancelItem.isHidden = true
+            return
         }
-        voiceItems[0].isEnabled = switch phase {
-        case .idle, .listening, .ready, .copied, .inserted, .copiedFallback, .issue: true
-        default: false
+
+        scratchItem.isHidden = false
+        scratchItem.title = switch phase {
+        case .listening where capture.activeIntent == .scratchpad:
+            "Finish Voice to Scratchpad"
+        case .ready:
+            "Open Captured Thought"
+        case .issue(.permission) where capture.needsMicrophoneAccess:
+            "Open Microphone Settings…"
+        case .issue where capture.canRetryAudio:
+            "Retry Transcription"
+        case .issue:
+            "Try Voice to Scratchpad Again"
+        default:
+            "Voice to Scratchpad"
         }
-        voiceItems[1].title = phase == .copiedFallback ? "Dismiss Voice Capture" : "Cancel Voice Capture"
-        voiceItems[1].isHidden = switch phase {
-        case .checking, .starting, .listening, .finishing, .transcribing, .waitingForModel, .copiedFallback, .issue: false
-        default: true
+        scratchItem.isEnabled = switch phase {
+        case .idle, .ready, .copied, .inserted, .insertedAndCopied, .copiedFallback, .issue:
+            true
+        case .listening:
+            capture.activeIntent == .scratchpad
+        default:
+            false
+        }
+
+        dictateItem.isHidden = false
+        dictateItem.title = switch phase {
+        case .listening where capture.activeIntent == .dictate:
+            "Finish Dictation"
+        default:
+            "Dictate"
+        }
+        dictateItem.isEnabled = switch phase {
+        case .idle, .copied, .inserted, .insertedAndCopied, .copiedFallback:
+            true
+        case .listening:
+            capture.activeIntent == .dictate
+        default:
+            false
+        }
+
+        if capture.isConfirmingCancel {
+            cancelItem.title = "Confirm Discard Recording"
+        } else if phase == .copiedFallback {
+            cancelItem.title = "Dismiss Status"
+        } else {
+            cancelItem.title = "Cancel Recording"
+        }
+        cancelItem.isHidden = switch phase {
+        case .checking, .starting, .listening, .finishing, .transcribing, .waitingForModel, .copiedFallback, .issue:
+            false
+        default:
+            true
         }
     }
 
     func menuDidClose(_ menu: NSMenu) {
         KeyboardShortcuts.enable(.toggleScratchpad, .toggleHome)
+        GlobalModifierDispatcher.shared.isSuspended = false
     }
 
-    @objc private func voiceCapture() { VoiceCapture.shared.activate() }
-    @objc private func cancelVoiceCapture() { VoiceCapture.shared.cancel() }
+    @objc private func voiceToScratchpad() {
+        VoiceCapture.shared.activate(intent: .scratchpad)
+    }
+
+    @objc private func voiceDictate() {
+        VoiceCapture.shared.activate(intent: .dictate)
+    }
+
+    @objc private func cancelVoiceCapture() {
+        VoiceCapture.shared.requestCancel(fromEscape: false)
+    }
 
     @objc private func openScratch() {
         delegate?.menuBarOpenScratch()

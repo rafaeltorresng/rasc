@@ -1,5 +1,4 @@
 import AppKit
-import KeyboardShortcuts
 import SwiftUI
 
 struct RefineStatusDescription: Equatable, Sendable {
@@ -47,6 +46,31 @@ private enum RefineLanguagePickerValue: Hashable {
     case fixedLocale(String)
 }
 
+enum SettingsTab: String, CaseIterable, Hashable {
+    case general
+    case shortcuts
+    case voice
+    case refine
+
+    var title: String {
+        switch self {
+        case .general: "General"
+        case .shortcuts: "Shortcuts"
+        case .voice: "Voice"
+        case .refine: "Refine"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .general: "gearshape"
+        case .shortcuts: "command"
+        case .voice: "waveform"
+        case .refine: "sparkles"
+        }
+    }
+}
+
 struct SettingsView: View {
     private let refinementProvider: any RefinementProvider
     private let loginItemController: LoginItemController
@@ -55,10 +79,13 @@ struct SettingsView: View {
     private let supportedLocales: any RefineSupportedLocaleDiscovering
 
     @ObservedObject private var themeStore: ThemeStore
+    @ObservedObject private var voiceCapture = VoiceCapture.shared
+    @ObservedObject private var globalShortcuts = GlobalShortcutStore.shared
     @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AppStorage(NoteTextSize.preferenceKey) private var noteTextSize: NoteTextSize = .standard
+
+    @State private var selectedTab: SettingsTab
     @State private var customDraft: CustomTheme
     @State private var customEditingScheme: ColorScheme?
     @State private var selectedTheme: AppTheme
@@ -77,8 +104,7 @@ struct SettingsView: View {
         isUsingFallback: false,
         unsupportedSavedLocaleIdentifier: nil
     )
-    @State private var globalShortcutRevision = 0
-    @State private var shortcutRestoreMessage: String?
+    @State private var showStandardShortcuts = false
 
     init(
         refinementProvider: any RefinementProvider = FoundationModelsRefinementProvider(),
@@ -86,7 +112,8 @@ struct SettingsView: View {
         languageSettings: RefineLanguageSettingsStore = RefineLanguageSettingsStore(),
         themeSettings: AppThemeSettingsStore = AppThemeSettingsStore(),
         themeStore: ThemeStore = .shared,
-        supportedLocales: any RefineSupportedLocaleDiscovering = RefineSupportedLocales()
+        supportedLocales: any RefineSupportedLocaleDiscovering = RefineSupportedLocales(),
+        initialTab: SettingsTab = .general
     ) {
         self.refinementProvider = refinementProvider
         self.loginItemController = loginItemController
@@ -96,26 +123,104 @@ struct SettingsView: View {
         self.themeStore = themeStore
         _customDraft = State(initialValue: themeStore.custom)
         self.supportedLocales = supportedLocales
+        _selectedTab = State(initialValue: initialTab)
     }
 
     var body: some View {
-        let _ = globalShortcutRevision
-        ScrollViewReader { proxy in
-            settingsForm
-                .onAppear {
-                    scrollToRequestedSection(proxy)
+        VStack(spacing: 0) {
+            settingsTabBar
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 10)
+
+            Divider()
+                .overlay(palette.border(for: colorScheme).opacity(0.45))
+
+            Group {
+                switch selectedTab {
+                case .general:
+                    generalTab
+                case .shortcuts:
+                    shortcutsTab
+                case .voice:
+                    voiceTab
+                case .refine:
+                    refineTab
                 }
-                .onReceive(NotificationCenter.default.publisher(for: SettingsNavigation.revealNotification)) { _ in
-                    scrollToRequestedSection(proxy)
-                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .onGlobalShortcutChange {
-            globalShortcutRevision += 1
-            shortcutRestoreMessage = nil
+        .frame(
+            minWidth: 500,
+            idealWidth: 540,
+            maxWidth: 600,
+            minHeight: SettingsWindowPresentation.fittedMinimumHeight(
+                visibleHeight: NSScreen.main?.visibleFrame.height ?? 680
+            )
+        )
+        .rascWindowSurface()
+        .registersSettingsOpenAction()
+        .onAppear {
+            handlePendingNavigation()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: SettingsNavigation.revealNotification)) { _ in
+            handlePendingNavigation()
+        }
+        .task {
+            refreshLaunchAtLoginState()
+            refreshLanguageSettings()
+            await refreshRefineStatus()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            selectMode(themeSettings.load())
+            refreshLaunchAtLoginState()
+            refreshLanguageSettings()
+            voiceCapture.refreshAccessibilityStatus()
         }
     }
 
-    private var settingsForm: some View {
+    private var settingsTabBar: some View {
+        HStack(spacing: 6) {
+            ForEach(SettingsTab.allCases, id: \.self) { tab in
+                let isSelected = (selectedTab == tab)
+                Button {
+                    selectedTab = tab
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: tab.systemImage)
+                            .font(.system(size: 12, weight: .medium))
+                        Text(tab.title)
+                            .font(.system(size: 12.5, weight: isSelected ? .semibold : .medium))
+                    }
+                    .foregroundStyle(
+                        isSelected
+                            ? palette.noteText(for: colorScheme)
+                            : palette.secondaryText(for: colorScheme)
+                    )
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background {
+                        if isSelected {
+                            RoundedRectangle(cornerRadius: 7, style: .continuous)
+                                .fill(palette.selectionFill(for: colorScheme))
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 7, style: .continuous)
+                                        .strokeBorder(palette.border(for: colorScheme).opacity(0.65), lineWidth: 1)
+                                }
+                        }
+                    }
+                    .contentShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(tab.title)
+                .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : .isButton)
+            }
+        }
+    }
+
+    // MARK: - General
+
+    private var generalTab: some View {
         Form {
             Section("Appearance") {
                 Picker("Mode", selection: Binding(
@@ -144,7 +249,9 @@ struct SettingsView: View {
                         ThemePresetSwatch(
                             preset: preset,
                             preview: ThemeCatalog.resolve(
-                                preset: preset, scheme: colorScheme, custom: themeStore.custom
+                                preset: preset,
+                                scheme: colorScheme,
+                                custom: themeStore.custom
                             ),
                             isSelected: themeStore.preset == preset
                         ) {
@@ -171,7 +278,7 @@ struct SettingsView: View {
             }
             .listRowBackground(settingsSectionBackground)
 
-            Section("General") {
+            Section("Startup") {
                 Toggle("Launch at Login", isOn: $launchAtLogin)
                     .onChange(of: launchAtLogin) { _, isEnabled in
                         updateLaunchAtLogin(isEnabled)
@@ -197,15 +304,125 @@ struct SettingsView: View {
             }
             .listRowBackground(settingsSectionBackground)
 
-            Section("Voice Capture") {
-                VoiceCaptureSettings(capture: .shared)
+            Section("About & Privacy") {
+                Text("Your thoughts live locally in SQLite on this Mac. Capture works instantaneously without AI.")
+                    .font(.caption)
+                    .foregroundStyle(palette.secondaryText(for: colorScheme))
+
+                Link("Source on GitHub", destination: URL(string: "https://github.com/rafaeltorresng/rasc")!)
+
+                Button("Send Feedback…") {
+                    BetaFeedback.open()
+                }
             }
             .listRowBackground(settingsSectionBackground)
-            .id(SettingsNavigation.voiceCaptureID)
+        }
+        .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
+    }
 
-            keyboardShortcutsSection
+    // MARK: - Shortcuts
 
-            Section("Refine") {
+    private var shortcutsTab: some View {
+        Form {
+            Section {
+                UnifiedShortcutRow(action: .toggleScratchpad)
+                UnifiedShortcutRow(action: .toggleHome)
+                UnifiedShortcutRow(action: .voiceScratchpad, showsRestoreDefault: false)
+                UnifiedShortcutRow(action: .voiceDictate, showsRestoreDefault: false)
+
+                if !voiceCapture.enabled &&
+                    (globalShortcuts.trigger(for: .voiceScratchpad) != nil ||
+                     globalShortcuts.trigger(for: .voiceDictate) != nil) {
+                    HStack {
+                        Text("Voice shortcuts stay inactive while Voice is turned off.")
+                            .font(.caption)
+                            .foregroundStyle(palette.secondaryText(for: colorScheme))
+                        Spacer()
+                        Button("Open Voice Tab") {
+                            selectedTab = .voice
+                        }
+                        .buttonStyle(.borderless)
+                        .font(.caption)
+                    }
+                }
+
+                if anyGlobalShortcutUsesModifier && !voiceCapture.hasAccessibilityAccess {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Accessibility access required for single-modifier triggers outside Rasc.")
+                            .font(.caption)
+                            .foregroundStyle(palette.secondaryText(for: colorScheme))
+                        HStack(spacing: 8) {
+                            Button("Allow Rasc…") {
+                                voiceCapture.requestAccessibilityForInsertion()
+                            }
+                            Button("Open System Settings…") {
+                                voiceCapture.openAccessibilitySettings()
+                            }
+                        }
+                        .controlSize(.small)
+                    }
+                    .padding(.vertical, 2)
+                }
+            } header: {
+                Text("Global")
+            } footer: {
+                Text("Works anywhere on your Mac. Click a field and press a key shortcut or tap a single modifier key (⌥, ⌃, ⇧, or ⌘).")
+            }
+            .id(SettingsNavigation.keyboardShortcutsID)
+            .listRowBackground(settingsSectionBackground)
+
+            Section {
+                ForEach(InternalCommand.allCases) { command in
+                    InternalShortcutEditor(command: command)
+                }
+
+                Button("Restore Defaults") {
+                    InternalShortcutStore.shared.restoreDefaults()
+                }
+                .accessibilityLabel("Restore inside shortcuts")
+
+                DisclosureGroup("System & Navigation Shortcuts", isExpanded: $showStandardShortcuts) {
+                    ForEach(RascShortcutCatalog.insideRasc.filter { entry in
+                        !["new-scratch", "refine", "keep", "search-thoughts", "command-palette"].contains(entry.id)
+                    }) { entry in
+                        insideRascShortcutRow(entry)
+                    }
+                }
+            } header: {
+                Text("Inside Rasc")
+            } footer: {
+                Text("Esc, ⌘W, ⌘,, and ⌘Q are reserved by macOS.")
+            }
+            .listRowBackground(settingsSectionBackground)
+        }
+        .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
+    }
+
+    private var anyGlobalShortcutUsesModifier: Bool {
+        GlobalShortcutAction.allCases.contains { action in
+            globalShortcuts.trigger(for: action)?.needsAccessibilityPermission == true
+        }
+    }
+
+    // MARK: - Voice
+
+    private var voiceTab: some View {
+        Form {
+            VoiceCaptureSettings(capture: voiceCapture)
+                .listRowBackground(settingsSectionBackground)
+        }
+        .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
+        .id(SettingsNavigation.voiceCaptureID)
+    }
+
+    // MARK: - Refine
+
+    private var refineTab: some View {
+        Form {
+            Section("Apple Intelligence") {
                 LabeledContent(refineStatus.headline) {
                     Text(refineStatus.detail)
                         .font(.caption)
@@ -214,7 +431,10 @@ struct SettingsView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .accessibilityElement(children: .combine)
+            }
+            .listRowBackground(settingsSectionBackground)
 
+            Section("Output Language") {
                 Picker("Language", selection: $selectedLanguage) {
                     Text("Match note language").tag(RefineLanguagePickerValue.matchNote)
                     ForEach(supportedFixedLocales) { option in
@@ -238,42 +458,22 @@ struct SettingsView: View {
                 }
             }
             .listRowBackground(settingsSectionBackground)
-
-            Section {
-                Text("Your notes are stored locally on this Mac. Refine runs on-device when available.")
-                    .font(.caption)
-                    .foregroundStyle(palette.secondaryText(for: colorScheme))
-
-                Link("Source on GitHub", destination: URL(string: "https://github.com/rafaeltorresng/rasc")!)
-
-                Button("Send Feedback…") {
-                    BetaFeedback.open()
-                }
-            }
-            .listRowBackground(settingsSectionBackground)
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
-        .padding(20)
-        .frame(
-            minWidth: 460,
-            idealWidth: 500,
-            maxWidth: 560,
-            minHeight: SettingsWindowPresentation.fittedMinimumHeight(
-                visibleHeight: NSScreen.main?.visibleFrame.height ?? 680
-            )
-        )
-        .rascWindowSurface()
-        .registersSettingsOpenAction()
-        .task {
-            refreshLaunchAtLoginState()
-            refreshLanguageSettings()
-            await refreshRefineStatus()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-            selectMode(themeSettings.load())
-            refreshLaunchAtLoginState()
-            refreshLanguageSettings()
+    }
+
+    // MARK: - Helpers
+
+    private func handlePendingNavigation() {
+        guard let target = SettingsNavigation.consumeRevealRequest() else { return }
+        switch target {
+        case SettingsNavigation.keyboardShortcutsID:
+            selectedTab = .shortcuts
+        case SettingsNavigation.voiceCaptureID:
+            selectedTab = .voice
+        default:
+            break
         }
     }
 
@@ -370,95 +570,6 @@ struct SettingsView: View {
         )
     }
 
-    private var keyboardShortcutsSection: some View {
-        Section {
-            shortcutCategory(
-                "Global Shortcuts",
-                detail: "Available from anywhere on your Mac."
-            )
-
-            KeyboardShortcuts.Recorder("Toggle Scratchpad", name: .toggleScratchpad)
-                .shortcutValidation { shortcut in
-                    GlobalShortcutPolicy.validation(
-                        proposed: shortcut,
-                        excluding: .toggleScratchpad
-                    )
-                }
-                .accessibilityHint("Editable global shortcut")
-                .frame(maxWidth: .infinity, alignment: .trailing)
-
-            if !GlobalShortcutPolicy.isUsingInitialShortcut(.toggleScratchpad) {
-                Button("Restore Default") {
-                    restoreGlobalShortcut(.toggleScratchpad, title: "Toggle Scratchpad")
-                }
-                .accessibilityLabel("Restore Toggle Scratchpad")
-                .accessibilityHint("Returns Toggle Scratchpad to its default shortcut")
-            }
-
-            KeyboardShortcuts.Recorder("Toggle Home", name: .toggleHome)
-                .shortcutValidation { shortcut in
-                    GlobalShortcutPolicy.validation(
-                        proposed: shortcut,
-                        excluding: .toggleHome
-                    )
-                }
-                .accessibilityHint("Editable global shortcut")
-                .frame(maxWidth: .infinity, alignment: .trailing)
-
-            if !GlobalShortcutPolicy.isUsingInitialShortcut(.toggleHome) {
-                Button("Restore Default") {
-                    restoreGlobalShortcut(.toggleHome, title: "Toggle Home")
-                }
-                .accessibilityLabel("Restore Toggle Home")
-                .accessibilityHint("Returns Toggle Home to its default shortcut")
-            }
-
-            if let shortcutRestoreMessage {
-                Text(shortcutRestoreMessage)
-                    .font(.caption)
-                    .foregroundStyle(palette.secondaryText(for: colorScheme))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-
-            shortcutCategory(
-                "Inside Rasc",
-                detail: "New, Search, Refine, the Command Palette, and Keep can be changed. Esc, ⌘W, ⌘, and ⌘Q stay with macOS."
-            )
-
-            ForEach(InternalCommand.allCases) { command in
-                InternalShortcutEditor(command: command)
-            }
-
-            Button("Restore Defaults") {
-                InternalShortcutStore.shared.restoreDefaults()
-            }
-            .accessibilityLabel("Restore inside shortcuts")
-
-            ForEach(RascShortcutCatalog.insideRasc.filter { entry in
-                !["new-scratch", "refine", "keep", "search-thoughts", "command-palette"].contains(entry.id)
-            }) { entry in
-                insideRascShortcutRow(entry)
-            }
-        } header: {
-            Text("Keyboard Shortcuts")
-        }
-        .id(SettingsNavigation.keyboardShortcutsID)
-        .listRowBackground(settingsSectionBackground)
-    }
-
-    private func shortcutCategory(_ title: String, detail: String) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(title)
-                .font(.subheadline.weight(.semibold))
-                .accessibilityAddTraits(.isHeader)
-            Text(detail)
-                .font(.caption)
-                .foregroundStyle(palette.secondaryText(for: colorScheme))
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .accessibilityElement(children: .combine)
-    }
-
     private func insideRascShortcutRow(_ entry: RascShortcutEntry) -> some View {
         LabeledContent {
             Text(entry.shortcut)
@@ -478,29 +589,6 @@ struct SettingsView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(entry.title), \(entry.shortcut)")
         .accessibilityHint(entry.detail.map { "\($0). Not customizable." } ?? "Not customizable.")
-    }
-
-    private func restoreGlobalShortcut(
-        _ name: KeyboardShortcuts.Name,
-        title: String
-    ) {
-        shortcutRestoreMessage = GlobalShortcutPolicy.restoreDefault(name)
-            ? nil : "Couldn’t restore the default for \(title). The shortcut is already in use."
-
-    }
-
-    private func scrollToRequestedSection(_ proxy: ScrollViewProxy) {
-        guard let section = SettingsNavigation.consumeRevealRequest() else { return }
-        let scroll = {
-            proxy.scrollTo(section, anchor: .top)
-        }
-        if reduceMotion {
-            scroll()
-        } else {
-            withAnimation(.easeOut(duration: 0.2)) {
-                scroll()
-            }
-        }
     }
 
     private var languageHelpText: String {
@@ -587,8 +675,14 @@ private struct InternalShortcutEditor: View {
         VStack(alignment: .leading, spacing: 4) {
             LabeledContent(command.title) {
                 Button(isRecording ? "Type shortcut…" : store.displayString(for: command)) {
-                    isRecording = true
-                    message = nil
+                    if isRecording {
+                        isRecording = false
+                        GlobalShortcutRecordingSuspension.end()
+                    } else {
+                        GlobalShortcutRecordingSuspension.begin()
+                        isRecording = true
+                        message = nil
+                    }
                 }
                 .buttonStyle(.bordered)
                 .accessibilityLabel("\(command.title) shortcut")
@@ -600,10 +694,17 @@ private struct InternalShortcutEditor: View {
                     .foregroundStyle(palette.secondaryText(for: colorScheme))
             }
         }
+        .onDisappear {
+            if isRecording {
+                isRecording = false
+                GlobalShortcutRecordingSuspension.end()
+            }
+        }
         .background {
             if isRecording {
                 InternalShortcutCapture(
                     onCapture: { event in
+                        GlobalShortcutRecordingSuspension.end()
                         guard let shortcut = InternalShortcut(event: event) else {
                             message = "Use a key with ⌘, ⌥, or ⌃."
                             isRecording = false
@@ -613,6 +714,7 @@ private struct InternalShortcutEditor: View {
                         isRecording = false
                     },
                     onCancel: {
+                        GlobalShortcutRecordingSuspension.end()
                         message = nil
                         isRecording = false
                     }
@@ -672,8 +774,6 @@ private struct ThemePresetSwatch: View {
     var body: some View {
         Button(action: onSelect) {
             VStack(spacing: 6) {
-                // A miniature page: canvas, raised sheet, two lines of ink — the three
-                // things that distinguish the presets.
                 ZStack {
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
                         .fill(Color(nsColor: preview.canvas))
