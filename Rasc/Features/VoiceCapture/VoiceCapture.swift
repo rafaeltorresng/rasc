@@ -141,11 +141,13 @@ final class VoiceCapture: ObservableObject {
     private let accessibilityTrusted: @Sendable () -> Bool
     private let pasteboard: NSPasteboard
     private let insertText: @MainActor @Sendable (String, NSRunningApplication?, NSPasteboard) -> VoiceTextInsertion.Result
+    private let insertInCurrentApp: @MainActor @Sendable (String) -> Bool
     private lazy var modifierMonitor = ModifierShortcutMonitor()
     private var repository: NoteRepository?
     private lazy var windows = VoiceCaptureWindows(capture: self)
     private var handlesShortcut = false
     private var setupTask: Task<Void, Never>?
+    private var shouldDownloadAfterCheck = false
     private var reprepareTask: Task<Void, Never>?
     private var pressure: DispatchSourceMemoryPressure?
     private var sleepObserver: (any NSObjectProtocol)?
@@ -211,6 +213,14 @@ final class VoiceCapture: ObservableObject {
         pasteboard: NSPasteboard = .general,
         insertText: @escaping @MainActor @Sendable (String, NSRunningApplication?, NSPasteboard) -> VoiceTextInsertion.Result = {
             VoiceTextInsertion.insert($0, target: $1, pasteboard: $2)
+        },
+        insertInCurrentApp: @escaping @MainActor @Sendable (String) -> Bool = { text in
+            guard NSApp.isActive,
+                  NSWorkspace.shared.frontmostApplication == .current
+            else {
+                return false
+            }
+            return VoiceTextInsertion.insertIntoWindowEditor(text, window: NSApp.keyWindow)
         }
     ) {
         self.preferences = preferences
@@ -227,6 +237,7 @@ final class VoiceCapture: ObservableObject {
         self.accessibilityTrusted = accessibilityTrusted
         self.pasteboard = pasteboard
         self.insertText = insertText
+        self.insertInCurrentApp = insertInCurrentApp
         modifierShortcut = modifierStore.shortcut
         let trusted = accessibilityTrusted()
         modifierShortcutHasAccess = trusted
@@ -291,6 +302,7 @@ final class VoiceCapture: ObservableObject {
             checkSetup(prepare: true)
             onRefreshGlobalModifiers?()
         } else {
+            shouldDownloadAfterCheck = false
             setupTask?.cancel()
             setupTask = nil
             reprepareTask?.cancel()
@@ -492,7 +504,34 @@ final class VoiceCapture: ObservableObject {
         }
     }
 
-    func checkSetup(prepare: Bool = false) {
+    /// Enables Voice Capture and initiates model preparation or background download
+    /// as soon as asset availability finishes resolving.
+    func enableAndDownloadIfMissing() {
+        guard support, canChangeEnabled else { return }
+        if !enabled {
+            enabled = true
+            preferences.set(true, forKey: Self.preferenceKey)
+            refreshShortcut()
+            onRefreshGlobalModifiers?()
+            checkSetup(prepare: true, downloadIfMissing: true)
+            return
+        }
+        switch setup {
+        case .installed:
+            prepareModel()
+        case .missing, .downloadFailed:
+            downloadModel()
+        case .unchecked:
+            checkSetup(prepare: true, downloadIfMissing: true)
+        default:
+            break
+        }
+    }
+
+    func checkSetup(prepare: Bool = false, downloadIfMissing: Bool = false) {
+        if downloadIfMissing {
+            shouldDownloadAfterCheck = true
+        }
         guard enabled, setupTask == nil else { return }
         let speech = self.speech
         setupTask = Task(priority: .utility) {
@@ -500,10 +539,16 @@ final class VoiceCapture: ObservableObject {
                 (speech.assetsAvailable(), speech.hasInstalledAssets())
             }.value
             guard !Task.isCancelled else { return }
+            let downloadPending = shouldDownloadAfterCheck
+            shouldDownloadAfterCheck = false
             setupTask = nil
             canRemoveInstalledModel = installed
             setup = available ? .installed : .missing
-            if available, prepare { prepareModel() }
+            if available, prepare {
+                prepareModel()
+            } else if !available, downloadPending {
+                downloadModel()
+            }
         }
     }
 
@@ -984,10 +1029,7 @@ final class VoiceCapture: ObservableObject {
                 transition(.copied)
                 scheduleDeliveryDismiss(.copied, after: .milliseconds(1400))
             case .insertAtCursor:
-                let app = currentTargetApplication()
-                let result = insertText(text, app, pasteboard)
-                switch result {
-                case .inserted:
+                if insertInCurrentApp(text) {
                     if dictationAlsoCopiesToClipboard {
                         VoiceTextInsertion.copy(text, to: pasteboard)
                         transition(.insertedAndCopied)
@@ -996,9 +1038,23 @@ final class VoiceCapture: ObservableObject {
                         transition(.inserted)
                         scheduleDeliveryDismiss(.inserted, after: .milliseconds(1400))
                     }
-                case .copiedToClipboard:
-                    // Honest fallback: text is on the clipboard, keep the capsule up.
-                    transition(.copiedFallback)
+                } else {
+                    let app = currentTargetApplication()
+                    let result = insertText(text, app, pasteboard)
+                    switch result {
+                    case .inserted:
+                        if dictationAlsoCopiesToClipboard {
+                            VoiceTextInsertion.copy(text, to: pasteboard)
+                            transition(.insertedAndCopied)
+                            scheduleDeliveryDismiss(.insertedAndCopied, after: .milliseconds(1400))
+                        } else {
+                            transition(.inserted)
+                            scheduleDeliveryDismiss(.inserted, after: .milliseconds(1400))
+                        }
+                    case .copiedToClipboard:
+                        // Honest fallback: text is on the clipboard, keep the capsule up.
+                        transition(.copiedFallback)
+                    }
                 }
             }
             enqueueStandaloneHistoryIfNeeded(text)

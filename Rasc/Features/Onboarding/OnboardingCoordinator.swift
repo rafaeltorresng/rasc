@@ -14,7 +14,7 @@ final class OnboardingCoordinator {
     private let windowController = OnboardingWindowController()
     private let voiceCapture: VoiceCapture
     private let shortcutStore: GlobalShortcutStore
-    private let microphoneAuthorized: @Sendable () -> Bool
+    private let microphoneStatusProvider: @Sendable () -> AVAuthorizationStatus
     private let accessibilityTrusted: @Sendable () -> Bool
     private let refineAvailabilityCheck: @Sendable () async -> Bool
     private let requestMicrophoneAccessHandler: @Sendable () async -> Bool
@@ -26,6 +26,7 @@ final class OnboardingCoordinator {
     private var practiceScreen: NSScreen?
 
     private(set) var isActive = false
+    private(set) var isReplaying = false
     private(set) var presentedStep: OnboardingStep = .welcome
     private(set) var captureSubstep: OnboardingCaptureSubstep = .waitingForShortcut
     private(set) var scratchpadGuidance = OnboardingScratchpadGuidance.inactive
@@ -40,6 +41,8 @@ final class OnboardingCoordinator {
     private(set) var selectedFocus: OnboardingFocus
     private(set) var practiceWasKept = false
     private(set) var isRequestingMicrophone = false
+    private var practiceMeaningfulTextEntered = false
+    private var practiceRefineAttemptedOrSkipped = false
 
     var isWaitingForShortcut: Bool {
         isActive
@@ -63,6 +66,14 @@ final class OnboardingCoordinator {
 
     var isVoiceEnabled: Bool {
         voiceCapture.enabled
+    }
+
+    var voiceCaptureSession: VoiceCapture {
+        voiceCapture
+    }
+
+    var shortcutStoreInstance: GlobalShortcutStore {
+        shortcutStore
     }
 
     var voiceSetupState: VoiceCapture.Setup {
@@ -109,9 +120,8 @@ final class OnboardingCoordinator {
         shortcutStore: GlobalShortcutStore = .shared,
         isVoiceSupported: Bool = VoiceCapture.isSupported,
         presentUIWindows: Bool = true,
-        microphoneAuthorized: @escaping @Sendable () -> Bool = {
-            AVCaptureDevice.authorizationStatus(for: .audio) == .authorized
-        },
+        microphoneStatus: (@Sendable () -> AVAuthorizationStatus)? = nil,
+        microphoneAuthorized: (@Sendable () -> Bool)? = nil,
         accessibilityTrusted: @escaping @Sendable () -> Bool = {
             ModifierShortcutAccess.isTrusted
         },
@@ -135,7 +145,13 @@ final class OnboardingCoordinator {
         self.voiceCapture = voiceCapture
         self.shortcutStore = shortcutStore
         self.presentUIWindows = presentUIWindows
-        self.microphoneAuthorized = microphoneAuthorized
+        if let microphoneStatus {
+            self.microphoneStatusProvider = microphoneStatus
+        } else if let microphoneAuthorized {
+            self.microphoneStatusProvider = { microphoneAuthorized() ? .authorized : .notDetermined }
+        } else {
+            self.microphoneStatusProvider = { AVCaptureDevice.authorizationStatus(for: .audio) }
+        }
         self.accessibilityTrusted = accessibilityTrusted
         self.refineAvailabilityCheck = refineAvailabilityCheck
         self.requestMicrophoneAccessHandler = requestMicrophoneAccessHandler
@@ -143,7 +159,7 @@ final class OnboardingCoordinator {
         let initialEnvironment = OnboardingEnvironment(
             isVoiceSupported: isVoiceSupported,
             isVoiceModelInstalled: voiceCapture.setup == .installed || voiceCapture.setup == .preparing,
-            isMicrophoneAuthorized: microphoneAuthorized(),
+            microphoneStatus: self.microphoneStatusProvider(),
             isAccessibilityTrusted: accessibilityTrusted(),
             isRefineAvailable: false
         )
@@ -154,6 +170,11 @@ final class OnboardingCoordinator {
             self.selectedFocus = isVoiceSupported ? .scratchpadAndVoice : .scratchpadOnly
         }
         self.practiceWasKept = store.practiceKept
+        self.practiceMeaningfulTextEntered = store.meaningfulTextEntered
+
+        windowController.onWindowClosedByUser = { [weak self] in
+            self?.dismissByWindowClose()
+        }
 
         if presentUIWindows {
             replayObserver = NotificationCenter.default.addObserver(
@@ -213,33 +234,59 @@ final class OnboardingCoordinator {
             panelController = panel
         }
         await refreshEnvironmentAsync()
-        resetOnboardingStateOnly()
+        isReplaying = true
+        if let savedFocus = store.focus {
+            selectedFocus = environment.isVoiceSupported ? savedFocus : .scratchpadOnly
+        } else {
+            selectedFocus = environment.isVoiceSupported ? .scratchpadAndVoice : .scratchpadOnly
+        }
+        practiceWasKept = false
+        practiceMeaningfulTextEntered = false
+        practiceRefineAttemptedOrSkipped = false
+        activateOnboardingSession(restoringProgress: false)
     }
 
     func resetOnboardingStateOnly() {
+        isReplaying = false
         store.resetOnboardingStateOnly()
         selectedFocus = environment.isVoiceSupported ? .scratchpadAndVoice : .scratchpadOnly
         practiceWasKept = false
+        practiceMeaningfulTextEntered = false
+        practiceRefineAttemptedOrSkipped = false
         refreshEnvironmentSync()
         activateOnboardingSession(restoringProgress: false)
     }
 
     func skipSetup() {
-        store.markCompleted()
-        tearDown(preservePracticeNote: false)
+        let wasReplaying = isReplaying
+        isReplaying = false
+        if !wasReplaying {
+            store.markCompleted()
+        }
+        tearDown(preservePracticeNote: wasReplaying)
+    }
+
+    func dismissByWindowClose() {
+        let wasReplaying = isReplaying
+        isReplaying = false
+        tearDown(preservePracticeNote: wasReplaying)
     }
 
     func selectFocus(_ focus: OnboardingFocus) {
         let resolved: OnboardingFocus = environment.isVoiceSupported ? focus : .scratchpadOnly
         selectedFocus = resolved
-        store.focus = resolved
+        if !isReplaying {
+            store.focus = resolved
+        }
     }
 
     func continueFromWelcome() {
-        store.focus = selectedFocus
+        if !isReplaying {
+            store.focus = selectedFocus
+            store.persistProgress(step: .shortcut)
+        }
         refreshEnvironmentSync()
         presentedStep = .shortcut
-        store.persistProgress(step: .shortcut)
         Task { await refreshEnvironmentAsync() }
     }
 
@@ -247,7 +294,9 @@ final class OnboardingCoordinator {
         refreshEnvironmentSync()
         presentedStep = .capturePractice
         captureSubstep = .waitingForShortcut
-        store.persistProgress(step: .capturePractice, captureSubstep: .waitingForShortcut)
+        if !isReplaying {
+            store.persistProgress(step: .capturePractice, captureSubstep: .waitingForShortcut)
+        }
         isYieldingForShortcut = true
         windowController.resignKey()
     }
@@ -257,36 +306,48 @@ final class OnboardingCoordinator {
     }
 
     func continueFromResumeCard() {
-        store.resumeCompleted = true
+        if !isReplaying {
+            store.resumeCompleted = true
+        }
         advanceAfterPractice()
     }
 
     func enableVoiceSetup() {
         guard environment.isVoiceSupported else { return }
-        store.voiceOptedIn = true
-        voiceCapture.setEnabled(true)
-        voiceCapture.checkSetup(prepare: true)
-        if voiceCapture.setup == .missing || voiceCapture.setup == .downloadFailed {
-            voiceCapture.downloadModel()
+        if !isReplaying {
+            store.voiceOptedIn = true
         }
+        voiceCapture.enableAndDownloadIfMissing()
         refreshEnvironmentSync()
     }
 
     func downloadVoiceModel() {
         guard environment.isVoiceSupported else { return }
-        if !voiceCapture.enabled {
-            voiceCapture.setEnabled(true)
-        }
-        voiceCapture.downloadModel()
+        voiceCapture.enableAndDownloadIfMissing()
         refreshEnvironmentSync()
     }
 
     func requestMicrophonePermission() async {
         guard !isRequestingMicrophone else { return }
+        if environment.isMicrophoneDenied {
+            openMicrophoneSettings()
+            return
+        }
         isRequestingMicrophone = true
         defer { isRequestingMicrophone = false }
         let granted = await requestMicrophoneAccessHandler()
-        environment.isMicrophoneAuthorized = granted || microphoneAuthorized()
+        let liveStatus = microphoneStatusProvider()
+        if liveStatus == .denied || liveStatus == .restricted {
+            environment.microphoneStatus = liveStatus
+        } else if granted || liveStatus == .authorized {
+            environment.microphoneStatus = .authorized
+        } else {
+            environment.microphoneStatus = .denied
+        }
+    }
+
+    func openMicrophoneSettings() {
+        voiceCapture.openMicrophoneSettings()
     }
 
     func requestAccessibilityPermission() {
@@ -307,7 +368,11 @@ final class OnboardingCoordinator {
     }
 
     func finish() {
-        store.markCompleted()
+        let wasReplaying = isReplaying
+        isReplaying = false
+        if !wasReplaying {
+            store.markCompleted()
+        }
         tearDown(preservePracticeNote: true)
         Task { @MainActor [weak self] in
             await self?.bootstrap?.openHome()
@@ -333,7 +398,9 @@ final class OnboardingCoordinator {
 
         if captureSubstep == .waitingToResume {
             captureSubstep = .liveResume
-            store.persistProgress(step: .capturePractice, captureSubstep: .liveResume)
+            if !isReplaying {
+                store.persistProgress(step: .capturePractice, captureSubstep: .liveResume)
+            }
             isYieldingForShortcut = false
             if presentUIWindows { windowController.hide() }
 
@@ -353,7 +420,9 @@ final class OnboardingCoordinator {
         }
 
         captureSubstep = .liveCapture
-        store.persistProgress(step: .capturePractice, captureSubstep: .liveCapture)
+        if !isReplaying {
+            store.persistProgress(step: .capturePractice, captureSubstep: .liveCapture)
+        }
         isYieldingForShortcut = false
         if presentUIWindows { windowController.hide() }
 
@@ -385,8 +454,14 @@ final class OnboardingCoordinator {
         }
     }
 
+    #if DEBUG
+    func restoreVoiceSetupForTest() {
+        activateOnboardingSession(restoringProgress: true)
+    }
+    #endif
+
     func refreshEnvironmentSync() {
-        environment.isMicrophoneAuthorized = microphoneAuthorized()
+        environment.microphoneStatus = microphoneStatusProvider()
         environment.isAccessibilityTrusted = accessibilityTrusted()
         environment.isVoiceModelInstalled = voiceCapture.setup == .installed || voiceCapture.setup == .preparing
         voiceCapture.refreshAccessibilityStatus()
@@ -411,25 +486,29 @@ final class OnboardingCoordinator {
         panelController?.scratchpadGuidance = .inactive
 
         if captureSubstep == .liveResume {
-            store.resumeCompleted = true
+            if !isReplaying { store.resumeCompleted = true }
             advanceAfterPractice()
             return
         }
 
-        if store.practiceKept {
-            store.resumeCompleted = true
+        if practiceWasKept || (!isReplaying && store.practiceKept) {
+            if !isReplaying { store.resumeCompleted = true }
             advanceAfterPractice()
             return
         }
 
-        if store.meaningfulTextEntered {
+        if practiceMeaningfulTextEntered || (!isReplaying && store.meaningfulTextEntered) {
             captureSubstep = .waitingToResume
-            store.persistProgress(step: .capturePractice, captureSubstep: .waitingToResume)
+            if !isReplaying {
+                store.persistProgress(step: .capturePractice, captureSubstep: .waitingToResume)
+            }
             isYieldingForShortcut = true
             presentWindow()
         } else {
             captureSubstep = .waitingForShortcut
-            store.persistProgress(step: .capturePractice, captureSubstep: .waitingForShortcut)
+            if !isReplaying {
+                store.persistProgress(step: .capturePractice, captureSubstep: .waitingForShortcut)
+            }
             isYieldingForShortcut = true
             presentWindow()
         }
@@ -440,7 +519,8 @@ final class OnboardingCoordinator {
         guard captureSubstep == .liveCapture else { return }
 
         if OnboardingMeaningfulInput.isMeaningful(text) {
-            store.meaningfulTextEntered = true
+            practiceMeaningfulTextEntered = true
+            if !isReplaying { store.meaningfulTextEntered = true }
             scratchpadGuidance.showEmptyHint = false
             scratchpadGuidance.showRefineHint = environment.isRefineAvailable
             scratchpadGuidance.showEscapeHint = true
@@ -453,20 +533,24 @@ final class OnboardingCoordinator {
 
         switch surface {
         case .refining:
-            store.refineAttempted = true
+            practiceRefineAttemptedOrSkipped = true
+            if !isReplaying { store.refineAttempted = true }
             scratchpadGuidance.showRefineHint = false
             scratchpadGuidance.unavailablePresentation = nil
             panelController?.scratchpadGuidance = scratchpadGuidance
             presentedStep = .refinePractice
-            store.persistProgress(step: .refinePractice, captureSubstep: captureSubstep)
+            if !isReplaying {
+                store.persistProgress(step: .refinePractice, captureSubstep: captureSubstep)
+            }
         case .refinementPreview:
-            store.refineAttempted = true
+            practiceRefineAttemptedOrSkipped = true
+            if !isReplaying { store.refineAttempted = true }
             scratchpadGuidance.showRefineHint = false
             panelController?.scratchpadGuidance = scratchpadGuidance
         case .message:
             break
         case .editor:
-            if store.refineAttempted || store.refineSkipped {
+            if practiceRefineAttemptedOrSkipped || (!isReplaying && (store.refineAttempted || store.refineSkipped)) {
                 scratchpadGuidance.showEscapeHint = true
                 if captureSubstep == .liveResume {
                     scratchpadGuidance.showKeepHint = true
@@ -483,17 +567,20 @@ final class OnboardingCoordinator {
 
         switch message {
         case .alreadyUseful:
-            store.refineAttempted = true
+            practiceRefineAttemptedOrSkipped = true
+            if !isReplaying { store.refineAttempted = true }
             scratchpadGuidance.showRefineHint = false
             scratchpadGuidance.showEscapeHint = true
             panelController?.scratchpadGuidance = scratchpadGuidance
         case .unavailable(let reason):
-            store.refineAttempted = true
+            practiceRefineAttemptedOrSkipped = true
+            if !isReplaying { store.refineAttempted = true }
             scratchpadGuidance.showRefineHint = false
             scratchpadGuidance.unavailablePresentation = mapUnavailable(reason)
             panelController?.scratchpadGuidance = scratchpadGuidance
         case .couldNotRefine, .couldNotSafelyRefineSelection, .couldNotSaveRefinement, .contextTooLarge:
-            store.refineAttempted = true
+            practiceRefineAttemptedOrSkipped = true
+            if !isReplaying { store.refineAttempted = true }
             scratchpadGuidance.showRefineHint = false
             scratchpadGuidance.showEscapeHint = true
             panelController?.scratchpadGuidance = scratchpadGuidance
@@ -504,18 +591,21 @@ final class OnboardingCoordinator {
 
     func sessionDidKeepNote() {
         guard isLivePracticeActive else { return }
-        store.practiceKept = true
+        if !isReplaying { store.practiceKept = true }
         practiceWasKept = true
     }
 
     func dismissRefineUnavailable() {
-        store.refineSkipped = true
+        practiceRefineAttemptedOrSkipped = true
+        if !isReplaying { store.refineSkipped = true }
         scratchpadGuidance.unavailablePresentation = nil
         scratchpadGuidance.showRefineHint = false
         scratchpadGuidance.showEscapeHint = true
         panelController?.scratchpadGuidance = scratchpadGuidance
         presentedStep = .refinePractice
-        store.persistProgress(step: .refinePractice, captureSubstep: captureSubstep)
+        if !isReplaying {
+            store.persistProgress(step: .refinePractice, captureSubstep: captureSubstep)
+        }
     }
 
     func openRefineSystemSettings() {
@@ -556,8 +646,12 @@ final class OnboardingCoordinator {
             }
         }
 
-        if presentedStep == .voiceSetup && !showsVoiceStepInFlow {
-            presentedStep = .completion
+        if presentedStep == .voiceSetup {
+            if !showsVoiceStepInFlow {
+                presentedStep = .completion
+            } else if voiceCapture.enabled, voiceCapture.setup == .unchecked {
+                voiceCapture.checkSetup(prepare: true)
+            }
         }
 
         if presentedStep == .completion {
@@ -580,7 +674,9 @@ final class OnboardingCoordinator {
             presentedStep = .voiceSetup
             captureSubstep = .waitingForShortcut
             isYieldingForShortcut = false
-            store.persistProgress(step: .voiceSetup)
+            if !isReplaying {
+                store.persistProgress(step: .voiceSetup)
+            }
             if voiceCapture.enabled, voiceCapture.setup == .unchecked {
                 voiceCapture.checkSetup(prepare: true)
             }
@@ -594,7 +690,9 @@ final class OnboardingCoordinator {
         presentedStep = .completion
         captureSubstep = .waitingForShortcut
         isYieldingForShortcut = false
-        store.persistProgress(step: .completion)
+        if !isReplaying {
+            store.persistProgress(step: .completion)
+        }
         refreshLoginItemState()
         presentWindow()
     }

@@ -12,15 +12,27 @@ private enum OnboardingLayout {
 struct OnboardingView: View {
     @Bindable var coordinator: OnboardingCoordinator
 
-    @ObservedObject private var voiceCapture = VoiceCapture.shared
-    @ObservedObject private var globalShortcuts = GlobalShortcutStore.shared
+    @ObservedObject private var voiceCapture: VoiceCapture
+    @ObservedObject private var globalShortcuts: GlobalShortcutStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
-    @FocusState private var welcomeFocused: Bool
-    @FocusState private var completionFocused: Bool
+    private enum FocusTarget: Hashable {
+        case welcomePrimary
+        case shortcutContinue
+        case resumeOpen
+        case voiceContinue
+        case completionFinish
+    }
+    @FocusState private var focusedTarget: FocusTarget?
     @State private var dictationPracticeDraft = ""
     @State private var shortcutRevision = 0
+
+    init(coordinator: OnboardingCoordinator) {
+        self.coordinator = coordinator
+        _voiceCapture = ObservedObject(wrappedValue: coordinator.voiceCaptureSession)
+        _globalShortcuts = ObservedObject(wrappedValue: coordinator.shortcutStoreInstance)
+    }
 
     var body: some View {
         let _ = shortcutRevision
@@ -63,17 +75,18 @@ struct OnboardingView: View {
             focusCurrentStep()
             coordinator.refreshEnvironmentSync()
         }
-        .onChange(of: coordinator.presentedStep) {
+        .onChange(of: stageTransitionKey) {
             focusCurrentStep()
-        }
-        .onChange(of: coordinator.captureSubstep) {
-            focusCurrentStep()
+            announceCurrentStep()
         }
         .onGlobalShortcutChange {
             shortcutRevision += 1
             coordinator.refreshEnvironmentSync()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            coordinator.refreshEnvironmentSync()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
             coordinator.refreshEnvironmentSync()
         }
     }
@@ -214,7 +227,7 @@ struct OnboardingView: View {
                 .buttonStyle(OnboardingProminentButtonStyle(fullWidth: false))
                 .frame(minWidth: OnboardingLayout.ctaMinWidth)
                 .keyboardShortcut(.defaultAction)
-                .focused($welcomeFocused)
+                .focused($focusedTarget, equals: .welcomePrimary)
                 .accessibilityLabel("Get started")
 
                 HStack(spacing: 8) {
@@ -312,6 +325,7 @@ struct OnboardingView: View {
 
                 UnifiedShortcutRecorder(
                     action: .toggleScratchpad,
+                    store: globalShortcuts,
                     prominent: true,
                     showsValidationError: true,
                     showsClearButton: false
@@ -327,7 +341,9 @@ struct OnboardingView: View {
                     contextualPermissionRow(
                         title: "Single-modifier triggers need Accessibility access outside Rasc.",
                         buttonTitle: "Allow Accessibility…",
-                        action: { coordinator.requestAccessibilityPermission() }
+                        secondaryTitle: "Settings…",
+                        action: { coordinator.requestAccessibilityPermission() },
+                        secondaryAction: { coordinator.openAccessibilitySettings() }
                     )
                 }
             }
@@ -344,6 +360,7 @@ struct OnboardingView: View {
                 .frame(minWidth: OnboardingLayout.ctaMinWidth)
                 .disabled(!GlobalShortcutFormatting.hasValidToggleShortcut())
                 .keyboardShortcut(.defaultAction)
+                .focused($focusedTarget, equals: .shortcutContinue)
                 .accessibilityLabel("Continue")
 
                 Text("You can change all shortcuts anytime in Settings.")
@@ -428,6 +445,7 @@ struct OnboardingView: View {
                 .buttonStyle(OnboardingProminentButtonStyle(fullWidth: false))
                 .frame(minWidth: OnboardingLayout.ctaMinWidth)
                 .keyboardShortcut(.defaultAction)
+                .focused($focusedTarget, equals: .resumeOpen)
 
                 Button("Skip resume step") {
                     coordinator.continueFromResumeCard()
@@ -465,6 +483,7 @@ struct OnboardingView: View {
 
                 UnifiedShortcutRow(
                     action: .voiceScratchpad,
+                    store: globalShortcuts,
                     title: "Voice to Scratchpad",
                     subtitle: "Speaks a thought and opens it inside Rasc.",
                     showsRestoreDefault: false
@@ -472,6 +491,7 @@ struct OnboardingView: View {
 
                 UnifiedShortcutRow(
                     action: .voiceDictate,
+                    store: globalShortcuts,
                     title: "Dictate",
                     subtitle: "Types directly where your cursor is in any app.",
                     showsRestoreDefault: false
@@ -483,13 +503,23 @@ struct OnboardingView: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 if voiceCapture.enabled && !coordinator.environment.isMicrophoneAuthorized {
-                    contextualPermissionRow(
-                        title: "Microphone access is needed when you start recording.",
-                        buttonTitle: coordinator.isRequestingMicrophone ? "Waiting…" : "Allow Microphone…",
-                        action: {
-                            Task { await coordinator.requestMicrophonePermission() }
-                        }
-                    )
+                    if coordinator.environment.isMicrophoneDenied {
+                        contextualPermissionRow(
+                            title: "Microphone access is turned off in System Settings. Allow Rasc under Privacy & Security → Microphone.",
+                            buttonTitle: "Open Microphone Settings…",
+                            action: { coordinator.openMicrophoneSettings() }
+                        )
+                    } else {
+                        contextualPermissionRow(
+                            title: "Microphone access is needed when you start recording.",
+                            buttonTitle: coordinator.isRequestingMicrophone ? "Waiting…" : "Allow Microphone…",
+                            secondaryTitle: "Settings…",
+                            action: {
+                                Task { await coordinator.requestMicrophonePermission() }
+                            },
+                            secondaryAction: { coordinator.openMicrophoneSettings() }
+                        )
+                    }
                 }
 
                 if coordinator.needsAccessibilityForVoiceSetup {
@@ -528,6 +558,7 @@ struct OnboardingView: View {
                 .buttonStyle(OnboardingProminentButtonStyle(fullWidth: false))
                 .frame(minWidth: 148)
                 .keyboardShortcut(.defaultAction)
+                .focused($focusedTarget, equals: .voiceContinue)
 
                 Button("Set up later") {
                     coordinator.skipVoiceSetup()
@@ -720,7 +751,7 @@ struct OnboardingView: View {
                 .buttonStyle(OnboardingProminentButtonStyle(fullWidth: false))
                 .frame(minWidth: OnboardingLayout.ctaMinWidth)
                 .keyboardShortcut(.defaultAction)
-                .focused($completionFocused)
+                .focused($focusedTarget, equals: .completionFinish)
                 .accessibilityLabel("Finish onboarding")
 
                 Text("You can reopen this guide anytime from Settings → General.")
@@ -735,7 +766,8 @@ struct OnboardingView: View {
         if coordinator.practiceWasKept {
             return "Your first thought is Kept in Home."
         }
-        return "Your draft stays saved whenever you summon Rasc. Press ⇧⌘K anytime to Keep a thought."
+        let keepShortcut = InternalShortcutStore.shared.displayString(for: .keep)
+        return "Your draft stays saved whenever you summon Rasc. Press \(keepShortcut) anytime to Keep a thought."
     }
 
     private var showsBackgroundDownloadNotice: Bool {
@@ -795,12 +827,47 @@ struct OnboardingView: View {
     private func focusCurrentStep() {
         switch coordinator.presentedStep {
         case .welcome:
-            welcomeFocused = true
+            focusedTarget = .welcomePrimary
+        case .shortcut:
+            focusedTarget = .shortcutContinue
+        case .capturePractice, .refinePractice:
+            if coordinator.captureSubstep == .waitingToResume {
+                focusedTarget = .resumeOpen
+            } else {
+                focusedTarget = nil
+            }
+        case .voiceSetup:
+            focusedTarget = .voiceContinue
         case .completion:
-            completionFocused = true
-        default:
-            break
+            focusedTarget = .completionFinish
+        case .finished:
+            focusedTarget = nil
         }
+    }
+
+    private func announceCurrentStep() {
+        let message: String
+        switch coordinator.presentedStep {
+        case .welcome:
+            message = "Welcome to Rasc. Choose how you plan to use Rasc."
+        case .shortcut:
+            message = "Open Scratchpad shortcut. Press Continue when ready."
+        case .capturePractice, .refinePractice:
+            if coordinator.captureSubstep == .waitingToResume {
+                message = "Draft parked and saved. Open Rasc once more to continue or keep your thought."
+            } else if coordinator.captureSubstep == .waitingForShortcut {
+                message = "Try opening Rasc with \(GlobalShortcutFormatting.currentToggleShortcutDisplay())."
+            } else {
+                return
+            }
+        case .voiceSetup:
+            message = "Capture or dictate by voice."
+        case .completion:
+            message = "You're ready."
+        case .finished:
+            return
+        }
+        RascAccessibility.announce(message)
     }
 }
 

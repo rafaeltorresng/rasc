@@ -1,4 +1,5 @@
 import AppKit
+import AVFoundation
 import Foundation
 import SwiftUI
 import Testing
@@ -207,6 +208,14 @@ struct OnboardingBehaviorTests {
         #expect(coordinator.isVoiceEnabled)
         #expect(coordinator.dictationAlsoCopiesToClipboard)
         #expect(coordinator.dictationSaveCopyInRasc)
+        for _ in 0..<100 where capture.setup == .unchecked {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        if case .downloading = capture.setup {
+            // Async download actively started from single click.
+        } else {
+            #expect(capture.setup == .installed)
+        }
 
         // Accessibility only requested when Dictate shortcut is configured (with insertAtCursor) or single modifier used.
         #expect(!coordinator.needsAccessibilityForVoiceSetup)
@@ -233,6 +242,9 @@ struct OnboardingBehaviorTests {
 
         let store = OnboardingStore(userDefaults: defaults)
         store.markCompletedForExistingUser()
+        store.recordHomeVisit()
+        store.recordHomeVisit()
+        let beforeVisits = store.homeVisitCount
 
         let coordinator = OnboardingCoordinator(
             store: store,
@@ -245,10 +257,219 @@ struct OnboardingBehaviorTests {
         await coordinator.replayOnboarding()
 
         #expect(coordinator.isActive)
+        #expect(coordinator.isReplaying)
         #expect(coordinator.presentedStep == .welcome)
+        #expect(store.isCompleted)
+        #expect(store.migrationApplied)
+        #expect(store.historyHintDismissed)
+        #expect(store.homeVisitCount == beforeVisits)
+
+        // Advance replay through steps and finish/dismiss without clearing established flags.
+        coordinator.continueFromWelcome()
+        coordinator.continueFromShortcut()
+        #expect(await coordinator.handleGlobalShortcut())
+        coordinator.sessionTextDidChange("Treino no replay")
+        coordinator.panelDidHide()
+        coordinator.continueFromResumeCard()
+        coordinator.skipVoiceSetup()
+        coordinator.dismissByWindowClose()
+
+        #expect(!coordinator.isActive)
+        #expect(!coordinator.isReplaying)
+        #expect(store.isCompleted)
+        #expect(store.migrationApplied)
+        #expect(store.historyHintDismissed)
+        #expect(store.homeVisitCount == beforeVisits)
         #expect(shortcuts.trigger(for: .toggleScratchpad) == .modifier(.option))
         let notes = try await fixture.repository.fetchAllNonDeleted()
         #expect(notes.map(\.content) == ["Nota já salva"])
+    }
+
+    @Test
+    func deniedMicrophoneAndResumingMidVoiceSetupBehaveSafely() async throws {
+        let fixture = try makeFixture()
+        defer { fixture.remove() }
+        let defaults = fixture.userDefaults
+        defaults.set(true, forKey: VoiceCapture.preferenceKey)
+
+        let capture = VoiceCapture(
+            preferences: defaults,
+            supported: true,
+            input: .init(
+                authorization: { .denied },
+                requestAccess: { false },
+                start: { _, _ in MicBuffer(rate: 16_000) },
+                stop: { _ in }
+            ),
+            presentWindows: false,
+            speech: .init(
+                assetsAvailable: { false },
+                hasInstalledAssets: { false },
+                download: { _ in },
+                prepare: {},
+                transcribe: { _, _ in "" },
+                release: {}
+            ),
+            accessibilityTrusted: { false }
+        )
+
+        let store = OnboardingStore(userDefaults: defaults)
+        store.markMigrationApplied()
+        store.focus = .scratchpadAndVoice
+        store.persistProgress(step: .voiceSetup)
+
+        let micStatus = MicStatusBox(.notDetermined)
+        let coordinator = OnboardingCoordinator(
+            store: store,
+            activeNoteStore: ActiveNoteStore(userDefaults: defaults),
+            windowFrameStore: WindowFrameStore(userDefaults: defaults),
+            voiceCapture: capture,
+            shortcutStore: GlobalShortcutStore(userDefaults: defaults, chordBacking: .userDefaultsOnly),
+            isVoiceSupported: true,
+            presentUIWindows: false,
+            microphoneStatus: { micStatus.get() },
+            accessibilityTrusted: { false },
+            refineAvailabilityCheck: { false },
+            requestMicrophoneAccessHandler: {
+                micStatus.set(.denied)
+                return false
+            }
+        )
+
+        // Verify resuming mid-voiceSetup via prepare() transitions setup out of .unchecked.
+        let panel = PanelController(
+            repository: fixture.repository,
+            windowFrameStore: WindowFrameStore(userDefaults: defaults)
+        )
+        #expect(capture.setup == .unchecked)
+        coordinator.restoreVoiceSetupForTest()
+        _ = panel
+        for _ in 0..<100 where capture.setup == .unchecked {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        #expect(coordinator.presentedStep == .voiceSetup)
+        #expect(capture.setup == .missing)
+
+        await coordinator.requestMicrophonePermission()
+        #expect(coordinator.environment.isMicrophoneDenied)
+        #expect(!coordinator.environment.isMicrophoneAuthorized)
+
+        let window = OnboardingWindowController()
+        var closedCallbackFired = false
+        window.onWindowClosedByUser = { closedCallbackFired = true }
+        #expect(window.windowShouldClose(NSWindow()) == false)
+        #expect(closedCallbackFired)
+
+        // Verify custom Keep shortcut is reflected dynamically in completion copy & snapshot.
+        let renderer = HomeSnapshotTests()
+        try renderer.renderPNG(
+            OnboardingView(coordinator: {
+                let c = OnboardingCoordinator(
+                    store: OnboardingStore(userDefaults: defaults),
+                    activeNoteStore: ActiveNoteStore(userDefaults: defaults),
+                    windowFrameStore: WindowFrameStore(userDefaults: defaults),
+                    voiceCapture: capture,
+                    shortcutStore: GlobalShortcutStore(userDefaults: defaults, chordBacking: .userDefaultsOnly),
+                    isVoiceSupported: true,
+                    presentUIWindows: false,
+                    microphoneStatus: { .denied },
+                    accessibilityTrusted: { false },
+                    refineAvailabilityCheck: { false }
+                )
+                c.resetOnboardingStateOnly()
+                c.continueFromWelcome()
+                c.continueFromShortcut()
+                c.continueFromResumeCard()
+                return c
+            }()),
+            width: RascWindowMetrics.onboarding.width,
+            height: RascWindowMetrics.onboarding.height,
+            scheme: .dark,
+            name: "onboarding-v2-voice-denied-mic-dark"
+        )
+
+        // Render ready-to-dictate state ("Try Dictate here" field visible).
+        let readyCapture = VoiceCapture(
+            preferences: defaults,
+            supported: true,
+            input: .init(
+                authorization: { .authorized },
+                requestAccess: { true },
+                start: { _, _ in MicBuffer(rate: 16_000) },
+                stop: { _ in }
+            ),
+            presentWindows: false,
+            speech: .init(
+                assetsAvailable: { true },
+                hasInstalledAssets: { true },
+                download: { _ in },
+                prepare: {},
+                transcribe: { _, _ in "" },
+                release: {}
+            ),
+            accessibilityTrusted: { true }
+        )
+        let readyShortcuts = GlobalShortcutStore(userDefaults: defaults, chordBacking: .userDefaultsOnly)
+        #expect(readyShortcuts.set(.modifier(.control), for: .voiceDictate) == nil)
+        readyCapture.enableAndDownloadIfMissing()
+        for _ in 0..<50 where readyCapture.setup != .installed {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        let readyCoordinator = OnboardingCoordinator(
+            store: OnboardingStore(userDefaults: defaults),
+            activeNoteStore: ActiveNoteStore(userDefaults: defaults),
+            windowFrameStore: WindowFrameStore(userDefaults: defaults),
+            voiceCapture: readyCapture,
+            shortcutStore: readyShortcuts,
+            isVoiceSupported: true,
+            presentUIWindows: false,
+            microphoneStatus: { .authorized },
+            accessibilityTrusted: { true },
+            refineAvailabilityCheck: { false }
+        )
+        readyCoordinator.resetOnboardingStateOnly()
+        readyCoordinator.continueFromWelcome()
+        readyCoordinator.continueFromShortcut()
+        readyCoordinator.continueFromResumeCard()
+        try renderer.renderPNG(
+            OnboardingView(coordinator: readyCoordinator),
+            width: RascWindowMetrics.onboarding.width,
+            height: RascWindowMetrics.onboarding.height,
+            scheme: .light,
+            name: "onboarding-v2-voice-dictate-ready-light"
+        )
+
+        // Verify dynamic Keep shortcut displays in completion subtitle when customized.
+        let originalKeep = InternalShortcutStore.shared.shortcut(for: .keep)
+        let customKeep = InternalShortcut(key: "y", command: true, shift: true)
+        #expect(InternalShortcutStore.shared.assign(customKeep, to: .keep) == nil)
+        defer { _ = InternalShortcutStore.shared.assign(originalKeep, to: .keep) }
+
+        let customCoordinator = OnboardingCoordinator(
+            store: OnboardingStore(userDefaults: defaults),
+            activeNoteStore: ActiveNoteStore(userDefaults: defaults),
+            windowFrameStore: WindowFrameStore(userDefaults: defaults),
+            voiceCapture: readyCapture,
+            shortcutStore: readyShortcuts,
+            isVoiceSupported: true,
+            presentUIWindows: false,
+            microphoneStatus: { .authorized },
+            accessibilityTrusted: { true },
+            refineAvailabilityCheck: { false }
+        )
+        customCoordinator.resetOnboardingStateOnly()
+        customCoordinator.continueFromWelcome()
+        customCoordinator.continueFromShortcut()
+        customCoordinator.continueFromResumeCard()
+        customCoordinator.continueFromVoiceSetup()
+        #expect(customCoordinator.presentedStep == .completion)
+        try renderer.renderPNG(
+            OnboardingView(coordinator: customCoordinator),
+            width: RascWindowMetrics.onboarding.width,
+            height: RascWindowMetrics.onboarding.height,
+            scheme: .light,
+            name: "onboarding-v2-completion-custom-keep-light"
+        )
     }
 
     @Test
@@ -398,5 +619,22 @@ private struct ScratchpadTestFixture {
         userDefaults.removePersistentDomain(forName: defaultsSuite)
         try? repository.closeForTesting()
         try? FileManager.default.removeItem(at: databaseURL)
+    }
+}
+
+private final class MicStatusBox: @unchecked Sendable {
+    private let lock = NSLock()
+    private var status: AVAuthorizationStatus
+
+    init(_ status: AVAuthorizationStatus) {
+        self.status = status
+    }
+
+    func get() -> AVAuthorizationStatus {
+        lock.withLock { status }
+    }
+
+    func set(_ next: AVAuthorizationStatus) {
+        lock.withLock { status = next }
     }
 }

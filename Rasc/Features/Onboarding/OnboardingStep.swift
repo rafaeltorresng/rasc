@@ -1,3 +1,4 @@
+import AVFoundation
 import Foundation
 
 enum OnboardingFocus: String, Codable, CaseIterable, Sendable, Identifiable {
@@ -49,14 +50,53 @@ enum OnboardingRefineUnavailablePresentation: Equatable, Sendable {
 struct OnboardingEnvironment: Equatable, Sendable {
     var isVoiceSupported: Bool
     var isVoiceModelInstalled: Bool
-    var isMicrophoneAuthorized: Bool
+    var microphoneStatus: AVAuthorizationStatus
     var isAccessibilityTrusted: Bool
     var isRefineAvailable: Bool
+
+    var isMicrophoneAuthorized: Bool {
+        get { microphoneStatus == .authorized }
+        set { microphoneStatus = newValue ? .authorized : .notDetermined }
+    }
+
+    var isMicrophoneDenied: Bool {
+        microphoneStatus == .denied || microphoneStatus == .restricted
+    }
+
+    init(
+        isVoiceSupported: Bool,
+        isVoiceModelInstalled: Bool,
+        microphoneStatus: AVAuthorizationStatus = .notDetermined,
+        isAccessibilityTrusted: Bool,
+        isRefineAvailable: Bool
+    ) {
+        self.isVoiceSupported = isVoiceSupported
+        self.isVoiceModelInstalled = isVoiceModelInstalled
+        self.microphoneStatus = microphoneStatus
+        self.isAccessibilityTrusted = isAccessibilityTrusted
+        self.isRefineAvailable = isRefineAvailable
+    }
+
+    init(
+        isVoiceSupported: Bool,
+        isVoiceModelInstalled: Bool,
+        isMicrophoneAuthorized: Bool,
+        isAccessibilityTrusted: Bool,
+        isRefineAvailable: Bool
+    ) {
+        self.init(
+            isVoiceSupported: isVoiceSupported,
+            isVoiceModelInstalled: isVoiceModelInstalled,
+            microphoneStatus: isMicrophoneAuthorized ? .authorized : .notDetermined,
+            isAccessibilityTrusted: isAccessibilityTrusted,
+            isRefineAvailable: isRefineAvailable
+        )
+    }
 
     static let `default` = OnboardingEnvironment(
         isVoiceSupported: VoiceCapture.isSupported,
         isVoiceModelInstalled: false,
-        isMicrophoneAuthorized: false,
+        microphoneStatus: .notDetermined,
         isAccessibilityTrusted: false,
         isRefineAvailable: false
     )
