@@ -33,7 +33,8 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
         prepareForDuplicate: @escaping @MainActor (UUID) async throws -> Void = { _ in },
         onNoteDiscarded: @escaping (UUID) -> Void = { _ in },
         onNoteUnkept: @escaping (UUID) -> Void = { _ in },
-        onExportThought: @escaping (UUID) -> Void = { _ in }
+        onExportThought: @escaping (UUID) -> Void = { _ in },
+        onExportSelected: @escaping (Set<UUID>) -> Void = { _ in }
     ) {
         let session = session ?? HomeSession(repository: repository, prepareForDuplicate: prepareForDuplicate)
         self.session = session
@@ -46,7 +47,8 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
                 onNewScratch: onNewScratch,
                 onNoteDiscarded: onNoteDiscarded,
                 onNoteUnkept: onNoteUnkept,
-                onExportThought: onExportThought
+                onExportThought: onExportThought,
+                onExportSelected: onExportSelected
             )
         }
 

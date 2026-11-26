@@ -510,6 +510,49 @@ actor NoteRepository {
         return receipt
     }
 
+    /// Discard every id in one transaction. Undo restores all of them atomically.
+    @discardableResult
+    func delete(ids: Set<UUID>) throws -> [NoteDiscardReceipt] {
+        guard !ids.isEmpty else { return [] }
+        let receipts: [NoteDiscardReceipt] = try database.write { database in
+            let deletedAt = Date()
+            var receipts: [NoteDiscardReceipt] = []
+            for id in ids.sorted(by: { $0.uuidString < $1.uuidString }) {
+                let count = try Note
+                    .filter(Note.Columns.id == id)
+                    .filter(Note.Columns.deletedAt == nil)
+                    .updateAll(database, [Note.Columns.deletedAt.set(to: deletedAt)])
+                if count == 1 {
+                    let receipt = NoteDiscardReceipt(noteID: id, deletedAt: deletedAt)
+                    receipts.append(receipt)
+                    discardReceipts[id] = receipt
+                }
+            }
+            return receipts
+        }
+        return receipts
+    }
+
+    func restoreDiscards(_ receipts: [NoteDiscardReceipt]) throws -> [Note] {
+        guard !receipts.isEmpty else { return [] }
+        return try database.write { database in
+            for receipt in receipts {
+                guard discardReceipts[receipt.noteID] == receipt else { throw PersistenceError.staleContent }
+            }
+            var restored: [Note] = []
+            for receipt in receipts {
+                let count = try Note
+                    .filter(Note.Columns.id == receipt.noteID)
+                    .filter(Note.Columns.deletedAt == receipt.deletedAt)
+                    .updateAll(database, [Note.Columns.deletedAt.set(to: nil)])
+                guard count == 1 else { throw PersistenceError.staleContent }
+                discardReceipts[receipt.noteID] = nil
+                if let note = try Note.fetchOne(database, key: receipt.noteID) { restored.append(note) }
+            }
+            return restored
+        }
+    }
+
     func restoreDiscard(_ receipt: NoteDiscardReceipt) throws -> Note {
         guard discardReceipts[receipt.noteID] == receipt else { throw PersistenceError.staleContent }
         let note = try database.write { database in

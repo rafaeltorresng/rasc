@@ -22,6 +22,10 @@ final class HomeSession {
     var showsAllKept = false
     var actionErrorMessage: String?
     private(set) var lastDiscard: NoteDiscardReceipt?
+    private(set) var lastDiscardBatch: [NoteDiscardReceipt] = []
+    private(set) var selectedNoteIDs: Set<UUID> = []
+    private(set) var selectionAnchorID: UUID?
+    private(set) var isSelectionMode = false
     private var discardUndoRegistrations: [UUID: DiscardUndoRegistration] = [:]
     private(set) var hasMoreSearchResults = false
 
@@ -147,6 +151,114 @@ final class HomeSession {
         }
     }
 
+    // MARK: Multi-selection
+
+    var selectedCount: Int { selectedNoteIDs.count }
+
+    /// Selected notes in visible order.
+    var selectedNotes: [Note] { displayedNotes.filter { selectedNoteIDs.contains($0.id) } }
+
+    var hasUndoableDiscard: Bool { lastDiscard != nil || !lastDiscardBatch.isEmpty }
+
+    /// Toggle a note in the multi-selection (Command-click). Does not open it.
+    func toggleSelection(_ noteID: UUID) {
+        if selectedNoteIDs.contains(noteID) { selectedNoteIDs.remove(noteID) }
+        else { selectedNoteIDs.insert(noteID) }
+        selectedNoteID = noteID
+        selectionAnchorID = noteID
+        if !selectedNoteIDs.isEmpty { isSelectionMode = true }
+    }
+
+    /// Range selection from the anchor to `noteID` within visible order (Shift-click).
+    func extendSelectionTo(_ noteID: UUID) {
+        let notes = displayedNotes
+        let anchor = selectionAnchorID ?? selectedNoteID ?? noteID
+        guard let start = notes.firstIndex(where: { $0.id == anchor }),
+              let end = notes.firstIndex(where: { $0.id == noteID }) else {
+            selectedNoteIDs.insert(noteID)
+            selectedNoteID = noteID
+            isSelectionMode = true
+            return
+        }
+        let range = notes[min(start, end)...max(start, end)]
+        selectedNoteIDs.formUnion(range.map(\.id))
+        selectedNoteID = noteID
+        isSelectionMode = true
+    }
+
+    /// Select every visible/filtered note (Command-A).
+    func selectAllVisible() {
+        let notes = displayedNotes
+        guard !notes.isEmpty else { return }
+        selectedNoteIDs = Set(notes.map(\.id))
+        selectionAnchorID = notes.first?.id
+        if selectedNoteID == nil { selectedNoteID = notes.first?.id }
+        isSelectionMode = true
+    }
+
+    /// Clear multi-selection and leave selection mode (Esc / explicit clear).
+    func clearSelection() {
+        selectedNoteIDs = []
+        selectionAnchorID = nil
+        isSelectionMode = false
+    }
+
+    func setSelectionMode(_ mode: Bool) {
+        if mode {
+            isSelectionMode = true
+            if selectedNoteIDs.isEmpty, let id = selectedNoteID { selectedNoteIDs.insert(id); selectionAnchorID = id }
+        } else {
+            clearSelection()
+        }
+    }
+
+    func toggleSelectionMode() { setSelectionMode(!isSelectionMode) }
+
+    /// Batch copy: selected note text in visible order, separated by a rule.
+    func copySelectedText() async throws -> String {
+        let notes = selectedNotes
+        guard !notes.isEmpty else { return "" }
+        var parts: [String] = []
+        for note in notes {
+            let document = try await repository.fetchDocument(id: note.id)
+            parts.append(document?.text ?? note.content)
+        }
+        return parts.joined(separator: "\n\n---\n\n")
+    }
+
+    /// Discard every selected note in a single transaction, preserving Undo.
+    func discardSelected(undoManager: UndoManager? = nil) async throws {
+        let ids = selectedNoteIDs
+        guard !ids.isEmpty else { return }
+        let receipts = try await repository.delete(ids: ids)
+        lastDiscardBatch = receipts
+        lastDiscard = nil
+        if !receipts.isEmpty, let undoManager {
+            let registration = DiscardUndoRegistration(manager: undoManager) { [weak self] in
+                Task { await self?.undoDiscardBatch(receipts) }
+            }
+            for receipt in receipts { discardUndoRegistrations[receipt.id] = registration }
+            registration.register()
+        }
+        clearSelection()
+        await reloadImmediately()
+    }
+
+    func undoDiscardBatch(_ receipts: [NoteDiscardReceipt]? = nil) async {
+        let batch = receipts ?? lastDiscardBatch
+        guard !batch.isEmpty else { return }
+        do {
+            let restored = try await repository.restoreDiscards(batch)
+            for receipt in batch { discardUndoRegistrations.removeValue(forKey: receipt.id)?.invalidate() }
+            if lastDiscardBatch == batch { lastDiscardBatch = [] }
+            actionErrorMessage = nil
+            selectedNoteIDs = Set(restored.map(\.id))
+            await reloadImmediately()
+        } catch {
+            actionErrorMessage = "Couldn't restore these thoughts. Try Undo again."
+        }
+    }
+
     func selectNote(_ noteID: UUID?) {
         selectedNoteID = noteID
     }
@@ -182,6 +294,7 @@ final class HomeSession {
     }
 
     func undoDiscard(_ receipt: NoteDiscardReceipt? = nil) async {
+        if receipt == nil, !lastDiscardBatch.isEmpty { await undoDiscardBatch(); return }
         guard let receipt = receipt ?? lastDiscard else { return }
         do {
             let note = try await repository.restoreDiscard(receipt)
@@ -281,6 +394,14 @@ final class HomeSession {
         guard !notes.isEmpty else {
             selectedNoteID = nil
             return
+        }
+
+        // Multi-selection follows reloads; drop notes that are no longer visible.
+        let visible = Set(notes.map(\.id))
+        let pruned = selectedNoteIDs.intersection(visible)
+        if pruned != selectedNoteIDs {
+            selectedNoteIDs = pruned
+            if pruned.isEmpty { selectionAnchorID = nil }
         }
 
         if let selectedNoteID, notes.contains(where: { $0.id == selectedNoteID }) {

@@ -108,6 +108,9 @@ final class AppBootstrap {
             },
             onExportThought: { [weak self] id in
                 Task { @MainActor in await self?.exportHomeThought(id) }
+            },
+            onExportSelected: { [weak self] ids in
+                Task { @MainActor in await self?.exportSelectedHomeThoughts(ids) }
             }
         )
     }
@@ -119,6 +122,11 @@ final class AppBootstrap {
         } else if panel.panel.isKeyWindow {
             await panel.exportActiveThought()
         }
+    }
+
+    private func exportSelectedHomeThoughts(_ ids: Set<UUID>) async {
+        guard let panel = await awaitPanel(), let window = homeWindowController?.exportWindow else { return }
+        await panel.noteExport.exportSelectedThoughts(from: window, ids: ids, prepare: panel.prepareThoughtsForExport)
     }
 
     private func exportHomeThought(_ id: UUID) async {

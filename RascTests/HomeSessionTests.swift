@@ -384,6 +384,111 @@ struct HomeSessionTests {
             .appendingPathExtension("sqlite")
         return try NoteRepository(databaseURL: databaseURL)
     }
+
+    @MainActor
+    @Test
+    func multiSelectionCommandClickTogglesAndShiftClickRanges() async throws {
+        let repository = try makeRepository()
+        var ids: [UUID] = []
+        for index in 0..<5 { ids.append(try await repository.createScratch(content: "note \(index)").id) }
+        let session = HomeSession(repository: repository)
+        await session.reloadImmediately()
+
+        #expect(session.selectedCount == 0)
+        session.toggleSelection(ids[1])
+        #expect(session.selectedNoteIDs == [ids[1]])
+        session.toggleSelection(ids[3])
+        #expect(session.selectedNoteIDs == [ids[1], ids[3]])
+        session.toggleSelection(ids[1])
+        #expect(session.selectedNoteIDs == [ids[3]])
+
+        session.selectNote(ids[0])
+        session.toggleSelection(ids[0]) // anchor
+        session.extendSelectionTo(ids[4])
+        #expect(session.selectedNoteIDs.contains(ids[4]))
+        #expect(session.selectedNoteIDs.isSubset(of: Set(ids)))
+
+        session.clearSelection()
+        #expect(session.selectedCount == 0)
+        #expect(!session.isSelectionMode)
+    }
+
+    @MainActor
+    @Test
+    func selectAllVisibleSelectsFilteredSet() async throws {
+        let repository = try makeRepository()
+        _ = try await repository.createScratch(content: "apple pie")
+        _ = try await repository.createScratch(content: "apple crumble")
+        _ = try await repository.createScratch(content: "banana bread")
+        let session = HomeSession(repository: repository)
+        session.searchQuery = "apple"
+        await session.reloadImmediately()
+
+        session.selectAllVisible()
+        #expect(session.selectedCount == session.displayedNotes.count)
+        #expect(session.selectedCount == 2)
+        #expect(session.isSelectionMode)
+
+        session.searchQuery = "banana"
+        await session.reloadImmediately()
+        #expect(session.selectedCount == 0) // pruned to visible
+    }
+
+    @MainActor
+    @Test
+    func batchCopyJoinsSelectedInVisibleOrder() async throws {
+        let repository = try makeRepository()
+        let first = try await repository.createScratch(content: "first thought")
+        let second = try await repository.createScratch(content: "second thought")
+        let session = HomeSession(repository: repository)
+        await session.reloadImmediately()
+
+        session.toggleSelection(first.id)
+        session.toggleSelection(second.id)
+        let text = try await session.copySelectedText()
+        #expect(text.contains("first thought"))
+        #expect(text.contains("second thought"))
+        #expect(text.contains("\n\n---\n\n"))
+    }
+
+    @MainActor
+    @Test
+    func batchDiscardIsSingleTransactionAndRestoresAllWithUndo() async throws {
+        let repository = try makeRepository()
+        var ids: [UUID] = []
+        for index in 0..<3 { ids.append(try await repository.createScratch(content: "note \(index)").id) }
+        let session = HomeSession(repository: repository)
+        await session.reloadImmediately()
+        for id in ids { session.toggleSelection(id) }
+
+        try await session.discardSelected()
+        #expect(session.selectedCount == 0)
+        #expect(try await repository.fetchAllNonDeleted().isEmpty)
+        #expect(session.lastDiscardBatch.count == 3)
+        #expect(session.hasUndoableDiscard)
+
+        await session.undoDiscardBatch()
+        let restored = try await repository.fetchAllNonDeleted()
+        #expect(restored.count == 3)
+        #expect(session.lastDiscardBatch.isEmpty)
+    }
+
+    @MainActor
+    @Test
+    func repositoryBatchDeleteIsAtomicAndRestoresAtomically() async throws {
+        let repository = try makeRepository()
+        var ids: Set<UUID> = []
+        for index in 0..<4 { ids.insert(try await repository.createScratch(content: "note \(index)").id) }
+        let receipts = try await repository.delete(ids: ids)
+        #expect(receipts.count == 4)
+        #expect(try await repository.fetchAllNonDeleted().isEmpty)
+        let restored = try await repository.restoreDiscards(receipts)
+        #expect(restored.count == 4)
+        #expect(try await repository.fetchAllNonDeleted().count == 4)
+        var rethrown = false
+        do { _ = try await repository.restoreDiscards(receipts) } catch { rethrown = true }
+        #expect(rethrown)
+    }
 }
 
 @Suite
