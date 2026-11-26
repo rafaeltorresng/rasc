@@ -52,9 +52,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
     private let bootstrap = AppBootstrap()
     private let onboardingCoordinator = OnboardingCoordinator()
     private var menuBarController: MenuBarController?
+    private nonisolated(unsafe) var globalShortcutObserver: (any NSObjectProtocol)?
+    private nonisolated(unsafe) var appActiveObserver: (any NSObjectProtocol)?
 #if RASC_SPARKLE
     private var updaterController: SPUStandardUpdaterController?
 #endif
+
+    deinit {
+        if let globalShortcutObserver { NotificationCenter.default.removeObserver(globalShortcutObserver) }
+        if let appActiveObserver { NotificationCenter.default.removeObserver(appActiveObserver) }
+    }
 
     override init() {
         #if DEBUG
@@ -78,6 +85,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
         #endif
 
         GlobalShortcutMigration.migrateFromPreviousDefaultIfNeeded()
+        GlobalShortcutStore.shared.migrateLegacyPreferencesIfNeeded()
         AppThemeApplicator.applyStoredTheme()
         SettingsWindowPresentation.installIfNeeded()
         SettingsWindowPresentation.onSettingsWindowWillPresent = { [weak self] in
@@ -95,6 +103,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
         }
         #endif
         InternalShortcutStore.shared.applyToMainMenu()
+        VoiceCapture.shared.onRefreshGlobalModifiers = { [weak self] in
+            self?.refreshGlobalModifierDispatcher()
+        }
         bootstrap.start()
 
         let forceResetOnboarding = ProcessInfo.processInfo.arguments.contains("-resetOnboarding")
@@ -117,25 +128,78 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
             VoiceCapture.shared.noteExternalChordInput()
         }
         KeyboardShortcuts.onKeyUp(for: .toggleScratchpad) { [weak self] in
-            Task { @MainActor in
-                guard let self else { return }
-                if self.onboardingCoordinator.shouldFlashShortcutKeycap() {
-                    self.onboardingCoordinator.flashShortcutKeycap()
-                }
-                if await self.onboardingCoordinator.handleGlobalShortcut() {
-                    return
-                }
-                guard let panel = await self.bootstrap.awaitPanel() else { return }
-                await panel.toggle()
-            }
+            self?.triggerScratchpadShortcut()
         }
 
         KeyboardShortcuts.onKeyDown(for: .toggleHome) {
             VoiceCapture.shared.noteExternalChordInput()
         }
         KeyboardShortcuts.onKeyUp(for: .toggleHome) { [weak self] in
-            Task { @MainActor in
-                await self?.bootstrap.toggleHome()
+            self?.triggerHomeShortcut()
+        }
+
+        globalShortcutObserver = NotificationCenter.default.addObserver(
+            forName: GlobalShortcutStore.didChange,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.refreshGlobalModifierDispatcher()
+                VoiceCapture.shared.refreshShortcut()
+            }
+        }
+        appActiveObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                VoiceCapture.shared.refreshAccessibilityStatus()
+                self?.refreshGlobalModifierDispatcher()
+            }
+        }
+        refreshGlobalModifierDispatcher()
+    }
+
+    private func triggerScratchpadShortcut() {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            if self.onboardingCoordinator.shouldFlashShortcutKeycap() {
+                self.onboardingCoordinator.flashShortcutKeycap()
+            }
+            if await self.onboardingCoordinator.handleGlobalShortcut() {
+                return
+            }
+            guard let panel = await self.bootstrap.awaitPanel() else { return }
+            await panel.toggle()
+        }
+    }
+
+    private func triggerHomeShortcut() {
+        Task { @MainActor [weak self] in
+            await self?.bootstrap.toggleHome()
+        }
+    }
+
+    private func refreshGlobalModifierDispatcher() {
+        let bindings = GlobalShortcutStore.shared.activeModifierBindings { action in
+            switch action {
+            case .toggleScratchpad, .toggleHome:
+                return true
+            case .voiceScratchpad, .voiceDictate:
+                return VoiceCapture.shared.enabled
+            }
+        }
+        GlobalModifierDispatcher.shared.sync(bindings: bindings) { [weak self] action in
+            switch action {
+            case .toggleScratchpad:
+                self?.triggerScratchpadShortcut()
+            case .toggleHome:
+                self?.triggerHomeShortcut()
+            case .voiceScratchpad:
+                VoiceCapture.shared.activate(intent: .scratchpad, fromShortcut: true)
+            case .voiceDictate:
+                VoiceCapture.shared.activate(intent: .dictate, fromShortcut: true)
             }
         }
     }

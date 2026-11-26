@@ -176,15 +176,14 @@ final class ModifierShortcutMonitor {
     private nonisolated(unsafe) var localMonitor: Any?
     private nonisolated(unsafe) var workspaceObserver: (any NSObjectProtocol)?
     private nonisolated(unsafe) var appObservers: [any NSObjectProtocol] = []
-    private var recognizer = ModifierTapRecognizer()
+    private var recognizers: [ModifierShortcut: ModifierTapRecognizer] = [:]
+    private var handlers: [ModifierShortcut: () -> Void] = [:]
     private var lastFlags: NSEvent.ModifierFlags = []
-    private var shortcut: ModifierShortcut?
-    private var onTap: (() -> Void)?
 
     var isSuspended = false {
         didSet {
             if isSuspended {
-                recognizer.handle(.reset)
+                resetRecognizers()
             } else {
                 lastFlags = currentFlags()
             }
@@ -201,11 +200,21 @@ final class ModifierShortcutMonitor {
     }
 
     func start(shortcut: ModifierShortcut, onTap: @escaping () -> Void) {
-        if isRunning, self.shortcut == shortcut { self.onTap = onTap; return }
+        start(bindings: [shortcut: onTap])
+    }
+
+    func start(bindings: [ModifierShortcut: () -> Void]) {
+        guard !bindings.isEmpty else {
+            stop()
+            return
+        }
+        if isRunning, Set(bindings.keys) == Set(recognizers.keys) {
+            handlers = bindings
+            return
+        }
         stop()
-        self.shortcut = shortcut
-        self.onTap = onTap
-        recognizer = ModifierTapRecognizer(shortcut: shortcut)
+        recognizers = Dictionary(uniqueKeysWithValues: bindings.keys.map { ($0, ModifierTapRecognizer(shortcut: $0)) })
+        handlers = bindings
         lastFlags = currentFlags()
 
         let mask: NSEvent.EventTypeMask = [
@@ -251,21 +260,28 @@ final class ModifierShortcutMonitor {
         localMonitor = nil
         workspaceObserver = nil
         appObservers = []
-        shortcut = nil
-        onTap = nil
-        recognizer.handle(.reset)
+        recognizers = [:]
+        handlers = [:]
         lastFlags = []
     }
 
     func reset() {
-        _ = recognizer.handle(.reset)
+        resetRecognizers()
         lastFlags = currentFlags()
     }
 
     /// Marks non-modifier key input when an external handler (such as Carbon
     /// hotkeys) consumes a chord before the global `keyDown` monitor receives it.
     func noteOtherKeyDown() {
-        _ = recognizer.handle(.otherKeyDown)
+        for key in recognizers.keys {
+            _ = recognizers[key]?.handle(.otherKeyDown)
+        }
+    }
+
+    private func resetRecognizers() {
+        for key in recognizers.keys {
+            _ = recognizers[key]?.handle(.reset)
+        }
     }
 
     private func process(_ event: NSEvent) {
@@ -279,26 +295,33 @@ final class ModifierShortcutMonitor {
             let pressed = next.subtracting(lastFlags)
             let released = lastFlags.subtracting(next)
             lastFlags = next
+            let activeKeys = Array(recognizers.keys)
             for modifier in ModifierShortcut.allCases {
                 if pressed.contains(modifier.flag) {
                     let others = !next.subtracting(modifier.flag).isEmpty
-                    _ = recognizer.handle(.modifierPressed(modifier, otherModifiersDown: others))
+                    for key in activeKeys {
+                        _ = recognizers[key]?.handle(.modifierPressed(modifier, otherModifiersDown: others))
+                    }
                 }
                 if released.contains(modifier.flag) {
                     let others = !next.isEmpty
-                    if recognizer.handle(.modifierReleased(modifier, otherModifiersDown: others)) {
-                        onTap?()
+                    for key in activeKeys {
+                        if recognizers[key]?.handle(.modifierReleased(modifier, otherModifiersDown: others)) == true {
+                            handlers[key]?()
+                        }
                     }
                 }
             }
         case .keyDown:
             if event.keyCode == 53 {
-                _ = recognizer.handle(.reset)
+                resetRecognizers()
             } else {
-                _ = recognizer.handle(.otherKeyDown)
+                noteOtherKeyDown()
             }
         case .leftMouseDown, .rightMouseDown, .otherMouseDown, .scrollWheel:
-            _ = recognizer.handle(.otherInput)
+            for key in recognizers.keys {
+                _ = recognizers[key]?.handle(.otherInput)
+            }
         default:
             break
         }

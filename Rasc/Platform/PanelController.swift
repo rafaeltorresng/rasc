@@ -71,6 +71,7 @@ final class PanelController: NSObject, NSWindowDelegate {
     var onOpenHome: (() -> Void)?
     var onOpenSettings: (() -> Void)?
     var onVoiceCapture: (() -> Void)?
+    var onVoiceDictate: (() -> Void)?
     var onVoiceCaptureShortcut: ((NSEvent) -> Bool)?
     var onDidHide: (() -> Void)?
 
@@ -795,6 +796,9 @@ final class PanelController: NSObject, NSWindowDelegate {
         case .voiceCapture:
             session.closeCommandPalette()
             onVoiceCapture?()
+        case .dictate:
+            session.closeCommandPalette()
+            onVoiceDictate?()
         case .openHome:
             session.closeCommandPalette()
             onOpenHome?()

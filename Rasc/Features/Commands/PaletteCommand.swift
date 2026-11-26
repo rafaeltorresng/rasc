@@ -13,6 +13,7 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
     case openHome
     case refine
     case voiceCapture
+    case dictate
     case keyboardShortcuts
     case settings
 
@@ -43,7 +44,9 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
         case .refine:
             "Refine"
         case .voiceCapture:
-            "Voice Capture"
+            "Voice to Scratchpad"
+        case .dictate:
+            "Dictate"
         case .keyboardShortcuts:
             "Keyboard Shortcuts"
         case .settings:
@@ -59,7 +62,7 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             ""
         case .copyNote:
             ""
-        case .shareNote, .exportThought, .exportThoughts, .voiceCapture:
+        case .shareNote, .exportThought, .exportThoughts, .voiceCapture, .dictate:
             ""
         case .discardNote:
             ""
@@ -94,6 +97,8 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             return InternalShortcutStore.shared.displayString(for: .keep)
         case .voiceCapture:
             return GlobalShortcutFormatting.currentVoiceShortcutDisplay()
+        case .dictate:
+            return GlobalShortcutFormatting.currentDictateShortcutDisplay()
         default:
             return shortcutLabel
         }
@@ -124,7 +129,9 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
         case .refine:
             "Refines the current note"
         case .voiceCapture:
-            "Record a new thought or open Voice Capture setup"
+            "Record a thought directly into Scratchpad"
+        case .dictate:
+            "Dictate into the active app or clipboard without opening Rasc"
         case .keyboardShortcuts:
             "Opens keyboard shortcut settings"
         case .settings:
@@ -164,7 +171,7 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
             .settings
         ])
         if includesVoiceCapture, let index = commands.firstIndex(of: .newScratch) {
-            commands.insert(.voiceCapture, at: index + 1)
+            commands.insert(contentsOf: [.voiceCapture, .dictate], at: index + 1)
         }
         return commands
     }

@@ -16,12 +16,19 @@ struct VoiceCaptureTests {
         defer { fixture.cleanUp() }
         let capture = fixture.capture(enabled: false)
         #expect(capture.output == .scratchpad)
-        #expect(!capture.standaloneKeepsHistory)
+        #expect(capture.dictationAlsoCopiesToClipboard)
+        #expect(capture.standaloneKeepsHistory)
         capture.setOutput(.insertAtCursor)
         #expect(capture.output == .insertAtCursor)
         capture.setOutput(.clipboard)
         #expect(capture.output == .clipboard)
         #expect(fixture.defaults.string(forKey: VoiceCapture.outputPreferenceKey) == "clipboard")
+        capture.setDictationAlsoCopiesToClipboard(false)
+        #expect(!capture.dictationAlsoCopiesToClipboard)
+        #expect(fixture.defaults.object(forKey: VoiceCapture.dictationAlsoClipboardPreferenceKey) as? Bool == false)
+        capture.setStandaloneKeepsHistory(false)
+        #expect(!capture.standaloneKeepsHistory)
+        #expect(fixture.defaults.object(forKey: VoiceCapture.standaloneHistoryPreferenceKey) as? Bool == false)
         capture.setStandaloneKeepsHistory(true)
         #expect(capture.standaloneKeepsHistory)
         #expect(fixture.defaults.bool(forKey: VoiceCapture.standaloneHistoryPreferenceKey))
@@ -34,6 +41,7 @@ struct VoiceCaptureTests {
         defer { pasteboard.releaseGlobally() }
         let capture = fixture.capture(presentWindows: false, pasteboard: pasteboard)
         capture.setOutput(.clipboard)
+        capture.setStandaloneKeepsHistory(false)
         var openedScratch = false
         capture.onOpenScratch = { _, _ in openedScratch = true; return true }
         capture.activate()
@@ -71,6 +79,7 @@ struct VoiceCaptureTests {
         defer { pasteboard.releaseGlobally() }
         let capture = fixture.capture(presentWindows: false, pasteboard: pasteboard)
         capture.setOutput(.insertAtCursor)
+        capture.setStandaloneKeepsHistory(false)
         capture.activate()
         try await wait { capture.phase == .listening }
         capture.finish()
@@ -93,6 +102,8 @@ struct VoiceCaptureTests {
             insertResult: .inserted
         )
         capture.setOutput(.insertAtCursor)
+        capture.setDictationAlsoCopiesToClipboard(false)
+        capture.setStandaloneKeepsHistory(false)
         capture.activate()
         try await wait { capture.phase == .listening }
         capture.finish()
@@ -104,6 +115,27 @@ struct VoiceCaptureTests {
         try await wait { capture.phase == .listening }
         capture.cancel()
         try await wait { capture.phase == .idle }
+    }
+
+    @Test func dictationDefaultsKeepClipboardAndLocalCopyEnabled() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let capture = fixture.capture(
+            presentWindows: false,
+            pasteboard: pasteboard,
+            insertResult: .inserted
+        )
+        capture.activate(intent: .dictate)
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .insertedAndCopied }
+        #expect(pasteboard.string(forType: .string) == "Talvez não fazer o deploy ainda.")
+        #expect(await capture.flushForTermination())
+        let notes = try await fixture.repository.fetchAllNonDeleted()
+        #expect(notes.map(\.content) == ["Talvez não fazer o deploy ainda."])
+        #expect(!notes[0].isKept)
     }
 
     @Test func flushForTerminationWaitsForPendingStandaloneHistorySave() async throws {
@@ -833,8 +865,265 @@ struct VoiceCaptureTests {
 
         for scheme in [ColorScheme.light, .dark] {
             let renderer = HomeSnapshotTests()
-            try renderer.renderPNG(VoiceStatusView(capture: capture), width: 304, height: 70,
+            try renderer.renderPNG(VoiceStatusView(capture: capture), width: 344, height: 74,
                                    scheme: scheme, name: "voice-listening-\(scheme)")
+        }
+        capture.cancel()
+        try await wait { capture.phase == .idle }
+    }
+
+    @Test func escapeCancelUnderThresholdDiscardsImmediatelyWithoutPersistence() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        var openedScratch = false
+        let capture = fixture.capture(
+            presentWindows: false,
+            cancelConfirmationThreshold: .seconds(30),
+            pasteboard: pasteboard
+        )
+        capture.onOpenScratch = { _, _ in openedScratch = true; return true }
+
+        capture.activate(intent: .scratchpad)
+        try await wait { capture.phase == .listening }
+        capture.requestCancel(fromEscape: true)
+        #expect(!capture.isConfirmingCancel)
+        try await wait { capture.phase == .idle }
+        #expect(!openedScratch)
+        #expect(pasteboard.string(forType: .string) == nil)
+        #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
+    }
+
+    @Test func escapeCancelOverThresholdPromptsConfirmationRespectsGuardAndDiscardsOnSecondEscape() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let capture = fixture.capture(
+            presentWindows: false,
+            cancelConfirmationThreshold: .milliseconds(30),
+            escapeConfirmGuard: .milliseconds(120),
+            cancelConfirmationTimeout: .seconds(5)
+        )
+
+        capture.activate(intent: .dictate)
+        try await wait { capture.phase == .listening }
+        try await Task.sleep(for: .milliseconds(45))
+
+        // First Escape triggers non-focus-stealing confirmation instead of discarding.
+        capture.requestCancel(fromEscape: true)
+        #expect(capture.isConfirmingCancel)
+        #expect(capture.phase == .listening)
+        #expect(capture.confirmCancelDurationSeconds >= 1)
+
+        // Second Escape inside guard window is ignored to prevent accidental double-tap discard.
+        capture.requestCancel(fromEscape: true)
+        #expect(capture.isConfirmingCancel)
+        #expect(capture.phase == .listening)
+
+        // Second Escape after guard confirms discard cleanly.
+        try await Task.sleep(for: .milliseconds(140))
+        capture.requestCancel(fromEscape: true)
+        try await wait { capture.phase == .idle }
+        #expect(!capture.isConfirmingCancel)
+        #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
+    }
+
+    @Test func keepRecordingReleasesHeldTranscriptAndConfirmDiscardDropsItCleanly() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let probe = SpeechGate()
+        let capture = fixture.capture(
+            presentWindows: false,
+            speech: .init(
+                assetsAvailable: { true },
+                prepare: {},
+                transcribe: { _, ready in
+                    await ready()
+                    return try await probe.waitResult("Confirmado com segurança.")
+                },
+                release: {}
+            ),
+            cancelConfirmationThreshold: .milliseconds(25),
+            escapeConfirmGuard: .milliseconds(20),
+            cancelConfirmationTimeout: .seconds(5),
+            pasteboard: pasteboard
+        )
+        capture.setDictationDelivery(.clipboard)
+
+        capture.activate(intent: .dictate)
+        try await wait { capture.phase == .listening }
+        try await Task.sleep(for: .milliseconds(40))
+        capture.finish()
+        try await wait { capture.phase == .transcribing }
+
+        // Ask to cancel >= threshold while transcribing, then let decode finish while dialog is up.
+        capture.requestCancel(fromEscape: true)
+        #expect(capture.isConfirmingCancel)
+        await probe.finish(with: "Confirmado com segurança.")
+        try await Task.sleep(for: .milliseconds(30))
+
+        // Transcript must be held back while awaiting user confirmation.
+        #expect(pasteboard.string(forType: .string) == nil)
+        #expect(capture.phase == .transcribing)
+
+        // Keeping releases the held transcript cleanly.
+        capture.keepRecording()
+        try await wait { capture.phase == .copied }
+        #expect(pasteboard.string(forType: .string) == "Confirmado com segurança.")
+        #expect(!capture.isConfirmingCancel)
+    }
+
+    @Test func confirmDiscardDuringTranscribingPreventsLateDeliveryAndPersistence() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let probe = SpeechGate()
+        let capture = fixture.capture(
+            presentWindows: false,
+            speech: .init(
+                assetsAvailable: { true },
+                prepare: {},
+                transcribe: { _, ready in
+                    await ready()
+                    return try await probe.waitResult("Texto descartado.")
+                },
+                release: {}
+            ),
+            cancelConfirmationThreshold: .milliseconds(25),
+            escapeConfirmGuard: .milliseconds(20),
+            cancelConfirmationTimeout: .seconds(5),
+            pasteboard: pasteboard
+        )
+        capture.setDictationDelivery(.clipboard)
+        capture.setStandaloneKeepsHistory(true)
+
+        capture.activate(intent: .dictate)
+        try await wait { capture.phase == .listening }
+        try await Task.sleep(for: .milliseconds(40))
+        capture.finish()
+        try await wait { capture.phase == .transcribing }
+
+        capture.requestCancel(fromEscape: true)
+        #expect(capture.isConfirmingCancel)
+        await probe.finish(with: "Texto descartado.")
+        try await Task.sleep(for: .milliseconds(25))
+        capture.confirmDiscard()
+        try await wait { capture.phase == .idle }
+
+        #expect(pasteboard.string(forType: .string) == nil)
+        #expect(await capture.flushForTermination())
+        #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
+    }
+
+    @Test func confirmationTimeoutDefaultsSafelyToKeep() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let capture = fixture.capture(
+            presentWindows: false,
+            cancelConfirmationThreshold: .milliseconds(20),
+            cancelConfirmationTimeout: .milliseconds(80)
+        )
+
+        capture.activate(intent: .scratchpad)
+        try await wait { capture.phase == .listening }
+        try await Task.sleep(for: .milliseconds(35))
+        capture.requestCancel(fromEscape: true)
+        #expect(capture.isConfirmingCancel)
+
+        try await wait { !capture.isConfirmingCancel }
+        #expect(capture.phase == .listening)
+        capture.cancel()
+        try await wait { capture.phase == .idle }
+    }
+
+    @Test func dualIntentsSeparateDictationAndScratchpadAndSupportInsertedAndCopied() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        var openedScratch = false
+        let capture = fixture.capture(
+            presentWindows: false,
+            pasteboard: pasteboard,
+            insertResult: .inserted
+        )
+        capture.onOpenScratch = { _, _ in openedScratch = true; return true }
+        capture.setDictationDelivery(.insertAtCursor)
+        capture.setDictationAlsoCopiesToClipboard(true)
+        capture.setStandaloneKeepsHistory(false)
+
+        // 1. Dictate inserts AND copies to clipboard without opening Scratchpad or saving a note.
+        capture.activate(intent: .dictate)
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .insertedAndCopied }
+        #expect(pasteboard.string(forType: .string) == "Talvez não fazer o deploy ainda.")
+        #expect(!openedScratch)
+        #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
+
+        // 2. Voice to Scratchpad saves a thought and opens Scratchpad independently of Dictation delivery.
+        pasteboard.clearContents()
+        capture.activate(intent: .scratchpad)
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .idle }
+        #expect(openedScratch)
+        #expect(pasteboard.string(forType: .string) == nil)
+        let notes = try await fixture.repository.fetchAllNonDeleted()
+        #expect(notes.map(\.content) == ["Talvez não fazer o deploy ainda."])
+    }
+
+    @Test func voiceConfirmationAndSettingsRenderInLightAndDarkAppearances() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let capture = fixture.capture(
+            cancelConfirmationThreshold: .milliseconds(15),
+            cancelConfirmationTimeout: .seconds(10)
+        )
+        capture.activate(intent: .dictate)
+        try await wait { capture.phase == .listening }
+        try await Task.sleep(for: .milliseconds(30))
+        capture.requestCancel(fromEscape: true)
+        #expect(capture.isConfirmingCancel)
+
+        let renderer = HomeSnapshotTests()
+        for scheme in [ColorScheme.light, .dark] {
+            try renderer.renderPNG(
+                VoiceStatusView(capture: capture),
+                width: 344,
+                height: 74,
+                scheme: scheme,
+                name: "voice-confirm-discard-\(scheme)"
+            )
+            try renderer.renderPNG(
+                SettingsView(initialTab: .general),
+                width: 540,
+                height: 680,
+                scheme: scheme,
+                name: "settings-general-\(scheme)"
+            )
+            try renderer.renderPNG(
+                SettingsView(initialTab: .shortcuts),
+                width: 540,
+                height: 680,
+                scheme: scheme,
+                name: "settings-shortcuts-\(scheme)"
+            )
+            try renderer.renderPNG(
+                Form {
+                    VoiceCaptureSettings(capture: capture)
+                }
+                .formStyle(.grouped)
+                .scrollContentBackground(.hidden)
+                .frame(width: 540, height: 680),
+                width: 540,
+                height: 680,
+                scheme: scheme,
+                name: "settings-voice-\(scheme)"
+            )
         }
         capture.cancel()
         try await wait { capture.phase == .idle }
@@ -886,6 +1175,9 @@ struct VoiceCaptureTests {
             presentWindows: Bool = false,
             speech: VoiceCapture.Speech? = nil,
             modelTimeout: Duration = .seconds(35),
+            cancelConfirmationThreshold: Duration = .seconds(30),
+            escapeConfirmGuard: Duration = .milliseconds(400),
+            cancelConfirmationTimeout: Duration = .seconds(6),
             accessibilityTrusted: Bool? = nil,
             pasteboard: NSPasteboard = .general,
             insertResult: VoiceTextInsertion.Result? = nil,
@@ -920,6 +1212,9 @@ struct VoiceCaptureTests {
                     return try await decode(audio)
                 }, release: {}),
                 modelTimeout: modelTimeout,
+                cancelConfirmationThreshold: cancelConfirmationThreshold,
+                escapeConfirmGuard: escapeConfirmGuard,
+                cancelConfirmationTimeout: cancelConfirmationTimeout,
                 accessibilityTrusted: resolvedAccessibilityTrusted,
                 pasteboard: pasteboard,
                 insertText: resolvedInsertText
@@ -1050,6 +1345,24 @@ private final class DownloadStateProbe: @unchecked Sendable {
 
     func recordPrepare() { lock.withLock { _prepares += 1 } }
     func recordRelease() { lock.withLock { _releases += 1 } }
+}
+
+private actor SpeechGate {
+    private var continuation: CheckedContinuation<String, Error>?
+    private var finishedValue: String?
+
+    func waitResult(_ fallback: String) async throws -> String {
+        if let finishedValue { return finishedValue }
+        return try await withCheckedThrowingContinuation { continuation in
+            self.continuation = continuation
+        }
+    }
+
+    func finish(with value: String) {
+        finishedValue = value
+        continuation?.resume(returning: value)
+        continuation = nil
+    }
 }
 
 private actor VoiceHandoffRefinementProvider: RefinementProvider {

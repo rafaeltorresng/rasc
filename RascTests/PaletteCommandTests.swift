@@ -78,4 +78,19 @@ struct PaletteCommandTests {
         #expect(commands.contains(.unkeep))
         #expect(!commands.contains(.keep))
     }
+
+    @Test
+    func voiceCaptureCommandsExposeBothScratchpadAndDictateWhenEnabled() {
+        let commands = PaletteCommand.availableCommands(
+            isKept: false,
+            hasPersistableContent: true,
+            canPerformCompletion: true,
+            includesVoiceCapture: true
+        )
+        #expect(commands.contains(.voiceCapture))
+        #expect(commands.contains(.dictate))
+        #expect(PaletteCommand.voiceCapture.title == "Voice to Scratchpad")
+        #expect(PaletteCommand.dictate.title == "Dictate")
+        #expect(PaletteCommand.filtered(by: "dictate", in: commands) == [.dictate])
+    }
 }
