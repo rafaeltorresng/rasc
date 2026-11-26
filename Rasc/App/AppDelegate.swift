@@ -74,6 +74,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
         if RefineReviewCommandLine.runIfRequested() { return }
         if RefineEvalLanguageResolverCommandLine.runIfRequested() { return }
         if RefineEvalCommandLine.runIfRequested() { return }
+        if VoiceEvalCommandLine.runIfRequested() { return }
         #endif
 
         GlobalShortcutMigration.migrateFromPreviousDefaultIfNeeded()
