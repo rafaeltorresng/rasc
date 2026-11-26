@@ -3,15 +3,31 @@ import Combine
 import SwiftUI
 
 @MainActor
+private final class HomeActionCallbacks {
+    var onOpenNote: (UUID) -> Void = { _ in }
+    var onNewScratch: () -> Void = {}
+    var onNoteDiscarded: (UUID) -> Void = { _ in }
+    var onNoteUnkept: (UUID) -> Void = { _ in }
+    var onExportThought: (UUID) -> Void = { _ in }
+    var onExportSelected: (Set<UUID>) -> Void = { _ in }
+}
+
+@MainActor
 final class HomeWindowController: NSObject, NSWindowDelegate {
     private var window: NSWindow?
     private var session: HomeSession?
     private var paletteObservation: AnyCancellable?
     private let windowFrameStore: WindowFrameStore
+    private let hiddenReleaseGracePeriod: Duration
+    private let callbacks = HomeActionCallbacks()
+    private nonisolated(unsafe) var deferredReleaseTask: Task<Void, Never>?
+    private nonisolated(unsafe) var memoryPressureSource: DispatchSourceMemoryPressure?
     private nonisolated(unsafe) var defaultObservers: [NSObjectProtocol] = []
     private nonisolated(unsafe) var workspaceObservers: [NSObjectProtocol] = []
 
     deinit {
+        deferredReleaseTask?.cancel()
+        memoryPressureSource?.cancel()
         for observer in defaultObservers {
             NotificationCenter.default.removeObserver(observer)
         }
@@ -27,16 +43,23 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
     var isKeyWindow: Bool { window?.isKeyWindow == true }
     var selectedNoteID: UUID? { session?.selectedNote()?.id }
     var exportWindow: NSWindow? { window }
+    var hasAttachedContentViewController: Bool { window?.contentViewController != nil }
+    var loadedNoteCount: Int { session?.noteCount ?? 0 }
     #if RASC_EFFICIENCY_BENCHMARK
     var benchmarkSession: HomeSession? { session }
     #endif
 
     var onVisibilityChange: ((Bool) -> Void)?
 
-    init(windowFrameStore: WindowFrameStore = .home()) {
+    init(
+        windowFrameStore: WindowFrameStore = .home(),
+        hiddenReleaseGracePeriod: Duration = .seconds(2)
+    ) {
         self.windowFrameStore = windowFrameStore
+        self.hiddenReleaseGracePeriod = hiddenReleaseGracePeriod
         super.init()
         observeDisplayChanges()
+        observeMemoryPressure()
     }
 
     func show(
@@ -49,26 +72,37 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
         onExportThought: @escaping (UUID) -> Void = { _ in },
         onExportSelected: @escaping (Set<UUID>) -> Void = { _ in }
     ) {
+        deferredReleaseTask?.cancel()
+        deferredReleaseTask = nil
+
         let session = session ?? HomeSession(repository: repository, prepareForDuplicate: prepareForDuplicate)
         self.session = session
         session.recordHomeVisit()
+        session.requestSearchFocus()
 
-        let contentView = RascAppearanceView {
-            HomeView(
-                session: session,
-                onOpenNote: onOpenNote,
-                onNewScratch: onNewScratch,
-                onNoteDiscarded: onNoteDiscarded,
-                onNoteUnkept: onNoteUnkept,
-                onExportThought: onExportThought,
-                onExportSelected: onExportSelected
-            )
-        }
+        callbacks.onOpenNote = onOpenNote
+        callbacks.onNewScratch = onNewScratch
+        callbacks.onNoteDiscarded = onNoteDiscarded
+        callbacks.onNoteUnkept = onNoteUnkept
+        callbacks.onExportThought = onExportThought
+        callbacks.onExportSelected = onExportSelected
 
-        let hostingController = NSHostingController(rootView: contentView)
         let window = self.window ?? makeWindow()
         (window as? HomeWindow)?.homeSession = session
-        window.contentViewController = hostingController
+        if window.contentViewController == nil {
+            let contentView = RascAppearanceView { [weak callbacks] in
+                HomeView(
+                    session: session,
+                    onOpenNote: { callbacks?.onOpenNote($0) },
+                    onNewScratch: { callbacks?.onNewScratch() },
+                    onNoteDiscarded: { callbacks?.onNoteDiscarded($0) },
+                    onNoteUnkept: { callbacks?.onNoteUnkept($0) },
+                    onExportThought: { callbacks?.onExportThought($0) },
+                    onExportSelected: { callbacks?.onExportSelected($0) }
+                )
+            }
+            window.contentViewController = NSHostingController(rootView: contentView)
+        }
 
         positionWindowIfNeeded(window)
         NSApp.activate(ignoringOtherApps: true)
@@ -80,10 +114,7 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
 
     func close() {
         guard let window else { return }
-        windowFrameStore.save(window)
-        window.orderOut(nil)
-        releaseHiddenContent(of: window)
-        onVisibilityChange?(false)
+        hideWindow(window)
     }
 
     func reloadIfVisible() {
@@ -98,16 +129,53 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
-        windowFrameStore.save(sender)
-        sender.orderOut(nil)
-        releaseHiddenContent(of: sender)
-        onVisibilityChange?(false)
+        hideWindow(sender)
         return false
+    }
+
+    func releaseHiddenContentIfNeeded() {
+        deferredReleaseTask?.cancel()
+        deferredReleaseTask = nil
+        guard let window, !window.isVisible else { return }
+        releaseHiddenContent(of: window)
+    }
+
+    private func hideWindow(_ window: NSWindow) {
+        windowFrameStore.save(window)
+        window.orderOut(nil)
+        scheduleDeferredHiddenRelease(for: window)
+        onVisibilityChange?(false)
+    }
+
+    private func scheduleDeferredHiddenRelease(for window: NSWindow) {
+        deferredReleaseTask?.cancel()
+        deferredReleaseTask = Task { @MainActor [weak self, weak window] in
+            guard let self else { return }
+            do {
+                try await Task.sleep(for: hiddenReleaseGracePeriod)
+            } catch {
+                return
+            }
+            guard !Task.isCancelled, let window, !window.isVisible else { return }
+            releaseHiddenContent(of: window)
+            deferredReleaseTask = nil
+        }
     }
 
     private func releaseHiddenContent(of window: NSWindow) {
         window.contentViewController = nil
         session?.releaseCachedNotesForHiddenWindow()
+    }
+
+    private func observeMemoryPressure() {
+        let source = DispatchSource.makeMemoryPressureSource(eventMask: [.warning, .critical], queue: .main)
+        source.setEventHandler { [weak self] in
+            Task { @MainActor [weak self] in
+                self?.releaseHiddenContentIfNeeded()
+            }
+        }
+        source.resume()
+        memoryPressureSource = source
     }
 
     func windowDidMove(_ notification: Notification) {

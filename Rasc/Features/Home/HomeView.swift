@@ -189,6 +189,10 @@ struct HomeView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .rascWindowSurface()
         .onAppear { DispatchQueue.main.async { searchIsFocused = true } }
+        .onChange(of: session.focusSearchRequestID) { _, _ in
+            searchIsFocused = false
+            DispatchQueue.main.async { searchIsFocused = true }
+        }
         .onChange(of: viewMode) { _, mode in
             HomeViewModeStore().save(mode)
         }

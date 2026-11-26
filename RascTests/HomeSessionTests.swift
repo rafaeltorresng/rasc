@@ -786,4 +786,36 @@ struct NoteSnippetTests {
         await session.reloadImmediately()
         #expect(session.searchResults.map(\.id) == [n2.id])
     }
+
+    @Test
+    @MainActor
+    func requestSearchFocusIncrementsGenerationAndPreservesSelectionAndUndo() async throws {
+        let dir = FileManager.default.temporaryDirectory.appending(path: "HomeFocusGen.\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+
+        let repo = try NoteRepository(databaseURL: dir.appending(path: "rasc.sqlite"))
+        defer { try? repo.closeForTesting() }
+
+        let n1 = try await repo.createScratch(content: "Focus check alpha")
+        let n2 = try await repo.createScratch(content: "Focus check beta")
+        let suite = "HomeFocusGen.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+
+        let session = HomeSession(repository: repo, discoveryStore: OnboardingStore(userDefaults: defaults))
+        await session.reloadImmediately()
+        session.toggleSelection(n1.id)
+        session.toggleSelection(n2.id)
+        #expect(session.selectedNoteIDs == [n1.id, n2.id])
+
+        let before = session.focusSearchRequestID
+        session.requestSearchFocus()
+        session.requestSearchFocus()
+        #expect(session.focusSearchRequestID == before + 2)
+
+        session.releaseCachedNotesForHiddenWindow()
+        #expect(session.selectedNoteIDs == [n1.id, n2.id])
+        #expect(session.focusSearchRequestID == before + 2)
+    }
 }

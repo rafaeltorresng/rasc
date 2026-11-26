@@ -30,6 +30,7 @@ final class HomeSession {
     private(set) var hasMoreSearchResults = false
 
     private(set) var showsHistoryHint = false
+    private(set) var focusSearchRequestID: Int = 0
 
     private let repository: NoteRepository
     private let prepareForDuplicate: @MainActor (UUID) async throws -> Void
@@ -88,6 +89,10 @@ final class HomeSession {
     func dismissHistoryHint() {
         discoveryStore.dismissHistoryHint()
         showsHistoryHint = false
+    }
+
+    func requestSearchFocus() {
+        focusSearchRequestID &+= 1
     }
 
     var visibleBrowseGroups: [HomeBrowseGroup] {

@@ -51,16 +51,26 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--baseline", type=Path, default=ROOT / "Experiments/Efficiency/results/baseline")
     parser.add_argument("--optimized", type=Path, default=ROOT / "Experiments/Efficiency/results/optimized")
+    parser.add_argument("--sparkle-json", type=Path, default=ROOT / "Experiments/Efficiency/results/sparkle_distribution.json")
+    parser.add_argument("--long-running-smoke-dir", type=Path, default=ROOT / "Experiments/Efficiency/results/long_running_smoke")
     parser.add_argument("--comparison-out", type=Path, default=ROOT / "Experiments/Efficiency/results/comparison.json")
     parser.add_argument("--web-out", type=Path, default=ROOT / "docs/evidence/efficiency-web-data.json")
     args = parser.parse_args()
 
     b = json.loads((args.baseline / "report.json").read_text())
     o = json.loads((args.optimized / "report.json").read_text())
+    rep_path = args.optimized / "replications.json"
+    rep_data = json.loads(rep_path.read_text()) if rep_path.exists() else None
+    sparkle_data = json.loads(args.sparkle_json.read_text()) if args.sparkle_json.exists() else None
+    long_running_smokes: dict[str, Any] = {}
+    if args.long_running_smoke_dir.exists():
+        for p in sorted(args.long_running_smoke_dir.glob("*_summary.json")):
+            long_running_smokes[p.stem] = json.loads(p.read_text())
 
     comparison = {
         "baseline_commit": b["environment"]["commit"],
         "optimized_commit": o["environment"]["commit"],
+        "optimized_screen_locked": o["environment"].get("screen_locked"),
         "metrics": {
             "app_bundle_mib": delta_entry(
                 b["disk_footprint"]["app_bundle"]["app_du_mib"],
@@ -139,20 +149,30 @@ def main() -> None:
             ),
         },
     }
+    if rep_data is not None:
+        comparison["replications"] = rep_data
+    if sparkle_data is not None:
+        comparison["sparkle_distribution"] = sparkle_data
+    if long_running_smokes:
+        comparison["long_running_smoke"] = long_running_smokes
     args.comparison_out.write_text(json.dumps(comparison, indent=2))
 
     # Build curated editorial dataset for rasc-web
     opt_phases = o["workday"]["phase_summaries"]
     opt_ops = o["workday"]["in_app_summary"].get("ops", {})
-    web_data = {
-        "schema_version": 1,
+    web_data: dict[str, Any] = {
+        "schema_version": 2,
         "generated_at": o["generated_at"],
         "environment": o["environment"],
         "scope": {
             "hardware": o["environment"]["machine_cpu"],
             "memory_gb": round(o["environment"]["memory_bytes"] / (1024 ** 3), 1),
             "macos": f"{o['environment']['macos_version']} ({o['environment']['macos_build']})",
-            "build_configuration": "Release (App Sandbox enabled, ad-hoc signed, no Sparkle in local build)",
+            "build_configuration": "Release (App Sandbox enabled, ad-hoc signed; Sparkle + LLC audited separately)",
+            "workload_distinction": (
+                "Standard accelerated workday suite (~4-5 min) is distinct from the detached long-running "
+                "8h soak + 24h Voice-On idle harness; full 8h/24h data is reported separately once completed."
+            ),
             "not_measured": [
                 "Full-SoC wall power / battery-life hours (sudo powermetrics unavailable without elevated privileges; Xcode Power Profiler does not support macOS)",
                 "Other Apple silicon SKUs (8 GB M1/M2/M4), Intel Macs, or macOS 14/15 idle behavior",
@@ -162,9 +182,18 @@ def main() -> None:
         "storage_distinction": {
             "app_bundle_mib": o["disk_footprint"]["app_bundle"]["app_du_mib"],
             "app_bundle_bytes": o["disk_footprint"]["app_bundle"]["total_file_bytes"],
+            "sparkle_app_bundle_mib": (
+                sparkle_data["disk_footprint"]["app_bundle"]["app_du_mib"]
+                if sparkle_data
+                else None
+            ),
             "speech_model_separate_bytes": o["disk_footprint"]["speech_model_bytes"],
             "speech_model_separate_mib": o["disk_footprint"]["speech_model_mib"],
-            "note": "Standard Rasc distribution does not bundle the 622 MiB speech model; it is an opt-in one-time download.",
+            "note": (
+                "Standard local Release Rasc.app does not embed Sparkle or the 622 MiB speech model; "
+                "GitHub Release builds embed Sparkle + cdhash-pinned Library Load Constraints (~26 MiB), "
+                "and the speech model remains an opt-in one-time download."
+            ),
         },
         "states": {
             "idle_voice_off": {
@@ -178,6 +207,7 @@ def main() -> None:
             "idle_voice_on": {
                 "phys_footprint_p50_mib": o["idle_voice_on"]["summary"]["phys_footprint_mib"]["p50"],
                 "rss_p50_mib": o["idle_voice_on"]["summary"]["rss_mib"]["p50"],
+                "neural_footprint_p50_mib": o["idle_voice_on"]["summary"]["neural_footprint_mib"]["p50"],
                 "cpu_mean_pct": o["idle_voice_on"]["summary"]["cpu_pct"]["mean"],
                 "idle_wkups_per_s": o["idle_voice_on"]["summary"]["pkg_idle_wkups_per_s_mean"],
                 "xnu_cpu_power_mw": o["idle_voice_on"]["summary"]["xnu_cpu_power_mw_mean"],
@@ -205,6 +235,18 @@ def main() -> None:
         "operation_latencies_ms": opt_ops,
         "workday_timeseries": downsample_timeseries(args.optimized / "workday_timeseries.csv"),
     }
+    if rep_data is not None:
+        web_data["replications"] = rep_data
+    if sparkle_data is not None:
+        web_data["sparkle_distribution"] = {
+            "disk_footprint": sparkle_data["disk_footprint"],
+            "llc_audit": sparkle_data.get("llc_audit"),
+            "launch": sparkle_data["launch"],
+            "idle_voice_off": sparkle_data["idle_voice_off"]["summary"],
+            "idle_voice_on": sparkle_data["idle_voice_on"]["summary"],
+        }
+    if long_running_smokes:
+        web_data["long_running_smoke"] = long_running_smokes
     args.web_out.parent.mkdir(parents=True, exist_ok=True)
     args.web_out.write_text(json.dumps(web_data, indent=2))
     print(f"Wrote {args.comparison_out} and {args.web_out}")

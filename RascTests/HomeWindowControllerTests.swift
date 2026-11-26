@@ -164,6 +164,79 @@ struct HomeWindowControllerTests {
         #expect(restoredWindow.frame == savedFrame)
     }
 
+    @Test
+    func closingHomeDefersContentReleaseForFastReopen() async throws {
+        let suite = "RascTests.HomeDeferredFastReopen.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+
+        let panel = try makePanelController(windowFrameStore: .scratchpad(userDefaults: defaults))
+        defer { try? panel.repository.closeForTesting() }
+        _ = try await panel.repository.createScratch(content: "Fast reopen cached thought")
+
+        let home = HomeWindowController(
+            windowFrameStore: .home(userDefaults: defaults),
+            hiddenReleaseGracePeriod: .milliseconds(250)
+        )
+        defer { home.close() }
+
+        home.show(repository: panel.repository, onOpenNote: { _ in }, onNewScratch: {})
+        try await Task.sleep(for: .milliseconds(60))
+        #expect(home.isVisible)
+        #expect(home.hasAttachedContentViewController)
+
+        home.close()
+        #expect(!home.isVisible)
+        #expect(home.hasAttachedContentViewController)
+
+        try await Task.sleep(for: .milliseconds(40))
+        home.show(repository: panel.repository, onOpenNote: { _ in }, onNewScratch: {})
+        try await Task.sleep(for: .milliseconds(260))
+
+        #expect(home.isVisible)
+        #expect(home.hasAttachedContentViewController)
+    }
+
+    @Test
+    func closingHomeReleasesContentAfterGracePeriodAndOnExplicitRelease() async throws {
+        let suite = "RascTests.HomeDeferredExpire.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+
+        let panel = try makePanelController(windowFrameStore: .scratchpad(userDefaults: defaults))
+        defer { try? panel.repository.closeForTesting() }
+        _ = try await panel.repository.createScratch(content: "Deferred teardown thought")
+
+        let home = HomeWindowController(
+            windowFrameStore: .home(userDefaults: defaults),
+            hiddenReleaseGracePeriod: .milliseconds(60)
+        )
+        defer { home.close() }
+
+        home.show(repository: panel.repository, onOpenNote: { _ in }, onNewScratch: {})
+        _ = await waitUntil { home.loadedNoteCount == 1 }
+        #expect(home.hasAttachedContentViewController)
+
+        home.close()
+        #expect(!home.isVisible)
+        #expect(home.hasAttachedContentViewController)
+
+        let releasedAfterGrace = await waitUntil { !home.hasAttachedContentViewController }
+        #expect(releasedAfterGrace)
+        #expect(home.loadedNoteCount == 0)
+
+        home.show(repository: panel.repository, onOpenNote: { _ in }, onNewScratch: {})
+        _ = await waitUntil { home.loadedNoteCount == 1 }
+        home.releaseHiddenContentIfNeeded()
+        #expect(home.hasAttachedContentViewController)
+        #expect(home.loadedNoteCount == 1)
+
+        home.close()
+        home.releaseHiddenContentIfNeeded()
+        #expect(!home.hasAttachedContentViewController)
+        #expect(home.loadedNoteCount == 0)
+    }
+
     private func makePanelController(
         windowFrameStore: WindowFrameStore
     ) throws -> PanelController {
