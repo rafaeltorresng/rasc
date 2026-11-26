@@ -446,7 +446,7 @@ struct ModifierShortcutRecorder: View {
                 }
             }
             if recorder.isRecording {
-                detail("Press one modifier key: Option, Control, Shift, or Command.")
+                detail("Tap one modifier key (Option, Control, Shift, or Command), or press Esc to cancel.")
             }
             if let shortcut = capture.modifierShortcut {
                 if !capture.modifierShortcutIsActive {
@@ -454,8 +454,13 @@ struct ModifierShortcutRecorder: View {
                 } else if !capture.modifierShortcutHasAccess {
                     VStack(alignment: .leading, spacing: 6) {
                         detail("Tapping \(shortcut.displayName) inside Rasc works. To use it in other apps, allow Rasc in Accessibility.")
-                        Button("Open Accessibility Settings…") { ModifierShortcutAccess.openSettings() }
-                        Button("Allow Rasc…") { ModifierShortcutAccess.request() }
+                        HStack(spacing: 8) {
+                            Button("Allow Rasc…") {
+                                ModifierShortcutAccess.request()
+                                capture.refreshModifierShortcut()
+                            }
+                            Button("Open Accessibility Settings…") { ModifierShortcutAccess.openSettings() }
+                        }
                     }
                 }
             }

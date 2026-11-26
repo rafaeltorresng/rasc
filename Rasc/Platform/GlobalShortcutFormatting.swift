@@ -13,11 +13,26 @@ enum GlobalShortcutFormatting {
     }
 
     static func currentVoiceShortcutDisplay() -> String {
+        let chord = KeyboardShortcuts.getShortcut(for: .voiceCapture)?.description
+        return voiceShortcutDisplay(
+            modifier: VoiceCapture.shared.modifierShortcut,
+            modifierActive: VoiceCapture.shared.modifierShortcutIsActive,
+            chord: chord,
+            chordActive: VoiceCapture.shared.shortcutIsActive
+        )
+    }
+
+    static func voiceShortcutDisplay(
+        modifier: ModifierShortcut?,
+        modifierActive: Bool,
+        chord: String?,
+        chordActive: Bool
+    ) -> String {
         var parts: [String] = []
-        if let modifier = VoiceCapture.shared.modifierShortcut, VoiceCapture.shared.modifierShortcutIsActive {
+        if let modifier, modifierActive {
             parts.append(modifier.displayString)
         }
-        if VoiceCapture.shared.shortcutIsActive, let chord = KeyboardShortcuts.getShortcut(for: .voiceCapture)?.description, !chord.isEmpty {
+        if chordActive, let chord, !chord.isEmpty {
             parts.append(chord)
         }
         return parts.joined(separator: " or ")
@@ -174,9 +189,13 @@ private struct GlobalShortcutChangeObserver: ViewModifier {
     let action: () -> Void
 
     func body(content: Content) -> some View {
-        content.onReceive(NotificationCenter.default.publisher(for: GlobalShortcutChange.notification)) { _ in
-            action()
-        }
+        content
+            .onReceive(NotificationCenter.default.publisher(for: GlobalShortcutChange.notification)) { _ in
+                action()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: ModifierShortcutStore.didChange)) { _ in
+                action()
+            }
     }
 }
 

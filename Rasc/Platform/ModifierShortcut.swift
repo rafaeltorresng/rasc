@@ -40,9 +40,20 @@ enum ModifierShortcut: String, CaseIterable, Codable, Sendable, Identifiable {
         }
     }
 
+    static let relevantMask: NSEvent.ModifierFlags = [.command, .option, .control, .shift]
+
     static func matching(_ flags: NSEvent.ModifierFlags) -> ModifierShortcut? {
-        let flags = flags.intersection(.deviceIndependentFlagsMask)
+        let flags = flags.intersection(relevantMask)
         return allCases.first { flags.contains($0.flag) }
+    }
+
+    static func exclusive(in flags: NSEvent.ModifierFlags) -> ModifierShortcut? {
+        let relevant = flags.intersection(relevantMask)
+        guard let shortcut = allCases.first(where: { relevant.contains($0.flag) }),
+              relevant.subtracting(shortcut.flag).isEmpty else {
+            return nil
+        }
+        return shortcut
     }
 }
 
@@ -78,8 +89,11 @@ struct ModifierTapRecognizer: Equatable {
                 if candidateStartedAt != nil { interfered = true }
                 return false
             }
-            // A repeated flagsChanged for the same modifier restarts the
-            // candidate rather than firing on a stale press.
+            if candidateStartedAt != nil {
+                // Keep prior interference sticky until a release or explicit reset.
+                interfered = true
+                return false
+            }
             candidateStartedAt = now
             interfered = otherModifiersDown
             return false
@@ -89,6 +103,7 @@ struct ModifierTapRecognizer: Equatable {
             let elapsed = started.duration(to: now)
             let isCleanTap = !interfered
                 && !otherModifiersDown
+                && elapsed >= .zero
                 && elapsed <= maximumTapDuration
             reset()
             return isCleanTap
@@ -157,18 +172,33 @@ final class ModifierShortcutStore: ObservableObject {
 /// whenever Rasc is the active application.
 @MainActor
 final class ModifierShortcutMonitor {
-    private var globalMonitor: Any?
-    private var localMonitor: Any?
+    private nonisolated(unsafe) var globalMonitor: Any?
+    private nonisolated(unsafe) var localMonitor: Any?
+    private nonisolated(unsafe) var workspaceObserver: (any NSObjectProtocol)?
+    private nonisolated(unsafe) var appObservers: [any NSObjectProtocol] = []
     private var recognizer = ModifierTapRecognizer()
     private var lastFlags: NSEvent.ModifierFlags = []
     private var shortcut: ModifierShortcut?
     private var onTap: (() -> Void)?
 
     var isSuspended = false {
-        didSet { if isSuspended { recognizer.handle(.reset) } }
+        didSet {
+            if isSuspended {
+                recognizer.handle(.reset)
+            } else {
+                lastFlags = currentFlags()
+            }
+        }
     }
 
     var isRunning: Bool { globalMonitor != nil || localMonitor != nil }
+
+    deinit {
+        if let globalMonitor { NSEvent.removeMonitor(globalMonitor) }
+        if let localMonitor { NSEvent.removeMonitor(localMonitor) }
+        if let workspaceObserver { NSWorkspace.shared.notificationCenter.removeObserver(workspaceObserver) }
+        for observer in appObservers { NotificationCenter.default.removeObserver(observer) }
+    }
 
     func start(shortcut: ModifierShortcut, onTap: @escaping () -> Void) {
         if isRunning, self.shortcut == shortcut { self.onTap = onTap; return }
@@ -176,9 +206,11 @@ final class ModifierShortcutMonitor {
         self.shortcut = shortcut
         self.onTap = onTap
         recognizer = ModifierTapRecognizer(shortcut: shortcut)
-        lastFlags = []
+        lastFlags = currentFlags()
 
-        let mask: NSEvent.EventTypeMask = [.flagsChanged, .keyDown, .leftMouseDown, .rightMouseDown, .otherMouseDown]
+        let mask: NSEvent.EventTypeMask = [
+            .flagsChanged, .keyDown, .leftMouseDown, .rightMouseDown, .otherMouseDown, .scrollWheel
+        ]
         globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] event in
             MainActor.assumeIsolated {
                 self?.process(event)
@@ -190,17 +222,50 @@ final class ModifierShortcutMonitor {
             }
             return event
         }
+        workspaceObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didActivateApplicationNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.reset()
+            }
+        }
+        for name in [NSApplication.didBecomeActiveNotification, NSApplication.didResignActiveNotification] {
+            appObservers.append(
+                NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
+                    MainActor.assumeIsolated {
+                        self?.reset()
+                    }
+                }
+            )
+        }
     }
 
     func stop() {
         if let globalMonitor { NSEvent.removeMonitor(globalMonitor) }
         if let localMonitor { NSEvent.removeMonitor(localMonitor) }
+        if let workspaceObserver { NSWorkspace.shared.notificationCenter.removeObserver(workspaceObserver) }
+        for observer in appObservers { NotificationCenter.default.removeObserver(observer) }
         globalMonitor = nil
         localMonitor = nil
+        workspaceObserver = nil
+        appObservers = []
         shortcut = nil
         onTap = nil
         recognizer.handle(.reset)
         lastFlags = []
+    }
+
+    func reset() {
+        _ = recognizer.handle(.reset)
+        lastFlags = currentFlags()
+    }
+
+    /// Marks non-modifier key input when an external handler (such as Carbon
+    /// hotkeys) consumes a chord before the global `keyDown` monitor receives it.
+    func noteOtherKeyDown() {
+        _ = recognizer.handle(.otherKeyDown)
     }
 
     private func process(_ event: NSEvent) {
@@ -227,8 +292,12 @@ final class ModifierShortcutMonitor {
                 }
             }
         case .keyDown:
-            _ = recognizer.handle(.otherKeyDown)
-        case .leftMouseDown, .rightMouseDown, .otherMouseDown:
+            if event.keyCode == 53 {
+                _ = recognizer.handle(.reset)
+            } else {
+                _ = recognizer.handle(.otherKeyDown)
+            }
+        case .leftMouseDown, .rightMouseDown, .otherMouseDown, .scrollWheel:
             _ = recognizer.handle(.otherInput)
         default:
             break
@@ -236,7 +305,11 @@ final class ModifierShortcutMonitor {
     }
 
     private func relevantFlags(_ event: NSEvent) -> NSEvent.ModifierFlags {
-        event.modifierFlags.intersection([.command, .option, .control, .shift])
+        event.modifierFlags.intersection(ModifierShortcut.relevantMask)
+    }
+
+    private func currentFlags() -> NSEvent.ModifierFlags {
+        NSEvent.modifierFlags.intersection(ModifierShortcut.relevantMask)
     }
 }
 
@@ -245,16 +318,26 @@ final class ModifierShortcutMonitor {
 final class ModifierShortcutRecorderModel: ObservableObject {
     @Published private(set) var isRecording = false
 
-    private var monitor: Any?
+    private nonisolated(unsafe) var monitor: Any?
     private var onAssign: ((ModifierShortcut?) -> Void)?
+    private var pendingShortcut: ModifierShortcut?
+    private var interfered = false
+
+    deinit {
+        if let monitor { NSEvent.removeMonitor(monitor) }
+    }
 
     func begin(onAssign: @escaping (ModifierShortcut?) -> Void) {
         end()
         isRecording = true
         self.onAssign = onAssign
-        monitor = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
-            MainActor.assumeIsolated { self?.handle(event) }
-            return event
+        pendingShortcut = nil
+        interfered = false
+        monitor = NSEvent.addLocalMonitorForEvents(matching: [.flagsChanged, .keyDown]) { [weak self] event in
+            let consume = MainActor.assumeIsolated {
+                self?.handle(event) ?? false
+            }
+            return consume ? nil : event
         }
     }
 
@@ -263,6 +346,8 @@ final class ModifierShortcutRecorderModel: ObservableObject {
         monitor = nil
         isRecording = false
         onAssign = nil
+        pendingShortcut = nil
+        interfered = false
     }
 
     func cancel() { end() }
@@ -272,9 +357,40 @@ final class ModifierShortcutRecorderModel: ObservableObject {
         end()
     }
 
-    private func handle(_ event: NSEvent) {
-        let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
-        guard let shortcut = ModifierShortcut.matching(flags), flags.subtracting(shortcut.flag).isEmpty else { return }
-        assign(shortcut)
+    /// Returns `true` when the event should be consumed while recording.
+    private func handle(_ event: NSEvent) -> Bool {
+        if event.type == .keyDown {
+            if event.keyCode == 53 {
+                cancel()
+                return true
+            }
+            pendingShortcut = nil
+            interfered = true
+            return true
+        }
+
+        let relevant = event.modifierFlags.intersection(ModifierShortcut.relevantMask)
+        if relevant.isEmpty {
+            if !interfered, let pendingShortcut {
+                assign(pendingShortcut)
+                return false
+            }
+            pendingShortcut = nil
+            interfered = false
+            return false
+        }
+
+        if let exclusive = ModifierShortcut.exclusive(in: relevant) {
+            if pendingShortcut == nil && !interfered {
+                pendingShortcut = exclusive
+            } else if pendingShortcut != exclusive {
+                pendingShortcut = nil
+                interfered = true
+            }
+        } else {
+            pendingShortcut = nil
+            interfered = true
+        }
+        return false
     }
 }
