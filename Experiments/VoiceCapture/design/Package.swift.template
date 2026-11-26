@@ -1,0 +1,9 @@
+// swift-tools-version:6.2
+import PackageDescription
+
+let package = Package(
+    name: "VoiceDesign",
+    platforms: [.macOS(.v14)],
+    dependencies: [.package(url: "https://github.com/sindresorhus/KeyboardShortcuts.git", exact: "3.0.1")],
+    targets: [.executableTarget(name: "VoiceDesign", dependencies: ["KeyboardShortcuts"], path: "Sources")]
+)

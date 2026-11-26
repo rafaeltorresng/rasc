@@ -1,0 +1,14 @@
+Online control reached example.com.
+Wi-Fi Power (en0): Off
+   No IPv4 states found
+   No IPv6 states found
+curl: (6) Could not resolve host: example.com
+External network control unreachable.
+{"engine":"apple","finish_ms":247.66874999999999,"fixture":"en-clip.wav","prepare_ms":81.411416000000003,"transcript":"Don't deploy yet."}
+{"engine":"apple","finish_ms":229.140084,"fixture":"pt-clip.wav","prepare_ms":61.333917,"transcript":"Não apaga isso"}
+{"engine":"ultra","finish_ms":18585.164459,"fixture":"en-clip.wav","prepare_ms":18527.903375000002,"transcript":"Don't deploy yet."}
+{"engine":"ultra","finish_ms":36.768500000000003,"fixture":"pt-clip.wav","prepare_ms":0.0040000000000000001,"transcript":"Não o apaga isso."}
+{"engine":"fluid","finish_ms":430.10133300000001,"fixture":"en-clip.wav","prepare_ms":376.21508299999999,"transcript":"Don't deploy yet."}
+{"engine":"fluid","finish_ms":36.617165999999997,"fixture":"pt-clip.wav","prepare_ms":0.0029580000000000001,"transcript":"Não o apaga isso."}
+No active IPv4 or IPv6 state after test.
+Wi-Fi Power (en0): On

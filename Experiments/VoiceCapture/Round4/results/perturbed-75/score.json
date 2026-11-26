@@ -1,0 +1,137 @@
+{
+  "overall": {
+    "clips": 72,
+    "referenceWords": 1692,
+    "hypothesisWords": 1704,
+    "wordEdits": 116,
+    "werPercent": 6.856,
+    "cerPercent": 3.34,
+    "werPunctuationSensitivePercent": 6.856,
+    "referencePunctuationMarks": 240,
+    "hypothesisPunctuationMarks": 233,
+    "emptyTranscripts": 0
+  },
+  "groups": {
+    "background-noise": {
+      "clips": 12,
+      "referenceWords": 282,
+      "hypothesisWords": 286,
+      "wordEdits": 24,
+      "werPercent": 8.511,
+      "cerPercent": 4.097,
+      "werPunctuationSensitivePercent": 8.511,
+      "referencePunctuationMarks": 40,
+      "hypothesisPunctuationMarks": 41,
+      "emptyTranscripts": 0
+    },
+    "pauses-silence": {
+      "clips": 24,
+      "referenceWords": 564,
+      "hypothesisWords": 567,
+      "wordEdits": 32,
+      "werPercent": 5.674,
+      "cerPercent": 2.881,
+      "werPunctuationSensitivePercent": 5.674,
+      "referencePunctuationMarks": 80,
+      "hypothesisPunctuationMarks": 75,
+      "emptyTranscripts": 0
+    },
+    "read-speech": {
+      "clips": 12,
+      "referenceWords": 282,
+      "hypothesisWords": 284,
+      "wordEdits": 18,
+      "werPercent": 6.383,
+      "cerPercent": 3.329,
+      "werPunctuationSensitivePercent": 6.383,
+      "referencePunctuationMarks": 40,
+      "hypothesisPunctuationMarks": 37,
+      "emptyTranscripts": 0
+    },
+    "speaking-rate": {
+      "clips": 24,
+      "referenceWords": 564,
+      "hypothesisWords": 567,
+      "wordEdits": 42,
+      "werPercent": 7.447,
+      "cerPercent": 3.425,
+      "werPunctuationSensitivePercent": 7.447,
+      "referencePunctuationMarks": 80,
+      "hypothesisPunctuationMarks": 80,
+      "emptyTranscripts": 0
+    }
+  },
+  "nonSpeechOutcomes": {
+    "control__click_only": "",
+    "control__silence_1s": "",
+    "control__silence_3s": ""
+  },
+  "errors": {},
+  "latencyMs": {
+    "modelLoad": {
+      "n": 72,
+      "mean": 0.01,
+      "p50": 0.009,
+      "p95": 0.014,
+      "min": 0.007,
+      "max": 0.015
+    },
+    "modelReady": {
+      "n": 72,
+      "mean": 0.01,
+      "p50": 0.009,
+      "p95": 0.014,
+      "min": 0.007,
+      "max": 0.015
+    },
+    "initialize": {
+      "n": 72,
+      "mean": 15.58,
+      "p50": 15.228,
+      "p95": 22.645,
+      "min": 5.937,
+      "max": 25.609
+    },
+    "inference": {
+      "n": 72,
+      "mean": 66.761,
+      "p50": 58.072,
+      "p95": 112.259,
+      "min": 42.241,
+      "max": 113.068
+    },
+    "cleanup": {
+      "n": 72,
+      "mean": 0.048,
+      "p50": 0.049,
+      "p95": 0.054,
+      "min": 0.042,
+      "max": 0.069
+    },
+    "transcribeTotal": {
+      "n": 72,
+      "mean": 82.459,
+      "p50": 72.963,
+      "p95": 133.146,
+      "min": 48.828,
+      "max": 135.593
+    },
+    "audioResample": {
+      "n": 72,
+      "mean": 60.843,
+      "p50": 60.154,
+      "p95": 85.236,
+      "min": 23.149,
+      "max": 97.808
+    }
+  },
+  "realTimeFactor": {
+    "n": 72,
+    "mean": 0.005,
+    "p50": 0.005,
+    "p95": 0.007,
+    "min": 0.004,
+    "max": 0.009
+  },
+  "repetitions": 1
+}

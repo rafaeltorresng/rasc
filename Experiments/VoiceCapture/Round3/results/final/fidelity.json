@@ -1,0 +1,186 @@
+{
+  "held": {
+    "neural": {
+      "pt-conversation": {
+        "clips": 64,
+        "words": 779,
+        "errors": 170,
+        "unchanged": 64,
+        "empty": 4,
+        "wer": 21.82
+      },
+      "en-meeting": {
+        "clips": 64,
+        "words": 477,
+        "errors": 62,
+        "unchanged": 64,
+        "empty": 1,
+        "wer": 13.0
+      },
+      "pt-en-read-switch": {
+        "clips": 40,
+        "words": 945,
+        "errors": 84,
+        "unchanged": 40,
+        "empty": 0,
+        "wer": 8.89
+      }
+    },
+    "lead80": {
+      "pt-conversation": {
+        "clips": 64,
+        "words": 779,
+        "errors": 188,
+        "unchanged": 29,
+        "empty": 6,
+        "wer": 24.13
+      },
+      "en-meeting": {
+        "clips": 64,
+        "words": 477,
+        "errors": 67,
+        "unchanged": 56,
+        "empty": 1,
+        "wer": 14.05
+      },
+      "pt-en-read-switch": {
+        "clips": 40,
+        "words": 945,
+        "errors": 84,
+        "unchanged": 27,
+        "empty": 0,
+        "wer": 8.89
+      }
+    },
+    "encoderCPU": {
+      "pt-conversation": {
+        "clips": 64,
+        "words": 779,
+        "errors": 169,
+        "unchanged": 60,
+        "empty": 3,
+        "wer": 21.69
+      },
+      "en-meeting": {
+        "clips": 64,
+        "words": 477,
+        "errors": 68,
+        "unchanged": 63,
+        "empty": 1,
+        "wer": 14.26
+      },
+      "pt-en-read-switch": {
+        "clips": 40,
+        "words": 945,
+        "errors": 84,
+        "unchanged": 34,
+        "empty": 0,
+        "wer": 8.89
+      }
+    }
+  },
+  "synthetic": {
+    "neural": {
+      "en": {
+        "clips": 9,
+        "words": 158,
+        "errors": 18,
+        "unchanged": 9,
+        "empty": 0,
+        "wer": 11.39
+      },
+      "pt": {
+        "clips": 8,
+        "words": 119,
+        "errors": 11,
+        "unchanged": 8,
+        "empty": 0,
+        "wer": 9.24
+      },
+      "mix": {
+        "clips": 3,
+        "words": 61,
+        "errors": 10,
+        "unchanged": 3,
+        "empty": 0,
+        "wer": 16.39
+      },
+      "control": {
+        "clips": 3,
+        "words": 0,
+        "errors": 0,
+        "unchanged": 3,
+        "empty": 3,
+        "wer": null
+      }
+    },
+    "lead80": {
+      "en": {
+        "clips": 9,
+        "words": 158,
+        "errors": 20,
+        "unchanged": 8,
+        "empty": 0,
+        "wer": 12.66
+      },
+      "pt": {
+        "clips": 8,
+        "words": 119,
+        "errors": 13,
+        "unchanged": 6,
+        "empty": 0,
+        "wer": 10.92
+      },
+      "mix": {
+        "clips": 3,
+        "words": 61,
+        "errors": 10,
+        "unchanged": 2,
+        "empty": 0,
+        "wer": 16.39
+      },
+      "control": {
+        "clips": 3,
+        "words": 0,
+        "errors": 0,
+        "unchanged": 3,
+        "empty": 3,
+        "wer": null
+      }
+    },
+    "encoderCPU": {
+      "en": {
+        "clips": 9,
+        "words": 158,
+        "errors": 18,
+        "unchanged": 9,
+        "empty": 0,
+        "wer": 11.39
+      },
+      "pt": {
+        "clips": 8,
+        "words": 119,
+        "errors": 11,
+        "unchanged": 8,
+        "empty": 0,
+        "wer": 9.24
+      },
+      "mix": {
+        "clips": 3,
+        "words": 61,
+        "errors": 10,
+        "unchanged": 2,
+        "empty": 0,
+        "wer": 16.39
+      },
+      "control": {
+        "clips": 3,
+        "words": 0,
+        "errors": 0,
+        "unchanged": 3,
+        "empty": 3,
+        "wer": null
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+Executable=/private/var/folders/k6/0sxfr5x912v07y54tsg09dv80000gn/T/rasc-whisper-ll6p771m/RascWhisperProbe.app/Contents/MacOS/WhisperProbe
+# designated => cdhash H"e0641e28c2fe1aeccc40a9bb9c71cda647ad1f93"
+[Dict]
+	[Key] com.apple.security.app-sandbox
+	[Value]
+		[Bool] true

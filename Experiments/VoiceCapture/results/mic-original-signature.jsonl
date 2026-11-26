@@ -1,0 +1,2 @@
+{"authorized":true,"event":"mic_permission","status":3}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":285.10291699999999,"received":true,"sample_rate":48000,"start_ms":179.93020799999999,"trial":1}

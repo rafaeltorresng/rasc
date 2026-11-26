@@ -1,0 +1,2 @@
+Executable=/private/tmp/rasc-r2/sparkle/update/Rasc Voice Update Probe.app/Contents/MacOS/VoiceUpdateProbe
+# designated => cdhash H"23bc44e608f4162599ef38903d0bccd73820edd2"

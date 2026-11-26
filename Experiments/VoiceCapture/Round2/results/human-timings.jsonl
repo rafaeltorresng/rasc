@@ -1,0 +1,704 @@
+{"run": "apple-held", "engine": "apple", "fixture": "en-00295.wav", "prepare_ms": 230.519583, "finish_ms": 1413.53225, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00296.wav", "prepare_ms": 70.786125, "finish_ms": 284.50425, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00297.wav", "prepare_ms": 52.5125, "finish_ms": 258.470792, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00298.wav", "prepare_ms": 34.086666, "finish_ms": 335.428083, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00299.wav", "prepare_ms": 31.095375, "finish_ms": 206.922042, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00300.wav", "prepare_ms": 28.815042, "finish_ms": 206.763958, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00301.wav", "prepare_ms": 36.851541, "finish_ms": 375.319667, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00302.wav", "prepare_ms": 27.293167, "finish_ms": 358.854375, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00303.wav", "prepare_ms": 26.483042, "finish_ms": 238.910708, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00304.wav", "prepare_ms": 27.461375, "finish_ms": 290.251209, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00305.wav", "prepare_ms": 28.95475, "finish_ms": 558.267208, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00306.wav", "prepare_ms": 30.012125, "finish_ms": 223.901208, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00307.wav", "prepare_ms": 70.361792, "finish_ms": 831.035958, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00308.wav", "prepare_ms": 30.254458, "finish_ms": 734.883959, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00309.wav", "prepare_ms": 29.60925, "finish_ms": 183.528875, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00310.wav", "prepare_ms": 28.104042, "finish_ms": 432.791291, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00472.wav", "prepare_ms": 27.151417, "finish_ms": 91.652125, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00473.wav", "prepare_ms": 26.054833, "finish_ms": 209.408292, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00474.wav", "prepare_ms": 30.080375, "finish_ms": 141.534917, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00475.wav", "prepare_ms": 27.762833, "finish_ms": 123.096958, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00476.wav", "prepare_ms": 27.0965, "finish_ms": 136.113542, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00477.wav", "prepare_ms": 26.144208, "finish_ms": 111.541084, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00478.wav", "prepare_ms": 26.848333, "finish_ms": 93.022667, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00479.wav", "prepare_ms": 25.911167, "finish_ms": 186.221542, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00480.wav", "prepare_ms": 25.096833, "finish_ms": 182.983125, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00481.wav", "prepare_ms": 35.910917, "finish_ms": 319.573125, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00482.wav", "prepare_ms": 29.797292, "finish_ms": 215.675791, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00483.wav", "prepare_ms": 28.556, "finish_ms": 316.148584, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00484.wav", "prepare_ms": 28.37875, "finish_ms": 365.511541, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00485.wav", "prepare_ms": 30.656916, "finish_ms": 267.789292, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00486.wav", "prepare_ms": 30.418042, "finish_ms": 89.507208, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "en-00487.wav", "prepare_ms": 27.943, "finish_ms": 160.699042, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01830.wav", "prepare_ms": 62.868083, "finish_ms": 269.927875, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01831.wav", "prepare_ms": 22.974542, "finish_ms": 109.565, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01832.wav", "prepare_ms": 25.351083, "finish_ms": 103.7275, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01833.wav", "prepare_ms": 24.465083, "finish_ms": 70.882333, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01834.wav", "prepare_ms": 24.878, "finish_ms": 94.842667, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01835.wav", "prepare_ms": 25.747792, "finish_ms": 126.285416, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01836.wav", "prepare_ms": 23.865666, "finish_ms": 58.870417, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01837.wav", "prepare_ms": 22.652041, "finish_ms": 105.328459, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01838.wav", "prepare_ms": 21.964833, "finish_ms": 65.859583, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01839.wav", "prepare_ms": 22.15975, "finish_ms": 48.594417, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01840.wav", "prepare_ms": 22.586, "finish_ms": 95.94525, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01841.wav", "prepare_ms": 22.117709, "finish_ms": 94.167625, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01842.wav", "prepare_ms": 23.217084, "finish_ms": 55.149375, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01843.wav", "prepare_ms": 22.065834, "finish_ms": 77.803833, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01844.wav", "prepare_ms": 22.720875, "finish_ms": 84.818958, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-01845.wav", "prepare_ms": 23.314959, "finish_ms": 92.288, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06000.wav", "prepare_ms": 24.423917, "finish_ms": 71.777334, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06001.wav", "prepare_ms": 24.786959, "finish_ms": 79.889625, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06002.wav", "prepare_ms": 24.402708, "finish_ms": 81.38875, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06003.wav", "prepare_ms": 23.687125, "finish_ms": 76.641292, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06004.wav", "prepare_ms": 23.346625, "finish_ms": 93.993125, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06005.wav", "prepare_ms": 23.265833, "finish_ms": 91.953459, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06006.wav", "prepare_ms": 22.425791, "finish_ms": 104.964, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06007.wav", "prepare_ms": 23.12025, "finish_ms": 58.763375, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06008.wav", "prepare_ms": 23.686167, "finish_ms": 71.496166, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06009.wav", "prepare_ms": 30.768291, "finish_ms": 96.487667, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06010.wav", "prepare_ms": 23.829, "finish_ms": 77.517458, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06011.wav", "prepare_ms": 24.17775, "finish_ms": 100.47375, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06012.wav", "prepare_ms": 21.419667, "finish_ms": 78.928167, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06013.wav", "prepare_ms": 21.967917, "finish_ms": 66.984875, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06014.wav", "prepare_ms": 22.118083, "finish_ms": 67.9035, "error": false}
+{"run": "apple-held", "engine": "apple", "fixture": "pt-06015.wav", "prepare_ms": 22.597583, "finish_ms": 100.119958, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00000.wav", "prepare_ms": 25.126666, "finish_ms": 99.413292, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00001.wav", "prepare_ms": 25.930542, "finish_ms": 292.778625, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00002.wav", "prepare_ms": 24.729666, "finish_ms": 134.205667, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00003.wav", "prepare_ms": 26.046209, "finish_ms": 422.430334, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00004.wav", "prepare_ms": 26.21175, "finish_ms": 266.319209, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00005.wav", "prepare_ms": 25.280166, "finish_ms": 324.244875, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00006.wav", "prepare_ms": 25.829667, "finish_ms": 156.923792, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00007.wav", "prepare_ms": 25.537042, "finish_ms": 95.637166, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00008.wav", "prepare_ms": 25.852542, "finish_ms": 109.74575, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00009.wav", "prepare_ms": 25.481292, "finish_ms": 156.79875, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00010.wav", "prepare_ms": 25.010667, "finish_ms": 90.551625, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00011.wav", "prepare_ms": 24.757625, "finish_ms": 93.306834, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00012.wav", "prepare_ms": 26.165959, "finish_ms": 73.207208, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00013.wav", "prepare_ms": 25.176625, "finish_ms": 86.007458, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00014.wav", "prepare_ms": 25.926792, "finish_ms": 354.347625, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00015.wav", "prepare_ms": 25.280333, "finish_ms": 138.7355, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00125.wav", "prepare_ms": 24.768584, "finish_ms": 155.661833, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00126.wav", "prepare_ms": 25.426334, "finish_ms": 128.995292, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00127.wav", "prepare_ms": 25.801041, "finish_ms": 141.980292, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00128.wav", "prepare_ms": 26.084875, "finish_ms": 200.868625, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00129.wav", "prepare_ms": 24.805709, "finish_ms": 115.79075, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00130.wav", "prepare_ms": 25.416209, "finish_ms": 238.375917, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00131.wav", "prepare_ms": 25.106375, "finish_ms": 400.528833, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00132.wav", "prepare_ms": 25.427917, "finish_ms": 290.911042, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00133.wav", "prepare_ms": 26.206375, "finish_ms": 191.587917, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00134.wav", "prepare_ms": 26.468417, "finish_ms": 105.51425, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00135.wav", "prepare_ms": 27.058084, "finish_ms": 200.000041, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00136.wav", "prepare_ms": 26.813916, "finish_ms": 108.399834, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00137.wav", "prepare_ms": 25.38075, "finish_ms": 366.457792, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00138.wav", "prepare_ms": 28.978333, "finish_ms": 341.013667, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00139.wav", "prepare_ms": 25.112167, "finish_ms": 249.582542, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "en-00140.wav", "prepare_ms": 24.733792, "finish_ms": 616.456416, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00000.wav", "prepare_ms": 20.581625, "finish_ms": 83.091916, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00001.wav", "prepare_ms": 20.0275, "finish_ms": 57.102334, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00002.wav", "prepare_ms": 20.042875, "finish_ms": 64.494875, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00003.wav", "prepare_ms": 20.994833, "finish_ms": 84.2125, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00004.wav", "prepare_ms": 19.770167, "finish_ms": 54.564416, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00005.wav", "prepare_ms": 19.748041, "finish_ms": 151.550417, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00006.wav", "prepare_ms": 20.236875, "finish_ms": 73.50875, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00007.wav", "prepare_ms": 19.936458, "finish_ms": 122.150458, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00008.wav", "prepare_ms": 21.434583, "finish_ms": 85.543916, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00009.wav", "prepare_ms": 19.844542, "finish_ms": 59.483541, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00010.wav", "prepare_ms": 20.361542, "finish_ms": 88.725208, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00011.wav", "prepare_ms": 20.116584, "finish_ms": 135.334625, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00012.wav", "prepare_ms": 20.849292, "finish_ms": 90.317417, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00013.wav", "prepare_ms": 20.430292, "finish_ms": 72.37125, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00014.wav", "prepare_ms": 21.437, "finish_ms": 103.693, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-00015.wav", "prepare_ms": 20.108708, "finish_ms": 95.59075, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04000.wav", "prepare_ms": 20.809208, "finish_ms": 56.677042, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04001.wav", "prepare_ms": 20.233292, "finish_ms": 84.900875, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04002.wav", "prepare_ms": 20.556625, "finish_ms": 56.987375, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04003.wav", "prepare_ms": 20.554375, "finish_ms": 50.606375, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04004.wav", "prepare_ms": 20.271792, "finish_ms": 52.729417, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04005.wav", "prepare_ms": 20.252042, "finish_ms": 77.325875, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04006.wav", "prepare_ms": 19.992958, "finish_ms": 65.198417, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04007.wav", "prepare_ms": 20.0695, "finish_ms": 57.638875, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04008.wav", "prepare_ms": 20.181583, "finish_ms": 110.572542, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04009.wav", "prepare_ms": 22.906375, "finish_ms": 58.896125, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04010.wav", "prepare_ms": 20.819291, "finish_ms": 93.288584, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04011.wav", "prepare_ms": 21.443833, "finish_ms": 73.624042, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04012.wav", "prepare_ms": 19.679834, "finish_ms": 65.183792, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04013.wav", "prepare_ms": 20.664042, "finish_ms": 65.314667, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04014.wav", "prepare_ms": 20.268542, "finish_ms": 65.033625, "error": false}
+{"run": "apple-screen", "engine": "apple", "fixture": "pt-04015.wav", "prepare_ms": 21.01375, "finish_ms": 49.8595, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00295.wav", "prepare_ms": 36747.8675, "finish_ms": 36813.497625, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00296.wav", "prepare_ms": 0.000875, "finish_ms": 53.654209, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00297.wav", "prepare_ms": 0.000833, "finish_ms": 57.575, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00298.wav", "prepare_ms": 0.001417, "finish_ms": 72.736291, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00299.wav", "prepare_ms": 0.0015, "finish_ms": 58.427083, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00300.wav", "prepare_ms": 0.001583, "finish_ms": 54.452791, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00301.wav", "prepare_ms": 0.00125, "finish_ms": 70.233625, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00302.wav", "prepare_ms": 0.001875, "finish_ms": 69.003417, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00303.wav", "prepare_ms": 0.001084, "finish_ms": 60.380333, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00304.wav", "prepare_ms": 0.001084, "finish_ms": 66.83475, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00305.wav", "prepare_ms": 0.001208, "finish_ms": 120.385916, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00306.wav", "prepare_ms": 0.000708, "finish_ms": 55.373625, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00307.wav", "prepare_ms": 0.00075, "finish_ms": 129.720792, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00308.wav", "prepare_ms": 0.001333, "finish_ms": 130.233708, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00309.wav", "prepare_ms": 0.001208, "finish_ms": 53.4335, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00310.wav", "prepare_ms": 0.001, "finish_ms": 118.404166, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00472.wav", "prepare_ms": 0.00125, "finish_ms": 41.461292, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00473.wav", "prepare_ms": 0.001083, "finish_ms": 56.924334, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00474.wav", "prepare_ms": 0.001334, "finish_ms": 46.484333, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00475.wav", "prepare_ms": 0.000709, "finish_ms": 46.848584, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00476.wav", "prepare_ms": 0.000958, "finish_ms": 45.251041, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00477.wav", "prepare_ms": 0.001209, "finish_ms": 43.419875, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00478.wav", "prepare_ms": 0.001417, "finish_ms": 42.923584, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00479.wav", "prepare_ms": 0.00075, "finish_ms": 59.432417, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00480.wav", "prepare_ms": 0.001042, "finish_ms": 57.855917, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00481.wav", "prepare_ms": 0.001208, "finish_ms": 62.51025, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00482.wav", "prepare_ms": 0.001875, "finish_ms": 62.185625, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00483.wav", "prepare_ms": 0.001375, "finish_ms": 66.572417, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00484.wav", "prepare_ms": 0.0015, "finish_ms": 73.810917, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00485.wav", "prepare_ms": 0.001792, "finish_ms": 62.367625, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00486.wav", "prepare_ms": 0.001125, "finish_ms": 40.744833, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "en-00487.wav", "prepare_ms": 0.001208, "finish_ms": 54.604333, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01830.wav", "prepare_ms": 0.001417, "finish_ms": 43.228375, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01831.wav", "prepare_ms": 0.001042, "finish_ms": 60.988083, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01832.wav", "prepare_ms": 0.000875, "finish_ms": 58.891916, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01833.wav", "prepare_ms": 0.000791, "finish_ms": 43.919958, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01834.wav", "prepare_ms": 0.001458, "finish_ms": 52.315208, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01835.wav", "prepare_ms": 0.001125, "finish_ms": 68.194542, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01836.wav", "prepare_ms": 0.0015, "finish_ms": 38.749083, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01837.wav", "prepare_ms": 0.001042, "finish_ms": 61.827667, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01838.wav", "prepare_ms": 0.00075, "finish_ms": 42.987917, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01839.wav", "prepare_ms": 0.000792, "finish_ms": 35.77275, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01840.wav", "prepare_ms": 0.000958, "finish_ms": 56.590833, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01841.wav", "prepare_ms": 0.000875, "finish_ms": 55.278375, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01842.wav", "prepare_ms": 0.001083, "finish_ms": 40.594708, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01843.wav", "prepare_ms": 0.001167, "finish_ms": 48.697916, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01844.wav", "prepare_ms": 0.00175, "finish_ms": 55.292542, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-01845.wav", "prepare_ms": 0.000834, "finish_ms": 54.655709, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06000.wav", "prepare_ms": 0.001584, "finish_ms": 46.187708, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06001.wav", "prepare_ms": 0.001041, "finish_ms": 51.480625, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06002.wav", "prepare_ms": 0.001416, "finish_ms": 48.422375, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06003.wav", "prepare_ms": 0.00125, "finish_ms": 48.134208, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06004.wav", "prepare_ms": 0.001042, "finish_ms": 53.825334, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06005.wav", "prepare_ms": 0.001083, "finish_ms": 56.771625, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06006.wav", "prepare_ms": 0.0015, "finish_ms": 60.694542, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06007.wav", "prepare_ms": 0.00075, "finish_ms": 44.237625, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06008.wav", "prepare_ms": 0.001542, "finish_ms": 43.1675, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06009.wav", "prepare_ms": 0.001333, "finish_ms": 55.492458, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06010.wav", "prepare_ms": 0.004875, "finish_ms": 45.185291, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06011.wav", "prepare_ms": 0.0015, "finish_ms": 53.483292, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06012.wav", "prepare_ms": 0.001209, "finish_ms": 51.093958, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06013.wav", "prepare_ms": 0.001125, "finish_ms": 50.659125, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06014.wav", "prepare_ms": 0.001167, "finish_ms": 46.474208, "error": false}
+{"run": "fluid-held", "engine": "fluid", "fixture": "pt-06015.wav", "prepare_ms": 0.000917, "finish_ms": 84.567541, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00000.wav", "prepare_ms": 0.000459, "finish_ms": 40.241166, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00001.wav", "prepare_ms": 0.000583, "finish_ms": 80.102042, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00002.wav", "prepare_ms": 0.000792, "finish_ms": 48.276458, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00003.wav", "prepare_ms": 0.001, "finish_ms": 169.757, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00004.wav", "prepare_ms": 0.001125, "finish_ms": 70.675417, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00005.wav", "prepare_ms": 0.001791, "finish_ms": 70.874833, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00006.wav", "prepare_ms": 0.001, "finish_ms": 51.33875, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00007.wav", "prepare_ms": 0.000625, "finish_ms": 40.212084, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00008.wav", "prepare_ms": 0.001083, "finish_ms": 49.885959, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00009.wav", "prepare_ms": 0.003166, "finish_ms": 59.582291, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00010.wav", "prepare_ms": 0.000625, "finish_ms": 41.310958, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00011.wav", "prepare_ms": 0.000833, "finish_ms": 43.723334, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00012.wav", "prepare_ms": 0.00075, "finish_ms": 38.858375, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00013.wav", "prepare_ms": 0.000917, "finish_ms": 45.12, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00014.wav", "prepare_ms": 0.00125, "finish_ms": 175.803667, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00015.wav", "prepare_ms": 0.001667, "finish_ms": 56.630375, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00125.wav", "prepare_ms": 0.001084, "finish_ms": 51.887, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00126.wav", "prepare_ms": 0.000708, "finish_ms": 50.624667, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00127.wav", "prepare_ms": 0.002167, "finish_ms": 54.448833, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00128.wav", "prepare_ms": 0.00125, "finish_ms": 63.991417, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00129.wav", "prepare_ms": 0.000583, "finish_ms": 49.615417, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00130.wav", "prepare_ms": 0.000875, "finish_ms": 69.47825, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00131.wav", "prepare_ms": 0.000833, "finish_ms": 94.839042, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00132.wav", "prepare_ms": 0.001084, "finish_ms": 77.123167, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00133.wav", "prepare_ms": 0.00075, "finish_ms": 66.334042, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00134.wav", "prepare_ms": 0.00075, "finish_ms": 43.962791, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00135.wav", "prepare_ms": 0.001, "finish_ms": 58.742417, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00136.wav", "prepare_ms": 0.001375, "finish_ms": 53.181375, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00137.wav", "prepare_ms": 0.000917, "finish_ms": 128.465417, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00138.wav", "prepare_ms": 0.000625, "finish_ms": 72.486417, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00139.wav", "prepare_ms": 0.000791, "finish_ms": 61.710042, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "en-00140.wav", "prepare_ms": 0.000625, "finish_ms": 163.393166, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00000.wav", "prepare_ms": 0.00075, "finish_ms": 52.7275, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00001.wav", "prepare_ms": 0.00075, "finish_ms": 48.319625, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00002.wav", "prepare_ms": 0.000834, "finish_ms": 53.408458, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00003.wav", "prepare_ms": 0.000625, "finish_ms": 52.399209, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00004.wav", "prepare_ms": 0.000541, "finish_ms": 45.462584, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00005.wav", "prepare_ms": 0.000625, "finish_ms": 119.371875, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00006.wav", "prepare_ms": 0.000625, "finish_ms": 47.334875, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00007.wav", "prepare_ms": 0.000667, "finish_ms": 73.092458, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00008.wav", "prepare_ms": 0.000833, "finish_ms": 55.450625, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00009.wav", "prepare_ms": 0.000709, "finish_ms": 43.345208, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00010.wav", "prepare_ms": 0.000791, "finish_ms": 58.259959, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00011.wav", "prepare_ms": 0.000542, "finish_ms": 85.262458, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00012.wav", "prepare_ms": 0.000708, "finish_ms": 53.798834, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00013.wav", "prepare_ms": 0.0005, "finish_ms": 46.239167, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00014.wav", "prepare_ms": 0.000625, "finish_ms": 62.876792, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-00015.wav", "prepare_ms": 0.000583, "finish_ms": 52.737916, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04000.wav", "prepare_ms": 0.000625, "finish_ms": 43.50575, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04001.wav", "prepare_ms": 0.000542, "finish_ms": 49.030292, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04002.wav", "prepare_ms": 0.0005, "finish_ms": 42.205709, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04003.wav", "prepare_ms": 0.000667, "finish_ms": 42.221, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04004.wav", "prepare_ms": 0.000625, "finish_ms": 48.581417, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04005.wav", "prepare_ms": 0.000667, "finish_ms": 48.789166, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04006.wav", "prepare_ms": 0.000708, "finish_ms": 43.204042, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04007.wav", "prepare_ms": 0.000625, "finish_ms": 43.175958, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04008.wav", "prepare_ms": 0.000625, "finish_ms": 68.534208, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04009.wav", "prepare_ms": 0.000792, "finish_ms": 42.764917, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04010.wav", "prepare_ms": 0.0005, "finish_ms": 54.58675, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04011.wav", "prepare_ms": 0.000791, "finish_ms": 48.463959, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04012.wav", "prepare_ms": 0.000625, "finish_ms": 45.536167, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04013.wav", "prepare_ms": 0.000625, "finish_ms": 43.071833, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04014.wav", "prepare_ms": 0.000625, "finish_ms": 44.910875, "error": false}
+{"run": "fluid-screen", "engine": "fluid", "fixture": "pt-04015.wav", "prepare_ms": 0.000709, "finish_ms": 36.482708, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00295.wav", "finish_ms": 63.22524999268353, "mlx_peak_bytes": 1095388855, "process_rss_bytes": 1076101120, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00296.wav", "finish_ms": 50.189167028293014, "mlx_peak_bytes": 1147392743, "process_rss_bytes": 1076969472, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00297.wav", "finish_ms": 51.45087500568479, "mlx_peak_bytes": 1183093621, "process_rss_bytes": 1077936128, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00298.wav", "finish_ms": 67.12224998045713, "mlx_peak_bytes": 1285822601, "process_rss_bytes": 1079181312, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00299.wav", "finish_ms": 50.74441700708121, "mlx_peak_bytes": 1199110021, "process_rss_bytes": 1080098816, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00300.wav", "finish_ms": 47.294249990954995, "mlx_peak_bytes": 1175556757, "process_rss_bytes": 1080721408, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00301.wav", "finish_ms": 68.06495797354728, "mlx_peak_bytes": 1295138478, "process_rss_bytes": 1081704448, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00302.wav", "finish_ms": 65.17958303447813, "mlx_peak_bytes": 1303035517, "process_rss_bytes": 1082654720, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00303.wav", "finish_ms": 50.447417073883116, "mlx_peak_bytes": 1224783781, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00304.wav", "finish_ms": 66.45241600926965, "mlx_peak_bytes": 1282299912, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00305.wav", "finish_ms": 83.63358397036791, "mlx_peak_bytes": 1386512956, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00306.wav", "finish_ms": 43.74237509910017, "mlx_peak_bytes": 1178219706, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00307.wav", "finish_ms": 93.38162501808256, "mlx_peak_bytes": 1442956194, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00308.wav", "finish_ms": 118.3513751020655, "mlx_peak_bytes": 1507543188, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00309.wav", "finish_ms": 50.89158297050744, "mlx_peak_bytes": 1198978942, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00310.wav", "finish_ms": 82.07404194399714, "mlx_peak_bytes": 1374126592, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00472.wav", "finish_ms": 30.84604104515165, "mlx_peak_bytes": 1095397538, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00473.wav", "finish_ms": 48.2137919170782, "mlx_peak_bytes": 1197815674, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00474.wav", "finish_ms": 34.68991594854742, "mlx_peak_bytes": 1133399853, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00475.wav", "finish_ms": 32.235249993391335, "mlx_peak_bytes": 1136669191, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00476.wav", "finish_ms": 33.70749996975064, "mlx_peak_bytes": 1133867552, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00477.wav", "finish_ms": 30.911958892829716, "mlx_peak_bytes": 1117884173, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00478.wav", "finish_ms": 30.18945804797113, "mlx_peak_bytes": 1106260348, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00479.wav", "finish_ms": 50.26787507813424, "mlx_peak_bytes": 1256634274, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00480.wav", "finish_ms": 49.538042047061026, "mlx_peak_bytes": 1218475909, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00481.wav", "finish_ms": 54.529333021491766, "mlx_peak_bytes": 1232205733, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00482.wav", "finish_ms": 45.36479094531387, "mlx_peak_bytes": 1188328634, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00483.wav", "finish_ms": 65.75470801908523, "mlx_peak_bytes": 1286182922, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00484.wav", "finish_ms": 68.22783395182341, "mlx_peak_bytes": 1303484852, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00485.wav", "finish_ms": 49.905333085916936, "mlx_peak_bytes": 1217853342, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00486.wav", "finish_ms": 29.08395801205188, "mlx_peak_bytes": 1095069854, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "en-00487.wav", "finish_ms": 45.793875004164875, "mlx_peak_bytes": 1177285818, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01830.wav", "finish_ms": 333.49708293098956, "mlx_peak_bytes": 1141813015, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01831.wav", "finish_ms": 49.91516703739762, "mlx_peak_bytes": 1224144798, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01832.wav", "finish_ms": 45.68566707894206, "mlx_peak_bytes": 1205859514, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01833.wav", "finish_ms": 30.28700000140816, "mlx_peak_bytes": 1116402040, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01834.wav", "finish_ms": 48.05329104419798, "mlx_peak_bytes": 1168733312, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01835.wav", "finish_ms": 66.86449993867427, "mlx_peak_bytes": 1232992158, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01836.wav", "finish_ms": 62.69833294209093, "mlx_peak_bytes": 1101983057, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01837.wav", "finish_ms": 48.38745901361108, "mlx_peak_bytes": 1202812794, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01838.wav", "finish_ms": 33.798292046412826, "mlx_peak_bytes": 1124545031, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01839.wav", "finish_ms": 29.254333931021392, "mlx_peak_bytes": 1077865656, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01840.wav", "finish_ms": 52.63991700485349, "mlx_peak_bytes": 1219524510, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01841.wav", "finish_ms": 51.1361249955371, "mlx_peak_bytes": 1213511557, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01842.wav", "finish_ms": 26.774542056955397, "mlx_peak_bytes": 1078832465, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01843.wav", "finish_ms": 46.85604199767113, "mlx_peak_bytes": 1154265942, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01844.wav", "finish_ms": 45.482999994419515, "mlx_peak_bytes": 1182659770, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-01845.wav", "finish_ms": 44.81620900332928, "mlx_peak_bytes": 1175385274, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06000.wav", "finish_ms": 32.26066706702113, "mlx_peak_bytes": 1124659719, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06001.wav", "finish_ms": 33.79195893649012, "mlx_peak_bytes": 1133752864, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06002.wav", "finish_ms": 45.889792032539845, "mlx_peak_bytes": 1175385274, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06003.wav", "finish_ms": 43.05766709148884, "mlx_peak_bytes": 1151710024, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06004.wav", "finish_ms": 48.547792015597224, "mlx_peak_bytes": 1200125818, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06005.wav", "finish_ms": 45.65720888786018, "mlx_peak_bytes": 1189262522, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06006.wav", "finish_ms": 69.82633308507502, "mlx_peak_bytes": 1305181043, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06007.wav", "finish_ms": 29.01779196690768, "mlx_peak_bytes": 1101729143, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06008.wav", "finish_ms": 33.40099996421486, "mlx_peak_bytes": 1134244348, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06009.wav", "finish_ms": 44.73891598172486, "mlx_peak_bytes": 1203565754, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06010.wav", "finish_ms": 32.053083064965904, "mlx_peak_bytes": 1146122679, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06011.wav", "finish_ms": 51.472416962496936, "mlx_peak_bytes": 1251735454, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06012.wav", "finish_ms": 42.835458065383136, "mlx_peak_bytes": 1164178560, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06013.wav", "finish_ms": 32.973541994579136, "mlx_peak_bytes": 1120678364, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06014.wav", "finish_ms": 33.6574160028249, "mlx_peak_bytes": 1115697628, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-held", "engine": "granite", "fixture": "pt-06015.wav", "finish_ms": 55.85799994878471, "mlx_peak_bytes": 1218508702, "process_rss_bytes": 1083375616, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00000.wav", "finish_ms": 30.100125004537404, "mlx_peak_bytes": 1111503307, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00001.wav", "finish_ms": 73.45174998044968, "mlx_peak_bytes": 1341463829, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00002.wav", "finish_ms": 37.15079196263105, "mlx_peak_bytes": 1140503065, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00003.wav", "finish_ms": 125.79874997027218, "mlx_peak_bytes": 1523829555, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00004.wav", "finish_ms": 65.36966701969504, "mlx_peak_bytes": 1287838481, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00005.wav", "finish_ms": 68.40829097200185, "mlx_peak_bytes": 1334084075, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00006.wav", "finish_ms": 44.13616703823209, "mlx_peak_bytes": 1173206116, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00007.wav", "finish_ms": 29.893249971792102, "mlx_peak_bytes": 1106719174, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00008.wav", "finish_ms": 31.858667032793164, "mlx_peak_bytes": 1143566873, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00009.wav", "finish_ms": 43.49316598381847, "mlx_peak_bytes": 1182594294, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00010.wav", "finish_ms": 29.294125037267804, "mlx_peak_bytes": 1102950751, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00011.wav", "finish_ms": 85.88820800650865, "mlx_peak_bytes": 1104900447, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00012.wav", "finish_ms": 25.916124926880002, "mlx_peak_bytes": 1087614262, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00013.wav", "finish_ms": 29.689167044125497, "mlx_peak_bytes": 1101230431, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00014.wav", "finish_ms": 97.37591701559722, "mlx_peak_bytes": 1392264203, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00015.wav", "finish_ms": 43.40574995148927, "mlx_peak_bytes": 1188721760, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00125.wav", "finish_ms": 42.498000082559884, "mlx_peak_bytes": 1164522592, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00126.wav", "finish_ms": 32.043375074863434, "mlx_peak_bytes": 1135718937, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00127.wav", "finish_ms": 41.96329100523144, "mlx_peak_bytes": 1153282960, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00128.wav", "finish_ms": 47.696415917016566, "mlx_peak_bytes": 1202026262, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00129.wav", "finish_ms": 30.60966602060944, "mlx_peak_bytes": 1116287444, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00130.wav", "finish_ms": 50.438790931366384, "mlx_peak_bytes": 1235335085, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00131.wav", "finish_ms": 68.59333405736834, "mlx_peak_bytes": 1329578475, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00132.wav", "finish_ms": 62.15629098005593, "mlx_peak_bytes": 1296160882, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00133.wav", "finish_ms": 43.05262502748519, "mlx_peak_bytes": 1170666596, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00134.wav", "finish_ms": 30.24945908691734, "mlx_peak_bytes": 1109717451, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00135.wav", "finish_ms": 42.756541981361806, "mlx_peak_bytes": 1185772640, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00136.wav", "finish_ms": 30.327290995046496, "mlx_peak_bytes": 1110995407, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00137.wav", "finish_ms": 79.15100001264364, "mlx_peak_bytes": 1377944591, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00138.wav", "finish_ms": 88.62062497064471, "mlx_peak_bytes": 1319845561, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00139.wav", "finish_ms": 48.93325001467019, "mlx_peak_bytes": 1220786033, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "en-00140.wav", "finish_ms": 121.89620803110301, "mlx_peak_bytes": 1588498339, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00000.wav", "finish_ms": 48.979457933455706, "mlx_peak_bytes": 1201862509, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00001.wav", "finish_ms": 40.60824995394796, "mlx_peak_bytes": 1103442271, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00002.wav", "finish_ms": 60.33666699659079, "mlx_peak_bytes": 1115746772, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00003.wav", "finish_ms": 43.52791595738381, "mlx_peak_bytes": 1182790902, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00004.wav", "finish_ms": 26.77712496370077, "mlx_peak_bytes": 1100705078, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00005.wav", "finish_ms": 87.74741704110056, "mlx_peak_bytes": 1388823563, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00006.wav", "finish_ms": 44.185791979543865, "mlx_peak_bytes": 1164751923, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00007.wav", "finish_ms": 71.70608395244926, "mlx_peak_bytes": 1337672171, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00008.wav", "finish_ms": 43.83979190606624, "mlx_peak_bytes": 1175106663, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00009.wav", "finish_ms": 31.09333396423608, "mlx_peak_bytes": 1102180703, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00010.wav", "finish_ms": 48.78087493125349, "mlx_peak_bytes": 1223980822, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00011.wav", "finish_ms": 99.11062498576939, "mlx_peak_bytes": 1427014751, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00012.wav", "finish_ms": 51.31854105275124, "mlx_peak_bytes": 1205385069, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00013.wav", "finish_ms": 49.18695893138647, "mlx_peak_bytes": 1170961459, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00014.wav", "finish_ms": 78.32783309277147, "mlx_peak_bytes": 1308269073, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-00015.wav", "finish_ms": 66.03195797652006, "mlx_peak_bytes": 1278416808, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04000.wav", "finish_ms": 31.01433301344514, "mlx_peak_bytes": 1111503307, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04001.wav", "finish_ms": 48.5885419184342, "mlx_peak_bytes": 1207760749, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04002.wav", "finish_ms": 30.80029191914946, "mlx_peak_bytes": 1117647316, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04003.wav", "finish_ms": 27.19720802269876, "mlx_peak_bytes": 1081830710, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04004.wav", "finish_ms": 28.30833406187594, "mlx_peak_bytes": 1095773494, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04005.wav", "finish_ms": 50.217291922308505, "mlx_peak_bytes": 1174860854, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04006.wav", "finish_ms": 32.97354094684124, "mlx_peak_bytes": 1144320537, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04007.wav", "finish_ms": 30.314416042529047, "mlx_peak_bytes": 1106293087, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04008.wav", "finish_ms": 63.72395798098296, "mlx_peak_bytes": 1300077390, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04009.wav", "finish_ms": 26.95275004953146, "mlx_peak_bytes": 1099181366, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04010.wav", "finish_ms": 49.47579198051244, "mlx_peak_bytes": 1223964589, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04011.wav", "finish_ms": 31.682999921031296, "mlx_peak_bytes": 1141404185, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04012.wav", "finish_ms": 32.664083992131054, "mlx_peak_bytes": 1153331996, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04013.wav", "finish_ms": 30.85399989504367, "mlx_peak_bytes": 1131868645, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04014.wav", "finish_ms": 31.0222499538213, "mlx_peak_bytes": 1125773797, "process_rss_bytes": 1078460416, "error": false}
+{"run": "granite-screen", "engine": "granite", "fixture": "pt-04015.wav", "finish_ms": 25.48004104755819, "mlx_peak_bytes": 1083977014, "process_rss_bytes": 1078460416, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00000.wav", "finish_ms": 121.32004206068814, "mlx_peak_bytes": 1444729028, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00001.wav", "finish_ms": 358.16854098811746, "mlx_peak_bytes": 1652142308, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00002.wav", "finish_ms": 145.94550000037998, "mlx_peak_bytes": 1475458404, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00003.wav", "finish_ms": 575.1964580267668, "mlx_peak_bytes": 1849778408, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00004.wav", "finish_ms": 304.26145798992366, "mlx_peak_bytes": 1617340132, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00005.wav", "finish_ms": 324.8854590347037, "mlx_peak_bytes": 1665878244, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00006.wav", "finish_ms": 176.1010839836672, "mlx_peak_bytes": 1488893364, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00007.wav", "finish_ms": 126.62633298896253, "mlx_peak_bytes": 1439010988, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00008.wav", "finish_ms": 142.1232500579208, "mlx_peak_bytes": 1468777284, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00009.wav", "finish_ms": 220.6865840125829, "mlx_peak_bytes": 1530448460, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00010.wav", "finish_ms": 108.05516596883535, "mlx_peak_bytes": 1434275988, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00011.wav", "finish_ms": 128.8489579455927, "mlx_peak_bytes": 1438486692, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00012.wav", "finish_ms": 98.34599995519966, "mlx_peak_bytes": 1407238172, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00013.wav", "finish_ms": 117.42970801424235, "mlx_peak_bytes": 1423609988, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00014.wav", "finish_ms": 407.97808300703764, "mlx_peak_bytes": 1705653560, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00015.wav", "finish_ms": 196.01104198955, "mlx_peak_bytes": 1508027884, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00125.wav", "finish_ms": 216.60308295395225, "mlx_peak_bytes": 1489434044, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00126.wav", "finish_ms": 169.01987500023097, "mlx_peak_bytes": 1469303628, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00127.wav", "finish_ms": 199.49712499510497, "mlx_peak_bytes": 1482947988, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00128.wav", "finish_ms": 245.87912508286536, "mlx_peak_bytes": 1540723332, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00129.wav", "finish_ms": 145.97591594792902, "mlx_peak_bytes": 1447563492, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00130.wav", "finish_ms": 286.42708295956254, "mlx_peak_bytes": 1597027044, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00131.wav", "finish_ms": 348.77941699232906, "mlx_peak_bytes": 1673119972, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00132.wav", "finish_ms": 286.4464580779895, "mlx_peak_bytes": 1599058660, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00133.wav", "finish_ms": 202.81037490349263, "mlx_peak_bytes": 1510059516, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00134.wav", "finish_ms": 123.53920796886086, "mlx_peak_bytes": 1444729028, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00135.wav", "finish_ms": 215.62449994962662, "mlx_peak_bytes": 1508031980, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00136.wav", "finish_ms": 151.0822910349816, "mlx_peak_bytes": 1444729028, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00137.wav", "finish_ms": 433.6142080137506, "mlx_peak_bytes": 1683514248, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00138.wav", "finish_ms": 337.2487920569256, "mlx_peak_bytes": 1646117092, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00139.wav", "finish_ms": 278.7034169305116, "mlx_peak_bytes": 1560878820, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "en-00140.wav", "finish_ms": 701.5074590453878, "mlx_peak_bytes": 1907162860, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00000.wav", "finish_ms": 238.646375015378, "mlx_peak_bytes": 1546095268, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00001.wav", "finish_ms": 143.04966595955193, "mlx_peak_bytes": 1434290324, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00002.wav", "finish_ms": 161.88683395739645, "mlx_peak_bytes": 1447530724, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00003.wav", "finish_ms": 241.30104202777147, "mlx_peak_bytes": 1530452556, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00004.wav", "finish_ms": 183.1759160850197, "mlx_peak_bytes": 1420230740, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00005.wav", "finish_ms": 457.00187503825873, "mlx_peak_bytes": 1720401380, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00006.wav", "finish_ms": 218.12104096170515, "mlx_peak_bytes": 1502293452, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00007.wav", "finish_ms": 399.17025004979223, "mlx_peak_bytes": 1676890340, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00008.wav", "finish_ms": 258.3890000823885, "mlx_peak_bytes": 1514319380, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00009.wav", "finish_ms": 145.21812496241182, "mlx_peak_bytes": 1425363084, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00010.wav", "finish_ms": 256.16241700481623, "mlx_peak_bytes": 1540231804, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00011.wav", "finish_ms": 313.8255000812933, "mlx_peak_bytes": 1746822888, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00012.wav", "finish_ms": 266.99716702569276, "mlx_peak_bytes": 1551602372, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00013.wav", "finish_ms": 197.1463750815019, "mlx_peak_bytes": 1489417660, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00014.wav", "finish_ms": 335.04220796748996, "mlx_peak_bytes": 1608288480, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-00015.wav", "finish_ms": 273.9173750160262, "mlx_peak_bytes": 1598816996, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04000.wav", "finish_ms": 173.9469999447465, "mlx_peak_bytes": 1444726980, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04001.wav", "finish_ms": 286.5187500137836, "mlx_peak_bytes": 1546097316, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04002.wav", "finish_ms": 173.1347090099007, "mlx_peak_bytes": 1445286100, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04003.wav", "finish_ms": 130.26308303233236, "mlx_peak_bytes": 1401456636, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04004.wav", "finish_ms": 161.63733310531825, "mlx_peak_bytes": 1419206724, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04005.wav", "finish_ms": 267.51799997873604, "mlx_peak_bytes": 1514042892, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04006.wav", "finish_ms": 147.50579197425395, "mlx_peak_bytes": 1466170204, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04007.wav", "finish_ms": 155.85383400321007, "mlx_peak_bytes": 1434800284, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04008.wav", "finish_ms": 393.5317079303786, "mlx_peak_bytes": 1642107108, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04009.wav", "finish_ms": 141.50033390615135, "mlx_peak_bytes": 1420220500, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04010.wav", "finish_ms": 304.960708017461, "mlx_peak_bytes": 1573460196, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04011.wav", "finish_ms": 366.0932920174673, "mlx_peak_bytes": 1424608580, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04012.wav", "finish_ms": 187.6427080715075, "mlx_peak_bytes": 1477242220, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04013.wav", "finish_ms": 171.24683409929276, "mlx_peak_bytes": 1462305572, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04014.wav", "finish_ms": 183.40079206973314, "mlx_peak_bytes": 1460831004, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen06-screen", "engine": "qwen06", "fixture": "pt-04015.wav", "finish_ms": 110.98433402366936, "mlx_peak_bytes": 1402195972, "process_rss_bytes": 865255424, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00295.wav", "finish_ms": 688.8239170657471, "mlx_peak_bytes": 2503758972, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00296.wav", "finish_ms": 505.3279580315575, "mlx_peak_bytes": 2574988844, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00297.wav", "finish_ms": 596.9003749778494, "mlx_peak_bytes": 2630948612, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00298.wav", "finish_ms": 682.0837080013007, "mlx_peak_bytes": 2716806004, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00299.wav", "finish_ms": 474.6899160090834, "mlx_peak_bytes": 2636617500, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00300.wav", "finish_ms": 448.0300829745829, "mlx_peak_bytes": 2608641708, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00301.wav", "finish_ms": 612.4533750116825, "mlx_peak_bytes": 2731240308, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00302.wav", "finish_ms": 672.4120419239625, "mlx_peak_bytes": 2749926260, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00303.wav", "finish_ms": 497.81650002114475, "mlx_peak_bytes": 2666711924, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00304.wav", "finish_ms": 611.7050830507651, "mlx_peak_bytes": 2716822388, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00305.wav", "finish_ms": 832.4890420772135, "mlx_peak_bytes": 2816150392, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00306.wav", "finish_ms": 406.69570805039257, "mlx_peak_bytes": 2604938916, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00307.wav", "finish_ms": 1135.9512079507113, "mlx_peak_bytes": 2875757432, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00308.wav", "finish_ms": 1019.9753339402378, "mlx_peak_bytes": 2937832312, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00309.wav", "finish_ms": 472.11450000759214, "mlx_peak_bytes": 2643580724, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00310.wav", "finish_ms": 787.0416659861803, "mlx_peak_bytes": 2780728180, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00472.wav", "finish_ms": 237.44095803704113, "mlx_peak_bytes": 2503595260, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00473.wav", "finish_ms": 498.9117910154164, "mlx_peak_bytes": 2637109028, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00474.wav", "finish_ms": 317.94341607019305, "mlx_peak_bytes": 2557199828, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00475.wav", "finish_ms": 294.101707986556, "mlx_peak_bytes": 2549892532, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00476.wav", "finish_ms": 329.0989159140736, "mlx_peak_bytes": 2556446156, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00477.wav", "finish_ms": 274.00662493892014, "mlx_peak_bytes": 2531546460, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00478.wav", "finish_ms": 231.82245809584856, "mlx_peak_bytes": 2523518260, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00479.wav", "finish_ms": 517.1328339492902, "mlx_peak_bytes": 2677771124, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00480.wav", "finish_ms": 481.0719999950379, "mlx_peak_bytes": 2651101036, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00481.wav", "finish_ms": 525.8999590296298, "mlx_peak_bytes": 2695543668, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00482.wav", "finish_ms": 437.7507499884814, "mlx_peak_bytes": 2628638452, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00483.wav", "finish_ms": 571.7644169926643, "mlx_peak_bytes": 2720541556, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00484.wav", "finish_ms": 616.8867499800399, "mlx_peak_bytes": 2750401396, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00485.wav", "finish_ms": 500.87445799726993, "mlx_peak_bytes": 2666449780, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00486.wav", "finish_ms": 211.68666693847626, "mlx_peak_bytes": 2502087924, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "en-00487.wav", "finish_ms": 415.2986250119284, "mlx_peak_bytes": 2602415756, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01830.wav", "finish_ms": 322.7612090995535, "mlx_peak_bytes": 2564994556, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01831.wav", "finish_ms": 601.060040993616, "mlx_peak_bytes": 2677885812, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01832.wav", "finish_ms": 563.8020830228925, "mlx_peak_bytes": 2628146924, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01833.wav", "finish_ms": 329.082207987085, "mlx_peak_bytes": 2531546460, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01834.wav", "finish_ms": 453.09720805380493, "mlx_peak_bytes": 2581214796, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01835.wav", "finish_ms": 667.5595829728991, "mlx_peak_bytes": 2676018036, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01836.wav", "finish_ms": 220.6584169762209, "mlx_peak_bytes": 2502087924, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01837.wav", "finish_ms": 629.3040830641985, "mlx_peak_bytes": 2643580724, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01838.wav", "finish_ms": 319.01279103476554, "mlx_peak_bytes": 2549106092, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01839.wav", "finish_ms": 154.90712504833937, "mlx_peak_bytes": 2478019700, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01840.wav", "finish_ms": 553.091749898158, "mlx_peak_bytes": 2666449780, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01841.wav", "finish_ms": 455.0496250158176, "mlx_peak_bytes": 2654607220, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01842.wav", "finish_ms": 261.2796248868108, "mlx_peak_bytes": 2480362626, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01843.wav", "finish_ms": 398.19979202002287, "mlx_peak_bytes": 2574988844, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01844.wav", "finish_ms": 497.75883299298584, "mlx_peak_bytes": 2602677908, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-01845.wav", "finish_ms": 458.50087504368275, "mlx_peak_bytes": 2602415756, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06000.wav", "finish_ms": 294.1925829509273, "mlx_peak_bytes": 2549122476, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06001.wav", "finish_ms": 361.76829203031957, "mlx_peak_bytes": 2556741068, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06002.wav", "finish_ms": 393.8499999931082, "mlx_peak_bytes": 2598712964, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06003.wav", "finish_ms": 396.62954199593514, "mlx_peak_bytes": 2568992268, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06004.wav", "finish_ms": 438.4445420000702, "mlx_peak_bytes": 2643580724, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06005.wav", "finish_ms": 502.43783404584974, "mlx_peak_bytes": 2624132828, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06006.wav", "finish_ms": 566.2324579898268, "mlx_peak_bytes": 2706586484, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06007.wav", "finish_ms": 250.3730000462383, "mlx_peak_bytes": 2505676004, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06008.wav", "finish_ms": 298.3893329510465, "mlx_peak_bytes": 2543371668, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06009.wav", "finish_ms": 437.976291985251, "mlx_peak_bytes": 2628638452, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06010.wav", "finish_ms": 346.7809159774333, "mlx_peak_bytes": 2565043708, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06011.wav", "finish_ms": 526.2622080044821, "mlx_peak_bytes": 2677525364, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06012.wav", "finish_ms": 370.44274993240833, "mlx_peak_bytes": 2592454244, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06013.wav", "finish_ms": 367.40433296654373, "mlx_peak_bytes": 2535757164, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06014.wav", "finish_ms": 277.16045803390443, "mlx_peak_bytes": 2536314228, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-held", "engine": "qwen17", "fixture": "pt-06015.wav", "finish_ms": 516.2527089705691, "mlx_peak_bytes": 2677640052, "process_rss_bytes": 688013312, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00000.wav", "finish_ms": 264.6067909663543, "mlx_peak_bytes": 2530022732, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00001.wav", "finish_ms": 868.6143340310082, "mlx_peak_bytes": 2750827372, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00002.wav", "finish_ms": 431.9218749878928, "mlx_peak_bytes": 2563519980, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00003.wav", "finish_ms": 1203.52300000377, "mlx_peak_bytes": 2958050160, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00004.wav", "finish_ms": 577.5242920499295, "mlx_peak_bytes": 2716805996, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00005.wav", "finish_ms": 622.8587500518188, "mlx_peak_bytes": 2724940652, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00006.wav", "finish_ms": 365.57787493802607, "mlx_peak_bytes": 2577479228, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00007.wav", "finish_ms": 247.9891669936478, "mlx_peak_bytes": 2525287732, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00008.wav", "finish_ms": 290.3111670166254, "mlx_peak_bytes": 2557183436, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00009.wav", "finish_ms": 460.56383405812085, "mlx_peak_bytes": 2624132820, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00010.wav", "finish_ms": 215.7934580463916, "mlx_peak_bytes": 2520143138, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00011.wav", "finish_ms": 254.2292500147596, "mlx_peak_bytes": 2523534636, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00012.wav", "finish_ms": 196.400957996957, "mlx_peak_bytes": 2491569316, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00013.wav", "finish_ms": 233.5278750397265, "mlx_peak_bytes": 2508330252, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00014.wav", "finish_ms": 863.306957995519, "mlx_peak_bytes": 2809219952, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00015.wav", "finish_ms": 401.23491699341685, "mlx_peak_bytes": 2598155892, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00125.wav", "finish_ms": 404.4421660946682, "mlx_peak_bytes": 2581231172, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00126.wav", "finish_ms": 315.1959580136463, "mlx_peak_bytes": 2557871572, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00127.wav", "finish_ms": 383.0087080132216, "mlx_peak_bytes": 2571531804, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00128.wav", "finish_ms": 433.2244999241084, "mlx_peak_bytes": 2634897164, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00129.wav", "finish_ms": 262.84666592255235, "mlx_peak_bytes": 2536314220, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00130.wav", "finish_ms": 544.1603749059141, "mlx_peak_bytes": 2695543660, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00131.wav", "finish_ms": 699.0183750167489, "mlx_peak_bytes": 2734066540, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00132.wav", "finish_ms": 574.876542086713, "mlx_peak_bytes": 2701048684, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00133.wav", "finish_ms": 427.970957942307, "mlx_peak_bytes": 2602415748, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00134.wav", "finish_ms": 242.32149997260422, "mlx_peak_bytes": 2530006348, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00135.wav", "finish_ms": 435.61524990946054, "mlx_peak_bytes": 2598155892, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00136.wav", "finish_ms": 300.467916065827, "mlx_peak_bytes": 2530006348, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00137.wav", "finish_ms": 854.4715830357745, "mlx_peak_bytes": 2785758060, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00138.wav", "finish_ms": 641.6729169432074, "mlx_peak_bytes": 2749926252, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00139.wav", "finish_ms": 547.6935829501599, "mlx_peak_bytes": 2656607084, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "en-00140.wav", "finish_ms": 1315.148291992955, "mlx_peak_bytes": 3008676724, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00000.wav", "finish_ms": 465.1305410079658, "mlx_peak_bytes": 2643597100, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00001.wav", "finish_ms": 253.38558305520564, "mlx_peak_bytes": 2519536924, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00002.wav", "finish_ms": 298.74083306640387, "mlx_peak_bytes": 2536281452, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00003.wav", "finish_ms": 466.6591660352424, "mlx_peak_bytes": 2624132820, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00004.wav", "finish_ms": 244.01004193350673, "mlx_peak_bytes": 2505675996, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00005.wav", "finish_ms": 906.1681249877438, "mlx_peak_bytes": 2819656560, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00006.wav", "finish_ms": 416.64162499364465, "mlx_peak_bytes": 2592175700, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00007.wav", "finish_ms": 810.5725409695879, "mlx_peak_bytes": 2735786860, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00008.wav", "finish_ms": 448.93250009045005, "mlx_peak_bytes": 2605184668, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00009.wav", "finish_ms": 297.2199589712545, "mlx_peak_bytes": 2509804820, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00010.wav", "finish_ms": 507.24179099779576, "mlx_peak_bytes": 2634405636, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00011.wav", "finish_ms": 563.6192499659956, "mlx_peak_bytes": 2850919280, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00012.wav", "finish_ms": 468.2488749967888, "mlx_peak_bytes": 2649085772, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00013.wav", "finish_ms": 383.11850000172853, "mlx_peak_bytes": 2581214788, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00014.wav", "finish_ms": 648.030124953948, "mlx_peak_bytes": 2708278120, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-00015.wav", "finish_ms": 459.19333305209875, "mlx_peak_bytes": 2697575276, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04000.wav", "finish_ms": 208.58199999202043, "mlx_peak_bytes": 2530006348, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04001.wav", "finish_ms": 472.6157078985125, "mlx_peak_bytes": 2643580716, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04002.wav", "finish_ms": 275.1569579122588, "mlx_peak_bytes": 2532037980, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04003.wav", "finish_ms": 220.6116250017658, "mlx_peak_bytes": 2484294788, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04004.wav", "finish_ms": 257.50316597986966, "mlx_peak_bytes": 2503185612, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04005.wav", "finish_ms": 453.4212088910863, "mlx_peak_bytes": 2604414612, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04006.wav", "finish_ms": 309.7532090032473, "mlx_peak_bytes": 2554250724, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04007.wav", "finish_ms": 386.4196250215173, "mlx_peak_bytes": 2523026724, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04008.wav", "finish_ms": 756.0246670618653, "mlx_peak_bytes": 2744437612, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04009.wav", "finish_ms": 260.00129198655486, "mlx_peak_bytes": 2505675996, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04010.wav", "finish_ms": 524.2528750095516, "mlx_peak_bytes": 2677885804, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04011.wav", "finish_ms": 445.62241598032415, "mlx_peak_bytes": 2558395868, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04012.wav", "finish_ms": 307.13970900978893, "mlx_peak_bytes": 2565027316, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04013.wav", "finish_ms": 333.3244159584865, "mlx_peak_bytes": 2549876140, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04014.wav", "finish_ms": 352.48416604008526, "mlx_peak_bytes": 2549155236, "process_rss_bytes": 1332084736, "error": false}
+{"run": "qwen17-screen", "engine": "qwen17", "fixture": "pt-04015.wav", "finish_ms": 197.5079170661047, "mlx_peak_bytes": 2485032076, "process_rss_bytes": 1332084736, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00295.wav", "prepare_ms": 31829.690209, "finish_ms": 31882.3085, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00296.wav", "prepare_ms": 0.000917, "finish_ms": 53.263958, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00297.wav", "prepare_ms": 0.00075, "finish_ms": 58.149708, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00298.wav", "prepare_ms": 0.000709, "finish_ms": 72.34075, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00299.wav", "prepare_ms": 0.000791, "finish_ms": 54.708916, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00300.wav", "prepare_ms": 0.000792, "finish_ms": 52.920333, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00301.wav", "prepare_ms": 0.000625, "finish_ms": 65.392625, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00302.wav", "prepare_ms": 0.000542, "finish_ms": 72.324417, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00303.wav", "prepare_ms": 0.000667, "finish_ms": 63.957667, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00304.wav", "prepare_ms": 0.000792, "finish_ms": 70.369541, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00305.wav", "prepare_ms": 0.000708, "finish_ms": 120.945709, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00306.wav", "prepare_ms": 0.000625, "finish_ms": 66.30575, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00307.wav", "prepare_ms": 0.000667, "finish_ms": 140.646375, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00308.wav", "prepare_ms": 0.000667, "finish_ms": 126.202417, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00309.wav", "prepare_ms": 0.000625, "finish_ms": 52.342458, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00310.wav", "prepare_ms": 0.00075, "finish_ms": 113.854625, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00472.wav", "prepare_ms": 0.000541, "finish_ms": 38.530208, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00473.wav", "prepare_ms": 0.000459, "finish_ms": 54.784792, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00474.wav", "prepare_ms": 0.000583, "finish_ms": 45.972375, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00475.wav", "prepare_ms": 0.000916, "finish_ms": 49.0615, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00476.wav", "prepare_ms": 0.00075, "finish_ms": 47.257583, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00477.wav", "prepare_ms": 0.000583, "finish_ms": 44.707333, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00478.wav", "prepare_ms": 0.000917, "finish_ms": 41.3295, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00479.wav", "prepare_ms": 0.001041, "finish_ms": 80.584208, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00480.wav", "prepare_ms": 0.000917, "finish_ms": 67.374459, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00481.wav", "prepare_ms": 0.001083, "finish_ms": 69.796666, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00482.wav", "prepare_ms": 0.000625, "finish_ms": 61.609, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00483.wav", "prepare_ms": 0.000875, "finish_ms": 72.777, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00484.wav", "prepare_ms": 0.001458, "finish_ms": 81.063042, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00485.wav", "prepare_ms": 0.0025, "finish_ms": 64.265625, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00486.wav", "prepare_ms": 0.000458, "finish_ms": 41.241083, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "en-00487.wav", "prepare_ms": 0.000875, "finish_ms": 56.801833, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01830.wav", "prepare_ms": 0.000791, "finish_ms": 46.292333, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01831.wav", "prepare_ms": 0.000791, "finish_ms": 67.2295, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01832.wav", "prepare_ms": 0.000958, "finish_ms": 63.778083, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01833.wav", "prepare_ms": 0.001458, "finish_ms": 44.255791, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01834.wav", "prepare_ms": 0.000917, "finish_ms": 53.516209, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01835.wav", "prepare_ms": 0.000542, "finish_ms": 73.438916, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01836.wav", "prepare_ms": 0.000917, "finish_ms": 40.127958, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01837.wav", "prepare_ms": 0.001083, "finish_ms": 68.555875, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01838.wav", "prepare_ms": 0.001084, "finish_ms": 44.767667, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01839.wav", "prepare_ms": 0.00175, "finish_ms": 35.81375, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01840.wav", "prepare_ms": 0.001667, "finish_ms": 65.029333, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01841.wav", "prepare_ms": 0.0015, "finish_ms": 60.344083, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01842.wav", "prepare_ms": 0.000666, "finish_ms": 46.643375, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01843.wav", "prepare_ms": 0.000875, "finish_ms": 49.863375, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01844.wav", "prepare_ms": 0.000917, "finish_ms": 58.298208, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-01845.wav", "prepare_ms": 0.000875, "finish_ms": 54.466292, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06000.wav", "prepare_ms": 0.001417, "finish_ms": 44.686042, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06001.wav", "prepare_ms": 0.00075, "finish_ms": 50.179875, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06002.wav", "prepare_ms": 0.000667, "finish_ms": 47.902208, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06003.wav", "prepare_ms": 0.000666, "finish_ms": 48.727125, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06004.wav", "prepare_ms": 0.000625, "finish_ms": 51.3565, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06005.wav", "prepare_ms": 0.000792, "finish_ms": 55.164833, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06006.wav", "prepare_ms": 0.000625, "finish_ms": 62.771875, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06007.wav", "prepare_ms": 0.000625, "finish_ms": 41.193875, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06008.wav", "prepare_ms": 0.000667, "finish_ms": 41.686833, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06009.wav", "prepare_ms": 0.000625, "finish_ms": 50.9545, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06010.wav", "prepare_ms": 0.000542, "finish_ms": 42.975625, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06011.wav", "prepare_ms": 0.000791, "finish_ms": 54.032958, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06012.wav", "prepare_ms": 0.0005, "finish_ms": 50.779125, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06013.wav", "prepare_ms": 0.00075, "finish_ms": 49.018583, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06014.wav", "prepare_ms": 0.000583, "finish_ms": 46.086333, "error": false}
+{"run": "ultra-held", "engine": "ultra", "fixture": "pt-06015.wav", "prepare_ms": 0.000833, "finish_ms": 59.376916, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00000.wav", "prepare_ms": 0.000667, "finish_ms": 40.862792, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00001.wav", "prepare_ms": 0.001, "finish_ms": 84.033708, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00002.wav", "prepare_ms": 0.000666, "finish_ms": 48.012708, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00003.wav", "prepare_ms": 0.000667, "finish_ms": 151.462417, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00004.wav", "prepare_ms": 0.000542, "finish_ms": 68.252125, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00005.wav", "prepare_ms": 0.00075, "finish_ms": 72.013792, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00006.wav", "prepare_ms": 0.00075, "finish_ms": 51.78, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00007.wav", "prepare_ms": 0.000666, "finish_ms": 41.161292, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00008.wav", "prepare_ms": 0.000709, "finish_ms": 44.479167, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00009.wav", "prepare_ms": 0.000583, "finish_ms": 57.971875, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00010.wav", "prepare_ms": 0.000625, "finish_ms": 39.48025, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00011.wav", "prepare_ms": 0.000625, "finish_ms": 40.077042, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00012.wav", "prepare_ms": 0.000834, "finish_ms": 36.164375, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00013.wav", "prepare_ms": 0.0005, "finish_ms": 37.900333, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00014.wav", "prepare_ms": 0.000542, "finish_ms": 134.683334, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00015.wav", "prepare_ms": 0.000666, "finish_ms": 51.90075, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00125.wav", "prepare_ms": 0.000625, "finish_ms": 54.580625, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00126.wav", "prepare_ms": 0.000583, "finish_ms": 45.631792, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00127.wav", "prepare_ms": 0.000625, "finish_ms": 49.908, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00128.wav", "prepare_ms": 0.00075, "finish_ms": 59.47175, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00129.wav", "prepare_ms": 0.000667, "finish_ms": 45.139166, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00130.wav", "prepare_ms": 0.000666, "finish_ms": 63.74775, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00131.wav", "prepare_ms": 0.000583, "finish_ms": 79.834292, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00132.wav", "prepare_ms": 0.000584, "finish_ms": 70.027667, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00133.wav", "prepare_ms": 0.000792, "finish_ms": 61.1395, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00134.wav", "prepare_ms": 0.000708, "finish_ms": 43.658833, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00135.wav", "prepare_ms": 0.000666, "finish_ms": 66.729416, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00136.wav", "prepare_ms": 0.000708, "finish_ms": 51.732083, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00137.wav", "prepare_ms": 0.000791, "finish_ms": 161.594583, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00138.wav", "prepare_ms": 0.000792, "finish_ms": 82.681708, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00139.wav", "prepare_ms": 0.000709, "finish_ms": 65.538792, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "en-00140.wav", "prepare_ms": 0.000708, "finish_ms": 171.916042, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00000.wav", "prepare_ms": 0.000792, "finish_ms": 55.210459, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00001.wav", "prepare_ms": 0.000666, "finish_ms": 45.056792, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00002.wav", "prepare_ms": 0.000708, "finish_ms": 48.966625, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00003.wav", "prepare_ms": 0.000708, "finish_ms": 53.546875, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00004.wav", "prepare_ms": 0.000666, "finish_ms": 39.702292, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00005.wav", "prepare_ms": 0.00075, "finish_ms": 132.445375, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00006.wav", "prepare_ms": 0.000583, "finish_ms": 52.520791, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00007.wav", "prepare_ms": 0.000625, "finish_ms": 81.742041, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00008.wav", "prepare_ms": 0.000792, "finish_ms": 60.714791, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00009.wav", "prepare_ms": 0.000584, "finish_ms": 45.71375, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00010.wav", "prepare_ms": 0.000584, "finish_ms": 62.857375, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00011.wav", "prepare_ms": 0.000625, "finish_ms": 94.544375, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00012.wav", "prepare_ms": 0.000792, "finish_ms": 55.782416, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00013.wav", "prepare_ms": 0.000708, "finish_ms": 48.817208, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00014.wav", "prepare_ms": 0.000584, "finish_ms": 68.824958, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-00015.wav", "prepare_ms": 0.0005, "finish_ms": 54.152292, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04000.wav", "prepare_ms": 0.000666, "finish_ms": 46.731333, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04001.wav", "prepare_ms": 0.000625, "finish_ms": 52.344916, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04002.wav", "prepare_ms": 0.000625, "finish_ms": 45.622208, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04003.wav", "prepare_ms": 0.000667, "finish_ms": 40.327958, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04004.wav", "prepare_ms": 0.000709, "finish_ms": 43.272, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04005.wav", "prepare_ms": 0.000625, "finish_ms": 51.765, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04006.wav", "prepare_ms": 0.000584, "finish_ms": 44.208625, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04007.wav", "prepare_ms": 0.000625, "finish_ms": 44.099042, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04008.wav", "prepare_ms": 0.000875, "finish_ms": 81.392083, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04009.wav", "prepare_ms": 0.00075, "finish_ms": 46.479625, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04010.wav", "prepare_ms": 0.000584, "finish_ms": 62.633417, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04011.wav", "prepare_ms": 0.000583, "finish_ms": 57.425042, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04012.wav", "prepare_ms": 0.000709, "finish_ms": 51.222292, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04013.wav", "prepare_ms": 0.00075, "finish_ms": 48.181208, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04014.wav", "prepare_ms": 0.000958, "finish_ms": 54.282583, "error": false}
+{"run": "ultra-screen", "engine": "ultra", "fixture": "pt-04015.wav", "prepare_ms": 0.003, "finish_ms": 39.197625, "error": false}

@@ -1,0 +1,50 @@
+{
+  "note": "Real human read speech, Google FLEURS CC-BY-4.0. Reference=raw_transcription. Hypothesis=Rasc verbatim. No editing. Includes honest error + <unk> + proper-name cases.",
+  "examples": [
+    {
+      "id": "en_us-000001683",
+      "language": "en_us",
+      "audio": "examples/en_us-000001683.wav",
+      "reference": "There are still many men and women alive who survived their time here, and many more who had loved ones who were murdered or worked to death there, Jews and non-Jews alike.",
+      "rascVerbatim": "There are still many men and women alive who survived their time here, and many more who had loved ones who were murdered or worked to death there, Jews and non-Jews alike.",
+      "audioSeconds": 11.1,
+      "inferenceMs": 86.31
+    },
+    {
+      "id": "en_us-000001664",
+      "language": "en_us",
+      "audio": "examples/en_us-000001664.wav",
+      "reference": "Swirl the two dry powders together and then, with clean wet hands, squeeze them into a ball.",
+      "rascVerbatim": "Swirl the two dry powers together and then with clean wet hands squeeze them into a ball.",
+      "audioSeconds": 8.36,
+      "inferenceMs": 83.03
+    },
+    {
+      "id": "pt_br-000001674",
+      "language": "pt_br",
+      "audio": "examples/pt_br-000001674.wav",
+      "reference": "Em algumas áreas, ferver a água por um minuto é suficiente; em outras, muitos minutos são necessários.",
+      "rascVerbatim": "Em algumas áreas, ferver a água por um minuto é suficiente, em outras, muitos minutos são necessários.",
+      "audioSeconds": 10.14,
+      "inferenceMs": 67.65
+    },
+    {
+      "id": "pt_br-000001678",
+      "language": "pt_br",
+      "audio": "examples/pt_br-000001678.wav",
+      "reference": "Oliver Sacks, em seu artigo O Discurso do Presidente, indicou como as pessoas que são incapazes de entender a fala por causa de dano cerebral são, apesar disso, capazes de avaliar sinceridade com precisão.",
+      "rascVerbatim": "Oliver Sachs, em seu artigo <unk>O Discurso do Presidente<unk>, indicou como as pessoas que são incapazes de entender a fala por causa de dano cerebral são, apesar disso, capazes de avaliar sinceridade com precisão.",
+      "audioSeconds": 16.56,
+      "inferenceMs": 150.12
+    },
+    {
+      "id": "pt_br-000001891",
+      "language": "pt_br",
+      "audio": "examples/pt_br-000001891.wav",
+      "reference": "Lakkha Singh também apresentou o chhappan bhog bhajan. O cantor Raju Khandelwal estava acompanhando-o.",
+      "rascVerbatim": "Laki Hassing também apresentou o Chapan de rogue <unk>Barrajan<unk>. O cantor Haju Kandewal estava acompanhando-o.",
+      "audioSeconds": 11.04,
+      "inferenceMs": 76.42
+    }
+  ]
+}

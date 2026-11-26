@@ -1,0 +1,9 @@
+Bundle before	com.rasc.research.voiceupdate
+Bundle after	com.rasc.research.voiceupdate
+Designated requirement before	cdhash H"af8e3313ccced54ca26448e9a7f1fe109bef1ea7"
+Designated requirement after	cdhash H"23bc44e608f4162599ef38903d0bccd73820edd2"
+Build A satisfies its requirement	match
+Build B satisfies its requirement	match
+Build B satisfies requirement A	no match
+Build A satisfies requirement B	no match
+     0 valid identities found

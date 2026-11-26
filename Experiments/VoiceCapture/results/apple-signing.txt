@@ -1,0 +1,9 @@
+Executable=/private/tmp/RascVoiceProbe.app/Contents/MacOS/VoiceProbe
+# designated => cdhash H"f5e76aca08c29f2728bb9168e8a41738b4a28c73"
+[Dict]
+	[Key] com.apple.security.app-sandbox
+	[Value]
+		[Bool] true
+	[Key] com.apple.security.device.audio-input
+	[Value]
+		[Bool] true

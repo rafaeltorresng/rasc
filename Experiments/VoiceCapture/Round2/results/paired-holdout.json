@@ -1,0 +1,68 @@
+{
+  "pt-BR": {
+    "clips": 32,
+    "differences_in_percentage_points": {
+      "fluid": {
+        "delta_vs_apple": -0.59,
+        "clip_resampled_95_interval": [
+          -2.54,
+          1.45
+        ]
+      },
+      "ultra": {
+        "delta_vs_apple": -1.39,
+        "clip_resampled_95_interval": [
+          -3.47,
+          0.95
+        ]
+      },
+      "granite": {
+        "delta_vs_apple": 3.37,
+        "clip_resampled_95_interval": [
+          -0.6,
+          8.69
+        ]
+      },
+      "qwen17": {
+        "delta_vs_apple": 3.76,
+        "clip_resampled_95_interval": [
+          0.99,
+          7.05
+        ]
+      }
+    }
+  },
+  "en-US": {
+    "clips": 32,
+    "differences_in_percentage_points": {
+      "fluid": {
+        "delta_vs_apple": -0.14,
+        "clip_resampled_95_interval": [
+          -1.15,
+          0.91
+        ]
+      },
+      "ultra": {
+        "delta_vs_apple": 0.14,
+        "clip_resampled_95_interval": [
+          -0.75,
+          1.03
+        ]
+      },
+      "granite": {
+        "delta_vs_apple": -1.25,
+        "clip_resampled_95_interval": [
+          -2.05,
+          -0.34
+        ]
+      },
+      "qwen17": {
+        "delta_vs_apple": 0.0,
+        "clip_resampled_95_interval": [
+          -1.22,
+          1.15
+        ]
+      }
+    }
+  }
+}

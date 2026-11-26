@@ -1,0 +1,24 @@
+{"engine":"parakeet-v3","event":"setup","prepare_ms":18306.655374999998}
+{"engine":"parakeet-v3","error":"invalidAudioData","event":"case_error","finish_ms":6.4517910000000001,"fixture":"accidental.wav"}
+{"engine":"parakeet-v3","event":"result","finish_ms":57.293083000000003,"fixture":"en-boundary.wav","mode":"batch","transcript":"Don't deploy yet."}
+{"engine":"parakeet-v3","event":"result","finish_ms":38.549334000000002,"fixture":"en-clip.wav","mode":"batch","transcript":"Don't deploy yet."}
+{"engine":"parakeet-v3","event":"result","finish_ms":57.120125000000002,"fixture":"en-correct.wav","mode":"batch","transcript":"Ask my Yu Chen on Friday, uh, no. I mean Monday the 23rd, if she's back by then."}
+{"engine":"parakeet-v3","event":"result","finish_ms":42.239834000000002,"fixture":"en-fragment.wav","mode":"batch","transcript":"The duplicate row is probably from, um, when we"}
+{"engine":"parakeet-v3","event":"result","finish_ms":51.325583000000002,"fixture":"en-literal.wav","mode":"batch","transcript":"Version 2.0.7, error 403, and a timeout of 180 milliseconds."}
+{"engine":"parakeet-v3","event":"result","finish_ms":51.565167000000002,"fixture":"en-noise.wav","mode":"batch","transcript":"I was thinking that maybe we should simplify the onboarding, but I'm not entirely sure yet."}
+{"engine":"parakeet-v3","event":"result","finish_ms":129.42708300000001,"fixture":"en-think.wav","mode":"batch","transcript":"Um, the reason I keep coming back to this is. Maybe the queue looks slow because we're measuring the wrong thing. I started by counting jobs, but the actual delay seems to be between retries. I need to think about what happens if the machine goes to sleep, and whether we can keep the same behavior after it wakes up."}
+{"engine":"parakeet-v3","event":"result","finish_ms":51.175708,"fixture":"en-uncertain.wav","mode":"batch","transcript":"I was thinking that maybe we should simplify the onboarding, but I'm not entirely sure yet."}
+{"engine":"parakeet-v3","event":"result","finish_ms":49.620041999999998,"fixture":"en-url.wav","mode":"batch","transcript":"Look at docs.example.org slash Q's question mark page equals to"}
+{"engine":"parakeet-v3","event":"result","finish_ms":53.880166000000003,"fixture":"mix-sql.wav","mode":"batch","transcript":"Talvez seja o cache do S. K. Lite, porque o Falbak mudou depois do roubach."}
+{"engine":"parakeet-v3","event":"result","finish_ms":67.168415999999993,"fixture":"mix-switch.wav","mode":"batch","transcript":"Se o bag voltar amanhã, lembra do que a Maia disse: Don't retry the job before the time out. Mas eu ainda não o sei se vale a pena."}
+{"engine":"parakeet-v3","event":"result","finish_ms":54.483874999999998,"fixture":"mix-worker.wav","mode":"batch","transcript":"Precisamos revisar a race condition no worker antes de fazer o deploy, mas não o sei se esse é realmente o problema."}
+{"engine":"parakeet-v3","event":"result","finish_ms":211.58041700000001,"fixture":"noise-only.wav","mode":"batch","transcript":""}
+{"engine":"parakeet-v3","event":"result","finish_ms":36.879624999999997,"fixture":"pt-boundary.wav","mode":"batch","transcript":"Não o apaga isso."}
+{"engine":"parakeet-v3","event":"result","finish_ms":35.837834000000001,"fixture":"pt-clip.wav","mode":"batch","transcript":"Não o apaga isso."}
+{"engine":"parakeet-v3","event":"result","finish_ms":48.351166999999997,"fixture":"pt-correct.wav","mode":"batch","transcript":"Pedir três cafés, não. Dois cafés e um chá, se a Marina vier."}
+{"engine":"parakeet-v3","event":"result","finish_ms":45.721333000000001,"fixture":"pt-fragment.wav","mode":"batch","transcript":"Aquele outro jeito de guardar, para deixar eu lembrar."}
+{"engine":"parakeet-v3","event":"result","finish_ms":44.265290999999998,"fixture":"pt-maybe.wav","mode":"batch","transcript":"Acho que talvez seja a migração, mas não o tenho certeza."}
+{"engine":"parakeet-v3","event":"result","finish_ms":59.973125000000003,"fixture":"pt-names.wav","mode":"batch","transcript":"A Lívia vai encontrar o João Siqueira e Fortaleza no dia 23 de novembro, às 15h40."}
+{"engine":"parakeet-v3","event":"result","finish_ms":44.285916999999998,"fixture":"pt-noise.wav","mode":"batch","transcript":"Acho que talvez seja a migração, mas não temos certeza."}
+{"engine":"parakeet-v3","event":"result","finish_ms":122.436042,"fixture":"pt-thinking.wav","mode":"batch","transcript":"Então, eu fiquei pensando no que a Camila falou sobre o começo da história. Talvez a primeira cena dê detalhes de mais antes de aparecer a personagem. Eu queria deixar a cena mais quieta, mas também não o quero tirar a referência ao mercado, porque ela explica por que a mãe chegou tarde."}
+{"engine":"parakeet-v3","event":"result","finish_ms":33.878791,"fixture":"silence.wav","mode":"batch","transcript":""}

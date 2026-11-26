@@ -1,0 +1,5 @@
+{"engine":"parakeet-v3","event":"setup","prepare_ms":20869.229458000002}
+{"engine":"parakeet-v3","event":"result","finish_ms":57.512540999999999,"fixture":"en-clip.wav","mode":"batch","transcript":"Don't deploy yet."}
+{"engine":"parakeet-v3","event":"result","finish_ms":93.435749999999999,"fixture":"en-uncertain.wav","mode":"batch","transcript":"I was thinking that maybe we should simplify the onboarding, but I'm not entirely sure yet."}
+{"engine":"parakeet-v3","event":"result","finish_ms":47.606499999999997,"fixture":"pt-clip.wav","mode":"batch","transcript":"Não o apaga isso."}
+{"engine":"parakeet-v3","event":"result","finish_ms":59.641540999999997,"fixture":"mix-worker.wav","mode":"batch","transcript":"Precisamos revisar a race condition no worker antes de fazer o deploy, mas não o sei se esse é realmente o problema."}

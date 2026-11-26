@@ -1,0 +1,16 @@
+{"authorized":true,"event":"mic_permission","status":3}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":350.08754199999998,"received":true,"sample_rate":48000,"start_ms":243.050375,"trial":1}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":171.29370800000001,"received":true,"sample_rate":48000,"start_ms":65.354083000000003,"trial":2}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":190.33600000000001,"received":true,"sample_rate":48000,"start_ms":84.238709,"trial":3}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":191.85033300000001,"received":true,"sample_rate":48000,"start_ms":86.492999999999995,"trial":4}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":187.76775000000001,"received":true,"sample_rate":48000,"start_ms":82.173457999999997,"trial":5}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":187.01641699999999,"received":true,"sample_rate":48000,"start_ms":80.849500000000006,"trial":6}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":187.1695,"received":true,"sample_rate":48000,"start_ms":81.330250000000007,"trial":7}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":183.02170799999999,"received":true,"sample_rate":48000,"start_ms":77.885208000000006,"trial":8}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":214.379333,"received":true,"sample_rate":48000,"start_ms":108.602625,"trial":9}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":189.77433300000001,"received":true,"sample_rate":48000,"start_ms":83.985957999999997,"trial":10}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":188.09733299999999,"received":true,"sample_rate":48000,"start_ms":82.157166000000004,"trial":11}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":186.749042,"received":true,"sample_rate":48000,"start_ms":80.809250000000006,"trial":12}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":185.82662500000001,"received":true,"sample_rate":48000,"start_ms":80.129583999999994,"trial":13}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":187.32104200000001,"received":true,"sample_rate":48000,"start_ms":81.326250000000002,"trial":14}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":185.23579100000001,"received":true,"sample_rate":48000,"start_ms":79.583207999999999,"trial":15}

@@ -1,0 +1,3 @@
+{"cancel_ms":0.123833,"engine":"speech","event":"cancelled","fixture":"pt-thinking.wav","mode":"cancel"}
+{"cancel_ms":15.657417000000001,"engine":"speech","event":"cancelled","fixture":"en-uncertain.wav","mode":"cancel-final"}
+{"audio_seconds":1.3876875,"engine":"speech","event":"result","final_count":1,"finish_ms":112.415333,"first_partial_ms":1110.5081250000001,"first_result_ms":1110.5081250000001,"fixture":"en-clip.wav","format":"<AVAudioFormat 0xb62ca4140:  1 ch,  16000 Hz, Int16>","locale":"en_US","mode":"paced","partial_count":7,"prepare_ms":38.855333000000002,"ready_ms":46.903917,"total_ms":1552.510417,"transcript":"Don't deploy yet."}

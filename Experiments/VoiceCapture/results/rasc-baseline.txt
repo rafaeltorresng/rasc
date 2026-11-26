@@ -1,0 +1,13 @@
+Initial native run with the default bundle ID
+Testing failed:
+	Could not launch “RascTests”
+	Rasc encountered an error (Failed to install or launch the test runner. (Underlying Error: Could not launch “RascTests”. The LaunchServices launcher has returned an error. Please check the system logs for the underlying cause of the error.))
+
+
+Shared scheme rerun with an isolated bundle ID
+✔ Test run with 538 tests in 52 suites passed after 12.092 seconds.
+** TEST SUCCEEDED **
+
+Domain fallback
+✔ Test run with 494 tests in 45 suites passed after 5.123 seconds.
+✔ Test run with 1 test in 1 suite passed after 0.490 seconds.

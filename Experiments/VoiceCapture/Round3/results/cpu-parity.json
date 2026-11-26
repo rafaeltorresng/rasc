@@ -1,0 +1,20 @@
+{
+  "n": 168,
+  "results": 168,
+  "identical": 157,
+  "differing_clip_ids": [
+    "pt-r3-00809.wav",
+    "pt-r3-01208.wav",
+    "pt-r3-01213.wav",
+    "pt-r3-01214.wav",
+    "en-r3-00038.wav",
+    "mix-r3-por_1663_CC.wav",
+    "mix-r3-por_1730_CC.wav",
+    "mix-r3-por_1891_CC.wav",
+    "mix-r3-por_1916_CC.wav",
+    "mix-r3-por_1950_CC.wav",
+    "mix-r3-por_1984_CC.wav"
+  ],
+  "warm_p50_ms": 151.55,
+  "warm_p95_ms": 280.39
+}

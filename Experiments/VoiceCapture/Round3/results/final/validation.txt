@@ -1,0 +1,19 @@
+PASS modal keyboard containment, first grant, deny, revoke and restore open no unauthorized input
+PASS unavailable language is routed to speech setup before microphone input
+PASS readiness uses first frame, bounded Finish tail includes the ending, input released
+PASS real SQLite failure preserves editable text, duplicate Keep is idempotent, success follows commit
+PASS reopen durable note and unchanged scratch, edit commits, guarded Undo protects later edit
+PASS automatic Keep commits once and Undo affects only the captured thought
+PASS failed automatic Keep stages recoverable text when the store permits
+PASS discard failure preserves review, retry clears the recovery journal without affecting Kept data
+PASS digital silence and click-only activation create no note
+PASS input error can retry, audio route loss and sleep handler send partial speech to review
+PASS stalled input preserves partial speech, stop seals buffers and normalizes invalid samples
+PASS transcription failure holds audio for retry and retries do not duplicate
+PASS cancellation remains responsive and late recognizer cannot mutate newer capture
+PASS recognition timeout, same-session retry race, crash-style transcript recovery, explicit discard
+PASS shortcut handler rejects repeated down events, hold early release and toggle edges behave
+PASS 120 repeated capture/cancel cycles leave no owned test input, task or extra note
+PASS reset drains queued recovery and export writes before clearing the isolated study data
+PASS signed sandbox actually decodes with Apple Speech, reviews, keeps and undoes
+{"assertions":18,"fixture_latency":[{"Audio duration":537.5,"Conversion":0.036249999999999998,"Database commit":0.87875000000000003,"Finish to microphone stop":120.45050000000001,"Finish to text":120.574416,"Microphone ready":12.6305,"Model wait after Finish":0,"Review and correction":75.215374999999995,"Start to Keep":232.28483299999999,"Status ordered":0.0030000000000000001},{"Audio duration":268.75,"Conversion":0.018416999999999999,"Database commit":1.30325,"Finish to microphone stop":121.71270800000001,"Finish to text":121.75379100000001,"Microphone ready":12.588915999999999,"Model wait after Finish":0,"Start to Keep":159.24574999999999,"Status ordered":0.001083}],"input_starts":135,"input_stops":135}

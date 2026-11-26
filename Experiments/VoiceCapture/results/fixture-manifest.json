@@ -1,0 +1,445 @@
+[
+  {
+    "id": "en-clip",
+    "locale": "en-US",
+    "group": "en",
+    "text": "Don't deploy yet.",
+    "critical": [
+      "don't",
+      "deploy",
+      "yet"
+    ],
+    "tags": [
+      "short",
+      "negation",
+      "boundary"
+    ],
+    "reference": "Don't deploy yet.",
+    "seconds": 1.3877
+  },
+  {
+    "id": "en-uncertain",
+    "locale": "en-US",
+    "group": "en",
+    "text": "I was thinking that maybe we should simplify the onboarding, but I'm not entirely sure yet.",
+    "critical": [
+      "maybe",
+      "not entirely sure"
+    ],
+    "tags": [
+      "uncertainty"
+    ],
+    "reference": "I was thinking that maybe we should simplify the onboarding, but I'm not entirely sure yet.",
+    "seconds": 5.2884
+  },
+  {
+    "id": "en-think",
+    "locale": "en-US",
+    "group": "en",
+    "segments": [
+      "Um, the reason I keep coming back to this is,",
+      "maybe the queue looks slow because we're measuring the wrong thing.",
+      "I started by counting jobs, but the actual delay seems to be between retries.",
+      "I need to think about what happens if the machine goes to sleep, and whether we can keep the same behavior after it wakes up."
+    ],
+    "pause_ms": 1400,
+    "critical": [
+      "maybe",
+      "wrong thing",
+      "between retries",
+      "sleep",
+      "wakes up"
+    ],
+    "tags": [
+      "long",
+      "hesitation",
+      "pauses",
+      "uncertainty"
+    ],
+    "reference": "Um, the reason I keep coming back to this is, maybe the queue looks slow because we're measuring the wrong thing. I started by counting jobs, but the actual delay seems to be between retries. I need to think about what happens if the machine goes to sleep, and whether we can keep the same behavior after it wakes up.",
+    "seconds": 21.3296
+  },
+  {
+    "id": "en-correct",
+    "locale": "en-US",
+    "group": "en",
+    "segments": [
+      "Ask Maya Chen on Friday. Uh, no,",
+      "I mean Monday the twenty-third, if she's back by then."
+    ],
+    "pause_ms": 850,
+    "critical": [
+      "Maya Chen",
+      "no",
+      "Monday",
+      "twenty-third",
+      "if"
+    ],
+    "tags": [
+      "names",
+      "date",
+      "self-correction"
+    ],
+    "reference": "Ask Maya Chen on Friday. Uh, no, I mean Monday the twenty-third, if she's back by then.",
+    "seconds": 6.8456
+  },
+  {
+    "id": "en-literal",
+    "locale": "en-US",
+    "group": "en",
+    "text": "Version two point zero point seven, error four oh three, and a timeout of one hundred and eighty milliseconds.",
+    "critical": [
+      "two point zero point seven",
+      "four oh three",
+      "one hundred and eighty",
+      "milliseconds"
+    ],
+    "tags": [
+      "versions",
+      "numbers",
+      "technical"
+    ],
+    "reference": "Version two point zero point seven, error four oh three, and a timeout of one hundred and eighty milliseconds.",
+    "seconds": 6.622
+  },
+  {
+    "id": "en-url",
+    "locale": "en-US",
+    "group": "en",
+    "text": "Look at docs dot example dot org slash queues question mark page equals two.",
+    "critical": [
+      "docs dot example dot org",
+      "queues",
+      "page equals two"
+    ],
+    "tags": [
+      "spoken URL",
+      "punctuation"
+    ],
+    "reference": "Look at docs dot example dot org slash queues question mark page equals two.",
+    "seconds": 4.8887
+  },
+  {
+    "id": "en-fragment",
+    "locale": "en-US",
+    "group": "en",
+    "text": "The duplicate row is probably from, um, when we…",
+    "critical": [
+      "duplicate row",
+      "probably"
+    ],
+    "tags": [
+      "fragment",
+      "hesitation"
+    ],
+    "reference": "The duplicate row is probably from, um, when we…",
+    "seconds": 3.5224
+  },
+  {
+    "id": "pt-clip",
+    "locale": "pt-BR",
+    "group": "pt",
+    "text": "Não apaga isso.",
+    "critical": [
+      "não",
+      "apaga",
+      "isso"
+    ],
+    "tags": [
+      "short",
+      "negation",
+      "boundary"
+    ],
+    "reference": "Não apaga isso.",
+    "seconds": 1.5568
+  },
+  {
+    "id": "pt-maybe",
+    "locale": "pt-BR",
+    "group": "pt",
+    "text": "Acho que talvez seja a migração, mas não tenho certeza.",
+    "critical": [
+      "talvez",
+      "migração",
+      "não tenho certeza"
+    ],
+    "tags": [
+      "uncertainty",
+      "negation"
+    ],
+    "reference": "Acho que talvez seja a migração, mas não tenho certeza.",
+    "seconds": 4.3429
+  },
+  {
+    "id": "pt-names",
+    "locale": "pt-BR",
+    "group": "pt",
+    "text": "A Lívia vai encontrar o João Siqueira em Fortaleza no dia vinte e três de novembro, às quinze e quarenta.",
+    "critical": [
+      "Lívia",
+      "João Siqueira",
+      "Fortaleza",
+      "vinte e três",
+      "novembro",
+      "quinze e quarenta"
+    ],
+    "tags": [
+      "names",
+      "dates",
+      "numbers"
+    ],
+    "reference": "A Lívia vai encontrar o João Siqueira em Fortaleza no dia vinte e três de novembro, às quinze e quarenta.",
+    "seconds": 7.1941
+  },
+  {
+    "id": "pt-correct",
+    "locale": "pt-BR",
+    "group": "pt",
+    "segments": [
+      "Pedir três cafés, não,",
+      "dois cafés e um chá, se a Marina vier."
+    ],
+    "pause_ms": 1100,
+    "critical": [
+      "três",
+      "não",
+      "dois",
+      "chá",
+      "se a Marina vier"
+    ],
+    "tags": [
+      "self-correction",
+      "numbers",
+      "pauses"
+    ],
+    "reference": "Pedir três cafés, não, dois cafés e um chá, se a Marina vier.",
+    "seconds": 6.0557
+  },
+  {
+    "id": "pt-thinking",
+    "locale": "pt-BR",
+    "group": "pt",
+    "segments": [
+      "Então, eu fiquei pensando no que a Camila falou sobre o começo da história.",
+      "Talvez a primeira cena dê detalhes demais antes de aparecer a personagem.",
+      "Eu queria deixar a cena mais quieta, mas também não quero tirar a referência ao mercado, porque ela explica por que a mãe chegou tarde."
+    ],
+    "pause_ms": 1600,
+    "critical": [
+      "Camila",
+      "talvez",
+      "não quero tirar",
+      "mercado",
+      "mãe",
+      "tarde"
+    ],
+    "tags": [
+      "long",
+      "pauses",
+      "nontechnical"
+    ],
+    "reference": "Então, eu fiquei pensando no que a Camila falou sobre o começo da história. Talvez a primeira cena dê detalhes demais antes de aparecer a personagem. Eu queria deixar a cena mais quieta, mas também não quero tirar a referência ao mercado, porque ela explica por que a mãe chegou tarde.",
+    "seconds": 22.2599
+  },
+  {
+    "id": "pt-fragment",
+    "locale": "pt-BR",
+    "group": "pt",
+    "text": "Aquele outro jeito de guardar, ah, deixa eu lembrar…",
+    "critical": [
+      "outro jeito de guardar",
+      "lembrar"
+    ],
+    "tags": [
+      "fragment",
+      "hesitation"
+    ],
+    "reference": "Aquele outro jeito de guardar, ah, deixa eu lembrar…",
+    "seconds": 4.0184
+  },
+  {
+    "id": "mix-worker",
+    "locale": "pt-BR",
+    "group": "mix",
+    "text": "Precisamos revisar a race condition no worker antes de fazer o deploy, mas não sei se esse é realmente o problema.",
+    "critical": [
+      "race condition",
+      "worker",
+      "deploy",
+      "não sei"
+    ],
+    "tags": [
+      "code-switch",
+      "uncertainty",
+      "negation",
+      "technical"
+    ],
+    "reference": "Precisamos revisar a race condition no worker antes de fazer o deploy, mas não sei se esse é realmente o problema.",
+    "seconds": 7.9893
+  },
+  {
+    "id": "mix-sql",
+    "locale": "pt-BR",
+    "group": "mix",
+    "text": "Talvez seja o cache do SQLite, porque o fallback mudou depois do rollback.",
+    "critical": [
+      "talvez",
+      "cache",
+      "SQLite",
+      "fallback",
+      "rollback"
+    ],
+    "tags": [
+      "code-switch",
+      "technical",
+      "proper nouns"
+    ],
+    "reference": "Talvez seja o cache do SQLite, porque o fallback mudou depois do rollback.",
+    "seconds": 5.7194
+  },
+  {
+    "id": "mix-switch",
+    "locale": "pt-BR",
+    "group": "mix",
+    "segments": [
+      {
+        "text": "Se o bug voltar amanhã, lembra do que a Maya disse:",
+        "locale": "pt-BR"
+      },
+      {
+        "text": "don't retry the job before the timeout.",
+        "locale": "en-US"
+      },
+      {
+        "text": "Mas eu ainda não sei se vale a pena.",
+        "locale": "pt-BR"
+      }
+    ],
+    "pause_ms": 450,
+    "critical": [
+      "Maya",
+      "don't retry",
+      "timeout",
+      "não sei"
+    ],
+    "tags": [
+      "sentence switch",
+      "two synthetic voices",
+      "negation"
+    ],
+    "reference": "Se o bug voltar amanhã, lembra do que a Maya disse: don't retry the job before the timeout. Mas eu ainda não sei se vale a pena.",
+    "seconds": 9.3362
+  },
+  {
+    "id": "en-noise",
+    "locale": "en-US",
+    "group": "en",
+    "copy": "en-uncertain",
+    "noise_db": -13,
+    "tags": [
+      "moderate synthetic colored noise"
+    ],
+    "reference": "I was thinking that maybe we should simplify the onboarding, but I'm not entirely sure yet.",
+    "critical": [
+      "maybe",
+      "not entirely sure"
+    ],
+    "seconds": 5.2884
+  },
+  {
+    "id": "pt-noise",
+    "locale": "pt-BR",
+    "group": "pt",
+    "copy": "pt-maybe",
+    "noise_db": -13,
+    "tags": [
+      "moderate synthetic colored noise"
+    ],
+    "reference": "Acho que talvez seja a migração, mas não tenho certeza.",
+    "critical": [
+      "talvez",
+      "migração",
+      "não tenho certeza"
+    ],
+    "seconds": 4.3429
+  },
+  {
+    "id": "en-boundary",
+    "locale": "en-US",
+    "group": "en",
+    "copy": "en-clip",
+    "tight": true,
+    "tags": [
+      "boundary stress",
+      "zero guard silence"
+    ],
+    "reference": "Don't deploy yet.",
+    "critical": [
+      "don't",
+      "deploy",
+      "yet"
+    ],
+    "seconds": 1.0377
+  },
+  {
+    "id": "pt-boundary",
+    "locale": "pt-BR",
+    "group": "pt",
+    "copy": "pt-clip",
+    "tight": true,
+    "tags": [
+      "boundary stress",
+      "zero guard silence"
+    ],
+    "reference": "Não apaga isso.",
+    "critical": [
+      "não",
+      "apaga",
+      "isso"
+    ],
+    "seconds": 1.2068
+  },
+  {
+    "id": "silence",
+    "locale": "en-US",
+    "group": "control",
+    "silence": 2.5,
+    "text": "",
+    "tags": [
+      "digital silence"
+    ],
+    "reference": "",
+    "critical": [],
+    "seconds": 2.5
+  },
+  {
+    "id": "accidental",
+    "locale": "pt-BR",
+    "group": "control",
+    "silence": 0.27,
+    "click": true,
+    "text": "",
+    "tags": [
+      "accidental activation",
+      "short click"
+    ],
+    "reference": "",
+    "critical": [],
+    "seconds": 0.27
+  },
+  {
+    "id": "noise-only",
+    "locale": "en-US",
+    "group": "control",
+    "silence": 2.5,
+    "noise_db": -32,
+    "text": "",
+    "tags": [
+      "ambient noise",
+      "no speech"
+    ],
+    "reference": "",
+    "critical": [],
+    "seconds": 2.5
+  }
+]

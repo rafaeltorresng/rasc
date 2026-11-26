@@ -1,0 +1,2 @@
+Executable=/private/tmp/rasc-voice-tcc/updated.app/Contents/MacOS/VoiceProbe
+# designated => cdhash H"660ba252cb9247840c7ceba522232b2dfc8e3aea"

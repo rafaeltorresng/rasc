@@ -1,0 +1,1682 @@
+[
+  {
+    "id": "pt-r3-00800",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 800,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "06a5abc9e2ca9b628f770c2f5050a6db32f90006c164cabc9a2dc250a653fd53"
+  },
+  {
+    "id": "pt-r3-00801",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 801,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "d4dbd60289abd51320524f50076ef7b5a1cd287e925275cfa3818fb3cb021af3"
+  },
+  {
+    "id": "pt-r3-00802",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 802,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "9a089e8f00fc97b91bfb31bf83dda91445b3b9dc16b2e780ab9e97e76ca8e6c5"
+  },
+  {
+    "id": "pt-r3-00803",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 803,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "a25f7cf3a492b8ba7a0278f98299b9385750056b3a4cf2de979d2c3f3a09edd8"
+  },
+  {
+    "id": "pt-r3-00804",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 804,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "97afbac2a72f3837885edc3b8df086923715f91f6f538a2697cd9b8b387c5579"
+  },
+  {
+    "id": "pt-r3-00805",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 805,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "f1ba8cf8ac5134fcbecfd97505eee2e938c5390d4fc1c10b68c09cdd4ac0b4a8"
+  },
+  {
+    "id": "pt-r3-00806",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 806,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "490b3a720e97a3d5a5a7047ea9c8e40c7db0ac5d2748f557afd07465c5748791"
+  },
+  {
+    "id": "pt-r3-00807",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 807,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "42181d8b8b5e2be64be6d31e632fe51fcf1a19f8207a3d5869792495f2676924"
+  },
+  {
+    "id": "pt-r3-00808",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 808,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "42492560e852b1f74c1b05dce18b6a7f9e1705c1d6f36685d6cc81a234431af3"
+  },
+  {
+    "id": "pt-r3-00809",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 809,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "fe5a9aedd7b8addd7789d74529feb811797aa8d85f58ac9b1ff5aa4c1a782325"
+  },
+  {
+    "id": "pt-r3-00810",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 810,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "ed3c234798b4ad5214da5c8bfb246667d8f45758a6440f58751bbdcfdadcf093"
+  },
+  {
+    "id": "pt-r3-00811",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 811,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "c5195f0725044e1f4bd7b56da4eadf9de6fbb1b766307932ac8f1d4fe51a24b2"
+  },
+  {
+    "id": "pt-r3-00812",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 812,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "431b1a629fbbbd0e74499e9e42b90ad310b7fccab7a4ee76edb9699244cfc370"
+  },
+  {
+    "id": "pt-r3-00813",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 813,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "b24abbb58a12ec7334a0129e4a24b8b4cfcbe1f430235aa64984c77b9d5c597c"
+  },
+  {
+    "id": "pt-r3-00814",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 814,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "3e55803be7ddab63b4564ee5aa937ca65b21dd82f62935bd4fd7d6bef8789661"
+  },
+  {
+    "id": "pt-r3-00815",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 815,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "90886d8a6f1b18f2be2a4a0898ee6b20dcbf19877fce67983fb7fabf56fc0ec2"
+  },
+  {
+    "id": "pt-r3-01200",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1200,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "838b24296fd976541d08f8666fd7e884785bf09d509b55bbb75c48b8a3ec3532"
+  },
+  {
+    "id": "pt-r3-01201",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1201,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "a7de13a930a8e40fd12971009079f83f051cc5244d3163a8c390f87feae24ca9"
+  },
+  {
+    "id": "pt-r3-01202",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1202,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "f9471ef64123274290dfd831d959fa2950f6a2b49dabdad08d9181d3cf45c68a"
+  },
+  {
+    "id": "pt-r3-01203",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1203,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "a958cba603c947d867ec1e38e774abbe2c8b7b47da749587607ec18b0656a75a"
+  },
+  {
+    "id": "pt-r3-01204",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1204,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "8ba468b2ddd8c2031e75df700e09bc19abf6bd0174601fee6bb896647d8b5b24"
+  },
+  {
+    "id": "pt-r3-01205",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1205,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "200064bb7ef3f707f3cf7c4d891e9a6f08378ee5a64286b8bed8429bed63e15f"
+  },
+  {
+    "id": "pt-r3-01206",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1206,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "d5ef3fa92f0c6236afe4841fffcaabceb6236f34e557e79e8768b3f6af6b4dd4"
+  },
+  {
+    "id": "pt-r3-01207",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1207,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "e49eaa62bf694c16a7ce6d4d65ab0e465c7d12b70f36d316bd0b20a226ce96c0"
+  },
+  {
+    "id": "pt-r3-01208",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1208,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "162f6926e38803079a718201920694f97a3ed27bf157e400e8bd0b7fa28fa6bd"
+  },
+  {
+    "id": "pt-r3-01209",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1209,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "8834a10b322c7f740c68cb19752e1559abbc786f2cb75a8e829558678be41aed"
+  },
+  {
+    "id": "pt-r3-01210",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1210,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "d031d71accc734ddc95477ce7707e0897a6fc63839ef0f36b8a7a58a416e07d2"
+  },
+  {
+    "id": "pt-r3-01211",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1211,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "01b451af77a97383c4efa30e5023b89ee01c0802bf69572cb656578b9219c2c4"
+  },
+  {
+    "id": "pt-r3-01212",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1212,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "19a18530652476179808e0fb6c464d0231013b682119a3ac70f5448e7f6f49b2"
+  },
+  {
+    "id": "pt-r3-01213",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1213,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "b8629677a1cddf0bfbda34c0195ca1d0c2b73fcf3894e0d636c33e10cc2e636f"
+  },
+  {
+    "id": "pt-r3-01214",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1214,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "16ac450394e36abe586c911e2f92f537493974c003f43860c5cdce401e033d9b"
+  },
+  {
+    "id": "pt-r3-01215",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 1215,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "1e633c9ba401426f2e6388c8bf8110261db9f9a67b52e06100f207acf8875ece"
+  },
+  {
+    "id": "pt-r3-03400",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3400,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "0a31a919987961b1f0c03af31c36e109ee498e5804a73b06f2d914d2c12757fb"
+  },
+  {
+    "id": "pt-r3-03401",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3401,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "999b01e5fb8cc937cda85f87e746ef35e23e7e857449e6d9784530e6510af063"
+  },
+  {
+    "id": "pt-r3-03402",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3402,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "1219f018901d2d0e46af2c10336b5ee41c3f98de9e89405e38cb35b65e5d3a41"
+  },
+  {
+    "id": "pt-r3-03403",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3403,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "59d288af0328d63344508eb2aa1cee7f8344397b93877429c33342f4e3829c51"
+  },
+  {
+    "id": "pt-r3-03404",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3404,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "9097727e11ca62d1c384c8c05ea5d5fb1ad05b295458c6d0c3f83452589b4831"
+  },
+  {
+    "id": "pt-r3-03405",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3405,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "627ea3bfc6c09043358264b33201ccf6e68a39ee8c4a467b5dfd5f1b389a3665"
+  },
+  {
+    "id": "pt-r3-03406",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3406,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "ba904aeb923ca9f0309492ab994cb4f3b17d5e085418b5141b908ff673deab85"
+  },
+  {
+    "id": "pt-r3-03407",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3407,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "9d2a3dbdb10ca7606c0a55191739a0fd01ca61a89833071aca337c3ac06c015f"
+  },
+  {
+    "id": "pt-r3-03408",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3408,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "e097e74067240ad62b76b763449c334470e3b7a7b2640649f81ccb633aa5b7af"
+  },
+  {
+    "id": "pt-r3-03409",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3409,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "48c258776502f49b4ae5014a805dfff16bca15250227c32a741ef3088410edac"
+  },
+  {
+    "id": "pt-r3-03410",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3410,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "d411e579c3146cc68f05e97218831a13cada0dd6a7d32953b17596426906e352"
+  },
+  {
+    "id": "pt-r3-03411",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3411,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "4e7391570ce804ff546cd4819b839b8d13aa6bc54ea8f68b91ad41b9699f6376"
+  },
+  {
+    "id": "pt-r3-03412",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3412,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "a3b51d32d44fd81404684e952ee56f1dc9a820054ddbd7bab4e9f7694f1216da"
+  },
+  {
+    "id": "pt-r3-03413",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3413,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "e445b83bd5fa4059e7ca5db1fd560c33e109a71e080ca25a22c1c1a5845e105d"
+  },
+  {
+    "id": "pt-r3-03414",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3414,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "76cc881d666d0c4af08d3338c86a7df654e6448da9efa17f3efb07b4b242be11"
+  },
+  {
+    "id": "pt-r3-03415",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 3415,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "e340b5c3e78ad937d3e5952360761911591f5cab8c1df6c44bf7a7dd083d4bb8"
+  },
+  {
+    "id": "pt-r3-06600",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6600,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "6c1fe1390251caa59c82d70d08da7faa166668dc082849654774bdf3a21fce12"
+  },
+  {
+    "id": "pt-r3-06601",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6601,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "731c0a6426e2528931e3e691edac9a732eea4a92dd21e26d286ff5a1706a71b5"
+  },
+  {
+    "id": "pt-r3-06602",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6602,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "dd5543fde5aeab8fbe05577313b0054b23d7166b3bc0497888cff97bf42771ac"
+  },
+  {
+    "id": "pt-r3-06603",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6603,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "b927c03e4771ea18adc691f7059405e17b73839d4bcc0951e9637aac01ba13c5"
+  },
+  {
+    "id": "pt-r3-06604",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6604,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "574a4d00c33d7ea18ad7966cfd13737dbf28265841b488e17368502107e528ab"
+  },
+  {
+    "id": "pt-r3-06605",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6605,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "d9975149c575df0b8649cc2f1dccbc30fced7f65b7ba4aad70171bfe68e0d874"
+  },
+  {
+    "id": "pt-r3-06606",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6606,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "19c68e732469d3a85efa5bcac803659322762c4bdff93c284972fa1057442deb"
+  },
+  {
+    "id": "pt-r3-06607",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6607,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "65bfd5f9650d5e52c34eea15cad570e74d5cc7b7a74f127830c4d45a506318ae"
+  },
+  {
+    "id": "pt-r3-06608",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6608,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "35295d4859d7854a7b2baf6c8218e2ac89f8ebe0688f4fa3a6c7eac183435175"
+  },
+  {
+    "id": "pt-r3-06609",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6609,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "6b3cdf5b2759191671a7adee9f70b7143656515dd1fe6952bfa4a57c6b4127e1"
+  },
+  {
+    "id": "pt-r3-06610",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6610,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "9b87166e5fca95f4ebd94ee381f0d7f158332fb9c212759187b7ad9a80231d68"
+  },
+  {
+    "id": "pt-r3-06611",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6611,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "2c310fd542d962c7fb7d162d68c9ae0ae255660dd04b66fc91c179151d05b25c"
+  },
+  {
+    "id": "pt-r3-06612",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6612,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "1d5081aac19e2316caf7408b00858a5649b60e9beac530385b5369f4fc113ecb"
+  },
+  {
+    "id": "pt-r3-06613",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6613,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "4b2167129f21152934b058a3303d86e45ae59ebc3f9d1ce5a2d49a4967e17f76"
+  },
+  {
+    "id": "pt-r3-06614",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6614,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "014cfed4125224c303c87b6910e8e289d8fc7f1e7340f35613c138aa5f87d944"
+  },
+  {
+    "id": "pt-r3-06615",
+    "dataset": "nilc-nlp/TARSILA-ASR",
+    "revision": "2785788cf674adc35caf83c297942dab3592a1b8",
+    "row": 6615,
+    "locale": "pt-BR",
+    "scenario": "pt-conversation",
+    "sha256": "64508c04deafbcc4b887fef12968f9eb1b94515a38507195463497b75c7f6343"
+  },
+  {
+    "id": "en-r3-00032",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 32,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO070",
+    "session": "EN2002a",
+    "sha256": "349d212aa65ff81562cbbb21e365eb753bd401fadb0fed0d70e7c028154911e1"
+  },
+  {
+    "id": "en-r3-00033",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 33,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002a",
+    "sha256": "3cacb4f5ad6525abbcc7cc541c078dbfc53b6ea968b2a398f4dcec20500e59b5"
+  },
+  {
+    "id": "en-r3-00034",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 34,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO070",
+    "session": "EN2002a",
+    "sha256": "617fcf249f570717440b7c03c7b4860e1c93fcc1e22830512eac3d1047464f78"
+  },
+  {
+    "id": "en-r3-00035",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 35,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO070",
+    "session": "EN2002a",
+    "sha256": "c0eb21d53c1f5272e73d4621f9bda1994e5ea2947045bf21ecc5cee9ca01bc99"
+  },
+  {
+    "id": "en-r3-00036",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 36,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO072",
+    "session": "EN2002a",
+    "sha256": "6ee672a843842d9e6050b794fa19d33b71c8a7f4c4c9467edb9daa0f55b03bc9"
+  },
+  {
+    "id": "en-r3-00037",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 37,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002a",
+    "sha256": "210c699f01c3a5a9ba3c8954c18f9b6aa018d12b53d3de10ec5203eadb2825ef"
+  },
+  {
+    "id": "en-r3-00038",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 38,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002a",
+    "sha256": "36fe97f503035bb40fb2c7aaa7f6038e69fe1135f9de3e33782089beee38d123"
+  },
+  {
+    "id": "en-r3-00039",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 39,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO072",
+    "session": "EN2002a",
+    "sha256": "ac8cc58d4052a1489a7bddf2713c85662ee12ec04bb157c0acc91fa71f3611f0"
+  },
+  {
+    "id": "en-r3-00040",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 40,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002a",
+    "sha256": "d784858f7136476c3b56bb02cd68144cdd9142dfb52ad87123a34a4aef857ba8"
+  },
+  {
+    "id": "en-r3-00041",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 41,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002a",
+    "sha256": "5ac27bcb85533fc6fd6898ee0367a316e62ec91b05b4e445f3fa25e64fe6d42d"
+  },
+  {
+    "id": "en-r3-00042",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 42,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002a",
+    "sha256": "ab6d25996c1b10cf6691ca37a34b01a2ec36a97e16b9926b38e33c91f95d0b89"
+  },
+  {
+    "id": "en-r3-00043",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 43,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002a",
+    "sha256": "b7cee78340d2c948f647d4d9d275734795298d65489d2be70baf0f8110764970"
+  },
+  {
+    "id": "en-r3-00044",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 44,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002a",
+    "sha256": "b4b10f20626f4d129392d0941d6197e97793b832f485b4e1a528c454c3e881a0"
+  },
+  {
+    "id": "en-r3-00045",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 45,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO072",
+    "session": "EN2002a",
+    "sha256": "7984bba9e76a51cd27611066b1c312c2f1b0283915965336804158d399a7e666"
+  },
+  {
+    "id": "en-r3-00046",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 46,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002a",
+    "sha256": "a3929872d2f9c00990b68c951d67a84a52b6e6856c7e8ed86f2d3eed3dd78d41"
+  },
+  {
+    "id": "en-r3-00047",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 47,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002a",
+    "sha256": "742ef61188cd929ce5da512a04c312001a006b18eac9eaefb70d12fe675228f8"
+  },
+  {
+    "id": "en-r3-00620",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 620,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002a",
+    "sha256": "c190cb74b5e2019c32f705856c853e23d0e6fc4bdf017fac6e9ce832b9eae63e"
+  },
+  {
+    "id": "en-r3-00621",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 621,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002a",
+    "sha256": "d4de64dac5076e1b3a826fbb61309faec4d72c2e90dfe3e44666c9a5a2c2b1a2"
+  },
+  {
+    "id": "en-r3-00622",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 622,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO072",
+    "session": "EN2002a",
+    "sha256": "bda548380865c2fa9e10499875377a957b3e18cc442c9e9fe30a439a7bea6406"
+  },
+  {
+    "id": "en-r3-00623",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 623,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002a",
+    "sha256": "18fffaf6b414ea3b9257a6203a2be0e85f3f2a42efce2fb7913eb237a1e934b2"
+  },
+  {
+    "id": "en-r3-00624",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 624,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002a",
+    "sha256": "64fa58104e941315088cd96f6ca56d0920c754e5fb9ae4bdd05f18f27db2bf0d"
+  },
+  {
+    "id": "en-r3-00625",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 625,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO070",
+    "session": "EN2002a",
+    "sha256": "a5129c139d3d6490c48dd06797ae24c62a27b450d82ea25749213753f5a5236a"
+  },
+  {
+    "id": "en-r3-00626",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 626,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO072",
+    "session": "EN2002a",
+    "sha256": "edebb816f48f1936cff33d9a84f73727a3bcac64d91e8b7de7e49af6871d94e8"
+  },
+  {
+    "id": "en-r3-00627",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 627,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO072",
+    "session": "EN2002a",
+    "sha256": "4c766c1ab7d38801f5d7b2b3f7099ae3b63f05b3fcec1773af8f5b6f979e850a"
+  },
+  {
+    "id": "en-r3-00628",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 628,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO072",
+    "session": "EN2002a",
+    "sha256": "2f71fb87cf862707076fe6d54c4117779ea13f2e7c25d62fc4b6bbfd9eab0803"
+  },
+  {
+    "id": "en-r3-00629",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 629,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002a",
+    "sha256": "42b05c7a3832e722cc16ec058b648de4dd51b6ed06b489ed085604983c434fa6"
+  },
+  {
+    "id": "en-r3-00630",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 630,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO070",
+    "session": "EN2002a",
+    "sha256": "1bbb59968413c3872965119186a6cbd07e0b6140404d9d0e7319ec589a846b1a"
+  },
+  {
+    "id": "en-r3-00631",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 631,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO070",
+    "session": "EN2002a",
+    "sha256": "2feda4d9355d4c70bd3be048eb3e4f6228c54addba4cf9976bb915949c3c1cf3"
+  },
+  {
+    "id": "en-r3-00632",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 632,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO072",
+    "session": "EN2002a",
+    "sha256": "6a616491af2fccf096bfc6fdaa57f1e3c8e216130c66a018d6f3b2fe958400d8"
+  },
+  {
+    "id": "en-r3-00633",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 633,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002a",
+    "sha256": "443db742014aa8d6eee36d8e1e839d48747862ab67894a1cc5ebda0735a097c2"
+  },
+  {
+    "id": "en-r3-00634",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 634,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002a",
+    "sha256": "a598f9724e00a2a4d426554f8e07aa9f57c6afe37d2df0d8d8ed3560561967b8"
+  },
+  {
+    "id": "en-r3-00635",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 635,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002a",
+    "sha256": "72b2d63b7531d3f45f8d1bd9ee8c6228441335c7ab1fe9194d7203cb0cf6e3e7"
+  },
+  {
+    "id": "en-r3-01620",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1620,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002b",
+    "sha256": "24331865afd207fc5af908cd54fb988601f391a5d0ae10e838327d54aca7ae7a"
+  },
+  {
+    "id": "en-r3-01621",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1621,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002b",
+    "sha256": "a1a3a028856b4bec7ed49639103c7a3cae48bdf5d0acf9ee8a446418645ab0fe"
+  },
+  {
+    "id": "en-r3-01622",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1622,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002b",
+    "sha256": "a96698ac3611d41ab0aa4a7cfa5b03a5545b4249df59ba0c4b18850a8015ca6b"
+  },
+  {
+    "id": "en-r3-01623",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1623,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002b",
+    "sha256": "99ac4df41702f613867e622e0ace638cf55b0dc89cd9a0defe3dda7b0d79b1fa"
+  },
+  {
+    "id": "en-r3-01624",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1624,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO072",
+    "session": "EN2002b",
+    "sha256": "d841ea1bba4530deabfb51864dcc8b2ae6a96d88b5604aef731ad4e7f975dde0"
+  },
+  {
+    "id": "en-r3-01625",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1625,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002b",
+    "sha256": "26a176499e442782b8a0ed3d02f78a373bd05e37a1e8b4ca9491e2a075142d81"
+  },
+  {
+    "id": "en-r3-01626",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1626,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO072",
+    "session": "EN2002b",
+    "sha256": "d1db701705260e4235c7343856295d4c4e55c3787ce1ae8b898638469932632e"
+  },
+  {
+    "id": "en-r3-01627",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1627,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002b",
+    "sha256": "ef435a1f72aa21a404c91b0e9ce4e207f0b510aca9a668c5bde8ba104d21f7a7"
+  },
+  {
+    "id": "en-r3-01628",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1628,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002b",
+    "sha256": "5e22336171e467fc9c3f794e6b09df9bfc5e192f37cd7307ff6dcdf64a530753"
+  },
+  {
+    "id": "en-r3-01629",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1629,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO070",
+    "session": "EN2002b",
+    "sha256": "a995bc30aa459fd5151e799c6ff693d37b5d58d195bbe4a81dba209274aa9096"
+  },
+  {
+    "id": "en-r3-01630",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1630,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002b",
+    "sha256": "0aa102649a135b9f53041ba436fdd122b419142829a8fa5b387d3ca573190fc7"
+  },
+  {
+    "id": "en-r3-01631",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1631,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO070",
+    "session": "EN2002b",
+    "sha256": "f47e22ddd9cbf7fee5ed1aa01b3399e0e72d59dbf61dd15daf08a156f0f4b2b8"
+  },
+  {
+    "id": "en-r3-01632",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1632,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002b",
+    "sha256": "18df04626fbcbc28e711b2e23e87ca2c082dfbfd32120fed08cf8efa842d29cf"
+  },
+  {
+    "id": "en-r3-01633",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1633,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO072",
+    "session": "EN2002b",
+    "sha256": "7d78c7d6d9c60a694dbb1ebdb2a0e7f8727d7f7f2b1ba952e0d451ead4c7ea8f"
+  },
+  {
+    "id": "en-r3-01634",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1634,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002b",
+    "sha256": "06b8107cd11abbf33bcf7e7205986493e58aa705799612f22f9bffc0c8618748"
+  },
+  {
+    "id": "en-r3-01635",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 1635,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002b",
+    "sha256": "83578127c5da4a769af4bf626e7baa568b1806e9045bfe3ecaea897ef42a6566"
+  },
+  {
+    "id": "en-r3-02570",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2570,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002c",
+    "sha256": "569f13ccf260ea5b562ac0db458ab5fba5fbb99e278914bec97b4a8e3911076e"
+  },
+  {
+    "id": "en-r3-02571",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2571,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002c",
+    "sha256": "2739e2d0d5be664c4f54189cd64aa37e3286265c89b1b474f90bc57efda1032d"
+  },
+  {
+    "id": "en-r3-02572",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2572,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002c",
+    "sha256": "927f6b731fbd6c2954ceb006b023a381fe5f968a958e960d09d9f049262367fe"
+  },
+  {
+    "id": "en-r3-02573",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2573,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002c",
+    "sha256": "543d5c782ddafe210254c4f2da1d7a133924508d24c5307befab6dc38d6eb9ac"
+  },
+  {
+    "id": "en-r3-02574",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2574,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002c",
+    "sha256": "734917ed494743e47091d568c4933d1a3ef9003eb2ff0a10db8ee1252445d63f"
+  },
+  {
+    "id": "en-r3-02575",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2575,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO072",
+    "session": "EN2002c",
+    "sha256": "8b61d3f1bc57fe09911d0ad0d5fcb9af8499f0b1f34420662661b8a61c2ab15d"
+  },
+  {
+    "id": "en-r3-02576",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2576,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO072",
+    "session": "EN2002c",
+    "sha256": "f76e94d1934aac29bfef03cdef953ffc504730a894b5ffcf8becbe7ac5f90a53"
+  },
+  {
+    "id": "en-r3-02577",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2577,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002c",
+    "sha256": "c06df26813be734c49b0fa11cc58afe732278426ab8227a0da4d418889523731"
+  },
+  {
+    "id": "en-r3-02578",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2578,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002c",
+    "sha256": "84d3b27e500330617a4be63a5d3575c9361aad4d1aa84717c4d8297011227111"
+  },
+  {
+    "id": "en-r3-02579",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2579,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002c",
+    "sha256": "db936ea3302c8b3f8e09219bbb3ad13fc54b555f63997f640a0dde4a075833a3"
+  },
+  {
+    "id": "en-r3-02580",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2580,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO072",
+    "session": "EN2002c",
+    "sha256": "014f2b4ba7a0ba1400a1616245b1fcdc8adc4466bffed9a50a473d2e5a6dd6f0"
+  },
+  {
+    "id": "en-r3-02581",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2581,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE071",
+    "session": "EN2002c",
+    "sha256": "846cb211089747b7d30b8fbcab2d2662034b23f29e4ce76f565c7fb0362962a5"
+  },
+  {
+    "id": "en-r3-02582",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2582,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002c",
+    "sha256": "178e074b4813019559ddd21d523e2d59ed2c31371df42dbe537060bf31e1c30b"
+  },
+  {
+    "id": "en-r3-02583",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2583,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002c",
+    "sha256": "82f6990ba1348e6ceaf77efc9e7808f7d8a29c1dbfa2066ea365efa927ed934c"
+  },
+  {
+    "id": "en-r3-02584",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2584,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "MEE073",
+    "session": "EN2002c",
+    "sha256": "de825b0ab8d0f19a344b88402fad3425ee508def7f4206ea167b05e01661193c"
+  },
+  {
+    "id": "en-r3-02585",
+    "dataset": "edinburghcstr/ami",
+    "revision": "46f28f2503e2ec48f8867a84eef356c70476beab",
+    "row": 2585,
+    "locale": "en-US",
+    "scenario": "en-meeting",
+    "speaker": "FEO072",
+    "session": "EN2002c",
+    "sha256": "65bfef6504cfe6aa7f646c0f48e226d96031257f2f815611e12cec4ef4f483fc"
+  },
+  {
+    "id": "mix-r3-por_1663_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1663_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "c72799d8742df32caaff359f4eed500cfc2e02ece529e49a0dc99c1fb42cb23e"
+  },
+  {
+    "id": "mix-r3-por_1671_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1671_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "a97c804a694b6a78eb5315b350ae359490cdd185d2b75be686e14f00dd8a2f3a"
+  },
+  {
+    "id": "mix-r3-por_1680_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1680_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "3b6e1c6aa9b944370ede6c1c1f7632d743075cefcb071827fef5e0862d61465b"
+  },
+  {
+    "id": "mix-r3-por_1689_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1689_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "b16c83cb3b15fe6f9769b08dcd05258f4250cca28be43ed2f9af1a44096e598b"
+  },
+  {
+    "id": "mix-r3-por_1698_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1698_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "9ae5af703f6b9d122d1d1a8c18f9e16c025d6ea171c435eb48442898750648e5"
+  },
+  {
+    "id": "mix-r3-por_1706_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1706_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "7322928fb56cefab81f4138cb69ba22f3aa98cee43a392f44d656daf16b14f93"
+  },
+  {
+    "id": "mix-r3-por_1714_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1714_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "b40c2fa0f79efd5dce22a5a53c06400aea0da9b156a51ec401d00ca5778ef3f6"
+  },
+  {
+    "id": "mix-r3-por_1722_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1722_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "7c387f283f6f0f38d230bf68eb0da045e8af0530492680638d9a5ca7456448ec"
+  },
+  {
+    "id": "mix-r3-por_1730_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1730_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "7edea734977e14320b7c0b901d6fae75b4e23e80d8246c622512c610dd540a62"
+  },
+  {
+    "id": "mix-r3-por_1738_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1738_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "4960bdfe1f57ff5968c3d33fa2698ba9ecbfccc0848597b8d18975cf68502a7e"
+  },
+  {
+    "id": "mix-r3-por_1746_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1746_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "4ff44ea4f4ebf6cd200099708688bd6dc8b678e5bdfddf5859f28922adba3813"
+  },
+  {
+    "id": "mix-r3-por_1754_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1754_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "997e164901ae2dfe001d88721771787c8ece73ec35f6eafbeba9373af93a6545"
+  },
+  {
+    "id": "mix-r3-por_1762_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1762_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "b05a722e69002abe2a247cb229cad2f72418663e082e4a2cc12e9771a6b8fd21"
+  },
+  {
+    "id": "mix-r3-por_1770_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1770_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "58ba509c93d7e703d3dd9f1d4998cc6c6b1f0526edc7e9db6c4f81b6316ad28c"
+  },
+  {
+    "id": "mix-r3-por_1778_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1778_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "9bb6305770db2caa439a83d5be7d94f0784a1a24d8305f71f8aa95eac69cfc50"
+  },
+  {
+    "id": "mix-r3-por_1786_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1786_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "c2ff98635614b87b287b142d6844cc40b455627dca039e188d4dc28b32294aa6"
+  },
+  {
+    "id": "mix-r3-por_1794_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1794_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "2d0ff2456946a979dd4ed25089b7546e66d9636ec9fd66ce732c1ca3eddde97e"
+  },
+  {
+    "id": "mix-r3-por_1802_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1802_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "408aa82406b345e3ccc1740d2ed39a82b4abe670a3da428f813ae6867348406e"
+  },
+  {
+    "id": "mix-r3-por_1811_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1811_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "3ab407d928060e1644567a9bd97655edf5ead7cf5edb048bc3cb6afacd8db55e"
+  },
+  {
+    "id": "mix-r3-por_1819_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1819_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "a0cfec1c602eec5778e65963c0878ac34b75e41d710541dfdff7910451d67e62"
+  },
+  {
+    "id": "mix-r3-por_1827_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1827_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "60cde0604bb42f65a3a3db9f343403213577b4548f496b1417ec41ec95420010"
+  },
+  {
+    "id": "mix-r3-por_1835_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1835_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "87a18c71bd377be01d784c71e55d41a55e156aa572efd4ac70e210975ee9455c"
+  },
+  {
+    "id": "mix-r3-por_1843_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1843_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "63b44902bbd42e56e69050f2ab20a9fafaedf9629d908d30ae8187c08a8b7ef0"
+  },
+  {
+    "id": "mix-r3-por_1851_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1851_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "6fcef104f0fa27df7fc7c8c77b7085c32daa11daa5e743e819ef269961b26bca"
+  },
+  {
+    "id": "mix-r3-por_1859_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1859_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "876808eec33e5fa2844d3f1d6ddfad489b17ba735613b6c855699cb3db6565a3"
+  },
+  {
+    "id": "mix-r3-por_1867_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1867_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "bd9dc91b7f0b071b237ccf8be24fe23592b2ac33c6afbae96ecdbfef0f75e9d9"
+  },
+  {
+    "id": "mix-r3-por_1875_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1875_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "5b180e5086ad1282a56160f41f3ae74b3c720612cecfbaa26d2f7fa231f62eb2"
+  },
+  {
+    "id": "mix-r3-por_1883_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1883_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "d3c86c6afce44c6c7f11adc07347782db21452fac30e937eeaf127425f366b8a"
+  },
+  {
+    "id": "mix-r3-por_1891_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1891_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "779968e6c303cf1c5144942cb248c3f1557b19ff20916e2b516e1f13b505d55a"
+  },
+  {
+    "id": "mix-r3-por_1900_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1900_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "0427a3ee05c6a8ff9c0f4edc09dc2f807aa3d51dcef3d0203c9b707c348f7b25"
+  },
+  {
+    "id": "mix-r3-por_1908_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1908_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "f064a4241c3ba6a67669ee1f8566ba9b6bfe632bc1b1a53994f8fed334b97c72"
+  },
+  {
+    "id": "mix-r3-por_1916_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1916_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "eb2064793913e2f7789a0d932f9fe069f6c08dd278d970e923fa71d3c2faa75b"
+  },
+  {
+    "id": "mix-r3-por_1925_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1925_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "a3439e431eef031976dc4d32f9aa87561e78690273ed846e8c3f88cc280d8085"
+  },
+  {
+    "id": "mix-r3-por_1934_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1934_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "1eb10bceb02b7ac73b6de98d6d781da5b7134b1cd13a58a91caa20158446e198"
+  },
+  {
+    "id": "mix-r3-por_1942_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1942_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "e087c7abc8386e3df80fe8648e339a8a2d60937caa374b198056ec059a1f1724"
+  },
+  {
+    "id": "mix-r3-por_1950_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1950_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "933c9ff492560fc9889693f51460a59b103409dfc32d67c4a10a9c587e2387b1"
+  },
+  {
+    "id": "mix-r3-por_1960_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1960_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "7698cde8eb503d059c37d5b29b887357e77bc8252c7b1b028169caa20e1b0be0"
+  },
+  {
+    "id": "mix-r3-por_1968_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1968_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "bbf90c399ddb6092ce12e8f6a6c99842354b4def57923e37374348eb81ff99b7"
+  },
+  {
+    "id": "mix-r3-por_1976_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1976_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "89a598a8150b3d48777465e40aa7782bdd431d4cde047313985b5afa50463954"
+  },
+  {
+    "id": "mix-r3-por_1984_CC",
+    "dataset": "byan/cs-fleurs",
+    "revision": "0cdbf166c5517ae4b6eb1c54248522eedec53017",
+    "row": "por_1984_CC",
+    "locale": "pt-BR",
+    "scenario": "pt-en-read-switch",
+    "speaker": "CC",
+    "sha256": "1707e8c9c696fbee96e531e6d74fec0992166ebd46ee477ae3842e81c647fce1"
+  }
+]

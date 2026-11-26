@@ -1,0 +1,2595 @@
+{
+  "apple-held": {
+    "attempts": 64,
+    "groups": {
+      "human-conversation:pt-BR": {
+        "n": 32,
+        "wer": 9.11,
+        "cer": 3.84,
+        "first_match": 22,
+        "last_match": 24,
+        "errors": 0
+      },
+      "human-read:en-US": {
+        "n": 32,
+        "wer": 2.22,
+        "cer": 1.28,
+        "first_match": 30,
+        "last_match": 31,
+        "errors": 0
+      },
+      "longer": {
+        "n": 39,
+        "wer": 4.78,
+        "cer": 2.22,
+        "first_match": 33,
+        "last_match": 34,
+        "errors": 0
+      },
+      "short": {
+        "n": 25,
+        "wer": 6.22,
+        "cer": 2.7,
+        "first_match": 19,
+        "last_match": 21,
+        "errors": 0
+      }
+    },
+    "short_finish_ms": {
+      "n": 25,
+      "p50": 77.8,
+      "p95": 284.5,
+      "max": 1413.53
+    },
+    "prepare_ms": [
+      230.52,
+      70.79,
+      52.51,
+      34.09,
+      31.1,
+      28.82,
+      36.85,
+      27.29,
+      26.48,
+      27.46,
+      28.95,
+      30.01,
+      70.36,
+      30.25,
+      29.61,
+      28.1,
+      27.15,
+      26.05,
+      30.08,
+      27.76,
+      27.1,
+      26.14,
+      26.85,
+      25.91,
+      25.1,
+      35.91,
+      29.8,
+      28.56,
+      28.38,
+      30.66,
+      30.42,
+      27.94,
+      62.87,
+      22.97,
+      25.35,
+      24.47,
+      24.88,
+      25.75,
+      23.87,
+      22.65,
+      21.96,
+      22.16,
+      22.59,
+      22.12,
+      23.22,
+      22.07,
+      22.72,
+      23.31,
+      24.42,
+      24.79,
+      24.4,
+      23.69,
+      23.35,
+      23.27,
+      22.43,
+      23.12,
+      23.69,
+      30.77,
+      23.83,
+      24.18,
+      21.42,
+      21.97,
+      22.12,
+      22.6
+    ],
+    "max_rss_mb": 25.6,
+    "peak_os_footprint_mb": 10.8,
+    "max_mlx_active_peak_mb": null,
+    "no_speech": {}
+  },
+  "apple-screen": {
+    "attempts": 87,
+    "groups": {
+      "human-conversation:pt-BR": {
+        "n": 32,
+        "wer": 15.68,
+        "cer": 9.87,
+        "first_match": 22,
+        "last_match": 22,
+        "errors": 0
+      },
+      "human-read:en-US": {
+        "n": 32,
+        "wer": 1.31,
+        "cer": 0.74,
+        "first_match": 30,
+        "last_match": 31,
+        "errors": 0
+      },
+      "longer": {
+        "n": 40,
+        "wer": 6.63,
+        "cer": 4.02,
+        "first_match": 35,
+        "last_match": 35,
+        "errors": 0
+      },
+      "short": {
+        "n": 44,
+        "wer": 13.14,
+        "cer": 9.26,
+        "first_match": 37,
+        "last_match": 36,
+        "errors": 0
+      },
+      "synthetic-en": {
+        "n": 9,
+        "wer": 13.92,
+        "cer": 11.32,
+        "first_match": 9,
+        "last_match": 8,
+        "errors": 0
+      },
+      "synthetic-mix": {
+        "n": 3,
+        "wer": 21.31,
+        "cer": 15.6,
+        "first_match": 3,
+        "last_match": 2,
+        "errors": 0
+      },
+      "synthetic-pt": {
+        "n": 8,
+        "wer": 5.88,
+        "cer": 1.96,
+        "first_match": 8,
+        "last_match": 8,
+        "errors": 0
+      },
+      "tag:boundary": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:boundary stress": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:code-switch": {
+        "n": 2,
+        "wer": 23.53,
+        "cer": 15.79,
+        "first_match": 2,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:date": {
+        "n": 1,
+        "wer": 16.67,
+        "cer": 15.38,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:dates": {
+        "n": 1,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:fragment": {
+        "n": 2,
+        "wer": 5.56,
+        "cer": 2.56,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:hesitation": {
+        "n": 3,
+        "wer": 3.85,
+        "cer": 0.91,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:long": {
+        "n": 2,
+        "wer": 4.5,
+        "cer": 0.42,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:moderate synthetic colored noise": {
+        "n": 2,
+        "wer": 7.69,
+        "cer": 5.08,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:names": {
+        "n": 2,
+        "wer": 7.89,
+        "cer": 6.71,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:negation": {
+        "n": 5,
+        "wer": 12.5,
+        "cer": 10.0,
+        "first_match": 5,
+        "last_match": 5,
+        "errors": 0
+      },
+      "tag:nontechnical": {
+        "n": 1,
+        "wer": 5.88,
+        "cer": 0.44,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:numbers": {
+        "n": 3,
+        "wer": 25.0,
+        "cer": 24.31,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:pauses": {
+        "n": 3,
+        "wer": 4.84,
+        "cer": 0.57,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:proper nouns": {
+        "n": 1,
+        "wer": 38.46,
+        "cer": 21.67,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:punctuation": {
+        "n": 1,
+        "wer": 35.71,
+        "cer": 22.58,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:self-correction": {
+        "n": 2,
+        "wer": 12.9,
+        "cer": 10.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:sentence switch": {
+        "n": 1,
+        "wer": 18.52,
+        "cer": 15.31,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:short": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:spoken URL": {
+        "n": 1,
+        "wer": 35.71,
+        "cer": 22.58,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:technical": {
+        "n": 3,
+        "wer": 37.74,
+        "cer": 31.54,
+        "first_match": 3,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:two synthetic voices": {
+        "n": 1,
+        "wer": 18.52,
+        "cer": 15.31,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:uncertainty": {
+        "n": 4,
+        "wer": 4.67,
+        "cer": 2.6,
+        "first_match": 4,
+        "last_match": 4,
+        "errors": 0
+      },
+      "tag:versions": {
+        "n": 1,
+        "wer": 63.16,
+        "cer": 58.43,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:zero guard silence": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      }
+    },
+    "short_finish_ms": {
+      "n": 44,
+      "p50": 73.13,
+      "p95": 156.92,
+      "max": 215.89
+    },
+    "prepare_ms": [
+      41.7,
+      31.0,
+      25.34,
+      26.41,
+      26.01,
+      25.81,
+      26.07,
+      29.19,
+      25.19,
+      24.93,
+      25.65,
+      25.13,
+      25.93,
+      24.73,
+      26.05,
+      26.21,
+      25.28,
+      25.83,
+      25.54,
+      25.85,
+      25.48,
+      25.01,
+      24.76,
+      26.17,
+      25.18,
+      25.93,
+      25.28,
+      24.77,
+      25.43,
+      25.8,
+      26.08,
+      24.81,
+      25.42,
+      25.11,
+      25.43,
+      26.21,
+      26.47,
+      27.06,
+      26.81,
+      25.38,
+      28.98,
+      25.11,
+      24.73,
+      57.35,
+      19.78,
+      21.19,
+      19.98,
+      20.46,
+      20.48,
+      19.37,
+      20.5,
+      19.8,
+      19.71,
+      19.84,
+      20.17,
+      20.58,
+      20.03,
+      20.04,
+      20.99,
+      19.77,
+      19.75,
+      20.24,
+      19.94,
+      21.43,
+      19.84,
+      20.36,
+      20.12,
+      20.85,
+      20.43,
+      21.44,
+      20.11,
+      20.81,
+      20.23,
+      20.56,
+      20.55,
+      20.27,
+      20.25,
+      19.99,
+      20.07,
+      20.18,
+      22.91,
+      20.82,
+      21.44,
+      19.68,
+      20.66,
+      20.27,
+      21.01
+    ],
+    "max_rss_mb": 27.6,
+    "peak_os_footprint_mb": 11.4,
+    "max_mlx_active_peak_mb": null,
+    "no_speech": {
+      "silence.wav": "",
+      "noise-only.wav": "",
+      "accidental.wav": ""
+    }
+  },
+  "fluid-held": {
+    "attempts": 64,
+    "groups": {
+      "human-conversation:pt-BR": {
+        "n": 32,
+        "wer": 8.51,
+        "cer": 4.45,
+        "first_match": 26,
+        "last_match": 27,
+        "errors": 0
+      },
+      "human-read:en-US": {
+        "n": 32,
+        "wer": 2.08,
+        "cer": 0.74,
+        "first_match": 30,
+        "last_match": 31,
+        "errors": 0
+      },
+      "longer": {
+        "n": 39,
+        "wer": 4.27,
+        "cer": 1.87,
+        "first_match": 34,
+        "last_match": 36,
+        "errors": 0
+      },
+      "short": {
+        "n": 25,
+        "wer": 6.64,
+        "cer": 3.82,
+        "first_match": 22,
+        "last_match": 22,
+        "errors": 0
+      }
+    },
+    "short_finish_ms": {
+      "n": 25,
+      "p50": 45.19,
+      "p95": 53.65,
+      "max": 36813.5
+    },
+    "prepare_ms": [
+      36747.87
+    ],
+    "max_rss_mb": 676.1,
+    "peak_os_footprint_mb": 80.3,
+    "max_mlx_active_peak_mb": null,
+    "no_speech": {}
+  },
+  "fluid-screen": {
+    "attempts": 87,
+    "groups": {
+      "human-conversation:pt-BR": {
+        "n": 32,
+        "wer": 11.53,
+        "cer": 7.65,
+        "first_match": 23,
+        "last_match": 23,
+        "errors": 0
+      },
+      "human-read:en-US": {
+        "n": 32,
+        "wer": 1.31,
+        "cer": 0.5,
+        "first_match": 31,
+        "last_match": 31,
+        "errors": 0
+      },
+      "longer": {
+        "n": 40,
+        "wer": 5.39,
+        "cer": 3.61,
+        "first_match": 38,
+        "last_match": 34,
+        "errors": 0
+      },
+      "short": {
+        "n": 44,
+        "wer": 10.69,
+        "cer": 6.64,
+        "first_match": 36,
+        "last_match": 37,
+        "errors": 0
+      },
+      "synthetic-en": {
+        "n": 9,
+        "wer": 11.39,
+        "cer": 10.44,
+        "first_match": 9,
+        "last_match": 8,
+        "errors": 0
+      },
+      "synthetic-mix": {
+        "n": 3,
+        "wer": 16.39,
+        "cer": 4.8,
+        "first_match": 3,
+        "last_match": 2,
+        "errors": 0
+      },
+      "synthetic-pt": {
+        "n": 8,
+        "wer": 9.24,
+        "cer": 6.46,
+        "first_match": 8,
+        "last_match": 7,
+        "errors": 0
+      },
+      "tag:boundary": {
+        "n": 2,
+        "wer": 16.67,
+        "cer": 3.85,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:boundary stress": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:code-switch": {
+        "n": 2,
+        "wer": 17.65,
+        "cer": 6.58,
+        "first_match": 2,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:date": {
+        "n": 1,
+        "wer": 11.11,
+        "cer": 13.85,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:dates": {
+        "n": 1,
+        "wer": 30.0,
+        "cer": 29.76,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:fragment": {
+        "n": 2,
+        "wer": 5.56,
+        "cer": 2.56,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:hesitation": {
+        "n": 3,
+        "wer": 1.28,
+        "cer": 0.61,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:long": {
+        "n": 2,
+        "wer": 0.9,
+        "cer": 0.21,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:moderate synthetic colored noise": {
+        "n": 2,
+        "wer": 3.85,
+        "cer": 2.54,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:names": {
+        "n": 2,
+        "wer": 21.05,
+        "cer": 22.82,
+        "first_match": 2,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:negation": {
+        "n": 5,
+        "wer": 10.94,
+        "cer": 1.92,
+        "first_match": 5,
+        "last_match": 5,
+        "errors": 0
+      },
+      "tag:nontechnical": {
+        "n": 1,
+        "wer": 1.96,
+        "cer": 0.44,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:numbers": {
+        "n": 3,
+        "wer": 34.62,
+        "cer": 35.32,
+        "first_match": 3,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:pauses": {
+        "n": 3,
+        "wer": 0.81,
+        "cer": 0.19,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:proper nouns": {
+        "n": 1,
+        "wer": 38.46,
+        "cer": 15.0,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:punctuation": {
+        "n": 1,
+        "wer": 28.57,
+        "cer": 16.13,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:self-correction": {
+        "n": 2,
+        "wer": 6.45,
+        "cer": 8.18,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:sentence switch": {
+        "n": 1,
+        "wer": 14.81,
+        "cer": 2.04,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:short": {
+        "n": 2,
+        "wer": 16.67,
+        "cer": 3.85,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:spoken URL": {
+        "n": 1,
+        "wer": 28.57,
+        "cer": 16.13,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:technical": {
+        "n": 3,
+        "wer": 33.96,
+        "cer": 25.73,
+        "first_match": 3,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:two synthetic voices": {
+        "n": 1,
+        "wer": 14.81,
+        "cer": 2.04,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:uncertainty": {
+        "n": 4,
+        "wer": 1.87,
+        "cer": 0.43,
+        "first_match": 4,
+        "last_match": 4,
+        "errors": 0
+      },
+      "tag:versions": {
+        "n": 1,
+        "wer": 63.16,
+        "cer": 58.43,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:zero guard silence": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      }
+    },
+    "short_finish_ms": {
+      "n": 44,
+      "p50": 44.51,
+      "p95": 53.41,
+      "max": 20169.01
+    },
+    "prepare_ms": [
+      20108.93
+    ],
+    "max_rss_mb": 676.0,
+    "peak_os_footprint_mb": 83.5,
+    "max_mlx_active_peak_mb": null,
+    "no_speech": {
+      "silence.wav": "",
+      "accidental.wav": "Invalid audio data provided. Must be at least 1 second of 16kHz audio.",
+      "noise-only.wav": ""
+    }
+  },
+  "granite-held": {
+    "attempts": 64,
+    "groups": {
+      "human-conversation:pt-BR": {
+        "n": 32,
+        "wer": 12.48,
+        "cer": 6.79,
+        "first_match": 24,
+        "last_match": 24,
+        "errors": 0
+      },
+      "human-read:en-US": {
+        "n": 32,
+        "wer": 0.97,
+        "cer": 0.42,
+        "first_match": 31,
+        "last_match": 31,
+        "errors": 0
+      },
+      "longer": {
+        "n": 39,
+        "wer": 3.76,
+        "cer": 1.91,
+        "first_match": 35,
+        "last_match": 35,
+        "errors": 0
+      },
+      "short": {
+        "n": 25,
+        "wer": 13.69,
+        "cer": 7.54,
+        "first_match": 20,
+        "last_match": 20,
+        "errors": 0
+      }
+    },
+    "short_finish_ms": {
+      "n": 25,
+      "p50": 33.4,
+      "p95": 63.23,
+      "max": 333.5
+    },
+    "prepare_ms": [
+      1334.4
+    ],
+    "max_rss_mb": 1090.0,
+    "peak_os_footprint_mb": 5583.4,
+    "max_mlx_active_peak_mb": 1507.5,
+    "no_speech": {}
+  },
+  "granite-screen": {
+    "attempts": 87,
+    "groups": {
+      "human-conversation:pt-BR": {
+        "n": 32,
+        "wer": 16.22,
+        "cer": 11.1,
+        "first_match": 19,
+        "last_match": 22,
+        "errors": 0
+      },
+      "human-read:en-US": {
+        "n": 32,
+        "wer": 1.18,
+        "cer": 0.56,
+        "first_match": 31,
+        "last_match": 32,
+        "errors": 0
+      },
+      "longer": {
+        "n": 40,
+        "wer": 6.55,
+        "cer": 4.23,
+        "first_match": 37,
+        "last_match": 34,
+        "errors": 0
+      },
+      "short": {
+        "n": 44,
+        "wer": 13.36,
+        "cer": 9.15,
+        "first_match": 33,
+        "last_match": 38,
+        "errors": 0
+      },
+      "synthetic-en": {
+        "n": 9,
+        "wer": 13.92,
+        "cer": 10.88,
+        "first_match": 9,
+        "last_match": 8,
+        "errors": 0
+      },
+      "synthetic-mix": {
+        "n": 3,
+        "wer": 9.84,
+        "cer": 2.8,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "synthetic-pt": {
+        "n": 8,
+        "wer": 10.08,
+        "cer": 5.68,
+        "first_match": 8,
+        "last_match": 7,
+        "errors": 0
+      },
+      "tag:boundary": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:boundary stress": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:code-switch": {
+        "n": 2,
+        "wer": 11.76,
+        "cer": 3.95,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:date": {
+        "n": 1,
+        "wer": 16.67,
+        "cer": 15.38,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:dates": {
+        "n": 1,
+        "wer": 30.0,
+        "cer": 29.76,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:fragment": {
+        "n": 2,
+        "wer": 11.11,
+        "cer": 3.85,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:hesitation": {
+        "n": 3,
+        "wer": 5.13,
+        "cer": 1.22,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:long": {
+        "n": 2,
+        "wer": 4.5,
+        "cer": 0.42,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:moderate synthetic colored noise": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:names": {
+        "n": 2,
+        "wer": 23.68,
+        "cer": 23.49,
+        "first_match": 2,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:negation": {
+        "n": 5,
+        "wer": 9.38,
+        "cer": 2.31,
+        "first_match": 5,
+        "last_match": 5,
+        "errors": 0
+      },
+      "tag:nontechnical": {
+        "n": 1,
+        "wer": 5.88,
+        "cer": 0.44,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:numbers": {
+        "n": 3,
+        "wer": 36.54,
+        "cer": 35.78,
+        "first_match": 3,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:pauses": {
+        "n": 3,
+        "wer": 4.84,
+        "cer": 0.57,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:proper nouns": {
+        "n": 1,
+        "wer": 7.69,
+        "cer": 3.33,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:punctuation": {
+        "n": 1,
+        "wer": 28.57,
+        "cer": 14.52,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:self-correction": {
+        "n": 2,
+        "wer": 12.9,
+        "cer": 10.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:sentence switch": {
+        "n": 1,
+        "wer": 7.41,
+        "cer": 1.02,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:short": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:spoken URL": {
+        "n": 1,
+        "wer": 28.57,
+        "cer": 14.52,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:technical": {
+        "n": 3,
+        "wer": 30.19,
+        "cer": 24.07,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:two synthetic voices": {
+        "n": 1,
+        "wer": 7.41,
+        "cer": 1.02,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:uncertainty": {
+        "n": 4,
+        "wer": 5.61,
+        "cer": 1.3,
+        "first_match": 4,
+        "last_match": 4,
+        "errors": 0
+      },
+      "tag:versions": {
+        "n": 1,
+        "wer": 63.16,
+        "cer": 58.43,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:zero guard silence": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      }
+    },
+    "short_finish_ms": {
+      "n": 44,
+      "p50": 31.39,
+      "p95": 60.34,
+      "max": 93.15
+    },
+    "prepare_ms": [
+      1113.82
+    ],
+    "max_rss_mb": 1090.0,
+    "peak_os_footprint_mb": 6940.9,
+    "max_mlx_active_peak_mb": 1588.5,
+    "no_speech": {
+      "silence.wav": ".",
+      "accidental.wav": "",
+      "noise-only.wav": ""
+    }
+  },
+  "nemotron-synthetic": {
+    "attempts": 23,
+    "groups": {
+      "longer": {
+        "n": 8,
+        "wer": 6.99,
+        "cer": 2.83,
+        "first_match": 8,
+        "last_match": 8,
+        "errors": 0
+      },
+      "short": {
+        "n": 12,
+        "wer": 11.01,
+        "cer": 5.53,
+        "first_match": 11,
+        "last_match": 11,
+        "errors": 0
+      },
+      "synthetic-en": {
+        "n": 9,
+        "wer": 8.86,
+        "cer": 4.12,
+        "first_match": 8,
+        "last_match": 8,
+        "errors": 0
+      },
+      "synthetic-mix": {
+        "n": 3,
+        "wer": 8.2,
+        "cer": 4.0,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "synthetic-pt": {
+        "n": 8,
+        "wer": 7.56,
+        "cer": 3.13,
+        "first_match": 8,
+        "last_match": 8,
+        "errors": 0
+      },
+      "tag:boundary": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:boundary stress": {
+        "n": 2,
+        "wer": 50.0,
+        "cer": 34.62,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:code-switch": {
+        "n": 2,
+        "wer": 5.88,
+        "cer": 3.29,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:date": {
+        "n": 1,
+        "wer": 5.56,
+        "cer": 3.08,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:dates": {
+        "n": 1,
+        "wer": 5.0,
+        "cer": 1.19,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:fragment": {
+        "n": 2,
+        "wer": 5.56,
+        "cer": 1.28,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:hesitation": {
+        "n": 3,
+        "wer": 3.85,
+        "cer": 0.61,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:long": {
+        "n": 2,
+        "wer": 4.5,
+        "cer": 0.42,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:moderate synthetic colored noise": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:names": {
+        "n": 2,
+        "wer": 5.26,
+        "cer": 2.01,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:negation": {
+        "n": 5,
+        "wer": 6.25,
+        "cer": 2.31,
+        "first_match": 5,
+        "last_match": 5,
+        "errors": 0
+      },
+      "tag:nontechnical": {
+        "n": 1,
+        "wer": 5.88,
+        "cer": 0.44,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:numbers": {
+        "n": 3,
+        "wer": 13.46,
+        "cer": 8.26,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:pauses": {
+        "n": 3,
+        "wer": 6.45,
+        "cer": 2.67,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:proper nouns": {
+        "n": 1,
+        "wer": 15.38,
+        "cer": 8.33,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:punctuation": {
+        "n": 1,
+        "wer": 35.71,
+        "cer": 17.74,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:self-correction": {
+        "n": 2,
+        "wer": 12.9,
+        "cer": 12.73,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:sentence switch": {
+        "n": 1,
+        "wer": 11.11,
+        "cer": 5.1,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:short": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:spoken URL": {
+        "n": 1,
+        "wer": 35.71,
+        "cer": 17.74,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:technical": {
+        "n": 3,
+        "wer": 9.43,
+        "cer": 4.15,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:two synthetic voices": {
+        "n": 1,
+        "wer": 11.11,
+        "cer": 5.1,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:uncertainty": {
+        "n": 4,
+        "wer": 2.8,
+        "cer": 0.43,
+        "first_match": 4,
+        "last_match": 4,
+        "errors": 0
+      },
+      "tag:versions": {
+        "n": 1,
+        "wer": 15.79,
+        "cer": 5.62,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:zero guard silence": {
+        "n": 2,
+        "wer": 50.0,
+        "cer": 34.62,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      }
+    },
+    "short_finish_ms": {
+      "n": 12,
+      "p50": 16.51,
+      "p95": 19.07,
+      "max": 19.07
+    },
+    "prepare_ms": [
+      34065.24
+    ],
+    "max_rss_mb": 618.7,
+    "peak_os_footprint_mb": 79.9,
+    "max_mlx_active_peak_mb": null,
+    "no_speech": {
+      "accidental.wav": "",
+      "noise-only.wav": "",
+      "silence.wav": ""
+    }
+  },
+  "qwen06-screen": {
+    "attempts": 87,
+    "groups": {
+      "human-conversation:pt-BR": {
+        "n": 32,
+        "wer": 16.94,
+        "cer": 8.92,
+        "first_match": 20,
+        "last_match": 25,
+        "errors": 0
+      },
+      "human-read:en-US": {
+        "n": 32,
+        "wer": 2.1,
+        "cer": 1.09,
+        "first_match": 31,
+        "last_match": 32,
+        "errors": 0
+      },
+      "longer": {
+        "n": 40,
+        "wer": 9.12,
+        "cer": 4.04,
+        "first_match": 34,
+        "last_match": 37,
+        "errors": 0
+      },
+      "short": {
+        "n": 44,
+        "wer": 12.69,
+        "cer": 7.8,
+        "first_match": 36,
+        "last_match": 38,
+        "errors": 0
+      },
+      "synthetic-en": {
+        "n": 9,
+        "wer": 12.03,
+        "cer": 10.15,
+        "first_match": 9,
+        "last_match": 9,
+        "errors": 0
+      },
+      "synthetic-mix": {
+        "n": 3,
+        "wer": 31.15,
+        "cer": 11.6,
+        "first_match": 3,
+        "last_match": 2,
+        "errors": 0
+      },
+      "synthetic-pt": {
+        "n": 8,
+        "wer": 15.97,
+        "cer": 2.35,
+        "first_match": 7,
+        "last_match": 7,
+        "errors": 0
+      },
+      "tag:boundary": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:boundary stress": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:code-switch": {
+        "n": 2,
+        "wer": 32.35,
+        "cer": 14.47,
+        "first_match": 2,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:date": {
+        "n": 1,
+        "wer": 5.56,
+        "cer": 1.54,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:dates": {
+        "n": 1,
+        "wer": 20.0,
+        "cer": 2.38,
+        "first_match": 0,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:fragment": {
+        "n": 2,
+        "wer": 5.56,
+        "cer": 1.28,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:hesitation": {
+        "n": 3,
+        "wer": 3.85,
+        "cer": 0.61,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:long": {
+        "n": 2,
+        "wer": 13.51,
+        "cer": 1.88,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:moderate synthetic colored noise": {
+        "n": 2,
+        "wer": 3.85,
+        "cer": 0.85,
+        "first_match": 2,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:names": {
+        "n": 2,
+        "wer": 13.16,
+        "cer": 2.01,
+        "first_match": 1,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:negation": {
+        "n": 5,
+        "wer": 18.75,
+        "cer": 6.15,
+        "first_match": 5,
+        "last_match": 5,
+        "errors": 0
+      },
+      "tag:nontechnical": {
+        "n": 1,
+        "wer": 25.49,
+        "cer": 3.49,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:numbers": {
+        "n": 3,
+        "wer": 30.77,
+        "cer": 24.77,
+        "first_match": 2,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:pauses": {
+        "n": 3,
+        "wer": 12.1,
+        "cer": 1.71,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:proper nouns": {
+        "n": 1,
+        "wer": 53.85,
+        "cer": 21.67,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:punctuation": {
+        "n": 1,
+        "wer": 28.57,
+        "cer": 24.19,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:self-correction": {
+        "n": 2,
+        "wer": 3.23,
+        "cer": 0.91,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:sentence switch": {
+        "n": 1,
+        "wer": 29.63,
+        "cer": 7.14,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:short": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:spoken URL": {
+        "n": 1,
+        "wer": 28.57,
+        "cer": 24.19,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:technical": {
+        "n": 3,
+        "wer": 43.4,
+        "cer": 30.71,
+        "first_match": 3,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:two synthetic voices": {
+        "n": 1,
+        "wer": 29.63,
+        "cer": 7.14,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:uncertainty": {
+        "n": 4,
+        "wer": 5.61,
+        "cer": 2.17,
+        "first_match": 4,
+        "last_match": 4,
+        "errors": 0
+      },
+      "tag:versions": {
+        "n": 1,
+        "wer": 63.16,
+        "cer": 58.43,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:zero guard silence": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      }
+    },
+    "short_finish_ms": {
+      "n": 44,
+      "p50": 153.47,
+      "p95": 216.6,
+      "max": 366.09
+    },
+    "prepare_ms": [
+      1283.46
+    ],
+    "max_rss_mb": 865.3,
+    "peak_os_footprint_mb": 2430.5,
+    "max_mlx_active_peak_mb": 1907.2,
+    "no_speech": {
+      "silence.wav": "",
+      "accidental.wav": "ечек",
+      "noise-only.wav": ""
+    }
+  },
+  "qwen17-held": {
+    "attempts": 64,
+    "groups": {
+      "human-conversation:pt-BR": {
+        "n": 32,
+        "wer": 12.87,
+        "cer": 5.47,
+        "first_match": 25,
+        "last_match": 23,
+        "errors": 0
+      },
+      "human-read:en-US": {
+        "n": 32,
+        "wer": 2.22,
+        "cer": 1.01,
+        "first_match": 32,
+        "last_match": 31,
+        "errors": 0
+      },
+      "longer": {
+        "n": 39,
+        "wer": 4.88,
+        "cer": 2.11,
+        "first_match": 37,
+        "last_match": 34,
+        "errors": 0
+      },
+      "short": {
+        "n": 25,
+        "wer": 13.69,
+        "cer": 5.77,
+        "first_match": 20,
+        "last_match": 20,
+        "errors": 0
+      }
+    },
+    "short_finish_ms": {
+      "n": 25,
+      "p50": 317.94,
+      "p95": 505.33,
+      "max": 688.82
+    },
+    "prepare_ms": [
+      5989.02
+    ],
+    "max_rss_mb": 688.0,
+    "peak_os_footprint_mb": 3474.2,
+    "max_mlx_active_peak_mb": 2937.8,
+    "no_speech": {}
+  },
+  "qwen17-screen": {
+    "attempts": 87,
+    "groups": {
+      "human-conversation:pt-BR": {
+        "n": 32,
+        "wer": 12.07,
+        "cer": 7.22,
+        "first_match": 21,
+        "last_match": 26,
+        "errors": 0
+      },
+      "human-read:en-US": {
+        "n": 32,
+        "wer": 1.18,
+        "cer": 0.5,
+        "first_match": 32,
+        "last_match": 32,
+        "errors": 0
+      },
+      "longer": {
+        "n": 40,
+        "wer": 6.3,
+        "cer": 3.58,
+        "first_match": 36,
+        "last_match": 38,
+        "errors": 0
+      },
+      "short": {
+        "n": 44,
+        "wer": 10.02,
+        "cer": 6.79,
+        "first_match": 35,
+        "last_match": 40,
+        "errors": 0
+      },
+      "synthetic-en": {
+        "n": 9,
+        "wer": 14.56,
+        "cer": 10.15,
+        "first_match": 8,
+        "last_match": 9,
+        "errors": 0
+      },
+      "synthetic-mix": {
+        "n": 3,
+        "wer": 26.23,
+        "cer": 21.2,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "synthetic-pt": {
+        "n": 8,
+        "wer": 5.04,
+        "cer": 1.17,
+        "first_match": 7,
+        "last_match": 8,
+        "errors": 0
+      },
+      "tag:boundary": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:boundary stress": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:code-switch": {
+        "n": 2,
+        "wer": 17.65,
+        "cer": 9.21,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:date": {
+        "n": 1,
+        "wer": 16.67,
+        "cer": 4.62,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:dates": {
+        "n": 1,
+        "wer": 15.0,
+        "cer": 3.57,
+        "first_match": 0,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:fragment": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:hesitation": {
+        "n": 3,
+        "wer": 3.85,
+        "cer": 0.91,
+        "first_match": 2,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:long": {
+        "n": 2,
+        "wer": 4.5,
+        "cer": 0.62,
+        "first_match": 1,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:moderate synthetic colored noise": {
+        "n": 2,
+        "wer": 3.85,
+        "cer": 2.54,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:names": {
+        "n": 2,
+        "wer": 15.79,
+        "cer": 4.03,
+        "first_match": 1,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:negation": {
+        "n": 5,
+        "wer": 20.31,
+        "cer": 17.69,
+        "first_match": 5,
+        "last_match": 5,
+        "errors": 0
+      },
+      "tag:nontechnical": {
+        "n": 1,
+        "wer": 3.92,
+        "cer": 0.0,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:numbers": {
+        "n": 3,
+        "wer": 32.69,
+        "cer": 25.23,
+        "first_match": 2,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:pauses": {
+        "n": 3,
+        "wer": 4.03,
+        "cer": 0.57,
+        "first_match": 2,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:proper nouns": {
+        "n": 1,
+        "wer": 23.08,
+        "cer": 11.67,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:punctuation": {
+        "n": 1,
+        "wer": 21.43,
+        "cer": 17.74,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:self-correction": {
+        "n": 2,
+        "wer": 9.68,
+        "cer": 2.73,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:sentence switch": {
+        "n": 1,
+        "wer": 37.04,
+        "cer": 39.8,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:short": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:spoken URL": {
+        "n": 1,
+        "wer": 21.43,
+        "cer": 17.74,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:technical": {
+        "n": 3,
+        "wer": 37.74,
+        "cer": 27.39,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:two synthetic voices": {
+        "n": 1,
+        "wer": 37.04,
+        "cer": 39.8,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:uncertainty": {
+        "n": 4,
+        "wer": 5.61,
+        "cer": 2.17,
+        "first_match": 3,
+        "last_match": 4,
+        "errors": 0
+      },
+      "tag:versions": {
+        "n": 1,
+        "wer": 73.68,
+        "cer": 58.43,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:zero guard silence": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      }
+    },
+    "short_finish_ms": {
+      "n": 44,
+      "p50": 295.96,
+      "p95": 431.92,
+      "max": 499.66
+    },
+    "prepare_ms": [
+      1783.39
+    ],
+    "max_rss_mb": 1332.1,
+    "peak_os_footprint_mb": 3600.5,
+    "max_mlx_active_peak_mb": 3008.7,
+    "no_speech": {
+      "silence.wav": "",
+      "accidental.wav": "",
+      "noise-only.wav": ""
+    }
+  },
+  "ultra-held": {
+    "attempts": 64,
+    "groups": {
+      "human-conversation:pt-BR": {
+        "n": 32,
+        "wer": 7.72,
+        "cer": 4.23,
+        "first_match": 28,
+        "last_match": 25,
+        "errors": 0
+      },
+      "human-read:en-US": {
+        "n": 32,
+        "wer": 2.36,
+        "cer": 1.07,
+        "first_match": 30,
+        "last_match": 31,
+        "errors": 0
+      },
+      "longer": {
+        "n": 39,
+        "wer": 4.37,
+        "cer": 2.04,
+        "first_match": 36,
+        "last_match": 34,
+        "errors": 0
+      },
+      "short": {
+        "n": 25,
+        "wer": 5.39,
+        "cer": 3.63,
+        "first_match": 22,
+        "last_match": 22,
+        "errors": 0
+      }
+    },
+    "short_finish_ms": {
+      "n": 25,
+      "p50": 45.97,
+      "p95": 53.52,
+      "max": 31882.31
+    },
+    "prepare_ms": [
+      31829.69
+    ],
+    "max_rss_mb": 678.5,
+    "peak_os_footprint_mb": 66.6,
+    "max_mlx_active_peak_mb": null,
+    "no_speech": {}
+  },
+  "ultra-screen": {
+    "attempts": 87,
+    "groups": {
+      "human-conversation:pt-BR": {
+        "n": 32,
+        "wer": 11.71,
+        "cer": 7.69,
+        "first_match": 22,
+        "last_match": 25,
+        "errors": 0
+      },
+      "human-read:en-US": {
+        "n": 32,
+        "wer": 1.44,
+        "cer": 0.53,
+        "first_match": 31,
+        "last_match": 31,
+        "errors": 0
+      },
+      "longer": {
+        "n": 40,
+        "wer": 5.22,
+        "cer": 3.45,
+        "first_match": 38,
+        "last_match": 35,
+        "errors": 0
+      },
+      "short": {
+        "n": 44,
+        "wer": 10.91,
+        "cer": 7.04,
+        "first_match": 35,
+        "last_match": 38,
+        "errors": 0
+      },
+      "synthetic-en": {
+        "n": 9,
+        "wer": 10.76,
+        "cer": 10.0,
+        "first_match": 9,
+        "last_match": 8,
+        "errors": 0
+      },
+      "synthetic-mix": {
+        "n": 3,
+        "wer": 13.11,
+        "cer": 4.8,
+        "first_match": 3,
+        "last_match": 2,
+        "errors": 0
+      },
+      "synthetic-pt": {
+        "n": 8,
+        "wer": 9.24,
+        "cer": 6.46,
+        "first_match": 8,
+        "last_match": 7,
+        "errors": 0
+      },
+      "tag:boundary": {
+        "n": 2,
+        "wer": 16.67,
+        "cer": 3.85,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:boundary stress": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:code-switch": {
+        "n": 2,
+        "wer": 11.76,
+        "cer": 6.58,
+        "first_match": 2,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:date": {
+        "n": 1,
+        "wer": 11.11,
+        "cer": 13.85,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:dates": {
+        "n": 1,
+        "wer": 30.0,
+        "cer": 29.76,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:fragment": {
+        "n": 2,
+        "wer": 5.56,
+        "cer": 2.56,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:hesitation": {
+        "n": 3,
+        "wer": 1.28,
+        "cer": 0.61,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:long": {
+        "n": 2,
+        "wer": 0.9,
+        "cer": 0.21,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:moderate synthetic colored noise": {
+        "n": 2,
+        "wer": 3.85,
+        "cer": 2.54,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:names": {
+        "n": 2,
+        "wer": 21.05,
+        "cer": 22.82,
+        "first_match": 2,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:negation": {
+        "n": 5,
+        "wer": 10.94,
+        "cer": 1.92,
+        "first_match": 5,
+        "last_match": 5,
+        "errors": 0
+      },
+      "tag:nontechnical": {
+        "n": 1,
+        "wer": 1.96,
+        "cer": 0.44,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:numbers": {
+        "n": 3,
+        "wer": 34.62,
+        "cer": 35.32,
+        "first_match": 3,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:pauses": {
+        "n": 3,
+        "wer": 0.81,
+        "cer": 0.19,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:proper nouns": {
+        "n": 1,
+        "wer": 23.08,
+        "cer": 15.0,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:punctuation": {
+        "n": 1,
+        "wer": 21.43,
+        "cer": 11.29,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:self-correction": {
+        "n": 2,
+        "wer": 6.45,
+        "cer": 8.18,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:sentence switch": {
+        "n": 1,
+        "wer": 14.81,
+        "cer": 2.04,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:short": {
+        "n": 2,
+        "wer": 16.67,
+        "cer": 3.85,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:spoken URL": {
+        "n": 1,
+        "wer": 21.43,
+        "cer": 11.29,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:technical": {
+        "n": 3,
+        "wer": 30.19,
+        "cer": 25.73,
+        "first_match": 3,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:two synthetic voices": {
+        "n": 1,
+        "wer": 14.81,
+        "cer": 2.04,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:uncertainty": {
+        "n": 4,
+        "wer": 1.87,
+        "cer": 0.43,
+        "first_match": 4,
+        "last_match": 4,
+        "errors": 0
+      },
+      "tag:versions": {
+        "n": 1,
+        "wer": 63.16,
+        "cer": 58.43,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:zero guard silence": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      }
+    },
+    "short_finish_ms": {
+      "n": 44,
+      "p50": 45.63,
+      "p95": 55.25,
+      "max": 24445.74
+    },
+    "prepare_ms": [
+      24395.3
+    ],
+    "max_rss_mb": 677.5,
+    "peak_os_footprint_mb": 66.2,
+    "max_mlx_active_peak_mb": null,
+    "no_speech": {
+      "silence.wav": "",
+      "accidental.wav": "Invalid audio data provided. Must be at least 1 second of 16kHz audio.",
+      "noise-only.wav": ""
+    }
+  },
+  "whisper-v3-synthetic": {
+    "attempts": 23,
+    "groups": {
+      "longer": {
+        "n": 8,
+        "wer": 11.35,
+        "cer": 9.55,
+        "first_match": 7,
+        "last_match": 7,
+        "errors": 0
+      },
+      "short": {
+        "n": 12,
+        "wer": 15.6,
+        "cer": 11.07,
+        "first_match": 12,
+        "last_match": 10,
+        "errors": 0
+      },
+      "synthetic-en": {
+        "n": 9,
+        "wer": 14.56,
+        "cer": 14.41,
+        "first_match": 9,
+        "last_match": 8,
+        "errors": 0
+      },
+      "synthetic-mix": {
+        "n": 3,
+        "wer": 13.11,
+        "cer": 6.4,
+        "first_match": 3,
+        "last_match": 2,
+        "errors": 0
+      },
+      "synthetic-pt": {
+        "n": 8,
+        "wer": 10.08,
+        "cer": 6.07,
+        "first_match": 7,
+        "last_match": 7,
+        "errors": 0
+      },
+      "tag:boundary": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:boundary stress": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:code-switch": {
+        "n": 2,
+        "wer": 20.59,
+        "cer": 9.87,
+        "first_match": 2,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:date": {
+        "n": 1,
+        "wer": 16.67,
+        "cer": 15.38,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:dates": {
+        "n": 1,
+        "wer": 45.0,
+        "cer": 30.95,
+        "first_match": 0,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:fragment": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:hesitation": {
+        "n": 3,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:long": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:moderate synthetic colored noise": {
+        "n": 2,
+        "wer": 7.69,
+        "cer": 3.39,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:names": {
+        "n": 2,
+        "wer": 31.58,
+        "cer": 24.16,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:negation": {
+        "n": 5,
+        "wer": 4.69,
+        "cer": 1.54,
+        "first_match": 5,
+        "last_match": 5,
+        "errors": 0
+      },
+      "tag:nontechnical": {
+        "n": 1,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:numbers": {
+        "n": 3,
+        "wer": 40.38,
+        "cer": 35.78,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:pauses": {
+        "n": 3,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 3,
+        "last_match": 3,
+        "errors": 0
+      },
+      "tag:proper nouns": {
+        "n": 1,
+        "wer": 46.15,
+        "cer": 21.67,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:punctuation": {
+        "n": 1,
+        "wer": 57.14,
+        "cer": 58.06,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:self-correction": {
+        "n": 2,
+        "wer": 9.68,
+        "cer": 9.09,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:sentence switch": {
+        "n": 1,
+        "wer": 3.7,
+        "cer": 1.02,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:short": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:spoken URL": {
+        "n": 1,
+        "wer": 57.14,
+        "cer": 58.06,
+        "first_match": 1,
+        "last_match": 0,
+        "errors": 0
+      },
+      "tag:technical": {
+        "n": 3,
+        "wer": 35.85,
+        "cer": 27.8,
+        "first_match": 3,
+        "last_match": 2,
+        "errors": 0
+      },
+      "tag:two synthetic voices": {
+        "n": 1,
+        "wer": 3.7,
+        "cer": 1.02,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:uncertainty": {
+        "n": 4,
+        "wer": 1.87,
+        "cer": 0.65,
+        "first_match": 4,
+        "last_match": 4,
+        "errors": 0
+      },
+      "tag:versions": {
+        "n": 1,
+        "wer": 63.16,
+        "cer": 58.43,
+        "first_match": 1,
+        "last_match": 1,
+        "errors": 0
+      },
+      "tag:zero guard silence": {
+        "n": 2,
+        "wer": 0.0,
+        "cer": 0.0,
+        "first_match": 2,
+        "last_match": 2,
+        "errors": 0
+      }
+    },
+    "short_finish_ms": {
+      "n": 12,
+      "p50": 1104.4,
+      "p95": 1368.1,
+      "max": 1368.1
+    },
+    "prepare_ms": [
+      1411.23,
+      939.71,
+      1289.86
+    ],
+    "max_rss_mb": 2012.3,
+    "peak_os_footprint_mb": 2149.6,
+    "max_mlx_active_peak_mb": null,
+    "no_speech": {
+      "silence.wav": " you",
+      "noise-only.wav": " Thank you.",
+      "accidental.wav": " Legenda por Sônia Ruberti"
+    }
+  }
+}
