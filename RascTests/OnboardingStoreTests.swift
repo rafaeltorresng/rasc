@@ -92,6 +92,21 @@ struct OnboardingStoreTests {
         store.persistProgress(step: .capturePractice, captureSubstep: .waitingForShortcut)
         #expect(store.step == .capturePractice)
         #expect(store.captureSubstep == .waitingForShortcut)
+
+        store.focus = .scratchpadAndVoice
+        store.resumeCompleted = true
+        store.practiceKept = true
+        store.voiceOptedIn = true
+        #expect(store.focus == .scratchpadAndVoice)
+        #expect(store.resumeCompleted)
+        #expect(store.practiceKept)
+        #expect(store.voiceOptedIn)
+
+        store.resetOnboardingStateOnly()
+        #expect(store.focus == nil)
+        #expect(!store.resumeCompleted)
+        #expect(!store.practiceKept)
+        #expect(!store.voiceOptedIn)
     }
 
     private func makeDefaults() -> UserDefaults {

@@ -37,7 +37,7 @@ final class OnboardingWindowController {
     private func makeWindow() -> NSWindow {
         let window = NSWindow(
             contentRect: NSRect(origin: .zero, size: RascWindowMetrics.onboarding),
-            styleMask: [.titled, .closable, .fullSizeContentView],
+            styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
@@ -46,8 +46,8 @@ final class OnboardingWindowController {
         window.titlebarAppearsTransparent = true
         window.isReleasedWhenClosed = false
         window.isMovableByWindowBackground = true
-        window.minSize = RascWindowMetrics.onboarding
-        window.maxSize = RascWindowMetrics.onboarding
+        window.minSize = NSSize(width: 560, height: 480)
+        window.maxSize = NSSize(width: 820, height: 640)
         window.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
         return window
     }

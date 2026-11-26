@@ -311,6 +311,10 @@ struct SettingsView: View {
 
                 Link("Source on GitHub", destination: URL(string: "https://github.com/rafaeltorresng/rasc")!)
 
+                Button("Welcome Guide…") {
+                    NotificationCenter.default.post(name: OnboardingCoordinator.replayNotification, object: nil)
+                }
+
                 Button("Send Feedback…") {
                     BetaFeedback.open()
                 }
