@@ -1138,6 +1138,18 @@ struct VoiceCaptureTests {
         #expect(measured.realTimeFactor == 0.0075)
     }
 
+    @Test func micBufferCompactsShortRecordingExcessCapacityAfterStop() {
+        let rate = 48_000.0
+        let buffer = MicBuffer(rate: rate)
+        let sampleCount = 24_000 // 0.5 s vs 90 s (4,320,000) capacity
+        let input = (0..<sampleCount).map { Float($0 % 97) * 0.001 }
+        input.withUnsafeBufferPointer { buffer.append($0) }
+
+        let audio = buffer.audio()
+        #expect(audio.samples == input)
+        #expect(audio.samples.capacity < Int(rate * 90) / 2)
+    }
+
     private func wait(until predicate: () -> Bool) async throws {
         let deadline = ContinuousClock.now.advanced(by: .seconds(10))
         while !predicate(), ContinuousClock.now < deadline {

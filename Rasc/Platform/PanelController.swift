@@ -62,11 +62,25 @@ final class PanelController: NSObject, NSWindowDelegate {
     private let windowFrameStore: WindowFrameStore
     private var hostingController: NSHostingController<AnyView>!
     private var previousApplication: NSRunningApplication?
-    private var displayObservers: [NSObjectProtocol] = []
-    private var keyMonitor: Any?
+    private nonisolated(unsafe) var defaultObservers: [NSObjectProtocol] = []
+    private nonisolated(unsafe) var workspaceObservers: [NSObjectProtocol] = []
+    private nonisolated(unsafe) var keyMonitor: Any?
     private var homeIsVisible = false
     private var menuIsTracking = false
-    private var occlusionTimer: Timer?
+    private nonisolated(unsafe) var occlusionTimer: Timer?
+
+    deinit {
+        occlusionTimer?.invalidate()
+        if let keyMonitor {
+            NSEvent.removeMonitor(keyMonitor)
+        }
+        for observer in defaultObservers {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        for observer in workspaceObservers {
+            NSWorkspace.shared.notificationCenter.removeObserver(observer)
+        }
+    }
     weak var onboardingDelegate: OnboardingPanelDelegate?
     var onOpenHome: (() -> Void)?
     var onOpenSettings: (() -> Void)?
@@ -345,7 +359,7 @@ final class PanelController: NSObject, NSWindowDelegate {
         positionPanelIfNeeded()
         resizePanelForTransientSurface()
         NSApp.activate(ignoringOtherApps: true)
-        updatePanelLevel()
+        updatePanelLevel(force: true)
         startOcclusionMonitoring()
         panel.orderFrontRegardless()
         panel.makeKeyAndOrderFront(nil)
@@ -429,7 +443,7 @@ final class PanelController: NSObject, NSWindowDelegate {
         panel.becomesKeyOnlyIfNeeded = false
         // `.screenSaver` is required for the scratchpad to appear above native fullscreen apps.
         // `.floating` stays below fullscreen Spaces; validated on macOS 26 with `.fullScreenAuxiliary`.
-        updatePanelLevel()
+        updatePanelLevel(force: true)
         panel.collectionBehavior = [
             .canJoinAllSpaces,
             .canJoinAllApplications,
@@ -580,7 +594,7 @@ final class PanelController: NSObject, NSWindowDelegate {
 
     private func observeActivation() {
         let center = NotificationCenter.default
-        displayObservers.append(
+        defaultObservers.append(
             center.addObserver(
                 forName: NSApplication.didBecomeActiveNotification,
                 object: nil,
@@ -592,7 +606,7 @@ final class PanelController: NSObject, NSWindowDelegate {
                 }
             }
         )
-        displayObservers.append(
+        workspaceObservers.append(
             NSWorkspace.shared.notificationCenter.addObserver(
                 forName: NSWorkspace.didActivateApplicationNotification,
                 object: nil,
@@ -603,7 +617,7 @@ final class PanelController: NSObject, NSWindowDelegate {
                 }
             }
         )
-        displayObservers.append(
+        defaultObservers.append(
             center.addObserver(
                 forName: NSApplication.didResignActiveNotification,
                 object: nil,
@@ -614,7 +628,7 @@ final class PanelController: NSObject, NSWindowDelegate {
                 }
             }
         )
-        displayObservers.append(
+        defaultObservers.append(
             center.addObserver(
                 forName: NSMenu.didBeginTrackingNotification,
                 object: nil,
@@ -626,7 +640,7 @@ final class PanelController: NSObject, NSWindowDelegate {
                 }
             }
         )
-        displayObservers.append(
+        defaultObservers.append(
             center.addObserver(
                 forName: NSMenu.didEndTrackingNotification,
                 object: nil,
@@ -640,13 +654,19 @@ final class PanelController: NSObject, NSWindowDelegate {
         )
     }
 
-    private func updatePanelLevel() {
-        panel.level = ScratchpadPanelLevelPolicy.level(
+    private func updatePanelLevel(force: Bool = false) {
+        guard force || panel.isVisible else { return }
+        let appIsActive = NSApp.isActive
+        let needsPriority = (homeIsVisible && appIsActive) ? false : systemInteractionNeedsPriority()
+        let nextLevel = ScratchpadPanelLevelPolicy.level(
             homeIsVisible: homeIsVisible,
-            appIsActive: NSApp.isActive,
+            appIsActive: appIsActive,
             menuIsTracking: menuIsTracking,
-            systemInteractionNeedsPriority: systemInteractionNeedsPriority()
+            systemInteractionNeedsPriority: needsPriority
         )
+        if panel.level != nextLevel {
+            panel.level = nextLevel
+        }
     }
 
     private func systemInteractionNeedsPriority() -> Bool {
@@ -663,6 +683,7 @@ final class PanelController: NSObject, NSWindowDelegate {
                 self?.updatePanelLevel()
             }
         }
+        timer.tolerance = 0.15
         RunLoop.main.add(timer, forMode: .common)
         occlusionTimer = timer
     }
@@ -695,25 +716,27 @@ final class PanelController: NSObject, NSWindowDelegate {
 
     private func observeDisplayChanges() {
         let workspaceCenter = NSWorkspace.shared.notificationCenter
-        displayObservers.append(
+        workspaceObservers.append(
             workspaceCenter.addObserver(
                 forName: NSWorkspace.screensDidWakeNotification,
                 object: nil,
                 queue: .main
             ) { [weak self] _ in
                 Task { @MainActor in
-                    self?.revalidatePanelFrame(reason: "screens_did_wake")
+                    guard let self, self.panel.isVisible else { return }
+                    self.revalidatePanelFrame(reason: "screens_did_wake")
                 }
             }
         )
-        displayObservers.append(
+        defaultObservers.append(
             NotificationCenter.default.addObserver(
                 forName: NSApplication.didChangeScreenParametersNotification,
                 object: nil,
                 queue: .main
             ) { [weak self] _ in
                 Task { @MainActor in
-                    self?.revalidatePanelFrame(reason: "screen_parameters_changed")
+                    guard let self, self.panel.isVisible else { return }
+                    self.revalidatePanelFrame(reason: "screen_parameters_changed")
                 }
             }
         )

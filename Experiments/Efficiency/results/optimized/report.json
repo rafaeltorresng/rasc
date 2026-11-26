@@ -1,0 +1,1046 @@
+{
+  "label": "optimized",
+  "generated_at": "2026-11-26T15:40:36-0300",
+  "environment": {
+    "commit": "1cee496",
+    "machine_cpu": "Apple M3 Pro",
+    "memory_bytes": 19327352832,
+    "macos_version": "26.5.1",
+    "macos_build": "25F80",
+    "xcode": "Xcode 26.2 / Build version 17C52",
+    "bundle_id": "com.rafaeltorres.rasc.efficiency",
+    "is_sandboxed": true,
+    "personal_db_unchanged": true
+  },
+  "disk_footprint": {
+    "app_bundle": {
+      "app_du_kib": 41476,
+      "app_du_mib": 40.5,
+      "total_file_bytes": 42326236,
+      "macos_binary_bytes": 41445776,
+      "frameworks_bytes": 187856,
+      "xpc_services_bytes": 311561,
+      "resources_bytes": 358582
+    },
+    "speech_model_bytes": 652304885,
+    "speech_model_mib": 622.09,
+    "sqlite_after_workday_bytes": {
+      "Rasc.sqlite": 192512,
+      "Rasc.sqlite-wal": 0,
+      "Rasc.sqlite-shm": 0
+    }
+  },
+  "launch": {
+    "runs": [
+      {
+        "run": 0,
+        "peak_cpu_pct": 79.97,
+        "time_to_idle_s": 0.2,
+        "settled_footprint_mib": 22.64,
+        "settled_rss_mib": 104.23,
+        "cum_cpu_ms_8s": 182.01,
+        "pkg_idle_wkups_8s": 3
+      },
+      {
+        "run": 1,
+        "peak_cpu_pct": 67.53,
+        "time_to_idle_s": 0.51,
+        "settled_footprint_mib": 22.67,
+        "settled_rss_mib": 104.28,
+        "cum_cpu_ms_8s": 204.76,
+        "pkg_idle_wkups_8s": 1
+      },
+      {
+        "run": 2,
+        "peak_cpu_pct": 66.14,
+        "time_to_idle_s": 0.7,
+        "settled_footprint_mib": 22.44,
+        "settled_rss_mib": 104.02,
+        "cum_cpu_ms_8s": 169.97,
+        "pkg_idle_wkups_8s": 0
+      },
+      {
+        "run": 3,
+        "peak_cpu_pct": 60.75,
+        "time_to_idle_s": 0.5,
+        "settled_footprint_mib": 22.3,
+        "settled_rss_mib": 103.91,
+        "cum_cpu_ms_8s": 169.54,
+        "pkg_idle_wkups_8s": 3
+      },
+      {
+        "run": 4,
+        "peak_cpu_pct": 71.36,
+        "time_to_idle_s": 0.6,
+        "settled_footprint_mib": 22.22,
+        "settled_rss_mib": 103.83,
+        "cum_cpu_ms_8s": 178.09,
+        "pkg_idle_wkups_8s": 1
+      }
+    ],
+    "peak_cpu_pct": {
+      "min": 60.75,
+      "p50": 67.53,
+      "max": 79.97
+    },
+    "time_to_idle_s": {
+      "min": 0.2,
+      "p50": 0.51,
+      "max": 0.7
+    },
+    "settled_footprint_mib": {
+      "min": 22.22,
+      "p50": 22.44,
+      "max": 22.67
+    },
+    "settled_rss_mib": {
+      "min": 103.83,
+      "p50": 104.02,
+      "max": 104.28
+    },
+    "cum_cpu_ms_8s": {
+      "min": 169.54,
+      "p50": 178.09,
+      "max": 204.76
+    },
+    "pkg_idle_wkups_8s": {
+      "min": 0,
+      "p50": 1,
+      "max": 3
+    }
+  },
+  "idle_voice_off": {
+    "summary": {
+      "label": "idle_voice_off",
+      "sample_count": 90,
+      "elapsed_s": 89.001,
+      "phys_footprint_mib": {
+        "start": 22.49,
+        "end": 22.45,
+        "min": 22.41,
+        "p50": 22.44,
+        "p95": 22.49,
+        "max": 22.49,
+        "mean": 22.44,
+        "slope_mib_per_min": -0.0051
+      },
+      "lifetime_max_phys_footprint_mib": 22.66,
+      "rss_mib": {
+        "min": 104.05,
+        "p50": 104.09,
+        "p95": 104.13,
+        "max": 104.14
+      },
+      "neural_footprint_mib": {
+        "p50": 0.0,
+        "max": 0.0,
+        "lifetime_max": 0.0
+      },
+      "cpu_pct": {
+        "mean": 0.0045,
+        "p50": 0.0,
+        "p95": 0.0409,
+        "max": 0.0633
+      },
+      "cumulative_cpu_ms": 3.98,
+      "pkg_idle_wkups_total": 1,
+      "pkg_idle_wkups_per_s_mean": 0.0112,
+      "pkg_idle_wkups_per_s_p50": 0.0,
+      "interrupt_wkups_total": 6,
+      "interrupt_wkups_per_s_mean": 0.0674,
+      "interrupt_wkups_per_s_p50": 0.0,
+      "disk_read_bytes": 0,
+      "disk_written_bytes": 0,
+      "logical_writes_bytes": 0,
+      "pageins_delta": 0,
+      "xnu_cpu_energy_j": 0.0006,
+      "xnu_cpu_power_mw_mean": 0.01,
+      "xnu_cpu_power_mw_p50": 0.0
+    },
+    "diagnostics_start": {
+      "footprint_cli": "22 MB",
+      "leaks_count": 288,
+      "leaks_bytes": 14400,
+      "open_fds": 43,
+      "related_processes": [
+        "60735 57514 106592   0.0   0:00.21 /tmp/rasc-efficiency-build/Shipping/Rasc.app/Contents/MacOS/Rasc"
+      ]
+    },
+    "diagnostics_end": {
+      "footprint_cli": "22 MB",
+      "leaks_count": 288,
+      "leaks_bytes": 14400,
+      "open_fds": 43,
+      "related_processes": [
+        "60735 57514 106560   0.0   0:00.22 /tmp/rasc-efficiency-build/Shipping/Rasc.app/Contents/MacOS/Rasc"
+      ]
+    }
+  },
+  "idle_voice_on": {
+    "summary": {
+      "label": "idle_voice_on",
+      "sample_count": 90,
+      "elapsed_s": 89.003,
+      "phys_footprint_mib": {
+        "start": 47.61,
+        "end": 47.59,
+        "min": 47.59,
+        "p50": 47.59,
+        "p95": 47.69,
+        "max": 47.69,
+        "mean": 47.62,
+        "slope_mib_per_min": -0.037
+      },
+      "lifetime_max_phys_footprint_mib": 61.85,
+      "rss_mib": {
+        "min": 116.59,
+        "p50": 117.11,
+        "p95": 123.11,
+        "max": 123.11
+      },
+      "neural_footprint_mib": {
+        "p50": 11.81,
+        "max": 11.81,
+        "lifetime_max": 598.44
+      },
+      "cpu_pct": {
+        "mean": 0.0045,
+        "p50": 0.0,
+        "p95": 0.0288,
+        "max": 0.0982
+      },
+      "cumulative_cpu_ms": 4.01,
+      "pkg_idle_wkups_total": 0,
+      "pkg_idle_wkups_per_s_mean": 0.0,
+      "pkg_idle_wkups_per_s_p50": 0.0,
+      "interrupt_wkups_total": 6,
+      "interrupt_wkups_per_s_mean": 0.0674,
+      "interrupt_wkups_per_s_p50": 0.0,
+      "disk_read_bytes": 0,
+      "disk_written_bytes": 0,
+      "logical_writes_bytes": 0,
+      "pageins_delta": 0,
+      "xnu_cpu_energy_j": 0.0075,
+      "xnu_cpu_power_mw_mean": 0.08,
+      "xnu_cpu_power_mw_p50": 0.0
+    },
+    "diagnostics_start": {
+      "footprint_cli": "48 MB",
+      "leaks_count": 210,
+      "leaks_bytes": 11168,
+      "open_fds": 48,
+      "related_processes": [
+        "61555 57514 125984   0.0   0:03.60 /tmp/rasc-efficiency-build/Shipping/Rasc.app/Contents/MacOS/Rasc"
+      ]
+    },
+    "diagnostics_end": {
+      "footprint_cli": "48 MB",
+      "leaks_count": 210,
+      "leaks_bytes": 11168,
+      "open_fds": 48,
+      "related_processes": [
+        "61555 57514 119920   0.0   0:03.61 /tmp/rasc-efficiency-build/Shipping/Rasc.app/Contents/MacOS/Rasc"
+      ]
+    }
+  },
+  "idle_modifier_on": {
+    "summary": {
+      "label": "idle_modifier_on",
+      "sample_count": 45,
+      "elapsed_s": 44.003,
+      "phys_footprint_mib": {
+        "start": 37.66,
+        "end": 37.59,
+        "min": 37.59,
+        "p50": 37.63,
+        "p95": 37.66,
+        "max": 37.66,
+        "mean": 37.63,
+        "slope_mib_per_min": -0.0206
+      },
+      "lifetime_max_phys_footprint_mib": 41.69,
+      "rss_mib": {
+        "min": 111.25,
+        "p50": 114.14,
+        "p95": 124.25,
+        "max": 124.25
+      },
+      "neural_footprint_mib": {
+        "p50": 11.81,
+        "max": 11.81,
+        "lifetime_max": 598.44
+      },
+      "cpu_pct": {
+        "mean": 0.0014,
+        "p50": 0.0,
+        "p95": 0.0079,
+        "max": 0.0176
+      },
+      "cumulative_cpu_ms": 0.61,
+      "pkg_idle_wkups_total": 0,
+      "pkg_idle_wkups_per_s_mean": 0.0,
+      "pkg_idle_wkups_per_s_p50": 0.0,
+      "interrupt_wkups_total": 6,
+      "interrupt_wkups_per_s_mean": 0.1364,
+      "interrupt_wkups_per_s_p50": 0.0,
+      "disk_read_bytes": 0,
+      "disk_written_bytes": 0,
+      "logical_writes_bytes": 0,
+      "pageins_delta": 0,
+      "xnu_cpu_energy_j": 0.001,
+      "xnu_cpu_power_mw_mean": 0.02,
+      "xnu_cpu_power_mw_p50": 0.0
+    },
+    "diagnostics_start": {
+      "footprint_cli": "41 MB",
+      "leaks_count": 287,
+      "leaks_bytes": 14336,
+      "open_fds": 48,
+      "related_processes": [
+        "62535 57514 127232   0.0   0:00.29 /tmp/rasc-efficiency-build/Shipping/Rasc.app/Contents/MacOS/Rasc"
+      ]
+    },
+    "diagnostics_end": {
+      "footprint_cli": "38 MB",
+      "leaks_count": 287,
+      "leaks_bytes": 14336,
+      "open_fds": 48,
+      "related_processes": [
+        "62535 57514 113904   0.0   0:00.29 /tmp/rasc-efficiency-build/Shipping/Rasc.app/Contents/MacOS/Rasc"
+      ]
+    }
+  },
+  "workday": {
+    "overall_sample_summary": {
+      "label": "workday_timeseries",
+      "sample_count": 227,
+      "elapsed_s": 226.004,
+      "phys_footprint_mib": {
+        "start": 0.08,
+        "end": 92.5,
+        "min": 0.08,
+        "p50": 92.13,
+        "p95": 120.0,
+        "max": 126.16,
+        "mean": 81.34,
+        "slope_mib_per_min": 20.5675
+      },
+      "lifetime_max_phys_footprint_mib": 136.38,
+      "rss_mib": {
+        "min": 0.03,
+        "p50": 161.27,
+        "p95": 687.78,
+        "max": 757.75
+      },
+      "neural_footprint_mib": {
+        "p50": 11.81,
+        "max": 598.44,
+        "lifetime_max": 598.44
+      },
+      "cpu_pct": {
+        "mean": 7.6273,
+        "p50": 0.0501,
+        "p95": 54.1877,
+        "max": 100.7771
+      },
+      "cumulative_cpu_ms": 17237.96,
+      "pkg_idle_wkups_total": 131,
+      "pkg_idle_wkups_per_s_mean": 0.5796,
+      "pkg_idle_wkups_per_s_p50": 0.0,
+      "interrupt_wkups_total": 8556,
+      "interrupt_wkups_per_s_mean": 37.8577,
+      "interrupt_wkups_per_s_p50": 0.9995,
+      "disk_read_bytes": 690941952,
+      "disk_written_bytes": 595382272,
+      "logical_writes_bytes": 723793432,
+      "pageins_delta": 42839,
+      "xnu_cpu_energy_j": 38.4029,
+      "xnu_cpu_power_mw_mean": 169.92,
+      "xnu_cpu_power_mw_p50": 0.08
+    },
+    "diagnostics_cooldown": {
+      "footprint_cli": "92 MB",
+      "leaks_count": 288,
+      "leaks_bytes": 14400,
+      "open_fds": 0,
+      "related_processes": []
+    },
+    "phase_summaries": {
+      "running": {
+        "label": "running",
+        "sample_count": 1,
+        "elapsed_s": 0.0,
+        "phys_footprint_mib": {
+          "start": 0.08,
+          "end": 0.08,
+          "min": 0.08,
+          "p50": 0.08,
+          "p95": 0.08,
+          "max": 0.08,
+          "mean": 0.08,
+          "slope_mib_per_min": 0.0
+        },
+        "lifetime_max_phys_footprint_mib": 0.09,
+        "rss_mib": {
+          "min": 0.03,
+          "p50": 0.03,
+          "p95": 0.03,
+          "max": 0.03
+        },
+        "neural_footprint_mib": {
+          "p50": 0.0,
+          "max": 0.0,
+          "lifetime_max": 0.0
+        },
+        "cpu_pct": {
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "cumulative_cpu_ms": 0.0,
+        "pkg_idle_wkups_total": 0,
+        "pkg_idle_wkups_per_s_mean": 0.0,
+        "pkg_idle_wkups_per_s_p50": 0.0,
+        "interrupt_wkups_total": 0,
+        "interrupt_wkups_per_s_mean": 0.0,
+        "interrupt_wkups_per_s_p50": 0.0,
+        "disk_read_bytes": 0,
+        "disk_written_bytes": 0,
+        "logical_writes_bytes": 0,
+        "pageins_delta": 0,
+        "xnu_cpu_energy_j": 0.0,
+        "xnu_cpu_power_mw_mean": 0.0,
+        "xnu_cpu_power_mw_p50": 0.0
+      },
+      "seed_and_idle_voice_off": {
+        "label": "seed_and_idle_voice_off",
+        "sample_count": 32,
+        "elapsed_s": 31.001,
+        "phys_footprint_mib": {
+          "start": 23.06,
+          "end": 22.61,
+          "min": 22.61,
+          "p50": 22.7,
+          "p95": 23.08,
+          "max": 23.08,
+          "mean": 22.77,
+          "slope_mib_per_min": -1.1319
+        },
+        "lifetime_max_phys_footprint_mib": 23.2,
+        "rss_mib": {
+          "min": 98.33,
+          "p50": 98.42,
+          "p95": 105.11,
+          "max": 105.14
+        },
+        "neural_footprint_mib": {
+          "p50": 0.0,
+          "max": 0.0,
+          "lifetime_max": 0.0
+        },
+        "cpu_pct": {
+          "mean": 0.0194,
+          "p50": 0.0,
+          "p95": 0.0749,
+          "max": 0.2496
+        },
+        "cumulative_cpu_ms": 6.01,
+        "pkg_idle_wkups_total": 0,
+        "pkg_idle_wkups_per_s_mean": 0.0,
+        "pkg_idle_wkups_per_s_p50": 0.0,
+        "interrupt_wkups_total": 10,
+        "interrupt_wkups_per_s_mean": 0.3226,
+        "interrupt_wkups_per_s_p50": 0.0,
+        "disk_read_bytes": 0,
+        "disk_written_bytes": 0,
+        "logical_writes_bytes": 0,
+        "pageins_delta": 0,
+        "xnu_cpu_energy_j": 0.002,
+        "xnu_cpu_power_mw_mean": 0.06,
+        "xnu_cpu_power_mw_p50": 0.0
+      },
+      "scratchpad_capture_loop": {
+        "label": "scratchpad_capture_loop",
+        "sample_count": 6,
+        "elapsed_s": 5.0,
+        "phys_footprint_mib": {
+          "start": 26.36,
+          "end": 26.64,
+          "min": 26.36,
+          "p50": 26.74,
+          "p95": 27.11,
+          "max": 27.13,
+          "mean": 26.76,
+          "slope_mib_per_min": 3.2123
+        },
+        "lifetime_max_phys_footprint_mib": 27.52,
+        "rss_mib": {
+          "min": 104.81,
+          "p50": 105.34,
+          "p95": 105.57,
+          "max": 105.59
+        },
+        "neural_footprint_mib": {
+          "p50": 0.0,
+          "max": 0.0,
+          "lifetime_max": 0.0
+        },
+        "cpu_pct": {
+          "mean": 19.5906,
+          "p50": 21.9421,
+          "p95": 22.6779,
+          "max": 22.8239
+        },
+        "cumulative_cpu_ms": 979.53,
+        "pkg_idle_wkups_total": 11,
+        "pkg_idle_wkups_per_s_mean": 2.2,
+        "pkg_idle_wkups_per_s_p50": 1.0047,
+        "interrupt_wkups_total": 1618,
+        "interrupt_wkups_per_s_mean": 323.6,
+        "interrupt_wkups_per_s_p50": 326.4115,
+        "disk_read_bytes": 20480,
+        "disk_written_bytes": 4440064,
+        "logical_writes_bytes": 2408832,
+        "pageins_delta": 0,
+        "xnu_cpu_energy_j": 1.4106,
+        "xnu_cpu_power_mw_mean": 282.13,
+        "xnu_cpu_power_mw_p50": 316.53
+      },
+      "home_search_loop": {
+        "label": "home_search_loop",
+        "sample_count": 6,
+        "elapsed_s": 4.999,
+        "phys_footprint_mib": {
+          "start": 35.66,
+          "end": 36.05,
+          "min": 35.41,
+          "p50": 35.85,
+          "p95": 36.07,
+          "max": 36.08,
+          "mean": 35.81,
+          "slope_mib_per_min": 6.6992
+        },
+        "lifetime_max_phys_footprint_mib": 36.75,
+        "rss_mib": {
+          "min": 118.2,
+          "p50": 121.91,
+          "p95": 122.2,
+          "max": 122.2
+        },
+        "neural_footprint_mib": {
+          "p50": 0.0,
+          "max": 0.0,
+          "lifetime_max": 0.0
+        },
+        "cpu_pct": {
+          "mean": 21.9326,
+          "p50": 16.7424,
+          "p95": 44.9814,
+          "max": 51.3921
+        },
+        "cumulative_cpu_ms": 1096.41,
+        "pkg_idle_wkups_total": 6,
+        "pkg_idle_wkups_per_s_mean": 1.2002,
+        "pkg_idle_wkups_per_s_p50": 1.0019,
+        "interrupt_wkups_total": 1020,
+        "interrupt_wkups_per_s_mean": 204.0408,
+        "interrupt_wkups_per_s_p50": 172.9395,
+        "disk_read_bytes": 782336,
+        "disk_written_bytes": 0,
+        "logical_writes_bytes": 20480,
+        "pageins_delta": 12,
+        "xnu_cpu_energy_j": 1.5578,
+        "xnu_cpu_power_mw_mean": 311.63,
+        "xnu_cpu_power_mw_p50": 163.28
+      },
+      "home_batch_ops": {
+        "label": "home_batch_ops",
+        "sample_count": 2,
+        "elapsed_s": 0.996,
+        "phys_footprint_mib": {
+          "start": 45.25,
+          "end": 55.08,
+          "min": 45.25,
+          "p50": 50.16,
+          "p95": 54.59,
+          "max": 55.08,
+          "mean": 50.16,
+          "slope_mib_per_min": 592.0571
+        },
+        "lifetime_max_phys_footprint_mib": 57.38,
+        "rss_mib": {
+          "min": 132.8,
+          "p50": 137.72,
+          "p95": 142.15,
+          "max": 142.64
+        },
+        "neural_footprint_mib": {
+          "p50": 0.0,
+          "max": 0.0,
+          "lifetime_max": 0.0
+        },
+        "cpu_pct": {
+          "mean": 100.7722,
+          "p50": 100.7771,
+          "p95": 100.7771,
+          "max": 100.7771
+        },
+        "cumulative_cpu_ms": 1003.69,
+        "pkg_idle_wkups_total": 0,
+        "pkg_idle_wkups_per_s_mean": 0.0,
+        "pkg_idle_wkups_per_s_p50": 0.0,
+        "interrupt_wkups_total": 75,
+        "interrupt_wkups_per_s_mean": 75.3012,
+        "interrupt_wkups_per_s_p50": 75.3049,
+        "disk_read_bytes": 237568,
+        "disk_written_bytes": 1822720,
+        "logical_writes_bytes": 1548408,
+        "pageins_delta": 4,
+        "xnu_cpu_energy_j": 3.3666,
+        "xnu_cpu_power_mw_mean": 3380.15,
+        "xnu_cpu_power_mw_p50": 3380.31
+      },
+      "voice_capture_and_dictate": {
+        "label": "voice_capture_and_dictate",
+        "sample_count": 48,
+        "elapsed_s": 47.0,
+        "phys_footprint_mib": {
+          "start": 75.97,
+          "end": 81.55,
+          "min": 75.97,
+          "p50": 81.19,
+          "p95": 83.74,
+          "max": 106.2,
+          "mean": 82.35,
+          "slope_mib_per_min": -3.9689
+        },
+        "lifetime_max_phys_footprint_mib": 113.63,
+        "rss_mib": {
+          "min": 167.98,
+          "p50": 171.97,
+          "p95": 757.62,
+          "max": 757.75
+        },
+        "neural_footprint_mib": {
+          "p50": 11.81,
+          "max": 598.44,
+          "lifetime_max": 598.44
+        },
+        "cpu_pct": {
+          "mean": 9.0649,
+          "p50": 0.0388,
+          "p95": 69.8158,
+          "max": 95.7683
+        },
+        "cumulative_cpu_ms": 4260.51,
+        "pkg_idle_wkups_total": 6,
+        "pkg_idle_wkups_per_s_mean": 0.1277,
+        "pkg_idle_wkups_per_s_p50": 0.0,
+        "interrupt_wkups_total": 185,
+        "interrupt_wkups_per_s_mean": 3.9362,
+        "interrupt_wkups_per_s_p50": 0.0,
+        "disk_read_bytes": 668831744,
+        "disk_written_bytes": 553545728,
+        "logical_writes_bytes": 694687860,
+        "pageins_delta": 41898,
+        "xnu_cpu_energy_j": 14.7947,
+        "xnu_cpu_power_mw_mean": 314.78,
+        "xnu_cpu_power_mw_p50": 0.12
+      },
+      "refine_on_device": {
+        "label": "refine_on_device",
+        "sample_count": 9,
+        "elapsed_s": 8.0,
+        "phys_footprint_mib": {
+          "start": 82.02,
+          "end": 84.08,
+          "min": 82.02,
+          "p50": 84.05,
+          "p95": 84.28,
+          "max": 84.28,
+          "mean": 83.78,
+          "slope_mib_per_min": 11.0156
+        },
+        "lifetime_max_phys_footprint_mib": 113.63,
+        "rss_mib": {
+          "min": 157.61,
+          "p50": 158.62,
+          "p95": 164.82,
+          "max": 168.88
+        },
+        "neural_footprint_mib": {
+          "p50": 11.81,
+          "max": 11.81,
+          "lifetime_max": 598.44
+        },
+        "cpu_pct": {
+          "mean": 3.2485,
+          "p50": 3.9044,
+          "p95": 4.4213,
+          "max": 4.4387
+        },
+        "cumulative_cpu_ms": 259.88,
+        "pkg_idle_wkups_total": 0,
+        "pkg_idle_wkups_per_s_mean": 0.0,
+        "pkg_idle_wkups_per_s_p50": 0.0,
+        "interrupt_wkups_total": 68,
+        "interrupt_wkups_per_s_mean": 8.5,
+        "interrupt_wkups_per_s_p50": 9.9984,
+        "disk_read_bytes": 4583424,
+        "disk_written_bytes": 0,
+        "logical_writes_bytes": 24576,
+        "pageins_delta": 277,
+        "xnu_cpu_energy_j": 0.7588,
+        "xnu_cpu_power_mw_mean": 94.85,
+        "xnu_cpu_power_mw_p50": 124.43
+      },
+      "sleep_wake_and_memory_pressure": {
+        "label": "sleep_wake_and_memory_pressure",
+        "sample_count": 8,
+        "elapsed_s": 7.002,
+        "phys_footprint_mib": {
+          "start": 84.05,
+          "end": 85.95,
+          "min": 84.05,
+          "p50": 85.63,
+          "p95": 85.9,
+          "max": 85.95,
+          "mean": 85.29,
+          "slope_mib_per_min": 15.0867
+        },
+        "lifetime_max_phys_footprint_mib": 113.63,
+        "rss_mib": {
+          "min": 130.62,
+          "p50": 131.87,
+          "p95": 154.52,
+          "max": 158.64
+        },
+        "neural_footprint_mib": {
+          "p50": 0.0,
+          "max": 0.0,
+          "lifetime_max": 598.44
+        },
+        "cpu_pct": {
+          "mean": 1.8505,
+          "p50": 0.0211,
+          "p95": 8.839,
+          "max": 12.5098
+        },
+        "cumulative_cpu_ms": 129.57,
+        "pkg_idle_wkups_total": 1,
+        "pkg_idle_wkups_per_s_mean": 0.1428,
+        "pkg_idle_wkups_per_s_p50": 0.0,
+        "interrupt_wkups_total": 34,
+        "interrupt_wkups_per_s_mean": 4.8558,
+        "interrupt_wkups_per_s_p50": 0.9975,
+        "disk_read_bytes": 888832,
+        "disk_written_bytes": 0,
+        "logical_writes_bytes": 20480,
+        "pageins_delta": 45,
+        "xnu_cpu_energy_j": 0.4146,
+        "xnu_cpu_power_mw_mean": 59.22,
+        "xnu_cpu_power_mw_p50": 0.04
+      },
+      "workday_endurance_loop": {
+        "label": "workday_endurance_loop",
+        "sample_count": 21,
+        "elapsed_s": 50.996,
+        "phys_footprint_mib": {
+          "start": 118.2,
+          "end": 92.66,
+          "min": 92.66,
+          "p50": 119.06,
+          "p95": 120.75,
+          "max": 126.16,
+          "mean": 112.17,
+          "slope_mib_per_min": -25.6289
+        },
+        "lifetime_max_phys_footprint_mib": 136.38,
+        "rss_mib": {
+          "min": 162.0,
+          "p50": 194.91,
+          "p95": 201.28,
+          "max": 202.08
+        },
+        "neural_footprint_mib": {
+          "p50": 598.44,
+          "max": 598.44,
+          "lifetime_max": 598.44
+        },
+        "cpu_pct": {
+          "mean": 12.9164,
+          "p50": 22.3572,
+          "p95": 55.6137,
+          "max": 58.314
+        },
+        "cumulative_cpu_ms": 6586.85,
+        "pkg_idle_wkups_total": 90,
+        "pkg_idle_wkups_per_s_mean": 1.7648,
+        "pkg_idle_wkups_per_s_p50": 1.0023,
+        "interrupt_wkups_total": 4495,
+        "interrupt_wkups_per_s_mean": 88.1442,
+        "interrupt_wkups_per_s_p50": 197.2296,
+        "disk_read_bytes": 2310144,
+        "disk_written_bytes": 14262272,
+        "logical_writes_bytes": 8586332,
+        "pageins_delta": 48,
+        "xnu_cpu_energy_j": 9.1193,
+        "xnu_cpu_power_mw_mean": 178.82,
+        "xnu_cpu_power_mw_p50": 263.76
+      },
+      "workday_endurance_pause": {
+        "label": "workday_endurance_pause",
+        "sample_count": 31,
+        "elapsed_s": 37.003,
+        "phys_footprint_mib": {
+          "start": 118.53,
+          "end": 119.77,
+          "min": 118.14,
+          "p50": 119.77,
+          "p95": 120.44,
+          "max": 120.44,
+          "mean": 119.39,
+          "slope_mib_per_min": 3.2481
+        },
+        "lifetime_max_phys_footprint_mib": 136.06,
+        "rss_mib": {
+          "min": 194.11,
+          "p50": 199.61,
+          "p95": 200.77,
+          "max": 200.81
+        },
+        "neural_footprint_mib": {
+          "p50": 598.44,
+          "max": 598.44,
+          "lifetime_max": 598.44
+        },
+        "cpu_pct": {
+          "mean": 9.9392,
+          "p50": 0.9069,
+          "p95": 20.3364,
+          "max": 56.769
+        },
+        "cumulative_cpu_ms": 3677.79,
+        "pkg_idle_wkups_total": 59,
+        "pkg_idle_wkups_per_s_mean": 1.5945,
+        "pkg_idle_wkups_per_s_p50": 0.0,
+        "interrupt_wkups_total": 2550,
+        "interrupt_wkups_per_s_mean": 68.9133,
+        "interrupt_wkups_per_s_p50": 3.0054,
+        "disk_read_bytes": 0,
+        "disk_written_bytes": 7770112,
+        "logical_writes_bytes": 4637272,
+        "pageins_delta": 0,
+        "xnu_cpu_energy_j": 4.6453,
+        "xnu_cpu_power_mw_mean": 125.54,
+        "xnu_cpu_power_mw_p50": 1.23
+      },
+      "post_workload_cooldown": {
+        "label": "post_workload_cooldown",
+        "sample_count": 62,
+        "elapsed_s": 61.002,
+        "phys_footprint_mib": {
+          "start": 92.24,
+          "end": 92.44,
+          "min": 92.13,
+          "p50": 92.22,
+          "p95": 92.53,
+          "max": 92.53,
+          "mean": 92.29,
+          "slope_mib_per_min": 0.337
+        },
+        "lifetime_max_phys_footprint_mib": 136.38,
+        "rss_mib": {
+          "min": 156.08,
+          "p50": 161.16,
+          "p95": 161.34,
+          "max": 161.34
+        },
+        "neural_footprint_mib": {
+          "p50": 11.81,
+          "max": 598.44,
+          "lifetime_max": 598.44
+        },
+        "cpu_pct": {
+          "mean": 0.2068,
+          "p50": 0.0043,
+          "p95": 1.0289,
+          "max": 4.4476
+        },
+        "cumulative_cpu_ms": 126.15,
+        "pkg_idle_wkups_total": 6,
+        "pkg_idle_wkups_per_s_mean": 0.0984,
+        "pkg_idle_wkups_per_s_p50": 0.0,
+        "interrupt_wkups_total": 69,
+        "interrupt_wkups_per_s_mean": 1.1311,
+        "interrupt_wkups_per_s_p50": 0.0,
+        "disk_read_bytes": 7294976,
+        "disk_written_bytes": 0,
+        "logical_writes_bytes": 0,
+        "pageins_delta": 161,
+        "xnu_cpu_energy_j": 0.0771,
+        "xnu_cpu_power_mw_mean": 1.26,
+        "xnu_cpu_power_mw_p50": 0.0
+      },
+      "cooldown_done": {
+        "label": "cooldown_done",
+        "sample_count": 1,
+        "elapsed_s": 0.0,
+        "phys_footprint_mib": {
+          "start": 92.5,
+          "end": 92.5,
+          "min": 92.5,
+          "p50": 92.5,
+          "p95": 92.5,
+          "max": 92.5,
+          "mean": 92.5,
+          "slope_mib_per_min": 0.0
+        },
+        "lifetime_max_phys_footprint_mib": 136.38,
+        "rss_mib": {
+          "min": 161.48,
+          "p50": 161.48,
+          "p95": 161.48,
+          "max": 161.48
+        },
+        "neural_footprint_mib": {
+          "p50": 11.81,
+          "max": 11.81,
+          "lifetime_max": 598.44
+        },
+        "cpu_pct": {
+          "mean": 0.0,
+          "p50": 0.4555,
+          "p95": 0.4555,
+          "max": 0.4555
+        },
+        "cumulative_cpu_ms": 0.0,
+        "pkg_idle_wkups_total": 0,
+        "pkg_idle_wkups_per_s_mean": 0.0,
+        "pkg_idle_wkups_per_s_p50": 0.0,
+        "interrupt_wkups_total": 0,
+        "interrupt_wkups_per_s_mean": 0.0,
+        "interrupt_wkups_per_s_p50": 1.0011,
+        "disk_read_bytes": 0,
+        "disk_written_bytes": 0,
+        "logical_writes_bytes": 0,
+        "pageins_delta": 0,
+        "xnu_cpu_energy_j": 0.0,
+        "xnu_cpu_power_mw_mean": 0.0,
+        "xnu_cpu_power_mw_p50": 0.41
+      }
+    },
+    "in_app_summary": {
+      "bundleIdentifier": "com.rafaeltorres.rasc.efficiency",
+      "homeRedacted": "~",
+      "ops": {
+        "home_close": {
+          "count": 20,
+          "p95Ms": 517.077958,
+          "p50Ms": 396.366875,
+          "meanMs": 280.28160005,
+          "maxMs": 520.644417
+        },
+        "home_open": {
+          "meanMs": 27.47147505,
+          "p50Ms": 24.467833,
+          "maxMs": 62.482,
+          "count": 20,
+          "p95Ms": 40.196583
+        },
+        "home_batch_copy_discard_undo": {
+          "count": 10,
+          "p95Ms": 239.805667,
+          "p50Ms": 183.721,
+          "meanMs": 192.64053370000002,
+          "maxMs": 239.805667
+        },
+        "refine_invoke": {
+          "count": 6,
+          "p95Ms": 3046.7125,
+          "p50Ms": 1081.054291,
+          "meanMs": 1408.0805486666666,
+          "maxMs": 3046.7125
+        },
+        "sleep_wake_cycle": {
+          "meanMs": 2081.115708,
+          "p50Ms": 2081.115708,
+          "maxMs": 2081.115708,
+          "count": 1,
+          "p95Ms": 2081.115708
+        },
+        "voice_dictate_transcribe": {
+          "meanMs": 68.00568428571428,
+          "p50Ms": 56.285667,
+          "maxMs": 105.914833,
+          "count": 7,
+          "p95Ms": 105.914833
+        },
+        "scratchpad_cycle": {
+          "meanMs": 204.57417650000005,
+          "p50Ms": 51.425375,
+          "maxMs": 535.305959,
+          "count": 30,
+          "p95Ms": 533.09775
+        },
+        "home_search": {
+          "meanMs": 18.5514584,
+          "p50Ms": 17.0635,
+          "maxMs": 31.818125,
+          "count": 20,
+          "p95Ms": 24.798375
+        },
+        "endurance_voice": {
+          "count": 20,
+          "p95Ms": 136.145459,
+          "p50Ms": 79.885625,
+          "meanMs": 93.37722299999999,
+          "maxMs": 151.235084
+        },
+        "endurance_home_cycle": {
+          "meanMs": 111.6647396,
+          "p50Ms": 61.509292,
+          "maxMs": 562.277125,
+          "count": 20,
+          "p95Ms": 219.356625
+        },
+        "voice_scratchpad_transcribe": {
+          "count": 8,
+          "p95Ms": 105.869,
+          "p50Ms": 55.107625,
+          "meanMs": 62.430848999999995,
+          "maxMs": 105.869
+        },
+        "seed_100_notes": {
+          "meanMs": 63.624125,
+          "p50Ms": 63.624125,
+          "maxMs": 63.624125,
+          "count": 1,
+          "p95Ms": 63.624125
+        },
+        "endurance_scratchpad": {
+          "count": 60,
+          "p95Ms": 520.518459,
+          "p50Ms": 37.503709,
+          "meanMs": 192.21463478333334,
+          "maxMs": 872.248125
+        }
+      },
+      "refineExecuted": 6,
+      "isSandboxed": true,
+      "voiceColdPrepareMs": 15816.009,
+      "voicePostSleepReprepareMs": 2081.115708,
+      "noteCountAtEnd": 225,
+      "totalElapsedS": 229.906792875,
+      "voiceWarmPrepareMs": 0.016459,
+      "refineAvailability": "available"
+    },
+    "sqlite_sizes_bytes": {
+      "Rasc.sqlite": 192512,
+      "Rasc.sqlite-wal": 0,
+      "Rasc.sqlite-shm": 0
+    },
+    "returncode": 0
+  }
+}

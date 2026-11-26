@@ -747,4 +747,43 @@ struct NoteSnippetTests {
         #expect(snippet?.contains("pricing") == true)
         #expect(snippet?.hasPrefix("…") == true)
     }
+
+    @Test
+    @MainActor
+    func releasingHiddenWindowCacheDropsNotesWhilePreservingUndoAndQuery() async throws {
+        let dir = FileManager.default.temporaryDirectory.appending(path: "HomeHiddenRelease.\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+
+        let repo = try NoteRepository(databaseURL: dir.appending(path: "rasc.sqlite"))
+        defer { try? repo.closeForTesting() }
+
+        let n1 = try await repo.createScratch(content: "First cached thought")
+        let n2 = try await repo.createScratch(content: "Second cached thought")
+        let suite = "HomeHiddenRelease.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+
+        let session = HomeSession(repository: repo, discoveryStore: OnboardingStore(userDefaults: defaults))
+        await session.reloadImmediately()
+        #expect(session.noteCount == 2)
+
+        session.toggleSelection(n1.id)
+        _ = try await session.discardSelected(undoManager: UndoManager())
+        #expect(session.hasUndoableDiscard)
+
+        session.searchQuery = "Second"
+        await session.reloadImmediately()
+        #expect(session.searchResults.map(\.id) == [n2.id])
+
+        session.releaseCachedNotesForHiddenWindow()
+        #expect(session.browseGroups.isEmpty)
+        #expect(session.searchResults.isEmpty)
+        #expect(!session.hasMoreSearchResults)
+        #expect(session.searchQuery == "Second")
+        #expect(session.hasUndoableDiscard)
+
+        await session.reloadImmediately()
+        #expect(session.searchResults.map(\.id) == [n2.id])
+    }
 }

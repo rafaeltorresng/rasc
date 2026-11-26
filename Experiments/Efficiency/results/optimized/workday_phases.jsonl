@@ -1,0 +1,17 @@
+{"elapsedS":2.9458e-05,"timestamp":"2026-11-26T18:31:08Z","detail":"seeding 100 notes then 30s idle","phase":"seed_and_idle_voice_off"}
+{"elapsedS":31.13415075,"timestamp":"2026-11-26T18:31:39Z","detail":"30 capture\/edit\/flush\/keep-or-park cycles","phase":"scratchpad_capture_loop"}
+{"detail":"20 open Home + search + close cycles","timestamp":"2026-11-26T18:31:45Z","elapsedS":37.275452166,"phase":"home_search_loop"}
+{"timestamp":"2026-11-26T18:31:52Z","detail":"10 batch select\/copy\/discard\/undo cycles","elapsedS":43.931641875,"phase":"home_batch_ops"}
+{"phase":"voice_capture_and_dictate","elapsedS":45.921347166,"timestamp":"2026-11-26T18:31:53Z","detail":"15 real FLEURS clips + 30s warm idle"}
+{"phase":"refine_on_device","timestamp":"2026-11-26T18:32:42Z","elapsedS":94.083500583,"detail":"checking Apple Foundation Models availability"}
+{"elapsedS":102.5382275,"timestamp":"2026-11-26T18:32:50Z","phase":"sleep_wake_and_memory_pressure","detail":"trigger willSleep\/pressure release then didWake re-prepare"}
+{"elapsedS":110.119368166,"detail":"4 rounds x mixed capture\/search\/batch\/voice + hidden workspace & modifier stress","phase":"workday_endurance_loop","timestamp":"2026-11-26T18:32:58Z"}
+{"phase":"workday_endurance_pause","elapsedS":114.366065,"timestamp":"2026-11-26T18:33:02Z","detail":"round 0 settle"}
+{"elapsedS":124.996952166,"detail":"round 1 active","phase":"workday_endurance_loop","timestamp":"2026-11-26T18:33:13Z"}
+{"timestamp":"2026-11-26T18:33:17Z","phase":"workday_endurance_pause","elapsedS":129.08098725,"detail":"round 1 settle"}
+{"elapsedS":139.135360708,"phase":"workday_endurance_loop","detail":"round 2 active","timestamp":"2026-11-26T18:33:27Z"}
+{"elapsedS":142.633321416,"timestamp":"2026-11-26T18:33:30Z","phase":"workday_endurance_pause","detail":"round 2 settle"}
+{"phase":"workday_endurance_loop","elapsedS":153.106517416,"timestamp":"2026-11-26T18:33:41Z","detail":"round 3 active"}
+{"timestamp":"2026-11-26T18:33:50Z","phase":"post_workload_cooldown","detail":"60s settled idle with Home closed and Panel hidden","elapsedS":162.317859666}
+{"timestamp":"2026-11-26T18:34:52Z","phase":"cooldown_done","detail":"notes=225; awaiting external footprint\/leaks","elapsedS":224.133963125}
+{"timestamp":"2026-11-26T18:34:57Z","phase":"exiting","detail":"done","elapsedS":229.90716875}

@@ -143,7 +143,16 @@ final class MicBuffer: @unchecked Sendable {
         lock.withLock {
             sealed = true
             let remainder = windowEnergy > Float(windowFrames) * 0.000004 ? windowFrames : 0
-            return VoiceAudio(samples: storage, rate: rate, peak: peak,
+            // Compact short recordings after the audio tap stops so the 90s capacity tail is freed immediately.
+            let finalSamples: [Float]
+            if storage.count < storage.capacity / 2 {
+                // Use an unsafe buffer copy so Swift does not retain the oversized CoW buffer via Array(storage).
+                finalSamples = storage.withUnsafeBufferPointer { Array($0) }
+            } else {
+                finalSamples = storage
+            }
+            storage = []
+            return VoiceAudio(samples: finalSamples, rate: rate, peak: peak,
                               activitySeconds: Double(activeFrames + remainder) / rate)
         }
     }

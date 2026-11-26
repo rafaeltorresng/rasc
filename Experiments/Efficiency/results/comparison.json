@@ -1,0 +1,111 @@
+{
+  "baseline_commit": "1cee496",
+  "optimized_commit": "1cee496",
+  "metrics": {
+    "app_bundle_mib": {
+      "before": 40.47,
+      "after": 40.5,
+      "delta": 0.03,
+      "delta_pct": 0.07,
+      "unit": "MiB"
+    },
+    "launch_time_to_idle_p50_s": {
+      "before": 0.6,
+      "after": 0.51,
+      "delta": -0.09,
+      "delta_pct": -15.0,
+      "unit": "s"
+    },
+    "launch_settled_footprint_p50_mib": {
+      "before": 22.38,
+      "after": 22.44,
+      "delta": 0.06,
+      "delta_pct": 0.27,
+      "unit": "MiB"
+    },
+    "idle_voice_off_footprint_p50_mib": {
+      "before": 22.41,
+      "after": 22.44,
+      "delta": 0.03,
+      "delta_pct": 0.13,
+      "unit": "MiB"
+    },
+    "idle_voice_off_cpu_mean_pct": {
+      "before": 0.2531,
+      "after": 0.0045,
+      "delta": -0.2486,
+      "delta_pct": -98.22,
+      "unit": "%"
+    },
+    "idle_voice_off_wkups_per_s": {
+      "before": 0.0449,
+      "after": 0.0112,
+      "delta": -0.0337,
+      "delta_pct": -75.06,
+      "unit": "/s"
+    },
+    "idle_voice_on_footprint_p50_mib": {
+      "before": 48.64,
+      "after": 47.59,
+      "delta": -1.05,
+      "delta_pct": -2.16,
+      "unit": "MiB"
+    },
+    "idle_voice_on_cpu_mean_pct": {
+      "before": 0.0022,
+      "after": 0.0045,
+      "delta": 0.0023,
+      "delta_pct": 104.55,
+      "unit": "%"
+    },
+    "idle_voice_on_wkups_per_s": {
+      "before": 0.0,
+      "after": 0.0,
+      "delta": 0.0,
+      "delta_pct": null,
+      "unit": "/s"
+    },
+    "workday_peak_footprint_mib": {
+      "before": 294.99,
+      "after": 136.38,
+      "delta": -158.61,
+      "delta_pct": -53.77,
+      "unit": "MiB"
+    },
+    "workday_cooldown_end_footprint_mib": {
+      "before": 189.22,
+      "after": 92.44,
+      "delta": -96.78,
+      "delta_pct": -51.15,
+      "unit": "MiB"
+    },
+    "workday_endurance_slope_mib_per_min": {
+      "before": -3.8885,
+      "after": -25.6289,
+      "delta": -21.7404,
+      "delta_pct": 559.09,
+      "unit": "MiB/min"
+    },
+    "workday_cum_cpu_ms": {
+      "before": 66961.56,
+      "after": 17237.96,
+      "delta": -49723.6,
+      "delta_pct": -74.26,
+      "unit": "ms"
+    },
+    "workday_xnu_cpu_energy_j": {
+      "before": 206.513,
+      "after": 38.4029,
+      "delta": -168.1101,
+      "delta_pct": -81.4,
+      "unit": "J"
+    },
+    "workday_cooldown_leaks": {
+      "before": 288.0,
+      "after": 288.0,
+      "delta": 0.0,
+      "delta_pct": 0.0,
+      "unit": "leaks"
+    }
+  }
+}

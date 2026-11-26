@@ -241,4 +241,58 @@ struct ModifierShortcutTests {
         #expect(!capture.enabled)
         #expect(capture.modifierShortcut == .option)
     }
+
+    @Test func scrollMonitorIsArmedOnlyDuringActiveModifierCandidate() throws {
+        let monitor = ModifierShortcutMonitor()
+        var taps = 0
+        monitor.start(shortcut: .option) { taps += 1 }
+        defer { monitor.stop() }
+
+        #expect(monitor.isRunning)
+        #expect(!monitor.isMonitoringScroll)
+
+        // Pressing Option arms the candidate scroll monitor.
+        let down = try #require(NSEvent.keyEvent(
+            with: .flagsChanged,
+            location: .zero,
+            modifierFlags: .option,
+            timestamp: 0,
+            windowNumber: 0,
+            context: nil,
+            characters: "",
+            charactersIgnoringModifiers: "",
+            isARepeat: false,
+            keyCode: 58
+        ))
+        monitor.benchmarkProcess(down)
+        #expect(monitor.isMonitoringScroll)
+
+        // Releasing Option fires once and tears down the scroll monitor immediately.
+        let up = try #require(NSEvent.keyEvent(
+            with: .flagsChanged,
+            location: .zero,
+            modifierFlags: [],
+            timestamp: 0.05,
+            windowNumber: 0,
+            context: nil,
+            characters: "",
+            charactersIgnoringModifiers: "",
+            isARepeat: false,
+            keyCode: 58
+        ))
+        monitor.benchmarkProcess(up)
+        #expect(taps == 1)
+        #expect(!monitor.isMonitoringScroll)
+
+        // Suspending or resetting clears scroll monitoring too.
+        monitor.benchmarkProcess(down)
+        #expect(monitor.isMonitoringScroll)
+        monitor.isSuspended = true
+        #expect(!monitor.isMonitoringScroll)
+        monitor.isSuspended = false
+        monitor.benchmarkProcess(down)
+        #expect(monitor.isMonitoringScroll)
+        monitor.reset()
+        #expect(!monitor.isMonitoringScroll)
+    }
 }

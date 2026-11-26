@@ -1,0 +1,50 @@
+======================================================================
+Rasc [61555]: 64-bit    Footprint: 48 MB (16384 bytes per page)
+======================================================================
+
+  Dirty      Clean  Reclaimable    Regions    Category
+    ---        ---          ---        ---    ---
+  32 MB        0 B      9168 KB         18    MALLOC_SMALL
+6400 KB        0 B          0 B          1    MALLOC_LARGE
+2335 KB     128 KB          0 B        968    __DATA
+2330 KB        0 B          0 B        870    __DATA_DIRTY
+1024 KB        0 B          0 B         11    MALLOC metadata
+ 641 KB        0 B          0 B          1    page table
+ 640 KB        0 B          0 B         24    untagged (VM_ALLOCATE)
+ 495 KB        0 B          0 B        632    __AUTH
+ 312 KB        0 B          0 B       2538    unused dyld shared cache area
+ 272 KB        0 B          0 B          2    CoreUI image data
+ 272 KB        0 B          0 B          1    MALLOC_TINY
+ 256 KB        0 B          0 B          8    stack
+ 176 KB        0 B          0 B         11    CoreAnimation
+ 128 KB        0 B          0 B          1    Accelerate image backing stores
+ 112 KB        0 B          0 B       1018    __AUTH_CONST
+ 112 KB        0 B          0 B          2    __TPRO_CONST
+  64 KB        0 B          0 B          2    IOAccelerator
+  48 KB     304 KB          0 B       1027    __DATA_CONST
+  48 KB        0 B          0 B          5    IOKit
+  32 KB        0 B          0 B          1    Activity Tracing
+  32 KB        0 B          0 B          1    tag 22
+  32 KB        0 B          0 B          2    CoreGraphics
+  16 KB        0 B          0 B          1    MALLOC_NANO
+  16 KB        0 B          0 B          2    IOAccelerator (graphics)
+  16 KB        0 B          0 B          1    os_alloc_once
+  16 KB        0 B          0 B          1    Foundation
+  16 KB        0 B          0 B          1    ColorSync
+    0 B      12 MB       588 MB          3    Owned physical footprint (unmapped) (neural) (nofootprint)
+    0 B      22 MB          0 B         41    mapped file
+    0 B    6592 KB          0 B          5    __LINKEDIT
+    0 B    5088 KB          0 B       1049    __TEXT
+    0 B        0 B          0 B          1    __LLVM_COV
+    0 B        0 B          0 B          1    __FONT_DATA
+    0 B        0 B          0 B          7    IOSurface
+    0 B        0 B          0 B          1    SQLite page cache
+    0 B        0 B          0 B          1    __CTF
+    ---        ---          ---        ---    ---
+  48 MB      45 MB       597 MB       8261    TOTAL
+
+Auxiliary data:
+    neural_peak: 598 MB
+    phys_footprint: 48 MB
+    phys_footprint_peak: 62 MB
+

@@ -109,6 +109,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
         bootstrap.start()
 
         let forceResetOnboarding = ProcessInfo.processInfo.arguments.contains("-resetOnboarding")
+        #if RASC_EFFICIENCY_BENCHMARK
+        EfficiencyBenchmarkCommandLine.prepareBeforeOnboardingIfRequested()
+        #endif
         #if DEBUG
         let showScratchpad = ProcessInfo.processInfo.arguments.contains("-showScratchpad")
         #endif
@@ -117,6 +120,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
                 bootstrap: bootstrap,
                 forceReset: forceResetOnboarding
             )
+            #if RASC_EFFICIENCY_BENCHMARK
+            if EfficiencyBenchmarkCommandLine.isRequested {
+                EfficiencyBenchmarkCommandLine.scheduleRun(bootstrap: bootstrap)
+                return
+            }
+            #endif
             #if DEBUG
             if showScratchpad {
                 await bootstrap.awaitPanel()?.show()

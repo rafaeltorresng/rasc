@@ -174,6 +174,8 @@ final class ModifierShortcutStore: ObservableObject {
 final class ModifierShortcutMonitor {
     private nonisolated(unsafe) var globalMonitor: Any?
     private nonisolated(unsafe) var localMonitor: Any?
+    private nonisolated(unsafe) var globalScrollMonitor: Any?
+    private nonisolated(unsafe) var localScrollMonitor: Any?
     private nonisolated(unsafe) var workspaceObserver: (any NSObjectProtocol)?
     private nonisolated(unsafe) var appObservers: [any NSObjectProtocol] = []
     private var recognizers: [ModifierShortcut: ModifierTapRecognizer] = [:]
@@ -184,6 +186,7 @@ final class ModifierShortcutMonitor {
         didSet {
             if isSuspended {
                 resetRecognizers()
+                syncScrollMonitors()
             } else {
                 lastFlags = currentFlags()
             }
@@ -191,10 +194,13 @@ final class ModifierShortcutMonitor {
     }
 
     var isRunning: Bool { globalMonitor != nil || localMonitor != nil }
+    var isMonitoringScroll: Bool { globalScrollMonitor != nil || localScrollMonitor != nil }
 
     deinit {
         if let globalMonitor { NSEvent.removeMonitor(globalMonitor) }
         if let localMonitor { NSEvent.removeMonitor(localMonitor) }
+        if let globalScrollMonitor { NSEvent.removeMonitor(globalScrollMonitor) }
+        if let localScrollMonitor { NSEvent.removeMonitor(localScrollMonitor) }
         if let workspaceObserver { NSWorkspace.shared.notificationCenter.removeObserver(workspaceObserver) }
         for observer in appObservers { NotificationCenter.default.removeObserver(observer) }
     }
@@ -218,7 +224,7 @@ final class ModifierShortcutMonitor {
         lastFlags = currentFlags()
 
         let mask: NSEvent.EventTypeMask = [
-            .flagsChanged, .keyDown, .leftMouseDown, .rightMouseDown, .otherMouseDown, .scrollWheel
+            .flagsChanged, .keyDown, .leftMouseDown, .rightMouseDown, .otherMouseDown
         ]
         globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] event in
             MainActor.assumeIsolated {
@@ -231,6 +237,7 @@ final class ModifierShortcutMonitor {
             }
             return event
         }
+        syncScrollMonitors()
         workspaceObserver = NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.didActivateApplicationNotification,
             object: nil,
@@ -254,10 +261,14 @@ final class ModifierShortcutMonitor {
     func stop() {
         if let globalMonitor { NSEvent.removeMonitor(globalMonitor) }
         if let localMonitor { NSEvent.removeMonitor(localMonitor) }
+        if let globalScrollMonitor { NSEvent.removeMonitor(globalScrollMonitor) }
+        if let localScrollMonitor { NSEvent.removeMonitor(localScrollMonitor) }
         if let workspaceObserver { NSWorkspace.shared.notificationCenter.removeObserver(workspaceObserver) }
         for observer in appObservers { NotificationCenter.default.removeObserver(observer) }
         globalMonitor = nil
         localMonitor = nil
+        globalScrollMonitor = nil
+        localScrollMonitor = nil
         workspaceObserver = nil
         appObservers = []
         recognizers = [:]
@@ -267,6 +278,7 @@ final class ModifierShortcutMonitor {
 
     func reset() {
         resetRecognizers()
+        syncScrollMonitors()
         lastFlags = currentFlags()
     }
 
@@ -276,6 +288,7 @@ final class ModifierShortcutMonitor {
         for key in recognizers.keys {
             _ = recognizers[key]?.handle(.otherKeyDown)
         }
+        syncScrollMonitors()
     }
 
     private func resetRecognizers() {
@@ -283,6 +296,39 @@ final class ModifierShortcutMonitor {
             _ = recognizers[key]?.handle(.reset)
         }
     }
+
+    private var hasActiveCandidate: Bool {
+        recognizers.values.contains { $0.candidateStartedAt != nil }
+    }
+
+    private func syncScrollMonitors() {
+        let shouldMonitor = isRunning && !isSuspended && hasActiveCandidate
+        if shouldMonitor {
+            guard globalScrollMonitor == nil && localScrollMonitor == nil else { return }
+            globalScrollMonitor = NSEvent.addGlobalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
+                MainActor.assumeIsolated {
+                    self?.process(event)
+                }
+            }
+            localScrollMonitor = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
+                MainActor.assumeIsolated {
+                    self?.process(event)
+                }
+                return event
+            }
+        } else {
+            if let globalScrollMonitor { NSEvent.removeMonitor(globalScrollMonitor) }
+            if let localScrollMonitor { NSEvent.removeMonitor(localScrollMonitor) }
+            globalScrollMonitor = nil
+            localScrollMonitor = nil
+        }
+    }
+
+    #if DEBUG || RASC_EFFICIENCY_BENCHMARK
+    func benchmarkProcess(_ event: NSEvent) {
+        process(event)
+    }
+    #endif
 
     private func process(_ event: NSEvent) {
         guard !isSuspended else {
@@ -325,6 +371,7 @@ final class ModifierShortcutMonitor {
         default:
             break
         }
+        syncScrollMonitors()
     }
 
     private func relevantFlags(_ event: NSEvent) -> NSEvent.ModifierFlags {

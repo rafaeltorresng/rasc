@@ -8,7 +8,17 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
     private var session: HomeSession?
     private var paletteObservation: AnyCancellable?
     private let windowFrameStore: WindowFrameStore
-    private var displayObservers: [NSObjectProtocol] = []
+    private nonisolated(unsafe) var defaultObservers: [NSObjectProtocol] = []
+    private nonisolated(unsafe) var workspaceObservers: [NSObjectProtocol] = []
+
+    deinit {
+        for observer in defaultObservers {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        for observer in workspaceObservers {
+            NSWorkspace.shared.notificationCenter.removeObserver(observer)
+        }
+    }
 
     var isVisible: Bool {
         window?.isVisible == true
@@ -17,6 +27,9 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
     var isKeyWindow: Bool { window?.isKeyWindow == true }
     var selectedNoteID: UUID? { session?.selectedNote()?.id }
     var exportWindow: NSWindow? { window }
+    #if RASC_EFFICIENCY_BENCHMARK
+    var benchmarkSession: HomeSession? { session }
+    #endif
 
     var onVisibilityChange: ((Bool) -> Void)?
 
@@ -69,6 +82,7 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
         guard let window else { return }
         windowFrameStore.save(window)
         window.orderOut(nil)
+        releaseHiddenContent(of: window)
         onVisibilityChange?(false)
     }
 
@@ -86,8 +100,14 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         windowFrameStore.save(sender)
         sender.orderOut(nil)
+        releaseHiddenContent(of: sender)
         onVisibilityChange?(false)
         return false
+    }
+
+    private func releaseHiddenContent(of window: NSWindow) {
+        window.contentViewController = nil
+        session?.releaseCachedNotesForHiddenWindow()
     }
 
     func windowDidMove(_ notification: Notification) {
@@ -142,7 +162,7 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
 
     private func observeDisplayChanges() {
         let workspaceCenter = NSWorkspace.shared.notificationCenter
-        displayObservers.append(
+        workspaceObservers.append(
             workspaceCenter.addObserver(
                 forName: NSWorkspace.screensDidWakeNotification,
                 object: nil,
@@ -153,7 +173,7 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
                 }
             }
         )
-        displayObservers.append(
+        defaultObservers.append(
             NotificationCenter.default.addObserver(
                 forName: NSApplication.didChangeScreenParametersNotification,
                 object: nil,

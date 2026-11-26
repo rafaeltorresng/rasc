@@ -498,7 +498,7 @@ struct HomeView: View {
         showsKeptIndicator: Bool = true
     ) -> some View {
         let showSelectionIndicators = session.isSelectionMode || session.selectedCount > 0
-        return VStack(alignment: .leading, spacing: 0) {
+        return LazyVStack(alignment: .leading, spacing: 0) {
             ForEach(Array(notes.enumerated()), id: \.element.id) { index, note in
                 let multiSelected = session.selectedNoteIDs.contains(note.id)
                 let keyboardFocused = session.selectedNoteID == note.id

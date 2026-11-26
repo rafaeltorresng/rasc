@@ -134,6 +134,17 @@ final class HomeSession {
         await performReload()
     }
 
+    /// Releases cached browse/search arrays when Home is hidden while preserving
+    /// search state, selection markers, and Undo discard receipts.
+    func releaseCachedNotesForHiddenWindow() {
+        reloadTask?.cancel()
+        reloadTask = nil
+        browseGroups = []
+        searchResults = []
+        hasMoreSearchResults = false
+        isLoading = false
+    }
+
     func scheduleReload() {
         reloadTask?.cancel()
         let query = searchQuery
