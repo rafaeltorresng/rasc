@@ -35,6 +35,8 @@ struct HomeView: View {
     let onNoteDiscarded: (UUID) -> Void
     let onNoteUnkept: (UUID) -> Void
     let onExportThought: (UUID) -> Void
+    /// Batch export of an explicit selection.
+    var onExportSelected: (Set<UUID>) -> Void = { _ in }
     @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -126,21 +128,48 @@ struct HomeView: View {
                     }
                 }
             }
+            if session.selectedCount > 0 {
+                homeContentColumn {
+                    HomeBatchActionsBar(
+                        session: session,
+                        undoManager: undoManager,
+                        onNoteDiscarded: onNoteDiscarded,
+                        onExportSelected: { ids in onExportSelected(ids) },
+                        onCopy: { message in
+                            session.actionErrorMessage = nil
+                            retryAction = nil
+                            copyFeedback = message
+                            copyFeedbackTask?.cancel()
+                            copyFeedbackTask = Task { @MainActor in
+                                try? await Task.sleep(for: .seconds(3))
+                                guard !Task.isCancelled else { return }
+                                copyFeedback = nil
+                            }
+                        },
+                        onDiscardSucceeded: {
+                            session.actionErrorMessage = nil
+                            retryAction = nil
+                        },
+                        onError: { message in session.actionErrorMessage = message }
+                    )
+                }
+                .padding(.bottom, 8)
+            }
             if let error = session.actionErrorMessage {
                 HStack(spacing: 12) {
                     Text(error).fixedSize(horizontal: false, vertical: true)
                     Spacer(minLength: 8)
                     if let retryAction { Button("Retry", action: retryAction) }
-                    else if session.lastDiscard != nil { Button("Undo") { Task { await session.undoDiscard() } } }
+                    else if session.hasUndoableDiscard { Button("Undo") { Task { await session.undoDiscard() } } }
                     Button("Dismiss") { session.actionErrorMessage = nil; retryAction = nil }
                 }
                 .font(.callout)
                 .padding(.horizontal, HomeLayout.horizontalPadding)
                 .padding(.vertical, 12)
                 .accessibilityElement(children: .contain)
-            } else if session.lastDiscard != nil {
+            } else if session.hasUndoableDiscard {
                 HStack {
-                    Text("Thought discarded.")
+                    Text(session.lastDiscardBatch.count > 1 ? "\(session.lastDiscardBatch.count) thoughts discarded." : "Thought discarded.")
                         .foregroundStyle(palette.secondaryText(for: colorScheme))
                     Spacer()
                     Button("Undo") { Task { await session.undoDiscard() } }
@@ -170,37 +199,64 @@ struct HomeView: View {
         .onChange(of: copyFeedback) { _, message in
             if let message { RascAccessibility.announce(message) }
         }
+        .onChange(of: session.selectedCount) { oldCount, count in
+            if count > 0 {
+                RascAccessibility.announce("\(count) selected")
+            } else if oldCount > 0 && !session.hasUndoableDiscard {
+                RascAccessibility.announce("Selection cleared")
+            }
+        }
         .onChange(of: session.lastDiscard) { _, receipt in
             if receipt != nil { RascAccessibility.announce("Thought discarded. Undo is available.") }
         }
-        .onKeyPress(.upArrow) {
+        .onChange(of: session.lastDiscardBatch) { _, batch in
+            guard !batch.isEmpty else { return }
+            let message = batch.count == 1
+                ? "Thought discarded. Undo is available."
+                : "\(batch.count) thoughts discarded. Undo is available."
+            RascAccessibility.announce(message)
+        }
+        .onKeyPress(keys: [.upArrow, .downArrow, .leftArrow, .rightArrow], phases: .down) { press in
             guard !searchIsFocused else { return .ignored }
+            let direction: HomeSession.NavigationDirection? = switch press.key {
+            case .upArrow: .up
+            case .downArrow: .down
+            case .leftArrow: .left
+            case .rightArrow: .right
+            default: nil
+            }
+            guard let direction else { return .ignored }
             listIsFocused = true
-            session.moveSelection(.up, columns: activeGridColumns)
+            if press.modifiers.contains(.shift) {
+                session.extendSelection(direction, columns: activeGridColumns)
+            } else {
+                session.moveSelection(direction, columns: activeGridColumns)
+            }
             return .handled
         }
-        .onKeyPress(.downArrow) {
-            guard !searchIsFocused else { return .ignored }
-            listIsFocused = true
-            session.moveSelection(.down, columns: activeGridColumns)
-            return .handled
-        }
-        .onKeyPress(.leftArrow) {
-            guard !searchIsFocused else { return .ignored }
-            listIsFocused = true
-            session.moveSelection(.left, columns: activeGridColumns)
-            return .handled
-        }
-        .onKeyPress(.rightArrow) {
-            guard !searchIsFocused else { return .ignored }
-            listIsFocused = true
-            session.moveSelection(.right, columns: activeGridColumns)
+        .onKeyPress(.space, phases: .down) { press in
+            guard !searchIsFocused,
+                  listIsFocused,
+                  session.isSelectionMode || session.selectedCount > 0,
+                  press.modifiers.isEmpty,
+                  let id = session.selectedNoteID else { return .ignored }
+            session.toggleSelection(id)
             return .handled
         }
         .onKeyPress(.return) {
             guard !searchIsFocused, listIsFocused else { return .ignored }
             openSelectedNote()
             return .handled
+        }
+        .onKeyPress(KeyEquivalent("a"), phases: .down) { press in
+            guard !searchIsFocused, press.modifiers == .command else { return .ignored }
+            listIsFocused = true
+            session.selectAllVisible()
+            return .handled
+        }
+        .onExitCommand {
+            guard session.selectedCount > 0 || session.isSelectionMode else { return }
+            session.clearSelection()
         }
     }
 
@@ -236,6 +292,10 @@ struct HomeView: View {
             Spacer(minLength: 12)
 
             HomeViewModeToggle(mode: $viewMode)
+
+            if session.hasNotes {
+                HomeSelectionToggle(isOn: session.isSelectionMode) { session.toggleSelectionMode() }
+            }
 
             HomeNewScratchButton(style: .header, action: onNewScratch)
 
@@ -400,20 +460,28 @@ struct HomeView: View {
         for notes: [Note],
         showsKeptIndicator: Bool = true
     ) -> some View {
-        LazyVGrid(
+        let showSelectionIndicators = session.isSelectionMode || session.selectedCount > 0
+        return LazyVGrid(
             columns: cardGridItems,
             alignment: .leading,
             spacing: HomeLayout.gridSpacing
         ) {
             ForEach(Array(notes.enumerated()), id: \.element.id) { _, note in
+                let multiSelected = session.selectedNoteIDs.contains(note.id)
+                let keyboardFocused = session.selectedNoteID == note.id
                 HomeNoteCardView(
                     note: note,
-                    isSelected: session.selectedNoteID == note.id,
+                    isSelected: showSelectionIndicators ? multiSelected : keyboardFocused,
+                    isKeyboardFocused: keyboardFocused,
+                    isSelectionMode: session.isSelectionMode,
+                    showsSelectionIndicator: showSelectionIndicators,
                     showsKeptIndicator: showsKeptIndicator,
                     timestamp: session.formattedTimestamp(for: note),
                     searchQuery: session.searchQuery,
                     onOpen: { onOpenNote(note.id) },
                     onSelect: { session.selectNote(note.id) },
+                    onToggleSelection: { session.toggleSelection(note.id) },
+                    onExtendSelection: { session.extendSelectionTo(note.id) },
                     onCopy: { copyNote(note.id) },
                     onExport: { onExportThought(note.id) },
                     onDuplicate: { duplicateNote(note.id) },
@@ -429,16 +497,24 @@ struct HomeView: View {
         for notes: [Note],
         showsKeptIndicator: Bool = true
     ) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
+        let showSelectionIndicators = session.isSelectionMode || session.selectedCount > 0
+        return VStack(alignment: .leading, spacing: 0) {
             ForEach(Array(notes.enumerated()), id: \.element.id) { index, note in
+                let multiSelected = session.selectedNoteIDs.contains(note.id)
+                let keyboardFocused = session.selectedNoteID == note.id
                 HomeNoteRowView(
                     note: note,
-                    isSelected: session.selectedNoteID == note.id,
+                    isSelected: showSelectionIndicators ? multiSelected : keyboardFocused,
+                    isKeyboardFocused: keyboardFocused,
+                    isSelectionMode: session.isSelectionMode,
+                    showsSelectionIndicator: showSelectionIndicators,
                     showsKeptIndicator: showsKeptIndicator,
                     timestamp: session.formattedTimestamp(for: note),
                     searchQuery: session.searchQuery,
                     onOpen: { onOpenNote(note.id) },
                     onSelect: { session.selectNote(note.id) },
+                    onToggleSelection: { session.toggleSelection(note.id) },
+                    onExtendSelection: { session.extendSelectionTo(note.id) },
                     onCopy: { copyNote(note.id) },
                     onExport: { onExportThought(note.id) },
                     onDuplicate: { duplicateNote(note.id) },
@@ -622,11 +698,16 @@ struct ThoughtSearchField: View {
 private struct HomeNoteRowView: View {
     let note: Note
     let isSelected: Bool
+    var isKeyboardFocused: Bool = false
+    var isSelectionMode: Bool = false
+    var showsSelectionIndicator: Bool = false
     let showsKeptIndicator: Bool
     let timestamp: String
     let searchQuery: String
     let onOpen: () -> Void
     let onSelect: () -> Void
+    var onToggleSelection: () -> Void = {}
+    var onExtendSelection: () -> Void = {}
     let onCopy: () -> Void
     let onExport: () -> Void
     let onDuplicate: () -> Void
@@ -659,8 +740,7 @@ private struct HomeNoteRowView: View {
 
     var body: some View {
         Button {
-            onSelect()
-            onOpen()
+            handleClick()
         } label: {
             rowContent
         }
@@ -675,12 +755,20 @@ private struct HomeNoteRowView: View {
         .animation(RascMotion.selection(reduceMotion: reduceMotion), value: isSelected)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
-        .accessibilityHint("Press Return to open")
+        .accessibilityHint(showsSelectionIndicator ? "Press Space to select or deselect" : "Press Return to open")
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private var rowContent: some View {
         HStack(alignment: .firstTextBaseline, spacing: 10) {
+            if showsSelectionIndicator {
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(isSelected ? Color.primary : palette.metadataText(for: colorScheme))
+                    .accessibilityHidden(true)
+                    .frame(width: 16)
+            }
+
             Image(systemName: "bookmark.fill")
                 .font(.system(size: 10, weight: .semibold))
                 .foregroundStyle(palette.metadataText(for: colorScheme))
@@ -731,6 +819,13 @@ private struct HomeNoteRowView: View {
                     .fill(palette.subtleFill(for: colorScheme))
             }
         }
+        .overlay {
+            if showsSelectionIndicator && isKeyboardFocused && !isSelected {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .strokeBorder(palette.focus(for: colorScheme).opacity(0.7), lineWidth: 1.25)
+                    .allowsHitTesting(false)
+            }
+        }
     }
 
     private var noteActionsMenu: some View {
@@ -767,6 +862,15 @@ private struct HomeNoteRowView: View {
         Button("Duplicate", action: onDuplicate)
             .disabled(!note.hasMeaningfulContent)
         Button("Discard Note", role: .destructive, action: onDiscard)
+    }
+
+    private func handleClick() {
+        let flags = NSApp.currentEvent?.modifierFlags.intersection(.deviceIndependentFlagsMask) ?? []
+        if flags.contains(.command) { onToggleSelection(); return }
+        if flags.contains(.shift) { onExtendSelection(); return }
+        if isSelectionMode { onToggleSelection(); return }
+        onSelect()
+        onOpen()
     }
 
     private var accessibilityLabel: String {
@@ -961,11 +1065,16 @@ private struct HomeViewModeToggle: View {
 private struct HomeNoteCardView: View {
     let note: Note
     let isSelected: Bool
+    var isKeyboardFocused: Bool = false
+    var isSelectionMode: Bool = false
+    var showsSelectionIndicator: Bool = false
     let showsKeptIndicator: Bool
     let timestamp: String
     let searchQuery: String
     let onOpen: () -> Void
     let onSelect: () -> Void
+    var onToggleSelection: () -> Void = {}
+    var onExtendSelection: () -> Void = {}
     let onCopy: () -> Void
     let onExport: () -> Void
     let onDuplicate: () -> Void
@@ -997,8 +1106,7 @@ private struct HomeNoteCardView: View {
 
     var body: some View {
         Button {
-            onSelect()
-            onOpen()
+            handleClick()
         } label: {
             cardContent
         }
@@ -1011,12 +1119,21 @@ private struct HomeNoteCardView: View {
         .animation(RascMotion.selection(reduceMotion: reduceMotion), value: isSelected)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
-        .accessibilityHint("Press Return to open")
+        .accessibilityHint(showsSelectionIndicator ? "Press Space to select or deselect" : "Press Return to open")
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private var cardContent: some View {
         HStack(alignment: .top, spacing: 9) {
+            if showsSelectionIndicator {
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(isSelected ? Color.primary : palette.metadataText(for: colorScheme))
+                    .frame(width: 16)
+                    .padding(.top, 1.5)
+                    .accessibilityHidden(true)
+            }
+
             Image(systemName: "bookmark.fill")
                 .font(.system(size: 10, weight: .semibold))
                 .foregroundStyle(palette.metadataText(for: colorScheme))
@@ -1084,6 +1201,10 @@ private struct HomeNoteCardView: View {
                     // decoration and must never intercept touches.
                     RascTransientSelectionBackground(cornerRadius: HomeLayout.gridItemCornerRadius)
                         .allowsHitTesting(false)
+                } else if showsSelectionIndicator && isKeyboardFocused {
+                    RoundedRectangle(cornerRadius: HomeLayout.gridItemCornerRadius, style: .continuous)
+                        .strokeBorder(palette.focus(for: colorScheme).opacity(0.7), lineWidth: 1.25)
+                        .allowsHitTesting(false)
                 }
             }
         }
@@ -1125,6 +1246,15 @@ private struct HomeNoteCardView: View {
         Button("Discard Note", role: .destructive, action: onDiscard)
     }
 
+    private func handleClick() {
+        let flags = NSApp.currentEvent?.modifierFlags.intersection(.deviceIndependentFlagsMask) ?? []
+        if flags.contains(.command) { onToggleSelection(); return }
+        if flags.contains(.shift) { onExtendSelection(); return }
+        if isSelectionMode { onToggleSelection(); return }
+        onSelect()
+        onOpen()
+    }
+
     private var accessibilityLabel: String {
         var components = [note.displayTitle]
         if note.isKept {
@@ -1135,5 +1265,139 @@ private struct HomeNoteCardView: View {
         }
         components.append(timestamp)
         return components.joined(separator: ", ")
+    }
+}
+
+/// Explicit selection mode toggle. Neutral, never copper; keyboard-first.
+private struct HomeSelectionToggle: View {
+    let isOn: Bool
+    let action: () -> Void
+
+    @Environment(\.rascPalette) private var palette
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorSchemeContrast) private var contrast
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: isOn ? "checkmark.circle.fill" : "checkmark.circle")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(isOn ? Color.primary : palette.metadataText(for: colorScheme))
+                .frame(width: 26, height: 26)
+                .background {
+                    if isOn {
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .fill(palette.selectionFill(for: colorScheme))
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                    .strokeBorder(palette.selectionStroke(for: colorScheme), lineWidth: contrast == .increased ? 1.5 : 1)
+                            }
+                    }
+                }
+                .contentShape(RoundedRectangle(cornerRadius: 6, style: .continuous).inset(by: -3))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(isOn ? "Selection mode on" : "Selection mode")
+        .accessibilityAddTraits(isOn ? [.isSelected, .isButton] : .isButton)
+        .help(isOn ? "Selection mode on. Click to clear." : "Select multiple thoughts")
+    }
+}
+
+/// Batch actions shown when one or more notes are selected. No folders or tags.
+struct HomeBatchActionsBar: View {
+    let session: HomeSession
+    let undoManager: UndoManager?
+    let onNoteDiscarded: (UUID) -> Void
+    let onExportSelected: (Set<UUID>) -> Void
+    let onCopy: (String) -> Void
+    var onDiscardSucceeded: () -> Void = {}
+    let onError: (String) -> Void
+
+    @Environment(\.rascPalette) private var palette
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var isWorking = false
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Text("\(session.selectedCount) selected")
+                .font(.callout.weight(.semibold))
+                .monospacedDigit()
+                .accessibilityAddTraits(.isHeader)
+
+            Spacer(minLength: 8)
+
+            Button("Copy") { copySelected() }
+                .disabled(isWorking)
+            Button("Export…") { onExportSelected(session.selectedNoteIDs) }
+                .disabled(isWorking)
+            Button("Discard", role: .destructive) { discardSelected() }
+                .disabled(isWorking)
+            Button("Clear") { session.clearSelection() }
+                .keyboardShortcut(.cancelAction)
+                .disabled(isWorking)
+        }
+        .font(.callout)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(palette.subtleFill(for: colorScheme))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(palette.border(for: colorScheme).opacity(0.66), lineWidth: 1)
+                }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Batch actions, \(session.selectedCount) selected")
+    }
+
+    private func copySelected() {
+        isWorking = true
+        Task {
+            defer { isWorking = false }
+            do {
+                let payload = try await session.batchCopyPayload()
+                guard payload.noteCount > 0 else { return }
+                if let single = payload.singleDocument, single.hasImages {
+                    try await NoteHandoff.copy(single)
+                    let imageCount = single.parts.filter { if case .image = $0 { true } else { false } }.count
+                    let imageOnly = imageCount == 1 && single.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    onCopy(imageOnly ? "Image copied." : "Copied with images. Paste into a rich-text app.")
+                    return
+                }
+                guard !payload.text.isEmpty else {
+                    if payload.includesImages {
+                        onError("Selected thoughts contain only images. Copy or export individually.")
+                    }
+                    return
+                }
+                let pasteboard = NSPasteboard.general
+                pasteboard.clearContents()
+                guard pasteboard.setString(payload.text, forType: .string) else {
+                    onError("Couldn't copy the selected thoughts.")
+                    return
+                }
+                if payload.includesImages {
+                    onCopy("Copied text from \(payload.noteCount) thoughts (images omitted).")
+                } else {
+                    onCopy(payload.noteCount == 1 ? "Copied." : "Copied \(payload.noteCount) thoughts.")
+                }
+            } catch {
+                onError("Couldn't copy the selected thoughts.")
+            }
+        }
+    }
+
+    private func discardSelected() {
+        isWorking = true
+        Task {
+            defer { isWorking = false }
+            do {
+                let receipts = try await session.discardSelected(undoManager: undoManager)
+                for receipt in receipts { onNoteDiscarded(receipt.noteID) }
+                onDiscardSucceeded()
+            } catch {
+                onError("Couldn't discard the selected thoughts. They are still available.")
+            }
+        }
     }
 }

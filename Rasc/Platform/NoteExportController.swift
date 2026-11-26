@@ -47,6 +47,20 @@ final class NoteExportController {
         }
     }
 
+    /// Batch export of an explicit selection to a single Markdown folder.
+    /// Reuses `NoteExportFiles.writeFolder`, preserving images and resolving
+    /// filename collisions. Does not show a picker; the caller supplies ids.
+    func exportSelectedThoughts(from window: NSWindow, ids: Set<UUID>, named name: String = "Rasc Thoughts", prepare: (NoteExportScope) async throws -> Void) async {
+        await present(from: window) {
+            guard !ids.isEmpty else { throw NoteExportError.empty }
+            let scope = NoteExportScope.selected(ids)
+            try await prepareForExport { try await prepare(scope) }
+            let snapshots = try await repository.exportSnapshot(for: scope)
+            guard !snapshots.isEmpty else { throw NoteExportError.empty }
+            try await exportFolder(snapshots, named: name, from: window)
+        }
+    }
+
     private func prepareForExport<Value>(_ prepare: () async throws -> Value) async throws -> Value {
         do { return try await prepare() }
         catch let error as NoteExportError { throw error }
