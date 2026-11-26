@@ -1,0 +1,344 @@
+en
+whisper_init_from_file_with_params_no_state: loading model from '/var/folders/k6/0sxfr5x912v07y54tsg09dv80000gn/T/rasc-whisper-ll6p771m/RascWhisperProbe.app/Contents/Resources/ggml-large-v3-turbo-q5_0.bin'
+whisper_init_with_params_no_state: use gpu    = 1
+whisper_init_with_params_no_state: flash attn = 1
+whisper_init_with_params_no_state: gpu_device = 0
+whisper_init_with_params_no_state: dtw        = 0
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_compile_all: compiled 'fa_aux' library in 0.368 sec
+ggml_metal_library_compile_all: compiled 'fa_f16' library in 2.298 sec
+ggml_metal_library_compile_all: compiled 'fa_f32' library in 1.450 sec
+ggml_metal_library_compile_all: compiled 'fa_q4_0' library in 1.371 sec
+ggml_metal_library_compile_all: compiled 'fa_q4_1' library in 2.146 sec
+ggml_metal_library_compile_all: compiled 'fa_q5_0' library in 1.365 sec
+ggml_metal_library_compile_all: compiled 'fa_q5_1' library in 1.439 sec
+ggml_metal_library_compile_all: compiled 'fa_q8_0' library in 3.263 sec
+ggml_metal_library_compile_all: compiled 'fa_tensor' library in 0.368 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_f16' library in 4.777 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_f32' library in 2.297 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_q4_0' library in 4.304 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_q4_1' library in 4.374 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_q5_0' library in 4.219 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_q5_1' library in 3.346 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_q8_0' library in 3.262 sec
+ggml_metal_library_compile_all: compiled 'mul_mv' library in 1.661 sec
+ggml_metal_library_compile_all: compiled 'mul_mv_mma' library in 3.083 sec
+ggml_metal_library_compile_all: compiled 'mul_mm' library in 3.137 sec
+ggml_metal_library_compile_all: compiled 'quantize' library in 0.739 sec
+ggml_metal_library_compile_all: compiled 'softmax' library in 0.205 sec
+ggml_metal_library_compile_all: compiled 'norm' library in 0.232 sec
+ggml_metal_library_compile_all: compiled 'unary' library in 1.526 sec
+ggml_metal_library_compile_all: compiled 'binbcast' library in 1.519 sec
+ggml_metal_library_compile_all: compiled 'reduce' library in 1.453 sec
+ggml_metal_library_compile_all: compiled 'tri' library in 1.448 sec
+ggml_metal_library_compile_all: compiled 'ssm' library in 1.448 sec
+ggml_metal_library_compile_all: compiled 'wkv' library in 0.366 sec
+ggml_metal_library_compile_all: compiled 'gated_delta_net' library in 1.447 sec
+ggml_metal_library_compile_all: compiled 'solve_tri' library in 1.447 sec
+ggml_metal_library_compile_all: compiled 'rope' library in 1.447 sec
+ggml_metal_library_compile_all: compiled 'conv' library in 0.234 sec
+ggml_metal_library_compile_all: compiled 'upscale' library in 0.402 sec
+ggml_metal_library_compile_all: compiled 'argsort' library in 0.232 sec
+ggml_metal_library_compile_all: compiled 'pool' library in 0.202 sec
+ggml_metal_library_compile_all: compiled 'misc' library in 0.303 sec
+ggml_metal_library_compile_all: loaded 36 libraries from embedded data in 4.778 sec (max single = 4.777 sec)
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 14302.25 MB
+whisper_init_with_params_no_state: devices    = 3
+whisper_init_with_params_no_state: backends   = 3
+whisper_model_load: loading model
+whisper_model_load: n_vocab       = 51866
+whisper_model_load: n_audio_ctx   = 1500
+whisper_model_load: n_audio_state = 1280
+whisper_model_load: n_audio_head  = 20
+whisper_model_load: n_audio_layer = 32
+whisper_model_load: n_text_ctx    = 448
+whisper_model_load: n_text_state  = 1280
+whisper_model_load: n_text_head   = 20
+whisper_model_load: n_text_layer  = 4
+whisper_model_load: n_mels        = 128
+whisper_model_load: ftype         = 8
+whisper_model_load: qntvr         = 2
+whisper_model_load: type          = 5 (large v3)
+whisper_model_load: adding 1609 extra tokens
+whisper_model_load: n_langs       = 100
+whisper_model_load:         MTL0 total size =   573.40 MB
+whisper_model_load: model size    =  573.40 MB
+whisper_backend_init_gpu: device 0: MTL0 (type: 1)
+whisper_backend_init_gpu: found GPU device 0: MTL0 (type: 1, cnt: 0)
+whisper_backend_init_gpu: using MTL0 backend
+ggml_metal_init: allocating
+ggml_metal_init: found device: Apple M3 Pro
+ggml_metal_init: picking default device: Apple M3 Pro
+ggml_metal_init: use fusion         = true
+ggml_metal_init: use concurrency    = true
+ggml_metal_init: use graph optimize = true
+whisper_backend_init: using BLAS backend
+whisper_init_state: kv self size  =   10.49 MB
+whisper_init_state: kv cross size =   31.46 MB
+whisper_init_state: kv pad  size  =    7.86 MB
+whisper_init_state: compute buffer (conv)   =   37.69 MB
+whisper_init_state: compute buffer (encode) =   67.31 MB
+whisper_init_state: compute buffer (cross)  =   63.03 MB
+whisper_init_state: compute buffer (decode) =  100.04 MB
+ggml_metal_free: deallocating
+       17.98 real         0.34 user         0.26 sys
+           824279040  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               57356  page reclaims
+                1808  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 117  voluntary context switches
+                8034  involuntary context switches
+          6631709600  instructions retired
+          2111748809  cycles elapsed
+           844711328  peak memory footprint
+pt
+whisper_init_from_file_with_params_no_state: loading model from '/var/folders/k6/0sxfr5x912v07y54tsg09dv80000gn/T/rasc-whisper-ll6p771m/RascWhisperProbe.app/Contents/Resources/ggml-large-v3-turbo-q5_0.bin'
+whisper_init_with_params_no_state: use gpu    = 1
+whisper_init_with_params_no_state: flash attn = 1
+whisper_init_with_params_no_state: gpu_device = 0
+whisper_init_with_params_no_state: dtw        = 0
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_compile_all: compiled 'fa_aux' library in 0.001 sec
+ggml_metal_library_compile_all: compiled 'fa_f16' library in 0.002 sec
+ggml_metal_library_compile_all: compiled 'fa_f32' library in 0.012 sec
+ggml_metal_library_compile_all: compiled 'fa_q4_0' library in 0.002 sec
+ggml_metal_library_compile_all: compiled 'fa_q4_1' library in 0.002 sec
+ggml_metal_library_compile_all: compiled 'fa_q5_0' library in 0.014 sec
+ggml_metal_library_compile_all: compiled 'fa_q5_1' library in 0.006 sec
+ggml_metal_library_compile_all: compiled 'fa_q8_0' library in 0.008 sec
+ggml_metal_library_compile_all: compiled 'fa_tensor' library in 0.002 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_f16' library in 0.007 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_f32' library in 0.006 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_q4_0' library in 0.013 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_q4_1' library in 0.012 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_q5_0' library in 0.011 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_q5_1' library in 0.010 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_q8_0' library in 0.004 sec
+ggml_metal_library_compile_all: compiled 'mul_mv' library in 0.005 sec
+ggml_metal_library_compile_all: compiled 'mul_mv_mma' library in 0.003 sec
+ggml_metal_library_compile_all: compiled 'mul_mm' library in 0.009 sec
+ggml_metal_library_compile_all: compiled 'quantize' library in 0.002 sec
+ggml_metal_library_compile_all: compiled 'softmax' library in 0.013 sec
+ggml_metal_library_compile_all: compiled 'norm' library in 0.013 sec
+ggml_metal_library_compile_all: compiled 'unary' library in 0.010 sec
+ggml_metal_library_compile_all: compiled 'binbcast' library in 0.010 sec
+ggml_metal_library_compile_all: compiled 'reduce' library in 0.008 sec
+ggml_metal_library_compile_all: compiled 'tri' library in 0.008 sec
+ggml_metal_library_compile_all: compiled 'ssm' library in 0.007 sec
+ggml_metal_library_compile_all: compiled 'wkv' library in 0.010 sec
+ggml_metal_library_compile_all: compiled 'gated_delta_net' library in 0.008 sec
+ggml_metal_library_compile_all: compiled 'solve_tri' library in 0.007 sec
+ggml_metal_library_compile_all: compiled 'rope' library in 0.008 sec
+ggml_metal_library_compile_all: compiled 'conv' library in 0.007 sec
+ggml_metal_library_compile_all: compiled 'upscale' library in 0.013 sec
+ggml_metal_library_compile_all: compiled 'argsort' library in 0.006 sec
+ggml_metal_library_compile_all: compiled 'pool' library in 0.013 sec
+ggml_metal_library_compile_all: compiled 'misc' library in 0.006 sec
+ggml_metal_library_compile_all: loaded 36 libraries from embedded data in 0.014 sec (max single = 0.014 sec)
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 14302.25 MB
+whisper_init_with_params_no_state: devices    = 3
+whisper_init_with_params_no_state: backends   = 3
+whisper_model_load: loading model
+whisper_model_load: n_vocab       = 51866
+whisper_model_load: n_audio_ctx   = 1500
+whisper_model_load: n_audio_state = 1280
+whisper_model_load: n_audio_head  = 20
+whisper_model_load: n_audio_layer = 32
+whisper_model_load: n_text_ctx    = 448
+whisper_model_load: n_text_state  = 1280
+whisper_model_load: n_text_head   = 20
+whisper_model_load: n_text_layer  = 4
+whisper_model_load: n_mels        = 128
+whisper_model_load: ftype         = 8
+whisper_model_load: qntvr         = 2
+whisper_model_load: type          = 5 (large v3)
+whisper_model_load: adding 1609 extra tokens
+whisper_model_load: n_langs       = 100
+whisper_model_load:         MTL0 total size =   573.40 MB
+whisper_model_load: model size    =  573.40 MB
+whisper_backend_init_gpu: device 0: MTL0 (type: 1)
+whisper_backend_init_gpu: found GPU device 0: MTL0 (type: 1, cnt: 0)
+whisper_backend_init_gpu: using MTL0 backend
+ggml_metal_init: allocating
+ggml_metal_init: found device: Apple M3 Pro
+ggml_metal_init: picking default device: Apple M3 Pro
+ggml_metal_init: use fusion         = true
+ggml_metal_init: use concurrency    = true
+ggml_metal_init: use graph optimize = true
+whisper_backend_init: using BLAS backend
+whisper_init_state: kv self size  =   10.49 MB
+whisper_init_state: kv cross size =   31.46 MB
+whisper_init_state: kv pad  size  =    7.86 MB
+whisper_init_state: compute buffer (conv)   =   37.69 MB
+whisper_init_state: compute buffer (encode) =   67.31 MB
+whisper_init_state: compute buffer (cross)  =   63.03 MB
+whisper_init_state: compute buffer (decode) =  100.04 MB
+ggml_metal_free: deallocating
+       10.09 real         0.37 user         0.19 sys
+           823705600  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               56845  page reclaims
+                  23  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  60  voluntary context switches
+                4375  involuntary context switches
+          7367049659  instructions retired
+          1992329040  cycles elapsed
+           836928856  peak memory footprint
+auto
+whisper_init_from_file_with_params_no_state: loading model from '/var/folders/k6/0sxfr5x912v07y54tsg09dv80000gn/T/rasc-whisper-ll6p771m/RascWhisperProbe.app/Contents/Resources/ggml-large-v3-turbo-q5_0.bin'
+whisper_init_with_params_no_state: use gpu    = 1
+whisper_init_with_params_no_state: flash attn = 1
+whisper_init_with_params_no_state: gpu_device = 0
+whisper_init_with_params_no_state: dtw        = 0
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_compile_all: compiled 'fa_aux' library in 0.001 sec
+ggml_metal_library_compile_all: compiled 'fa_f16' library in 0.005 sec
+ggml_metal_library_compile_all: compiled 'fa_f32' library in 0.002 sec
+ggml_metal_library_compile_all: compiled 'fa_q4_0' library in 0.003 sec
+ggml_metal_library_compile_all: compiled 'fa_q4_1' library in 0.003 sec
+ggml_metal_library_compile_all: compiled 'fa_q5_0' library in 0.007 sec
+ggml_metal_library_compile_all: compiled 'fa_q5_1' library in 0.012 sec
+ggml_metal_library_compile_all: compiled 'fa_q8_0' library in 0.003 sec
+ggml_metal_library_compile_all: compiled 'fa_tensor' library in 0.003 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_f16' library in 0.012 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_f32' library in 0.010 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_q4_0' library in 0.013 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_q4_1' library in 0.015 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_q5_0' library in 0.010 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_q5_1' library in 0.014 sec
+ggml_metal_library_compile_all: compiled 'fa_vec_q8_0' library in 0.009 sec
+ggml_metal_library_compile_all: compiled 'mul_mv' library in 0.004 sec
+ggml_metal_library_compile_all: compiled 'mul_mv_mma' library in 0.007 sec
+ggml_metal_library_compile_all: compiled 'mul_mm' library in 0.001 sec
+ggml_metal_library_compile_all: compiled 'quantize' library in 0.007 sec
+ggml_metal_library_compile_all: compiled 'softmax' library in 0.007 sec
+ggml_metal_library_compile_all: compiled 'norm' library in 0.007 sec
+ggml_metal_library_compile_all: compiled 'unary' library in 0.005 sec
+ggml_metal_library_compile_all: compiled 'binbcast' library in 0.005 sec
+ggml_metal_library_compile_all: compiled 'reduce' library in 0.004 sec
+ggml_metal_library_compile_all: compiled 'tri' library in 0.007 sec
+ggml_metal_library_compile_all: compiled 'ssm' library in 0.006 sec
+ggml_metal_library_compile_all: compiled 'wkv' library in 0.007 sec
+ggml_metal_library_compile_all: compiled 'gated_delta_net' library in 0.006 sec
+ggml_metal_library_compile_all: compiled 'solve_tri' library in 0.005 sec
+ggml_metal_library_compile_all: compiled 'rope' library in 0.009 sec
+ggml_metal_library_compile_all: compiled 'conv' library in 0.005 sec
+ggml_metal_library_compile_all: compiled 'upscale' library in 0.005 sec
+ggml_metal_library_compile_all: compiled 'argsort' library in 0.011 sec
+ggml_metal_library_compile_all: compiled 'pool' library in 0.004 sec
+ggml_metal_library_compile_all: compiled 'misc' library in 0.004 sec
+ggml_metal_library_compile_all: loaded 36 libraries from embedded data in 0.016 sec (max single = 0.015 sec)
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   MTL0 (Apple M3 Pro)
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal4  (5002)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 14302.25 MB
+whisper_init_with_params_no_state: devices    = 3
+whisper_init_with_params_no_state: backends   = 3
+whisper_model_load: loading model
+whisper_model_load: n_vocab       = 51866
+whisper_model_load: n_audio_ctx   = 1500
+whisper_model_load: n_audio_state = 1280
+whisper_model_load: n_audio_head  = 20
+whisper_model_load: n_audio_layer = 32
+whisper_model_load: n_text_ctx    = 448
+whisper_model_load: n_text_state  = 1280
+whisper_model_load: n_text_head   = 20
+whisper_model_load: n_text_layer  = 4
+whisper_model_load: n_mels        = 128
+whisper_model_load: ftype         = 8
+whisper_model_load: qntvr         = 2
+whisper_model_load: type          = 5 (large v3)
+whisper_model_load: adding 1609 extra tokens
+whisper_model_load: n_langs       = 100
+whisper_model_load:         MTL0 total size =   573.40 MB
+whisper_model_load: model size    =  573.40 MB
+whisper_backend_init_gpu: device 0: MTL0 (type: 1)
+whisper_backend_init_gpu: found GPU device 0: MTL0 (type: 1, cnt: 0)
+whisper_backend_init_gpu: using MTL0 backend
+ggml_metal_init: allocating
+ggml_metal_init: found device: Apple M3 Pro
+ggml_metal_init: picking default device: Apple M3 Pro
+ggml_metal_init: use fusion         = true
+ggml_metal_init: use concurrency    = true
+ggml_metal_init: use graph optimize = true
+whisper_backend_init: using BLAS backend
+whisper_init_state: kv self size  =   10.49 MB
+whisper_init_state: kv cross size =   31.46 MB
+whisper_init_state: kv pad  size  =    7.86 MB
+whisper_init_state: compute buffer (conv)   =   37.69 MB
+whisper_init_state: compute buffer (encode) =   67.31 MB
+whisper_init_state: compute buffer (cross)  =   63.03 MB
+whisper_init_state: compute buffer (decode) =  100.04 MB
+whisper_full_with_state: auto-detected language: en (p = 0.996841)
+whisper_full_with_state: auto-detected language: pt (p = 0.999416)
+whisper_full_with_state: auto-detected language: pt (p = 0.999359)
+whisper_full_with_state: auto-detected language: pt (p = 0.999323)
+whisper_full_with_state: auto-detected language: en (p = 0.405372)
+ggml_metal_free: deallocating
+        8.19 real         0.20 user         0.16 sys
+           825114624  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               51596  page reclaims
+                  40  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  30  voluntary context switches
+                2867  involuntary context switches
+          3888619480  instructions retired
+          1278458943  cycles elapsed
+           838370648  peak memory footprint

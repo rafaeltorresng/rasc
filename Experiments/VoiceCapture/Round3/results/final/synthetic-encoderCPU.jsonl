@@ -1,0 +1,23 @@
+{"engine":"fluid","finish_ms":2791.9520830000001,"fixture":"en-clip.wav","prepare_ms":2583.4449589999999,"transcript":"Don't deploy yet."}
+{"engine":"fluid","finish_ms":159.283041,"fixture":"en-uncertain.wav","prepare_ms":0.0039170000000000003,"transcript":"I was thinking that maybe we should simplify the onboarding, but I'm not entirely sure yet."}
+{"engine":"fluid","finish_ms":315.46033299999999,"fixture":"en-think.wav","prepare_ms":0.0044999999999999997,"transcript":"Um, the reason I keep coming back to this is maybe the queue looks slow because we're measuring the wrong thing. I started by counting jobs, but the actual delay seems to be between retries. I need to think about what happens if the machine goes to sleep, and whether we can keep the same behavior after it wakes up."}
+{"engine":"fluid","finish_ms":149.12074999999999,"fixture":"en-correct.wav","prepare_ms":0.0061250000000000002,"transcript":"Ask Maya Chen on Friday, uh, no. I mean Monday the 23rd, if she's back by then."}
+{"engine":"fluid","finish_ms":146.74087499999999,"fixture":"en-literal.wav","prepare_ms":0.0030000000000000001,"transcript":"Version 2.0.7, error 403, and a timeout of 180 milliseconds."}
+{"engine":"fluid","finish_ms":147.48779200000001,"fixture":"en-url.wav","prepare_ms":0.0032499999999999999,"transcript":"Look at docs.example.org slash cues question mark page equals to"}
+{"engine":"fluid","finish_ms":142.12912499999999,"fixture":"en-fragment.wav","prepare_ms":0.0046249999999999998,"transcript":"The duplicate row is probably from, um, when we"}
+{"engine":"fluid","finish_ms":142.421459,"fixture":"pt-clip.wav","prepare_ms":0.0048329999999999996,"transcript":"Não o apaga isso."}
+{"engine":"fluid","finish_ms":140.00262499999999,"fixture":"pt-maybe.wav","prepare_ms":0.0035000000000000001,"transcript":"Acho que talvez seja a migração, mas não o tenho certeza."}
+{"engine":"fluid","finish_ms":168.59437500000001,"fixture":"pt-names.wav","prepare_ms":0.0083750000000000005,"transcript":"A Lívia vai encontrar o João Siqueira em Fortaleza no dia 23 de novembro, às 15h40."}
+{"engine":"fluid","finish_ms":156.41341700000001,"fixture":"pt-correct.wav","prepare_ms":0.0037499999999999999,"transcript":"Pedir três cafés, não. Dois cafés e um chá, se a marina vier."}
+{"engine":"fluid","finish_ms":385.66079200000001,"fixture":"pt-thinking.wav","prepare_ms":0.0042090000000000001,"transcript":"Então, eu fiquei pensando no que a Camila falou sobre o começo da história. Talvez a primeira cena dê detalhes demais antes de aparecer a personagem. Eu queria deixar a cena mais quieta, mas também não o quero tirar a referência ao mercado, porque ela explica por que a mãe chegou tarde."}
+{"engine":"fluid","finish_ms":135.63891599999999,"fixture":"pt-fragment.wav","prepare_ms":0.0036250000000000002,"transcript":"Aquele outro jeito de guardar, ara, deixa eu lembrar."}
+{"engine":"fluid","finish_ms":176.85550000000001,"fixture":"mix-worker.wav","prepare_ms":0.0043750000000000004,"transcript":"Precisamos revisar a race condition no worker antes de fazer o deploy, mas não o sei se esse é realmente o problema."}
+{"engine":"fluid","finish_ms":170.73712499999999,"fixture":"mix-sql.wav","prepare_ms":0.0051250000000000002,"transcript":"Talvez seja o cache do S. K. Elite, porque o Faulbach mudou depois do Haubach."}
+{"engine":"fluid","finish_ms":169.67154199999999,"fixture":"mix-switch.wav","prepare_ms":0.0090410000000000004,"transcript":"Se o bag voltar amanhã, lembra do que a Maya disse. Don't retry the job before the time out. Mas eu ainda não o sei se vale a pena."}
+{"engine":"fluid","finish_ms":145.82837499999999,"fixture":"en-noise.wav","prepare_ms":0.0050829999999999998,"transcript":"I was thinking that maybe we should simplify the onboarding, but I'm not entirely sure yet."}
+{"engine":"fluid","finish_ms":131.58991599999999,"fixture":"pt-noise.wav","prepare_ms":0.0035829999999999998,"transcript":"Acho que talvez seja a migração, mas não temos certeza."}
+{"engine":"fluid","finish_ms":123.699583,"fixture":"en-boundary.wav","prepare_ms":0.003375,"transcript":"Don't deploy yet."}
+{"engine":"fluid","finish_ms":121.620542,"fixture":"pt-boundary.wav","prepare_ms":0.0030829999999999998,"transcript":"Não apaga isso."}
+{"engine":"fluid","finish_ms":122.12579100000001,"fixture":"silence.wav","prepare_ms":0.0034160000000000002,"transcript":""}
+{"engine":"fluid","finish_ms":120.667333,"fixture":"accidental.wav","prepare_ms":0.0041669999999999997,"transcript":""}
+{"engine":"fluid","finish_ms":121.160208,"fixture":"noise-only.wav","prepare_ms":0.0047089999999999996,"transcript":""}

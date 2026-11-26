@@ -105,6 +105,7 @@
 		010000000000000000000055 /* RefineEvalReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000055 /* RefineEvalReport.swift */; };
 		010000000000000000000056 /* RefineEvalComparator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000056 /* RefineEvalComparator.swift */; };
 		010000000000000000000057 /* RefineEvalCommandLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000057 /* RefineEvalCommandLine.swift */; };
+		0B00000000000000000000C2 /* VoiceEvalCommandLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B00000000000000000000C1 /* VoiceEvalCommandLine.swift */; };
 		010000000000000000000059 /* RefineLanguageDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000059 /* RefineLanguageDetection.swift */; };
 		01000000000000000000005A /* RefineLanguagePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005A /* RefineLanguagePolicy.swift */; };
 		01000000000000000000005B /* RefineLanguageResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005B /* RefineLanguageResolver.swift */; };
@@ -294,6 +295,7 @@
 		020000000000000000000055 /* RefineEvalReport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Eval/RefineReliability/RefineEvalReport.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000056 /* RefineEvalComparator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Eval/RefineReliability/RefineEvalComparator.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000057 /* RefineEvalCommandLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Eval/RefineReliability/RefineEvalCommandLine.swift; sourceTree = SOURCE_ROOT; };
+		0B00000000000000000000C1 /* VoiceEvalCommandLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/Eval/VoiceCapture/VoiceEvalCommandLine.swift; sourceTree = SOURCE_ROOT; };
 		020000000000000000000059 /* RefineLanguageDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineLanguageDetection.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000005A /* RefineLanguagePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineLanguagePolicy.swift; sourceTree = SOURCE_ROOT; };
 		02000000000000000000005B /* RefineLanguageResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rasc/AI/RefineLanguageResolver.swift; sourceTree = SOURCE_ROOT; };
@@ -491,6 +493,7 @@
 				020000000000000000000055 /* RefineEvalReport.swift */,
 				020000000000000000000056 /* RefineEvalComparator.swift */,
 				020000000000000000000057 /* RefineEvalCommandLine.swift */,
+				0B00000000000000000000C1 /* VoiceEvalCommandLine.swift */,
 				02000000000000000000005F /* RefineEvalIndependentLanguageAssessor.swift */,
 				020000000000000000000060 /* RefineEvalLanguageDiagnostics.swift */,
 				020000000000000000000061 /* RefineAdjudicationModels.swift */,
@@ -792,6 +795,7 @@
 				010000000000000000000055 /* RefineEvalReport.swift in Sources */,
 				010000000000000000000056 /* RefineEvalComparator.swift in Sources */,
 				010000000000000000000057 /* RefineEvalCommandLine.swift in Sources */,
+				0B00000000000000000000C2 /* VoiceEvalCommandLine.swift in Sources */,
 				010000000000000000000059 /* RefineLanguageDetection.swift in Sources */,
 				01000000000000000000005A /* RefineLanguagePolicy.swift in Sources */,
 				01000000000000000000005B /* RefineLanguageResolver.swift in Sources */,

@@ -1,0 +1,9 @@
+// swift-tools-version:6.2
+import PackageDescription
+let package = Package(name: "RascVoiceStudy", platforms: [.macOS(.v26)], dependencies: [
+    .package(path: "../deps/FluidAudio"),
+    .package(path: "../deps/KeyboardShortcuts"),
+    .package(path: "../deps/GRDB.swift"),
+], targets: [.executableTarget(name: "VoiceStudy", dependencies: [
+    .product(name: "FluidAudio", package: "FluidAudio"), "KeyboardShortcuts", .product(name: "GRDB", package: "GRDB.swift")
+], path: "Sources")])

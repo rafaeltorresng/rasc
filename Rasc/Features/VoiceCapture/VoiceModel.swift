@@ -298,6 +298,22 @@ actor VoiceModel {
         case unavailable, lowDiskSpace
     }
 
+    /// Additive instrumentation; production behavior is unchanged.
+    struct TranscriptionTiming: Sendable, Codable, Equatable {
+        var modelLoadMs: Double = 0
+        var modelReadyMs: Double = 0
+        var audioPrepareMs: Double = 0
+        var initializeMs: Double = 0
+        var inferenceMs: Double = 0
+        var cleanupMs: Double = 0
+        var totalMs: Double = 0
+        var audioSeconds: Double = 0
+        /// inferenceMs / audioSeconds; lower is faster. Not clamped.
+        var realTimeFactor: Double? { audioSeconds > 0 ? inferenceMs / (audioSeconds * 1000) : nil }
+    }
+
+    private(set) var lastTiming = TranscriptionTiming()
+
     private let retention: Duration?
     private var models: AsrModels?
     private var loading: (id: UUID, task: Task<AsrModels, Error>)?
@@ -385,10 +401,13 @@ actor VoiceModel {
         }
         try Task.checkCancellation()
         let id = UUID()
+        let taskStart = ContinuousClock.now
         let task = Task {
             let models = try await preparedModel()
+            let loadedAt = ContinuousClock.now
             try Task.checkCancellation()
             await modelReady()
+            let readyAt = ContinuousClock.now
             var samples = try audio.mono16k()
             if samples.count < 16_000 {
                 samples.append(contentsOf: repeatElement(0, count: 16_000 - samples.count))
@@ -398,10 +417,23 @@ actor VoiceModel {
             let start = ContinuousClock.now
             do {
                 try await manager.initialize(models: models)
+                let initialized = ContinuousClock.now
                 let result = try await manager.transcribe(samples, source: .microphone)
+                let inferred = ContinuousClock.now
                 try Task.checkCancellation()
                 await manager.cleanup()
+                let cleaned = ContinuousClock.now
                 Self.logger.debug("Local transcription: \(Self.milliseconds(since: start), privacy: .public) ms")
+                lastTiming = TranscriptionTiming(
+                    modelLoadMs: Self.ms(taskStart.duration(to: loadedAt)),
+                    modelReadyMs: Self.ms(taskStart.duration(to: readyAt)),
+                    audioPrepareMs: Self.ms(readyAt.duration(to: start)),
+                    initializeMs: Self.ms(start.duration(to: initialized)),
+                    inferenceMs: Self.ms(initialized.duration(to: inferred)),
+                    cleanupMs: Self.ms(inferred.duration(to: cleaned)),
+                    totalMs: Self.ms(taskStart.duration(to: cleaned)),
+                    audioSeconds: audio.seconds
+                )
                 return result.text
             } catch {
                 await manager.cleanup()
@@ -461,6 +493,10 @@ actor VoiceModel {
     func releaseForMemoryPressure() {
         if prediction != nil { releaseAfterPrediction = true }
         else { release() }
+    }
+
+    private static func ms(_ duration: Duration) -> Double {
+        (Double(duration.components.seconds) * 1000) + (Double(duration.components.attoseconds) / 1_000_000_000_000_000)
     }
 
     private static func milliseconds(since start: ContinuousClock.Instant) -> Int {

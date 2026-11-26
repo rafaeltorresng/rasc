@@ -1,0 +1,230 @@
+{
+  "overall": {
+    "clips": 72,
+    "referenceWords": 1692,
+    "hypothesisWords": 1704,
+    "wordEdits": 116,
+    "werPercent": 6.856,
+    "cerPercent": 2.598,
+    "cerRawPercent": 3.34,
+    "werPunctuationSensitivePercent": 10.404,
+    "referencePunctuationMarks": 240,
+    "hypothesisPunctuationMarks": 233,
+    "emptyTranscripts": 0
+  },
+  "groups": {
+    "background-noise": {
+      "clips": 12,
+      "referenceWords": 282,
+      "hypothesisWords": 286,
+      "wordEdits": 24,
+      "werPercent": 8.511,
+      "cerPercent": 3.34,
+      "cerRawPercent": 4.097,
+      "werPunctuationSensitivePercent": 11.801,
+      "referencePunctuationMarks": 40,
+      "hypothesisPunctuationMarks": 41,
+      "emptyTranscripts": 0
+    },
+    "pauses-silence": {
+      "clips": 24,
+      "referenceWords": 564,
+      "hypothesisWords": 567,
+      "wordEdits": 32,
+      "werPercent": 5.674,
+      "cerPercent": 2.161,
+      "cerRawPercent": 2.881,
+      "werPunctuationSensitivePercent": 8.851,
+      "referencePunctuationMarks": 80,
+      "hypothesisPunctuationMarks": 75,
+      "emptyTranscripts": 0
+    },
+    "read-speech": {
+      "clips": 12,
+      "referenceWords": 282,
+      "hypothesisWords": 284,
+      "wordEdits": 18,
+      "werPercent": 6.383,
+      "cerPercent": 2.489,
+      "cerRawPercent": 3.329,
+      "werPunctuationSensitivePercent": 10.559,
+      "referencePunctuationMarks": 40,
+      "hypothesisPunctuationMarks": 37,
+      "emptyTranscripts": 0
+    },
+    "speaking-rate": {
+      "clips": 24,
+      "referenceWords": 564,
+      "hypothesisWords": 567,
+      "wordEdits": 42,
+      "werPercent": 7.447,
+      "cerPercent": 2.718,
+      "cerRawPercent": 3.425,
+      "werPunctuationSensitivePercent": 11.18,
+      "referencePunctuationMarks": 80,
+      "hypothesisPunctuationMarks": 80,
+      "emptyTranscripts": 0
+    }
+  },
+  "variants": {
+    "added_noise_m15db": {
+      "clips": 12,
+      "referenceWords": 282,
+      "hypothesisWords": 286,
+      "wordEdits": 24,
+      "werPercent": 8.511,
+      "cerPercent": 3.34,
+      "cerRawPercent": 4.097,
+      "werPunctuationSensitivePercent": 11.801,
+      "referencePunctuationMarks": 40,
+      "hypothesisPunctuationMarks": 41,
+      "emptyTranscripts": 0
+    },
+    "base": {
+      "clips": 12,
+      "referenceWords": 282,
+      "hypothesisWords": 284,
+      "wordEdits": 18,
+      "werPercent": 6.383,
+      "cerPercent": 2.489,
+      "cerRawPercent": 3.329,
+      "werPunctuationSensitivePercent": 10.559,
+      "referencePunctuationMarks": 40,
+      "hypothesisPunctuationMarks": 37,
+      "emptyTranscripts": 0
+    },
+    "leading_silence_2s": {
+      "clips": 12,
+      "referenceWords": 282,
+      "hypothesisWords": 283,
+      "wordEdits": 14,
+      "werPercent": 4.965,
+      "cerPercent": 1.965,
+      "cerRawPercent": 2.625,
+      "werPunctuationSensitivePercent": 7.453,
+      "referencePunctuationMarks": 40,
+      "hypothesisPunctuationMarks": 37,
+      "emptyTranscripts": 0
+    },
+    "tempo_fast_1p25": {
+      "clips": 12,
+      "referenceWords": 282,
+      "hypothesisWords": 284,
+      "wordEdits": 19,
+      "werPercent": 6.738,
+      "cerPercent": 2.816,
+      "cerRawPercent": 3.585,
+      "werPunctuationSensitivePercent": 11.18,
+      "referencePunctuationMarks": 40,
+      "hypothesisPunctuationMarks": 42,
+      "emptyTranscripts": 0
+    },
+    "tempo_slow_0p8": {
+      "clips": 12,
+      "referenceWords": 282,
+      "hypothesisWords": 283,
+      "wordEdits": 23,
+      "werPercent": 8.156,
+      "cerPercent": 2.62,
+      "cerRawPercent": 3.265,
+      "werPunctuationSensitivePercent": 11.18,
+      "referencePunctuationMarks": 40,
+      "hypothesisPunctuationMarks": 38,
+      "emptyTranscripts": 0
+    },
+    "trailing_silence_3s": {
+      "clips": 12,
+      "referenceWords": 282,
+      "hypothesisWords": 284,
+      "wordEdits": 18,
+      "werPercent": 6.383,
+      "cerPercent": 2.358,
+      "cerRawPercent": 3.137,
+      "werPunctuationSensitivePercent": 10.248,
+      "referencePunctuationMarks": 40,
+      "hypothesisPunctuationMarks": 38,
+      "emptyTranscripts": 0
+    }
+  },
+  "nonSpeechOutcomes": {
+    "control__click_only": "",
+    "control__silence_1s": "",
+    "control__silence_3s": ""
+  },
+  "errors": {},
+  "latencyMs": {
+    "modelLoad": {
+      "n": 72,
+      "mean": 0.012,
+      "p50": 0.012,
+      "p95": 0.015,
+      "min": 0.008,
+      "max": 0.019
+    },
+    "modelReady": {
+      "n": 72,
+      "mean": 0.012,
+      "p50": 0.012,
+      "p95": 0.016,
+      "min": 0.008,
+      "max": 0.02
+    },
+    "audioPrepare": {
+      "n": 72,
+      "mean": 14.53,
+      "p50": 14.555,
+      "p95": 20.983,
+      "min": 5.605,
+      "max": 23.62
+    },
+    "initialize": {
+      "n": 72,
+      "mean": 0.034,
+      "p50": 0.034,
+      "p95": 0.038,
+      "min": 0.03,
+      "max": 0.04
+    },
+    "inference": {
+      "n": 72,
+      "mean": 66.759,
+      "p50": 58.974,
+      "p95": 107.817,
+      "min": 43.156,
+      "max": 112.764
+    },
+    "cleanup": {
+      "n": 72,
+      "mean": 0.05,
+      "p50": 0.049,
+      "p95": 0.057,
+      "min": 0.042,
+      "max": 0.08
+    },
+    "transcribeTotal": {
+      "n": 72,
+      "mean": 81.446,
+      "p50": 72.908,
+      "p95": 130.895,
+      "min": 49.962,
+      "max": 134.328
+    },
+    "audioLoad": {
+      "n": 72,
+      "mean": 46.546,
+      "p50": 46.686,
+      "p95": 63.511,
+      "min": 17.784,
+      "max": 77.972
+    }
+  },
+  "realTimeFactor": {
+    "n": 72,
+    "mean": 0.005,
+    "p50": 0.005,
+    "p95": 0.007,
+    "min": 0.004,
+    "max": 0.01
+  },
+  "repetitions": 1
+}

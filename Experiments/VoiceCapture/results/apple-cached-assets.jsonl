@@ -1,0 +1,8 @@
+{"engine":"speech","event":"asset_start","locale":"en_US","status":"installed"}
+{"elapsed_ms":24.701000000000001,"engine":"speech","event":"asset_end","locale":"en_US","status":"installed"}
+{"engine":"speech","event":"asset_start","locale":"pt_BR","status":"installed"}
+{"elapsed_ms":15.168167,"engine":"speech","event":"asset_end","locale":"pt_BR","status":"installed"}
+{"engine":"dictation","event":"asset_start","locale":"en_US","status":"installed"}
+{"elapsed_ms":16.015125000000001,"engine":"dictation","event":"asset_end","locale":"en_US","status":"installed"}
+{"engine":"dictation","event":"asset_start","locale":"pt_BR","status":"installed"}
+{"elapsed_ms":16.231959,"engine":"dictation","event":"asset_end","locale":"pt_BR","status":"installed"}

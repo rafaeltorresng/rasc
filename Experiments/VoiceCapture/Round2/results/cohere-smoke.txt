@@ -1,0 +1,4 @@
+/tmp/rasc-r2/bench/cohere-speechswift.stdout:Result: Now apaga isso.
+/tmp/rasc-r2/bench/cohere-speechswift.stdout:  Time: 4.00s, RTF: 2.570
+/tmp/rasc-r2/bench/cohere-pt-speechswift.stdout:Result: Não apaga isso.
+/tmp/rasc-r2/bench/cohere-pt-speechswift.stdout:  Time: 0.52s, RTF: 0.332

@@ -840,6 +840,15 @@ struct VoiceCaptureTests {
         try await wait { capture.phase == .idle }
     }
 
+    @Test func voiceModelTranscriptionTimingComputesUnclampedRealTimeFactor() {
+        let zero = VoiceModel.TranscriptionTiming(audioPrepareMs: 1.5, inferenceMs: 120, audioSeconds: 0)
+        #expect(zero.audioPrepareMs == 1.5)
+        #expect(zero.realTimeFactor == nil)
+
+        let measured = VoiceModel.TranscriptionTiming(inferenceMs: 75, audioSeconds: 10)
+        #expect(measured.realTimeFactor == 0.0075)
+    }
+
     private func wait(until predicate: () -> Bool) async throws {
         let deadline = ContinuousClock.now.advanced(by: .seconds(10))
         while !predicate(), ContinuousClock.now < deadline {

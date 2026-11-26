@@ -1,0 +1,173 @@
+{
+  "en-meeting": {
+    "apple": {
+      "n": 64,
+      "wer": 18.87,
+      "cer": 11.97,
+      "first": 49,
+      "last": 44,
+      "failed": 0,
+      "empty": 6,
+      "short_finish_ms": {
+        "n": 58,
+        "p50": 64.82,
+        "p95": 184.7,
+        "max": 232.62
+      }
+    },
+    "ultra": {
+      "n": 64,
+      "wer": 16.14,
+      "cer": 10.19,
+      "first": 49,
+      "last": 48,
+      "failed": 0,
+      "empty": 2,
+      "short_finish_ms": {
+        "n": 58,
+        "p50": 35.91,
+        "p95": 57.06,
+        "max": 60.47
+      }
+    },
+    "fluid": {
+      "n": 64,
+      "wer": 13.0,
+      "cer": 7.04,
+      "first": 52,
+      "last": 51,
+      "failed": 0,
+      "empty": 1,
+      "short_finish_ms": {
+        "n": 58,
+        "p50": 35.93,
+        "p95": 51.3,
+        "max": 65.75
+      }
+    },
+    "paired_clip_95_interval_delta_vs_ultra": {
+      "fluid": [
+        -9.33,
+        1.13
+      ],
+      "apple": [
+        -3.75,
+        8.02
+      ]
+    }
+  },
+  "pt-conversation": {
+    "apple": {
+      "n": 64,
+      "wer": 25.55,
+      "cer": 15.76,
+      "first": 40,
+      "last": 36,
+      "failed": 0,
+      "empty": 2,
+      "short_finish_ms": {
+        "n": 44,
+        "p50": 57.98,
+        "p95": 74.81,
+        "max": 355.97
+      }
+    },
+    "ultra": {
+      "n": 64,
+      "wer": 22.85,
+      "cer": 14.75,
+      "first": 39,
+      "last": 38,
+      "failed": 0,
+      "empty": 0,
+      "short_finish_ms": {
+        "n": 44,
+        "p50": 40.83,
+        "p95": 52.43,
+        "max": 19148.06
+      }
+    },
+    "fluid": {
+      "n": 64,
+      "wer": 21.82,
+      "cer": 14.38,
+      "first": 38,
+      "last": 38,
+      "failed": 0,
+      "empty": 4,
+      "short_finish_ms": {
+        "n": 44,
+        "p50": 40.38,
+        "p95": 51.66,
+        "max": 16596.85
+      }
+    },
+    "paired_clip_95_interval_delta_vs_ultra": {
+      "fluid": [
+        -3.51,
+        1.54
+      ],
+      "apple": [
+        -1.45,
+        6.59
+      ]
+    }
+  },
+  "pt-en-read-switch": {
+    "apple": {
+      "n": 40,
+      "wer": 24.23,
+      "cer": 11.67,
+      "first": 31,
+      "last": 32,
+      "failed": 0,
+      "empty": 0,
+      "short_finish_ms": {
+        "n": 2,
+        "p50": 85.27,
+        "p95": 98.42,
+        "max": 98.42
+      }
+    },
+    "ultra": {
+      "n": 40,
+      "wer": 10.05,
+      "cer": 3.62,
+      "first": 34,
+      "last": 34,
+      "failed": 0,
+      "empty": 0,
+      "short_finish_ms": {
+        "n": 2,
+        "p50": 48.77,
+        "p95": 49.19,
+        "max": 49.19
+      }
+    },
+    "fluid": {
+      "n": 40,
+      "wer": 8.89,
+      "cer": 3.46,
+      "first": 36,
+      "last": 34,
+      "failed": 0,
+      "empty": 0,
+      "short_finish_ms": {
+        "n": 2,
+        "p50": 42.94,
+        "p95": 43.07,
+        "max": 43.07
+      }
+    },
+    "paired_clip_95_interval_delta_vs_ultra": {
+      "fluid": [
+        -2.91,
+        0.64
+      ],
+      "apple": [
+        9.8,
+        19.23
+      ]
+    }
+  }
+}

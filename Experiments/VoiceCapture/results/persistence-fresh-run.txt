@@ -1,0 +1,2 @@
+PASS: concurrent replay, scratch isolation, committed read, FTS, empty/collision rejection, rollback/retry, soft discard/restore, stale replay
+50 serial SQLite commits, milliseconds: p50 0.414375, p95 0.576375, max 0.712541

@@ -1,0 +1,44 @@
+{
+  "fluid-pro": {
+    "repo": "FluidVoice-Labs/fluid-speech-pro-coreml",
+    "revision": "3b9d38a93d606f84011e5a0a669b7ea146375a22",
+    "bytes": 652305531
+  },
+  "ultra": {
+    "repo": "FluidInference/parakeet-ultra-coreml",
+    "revision": "95eaa59a39d4394f047a4dc5cce480388a60d1b6",
+    "bytes": 632162964
+  },
+  "nemotron": {
+    "repo": "FluidInference/Nemotron-3.5-ASR-Streaming-Multilingual-0.6b-CoreML",
+    "revision": "a70b9d1c33594f1f4cf3f4eca9b4a0a8f44a9f59",
+    "bytes": 610993681
+  },
+  "qwen06": {
+    "repo": "mlx-community/Qwen3-ASR-0.6B-4bit",
+    "revision": "313d850181767edf09f00a9c289becca70e58cd0",
+    "bytes": 712778752
+  },
+  "qwen17": {
+    "repo": "mlx-community/Qwen3-ASR-1.7B-4bit",
+    "revision": "78a389c776a5483b2d0d4ea5494e11012e0d6159",
+    "bytes": 1607630579
+  },
+  "granite": {
+    "repo": "ibm-granite/granite-speech-5.0-470m-turboctc",
+    "revision": "91dcb0605daf65f88dbb04fef015c423241d941d",
+    "bytes": 948013087
+  },
+  "whisper-v3": {
+    "repo": "ggerganov/whisper.cpp",
+    "file": "ggml-large-v3-q5_0.bin",
+    "bytes": 1081140203,
+    "sha256": "d75795ecff3f83b5faa89d1900604ad8c780abd5739fae406de19f23ecd98ad1",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1"
+  },
+  "cohere": {
+    "repo": "beshkenadze/cohere-transcribe-03-2026-mlx-4bit",
+    "revision": "104bc4391b5b1a12b040859793d7148525e1a08c",
+    "bytes": 1505848746
+  }
+}

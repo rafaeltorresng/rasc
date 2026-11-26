@@ -1,0 +1,13 @@
+{"authorized":true,"event":"mic_permission","status":3}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":4036.803042,"received":true,"sample_rate":48000,"start_ms":3931.5018749999999,"trial":1}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":176.54204200000001,"received":true,"sample_rate":48000,"start_ms":72.039625000000001,"trial":2}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":173.19458299999999,"received":true,"sample_rate":48000,"start_ms":67.144417000000004,"trial":3}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":173.02225000000001,"received":true,"sample_rate":48000,"start_ms":67.336749999999995,"trial":4}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":175.88662500000001,"received":true,"sample_rate":48000,"start_ms":69.904542000000006,"trial":5}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":173.3115,"received":true,"sample_rate":48000,"start_ms":66.790999999999997,"trial":6}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":171.896333,"received":true,"sample_rate":48000,"start_ms":65.982249999999993,"trial":7}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":174.52333300000001,"received":true,"sample_rate":48000,"start_ms":68.281666999999999,"trial":8}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":171.79525000000001,"received":true,"sample_rate":48000,"start_ms":65.406000000000006,"trial":9}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":173.63425000000001,"received":true,"sample_rate":48000,"start_ms":68.441917000000004,"trial":10}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":168.51629199999999,"received":true,"sample_rate":48000,"start_ms":62.355083999999998,"trial":11}
+{"channels":1,"event":"mic_trial","first_buffer_frames":4800,"first_buffer_ms":169.762292,"received":true,"sample_rate":48000,"start_ms":63.224375000000002,"trial":12}

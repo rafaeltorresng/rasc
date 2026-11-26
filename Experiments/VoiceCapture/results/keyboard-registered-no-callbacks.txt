@@ -1,0 +1,8 @@
+Test-synthesized event sequences
+Quick start
+Hold with two synthesized repeat events and normal release
+Rapid next press while finalizing
+Release event with the modifiers already clear
+
+Observed sandbox app output
+Hotkey probe ready, registered: true

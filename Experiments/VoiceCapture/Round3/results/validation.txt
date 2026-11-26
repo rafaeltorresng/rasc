@@ -1,0 +1,15 @@
+PASS readiness uses first frame, bounded Finish tail includes the ending, input released
+PASS real SQLite failure preserves editable text, duplicate Keep is idempotent, success follows commit
+PASS reopen durable note and unchanged scratch, edit commits, guarded Undo protects later edit
+PASS automatic Keep commits once and Undo affects only the captured thought
+PASS failed automatic Keep stages recoverable text when the store permits
+PASS digital silence and click-only activation create no note
+PASS input error can retry, audio route loss and sleep handler send partial speech to review
+PASS transcription failure holds audio for retry and retries do not duplicate
+PASS cancellation remains responsive and late recognizer cannot mutate newer capture
+PASS recognition timeout, same-session retry race, crash-style transcript recovery, explicit discard
+PASS shortcut handler rejects repeated down events, hold early release and toggle edges behave
+PASS 30 repeated capture/cancel cycles leave no owned test input, task or extra note
+PASS explicit study reset deletes only the disposable study records
+PASS signed sandbox actually decodes with Apple Speech, reviews, keeps and undoes
+{"assertions":14,"fixture_latency":[{"Audio duration":400,"Conversion":0.031334000000000001,"Database commit":2.542208,"Finish to microphone stop":120.300166,"Finish to text":120.430875,"Microphone ready":12.492584000000001,"Model wait after Finish":0,"Review and correction":18.698667,"Start to Keep":166.63399999999999,"Status ordered":0.013667},{"Audio duration":200,"Conversion":0.022749999999999999,"Database commit":1.7090000000000001,"Finish to microphone stop":123.550375,"Finish to text":123.614875,"Microphone ready":11.188917,"Model wait after Finish":0,"Start to Keep":147.60454200000001,"Status ordered":0.0011670000000000001}],"input_starts":43,"input_stops":43}

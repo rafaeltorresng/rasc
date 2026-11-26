@@ -1,0 +1,17 @@
+ProductName:		macOS
+ProductVersion:		26.5.1
+BuildVersion:		25F80
+swift-driver version: 1.127.14.1 Apple Swift version 6.2.3 (swiftlang-6.2.3.3.21 clang-1700.6.3.2)
+Target: arm64-apple-macosx26.0
+Xcode 26.2
+Build version 17C52
+hw.model: Mac15,6
+hw.memsize: 19327352832
+Executable=/Users/rafatorres/Desktop/rasc/Experiments/VoiceCapture/Round2/Study/Build/Rasc Voice Study.app/Contents/MacOS/VoiceStudy
+[Dict]
+	[Key] com.apple.security.app-sandbox
+	[Value]
+		[Bool] true
+	[Key] com.apple.security.device.audio-input
+	[Value]
+		[Bool] true

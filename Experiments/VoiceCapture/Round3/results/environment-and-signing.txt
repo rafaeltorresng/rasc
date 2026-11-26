@@ -1,0 +1,28 @@
+ProductName:		macOS
+ProductVersion:		26.5.1
+BuildVersion:		25F80
+Xcode 26.2
+Build version 17C52
+swift-driver version: 1.127.14.1 Apple Swift version 6.2.3 (swiftlang-6.2.3.3.21 clang-1700.6.3.2)
+Target: arm64-apple-macosx26.0
+hw.model: Mac15,6
+hw.memsize: 19327352832
+Executable=/Users/rafatorres/Desktop/rasc/Experiments/VoiceCapture/Round3/Study/Build/Rasc Voice Capture.app/Contents/MacOS/VoiceStudy
+Identifier=com.rasc.research.voicecapture
+Format=app bundle with Mach-O thin (arm64)
+CodeDirectory v=20500 size=44159 flags=0x10002(adhoc,runtime) hashes=1369+7 location=embedded
+Signature=adhoc
+Info.plist entries=11
+TeamIdentifier=not set
+Runtime Version=26.2.0
+Sealed Resources version=2 rules=13 files=47
+# designated => cdhash H"471d2d79f75681e19c0e77f7ace174a1200b28bc"
+Executable=/Users/rafatorres/Desktop/rasc/Experiments/VoiceCapture/Round3/Study/Build/Rasc Voice Capture.app/Contents/MacOS/VoiceStudy
+[Dict]
+	[Key] com.apple.security.app-sandbox
+	[Value]
+		[Bool] true
+	[Key] com.apple.security.device.audio-input
+	[Value]
+		[Bool] true
+     0 valid identities found

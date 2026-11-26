@@ -1,0 +1,308 @@
+{
+  "SpeechTranscriber": {
+    "wer": {
+      "en": {
+        "utterances": 9,
+        "reference_words": 158,
+        "word_edits": 22,
+        "wer_percent": 13.92
+      },
+      "pt": {
+        "utterances": 8,
+        "reference_words": 119,
+        "word_edits": 7,
+        "wer_percent": 5.88
+      },
+      "mix": {
+        "utterances": 3,
+        "reference_words": 61,
+        "word_edits": 13,
+        "wer_percent": 21.31
+      },
+      "all": {
+        "utterances": 20,
+        "reference_words": 338,
+        "word_edits": 42,
+        "wer_percent": 12.43
+      }
+    },
+    "no_speech_outcomes": {
+      "silence.wav": "",
+      "noise-only.wav": "",
+      "accidental.wav": ""
+    },
+    "first_result_ms": {
+      "n": 20,
+      "p50": 1124.27,
+      "p95": 1127.87,
+      "min": 1057.35,
+      "max": 1155.32
+    },
+    "first_partial_ms": {
+      "n": 20,
+      "p50": 1124.27,
+      "p95": 1127.87,
+      "min": 1057.35,
+      "max": 1155.32
+    },
+    "finish_ms_all_speech": {
+      "n": 20,
+      "p50": 67.69,
+      "p95": 129.67,
+      "min": 20.49,
+      "max": 152.19
+    },
+    "finish_ms_short_speech": {
+      "n": 12,
+      "p50": 85.58,
+      "p95": 129.67,
+      "min": 20.49,
+      "max": 129.67
+    },
+    "prepare_first_clip_in_process_ms": [
+      82.52,
+      125.51
+    ],
+    "analyzer_prepare_ms": {
+      "n": 20,
+      "p50": 27.41,
+      "p95": 82.52,
+      "min": 22.57,
+      "max": 125.51
+    },
+    "boundary": {
+      "en-clip.wav": "Don't deploy yet.",
+      "en-boundary.wav": "Don't deploy yet.",
+      "pt-clip.wav": "Não apaga isso",
+      "pt-boundary.wav": "Não apaga isso."
+    }
+  },
+  "DictationTranscriber": {
+    "wer": {
+      "en": {
+        "utterances": 9,
+        "reference_words": 158,
+        "word_edits": 36,
+        "wer_percent": 22.78
+      },
+      "pt": {
+        "utterances": 8,
+        "reference_words": 119,
+        "word_edits": 62,
+        "wer_percent": 52.1
+      },
+      "mix": {
+        "utterances": 3,
+        "reference_words": 61,
+        "word_edits": 47,
+        "wer_percent": 77.05
+      },
+      "all": {
+        "utterances": 20,
+        "reference_words": 338,
+        "word_edits": 145,
+        "wer_percent": 42.9
+      }
+    },
+    "no_speech_outcomes": {
+      "silence.wav": "",
+      "noise-only.wav": "",
+      "accidental.wav": ""
+    },
+    "first_result_ms": {
+      "n": 20,
+      "p50": 829.42,
+      "p95": 6816.18,
+      "min": 632.24,
+      "max": 8017.55
+    },
+    "first_partial_ms": {
+      "n": 18,
+      "p50": 823.0,
+      "p95": 6816.18,
+      "min": 632.24,
+      "max": 6816.18
+    },
+    "finish_ms_all_speech": {
+      "n": 20,
+      "p50": 54.39,
+      "p95": 116.35,
+      "min": 13.58,
+      "max": 121.17
+    },
+    "finish_ms_short_speech": {
+      "n": 12,
+      "p50": 54.39,
+      "p95": 121.17,
+      "min": 13.58,
+      "max": 121.17
+    },
+    "prepare_first_clip_in_process_ms": [
+      122.91,
+      85.59
+    ],
+    "analyzer_prepare_ms": {
+      "n": 20,
+      "p50": 42.12,
+      "p95": 85.59,
+      "min": 29.96,
+      "max": 122.91
+    },
+    "boundary": {
+      "en-clip.wav": "Don't deploy yet",
+      "en-boundary.wav": "Don't deploy",
+      "pt-clip.wav": "Não apaga isso",
+      "pt-boundary.wav": "Apaga isso"
+    }
+  },
+  "Whisper turbo": {
+    "wer": {
+      "en": {
+        "utterances": 9,
+        "reference_words": 158,
+        "word_edits": 23,
+        "wer_percent": 14.56
+      },
+      "pt": {
+        "utterances": 8,
+        "reference_words": 119,
+        "word_edits": 11,
+        "wer_percent": 9.24
+      },
+      "mix": {
+        "utterances": 3,
+        "reference_words": 61,
+        "word_edits": 9,
+        "wer_percent": 14.75
+      },
+      "all": {
+        "utterances": 20,
+        "reference_words": 338,
+        "word_edits": 43,
+        "wer_percent": 12.72
+      }
+    },
+    "no_speech_outcomes": {
+      "silence.wav": "Thank you.",
+      "noise-only.wav": "I'm going to go.",
+      "accidental.wav": "E aí"
+    },
+    "first_result_ms": null,
+    "first_partial_ms": null,
+    "finish_ms_all_speech": {
+      "n": 20,
+      "p50": 810.31,
+      "p95": 945.28,
+      "min": 769.98,
+      "max": 1244.92
+    },
+    "finish_ms_short_speech": {
+      "n": 12,
+      "p50": 798.35,
+      "p95": 1244.92,
+      "min": 769.98,
+      "max": 1244.92
+    },
+    "prepare_first_clip_in_process_ms": [
+      5089.84,
+      224.86,
+      236.99
+    ],
+    "analyzer_prepare_ms": null,
+    "boundary": {
+      "en-clip.wav": "Don't deploy yet.",
+      "en-boundary.wav": "Don't deploy yet.",
+      "pt-clip.wav": "Não apaga isso.",
+      "pt-boundary.wav": "Não apaga isso."
+    }
+  },
+  "Parakeet v3": {
+    "wer": {
+      "en": {
+        "utterances": 9,
+        "reference_words": 158,
+        "word_edits": 20,
+        "wer_percent": 12.66
+      },
+      "pt": {
+        "utterances": 8,
+        "reference_words": 119,
+        "word_edits": 16,
+        "wer_percent": 13.45
+      },
+      "mix": {
+        "utterances": 3,
+        "reference_words": 61,
+        "word_edits": 11,
+        "wer_percent": 18.03
+      },
+      "all": {
+        "utterances": 20,
+        "reference_words": 338,
+        "word_edits": 47,
+        "wer_percent": 13.91
+      }
+    },
+    "no_speech_outcomes": {
+      "accidental.wav": "invalidAudioData",
+      "noise-only.wav": "",
+      "silence.wav": ""
+    },
+    "first_result_ms": null,
+    "first_partial_ms": null,
+    "finish_ms_all_speech": {
+      "n": 20,
+      "p50": 51.25,
+      "p95": 122.44,
+      "min": 35.84,
+      "max": 129.43
+    },
+    "finish_ms_short_speech": {
+      "n": 12,
+      "p50": 45.0,
+      "p95": 57.29,
+      "min": 35.84,
+      "max": 57.29
+    },
+    "prepare_first_clip_in_process_ms": [
+      18306.66
+    ],
+    "analyzer_prepare_ms": null,
+    "boundary": {
+      "en-boundary.wav": "Don't deploy yet.",
+      "en-clip.wav": "Don't deploy yet.",
+      "pt-boundary.wav": "Não o apaga isso.",
+      "pt-clip.wav": "Não o apaga isso."
+    }
+  },
+  "microphone": {
+    "first_trial_ms": 350.087542,
+    "all_first_buffer_ms": {
+      "n": 15,
+      "p50": 187.32,
+      "p95": 350.09,
+      "min": 171.29,
+      "max": 350.09
+    },
+    "repeated_first_buffer_ms": {
+      "n": 14,
+      "p50": 187.25,
+      "p95": 214.38,
+      "min": 171.29,
+      "max": 214.38
+    },
+    "engine_start_ms": {
+      "n": 15,
+      "p50": 81.33,
+      "p95": 243.05,
+      "min": 65.35,
+      "max": 243.05
+    },
+    "tap_frames": [
+      4800
+    ],
+    "sample_rates": [
+      48000
+    ]
+  }
+}

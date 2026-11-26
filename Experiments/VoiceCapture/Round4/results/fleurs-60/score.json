@@ -1,0 +1,120 @@
+{
+  "overall": {
+    "clips": 60,
+    "referenceWords": 1270,
+    "hypothesisWords": 1273,
+    "wordEdits": 68,
+    "werPercent": 5.354,
+    "cerPercent": 2.054,
+    "cerRawPercent": 3.025,
+    "werPunctuationSensitivePercent": 8.884,
+    "referencePunctuationMarks": 188,
+    "hypothesisPunctuationMarks": 167,
+    "emptyTranscripts": 0
+  },
+  "groups": {
+    "en_us": {
+      "clips": 30,
+      "referenceWords": 637,
+      "hypothesisWords": 634,
+      "wordEdits": 39,
+      "werPercent": 6.122,
+      "cerPercent": 2.189,
+      "cerRawPercent": 3.452,
+      "werPunctuationSensitivePercent": 11.02,
+      "referencePunctuationMarks": 102,
+      "hypothesisPunctuationMarks": 78,
+      "emptyTranscripts": 0
+    },
+    "pt_br": {
+      "clips": 30,
+      "referenceWords": 633,
+      "hypothesisWords": 639,
+      "wordEdits": 29,
+      "werPercent": 4.581,
+      "cerPercent": 1.915,
+      "cerRawPercent": 2.588,
+      "werPunctuationSensitivePercent": 6.695,
+      "referencePunctuationMarks": 86,
+      "hypothesisPunctuationMarks": 89,
+      "emptyTranscripts": 0
+    }
+  },
+  "nonSpeechOutcomes": {},
+  "errors": {},
+  "latencyMs": {
+    "modelLoad": {
+      "n": 60,
+      "mean": 0.012,
+      "p50": 0.012,
+      "p95": 0.013,
+      "min": 0.008,
+      "max": 0.028
+    },
+    "modelReady": {
+      "n": 60,
+      "mean": 0.012,
+      "p50": 0.012,
+      "p95": 0.014,
+      "min": 0.009,
+      "max": 0.029
+    },
+    "audioPrepare": {
+      "n": 60,
+      "mean": 12.726,
+      "p50": 12.888,
+      "p95": 17.936,
+      "min": 4.528,
+      "max": 21.081
+    },
+    "initialize": {
+      "n": 60,
+      "mean": 0.034,
+      "p50": 0.034,
+      "p95": 0.036,
+      "min": 0.028,
+      "max": 0.045
+    },
+    "inference": {
+      "n": 60,
+      "mean": 61.135,
+      "p50": 55.749,
+      "p95": 107.849,
+      "min": 43.286,
+      "max": 114.741
+    },
+    "cleanup": {
+      "n": 60,
+      "mean": 0.051,
+      "p50": 0.05,
+      "p95": 0.059,
+      "min": 0.043,
+      "max": 0.071
+    },
+    "transcribeTotal": {
+      "n": 60,
+      "mean": 74.019,
+      "p50": 69.9,
+      "p95": 126.344,
+      "min": 48.413,
+      "max": 135.98
+    },
+    "audioLoad": {
+      "n": 60,
+      "mean": 41.649,
+      "p50": 41.364,
+      "p95": 59.878,
+      "min": 14.889,
+      "max": 67.953
+    }
+  },
+  "realTimeFactor": {
+    "n": 60,
+    "mean": 0.006,
+    "p50": 0.005,
+    "p95": 0.008,
+    "min": 0.004,
+    "max": 0.011
+  },
+  "repetitions": 1
+}

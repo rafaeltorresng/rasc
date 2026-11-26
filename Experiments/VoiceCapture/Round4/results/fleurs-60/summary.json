@@ -1,0 +1,1 @@
+{"errors":0,"rows":60,"inferenceMsP95":107.848917,"transcribeTotalMsP95":126.344333,"inferenceMsP50":55.7495,"speechRows":60,"realTimeFactorP50":0.0053288973737373735,"coldLoadMs":11339.710834,"realTimeFactorP95":0.008104017105263157,"transcribeTotalMsP50":69.899958,"repetitions":1,"cold":false,"warmLoadMs":0.019958}

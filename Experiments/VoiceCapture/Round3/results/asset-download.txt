@@ -1,0 +1,21 @@
+fluid-pro: 652305531 bytes 3b9d38a93d606f84011e5a0a669b7ea146375a22
+real 23.42
+user 3.32
+sys 2.55
+            25280512  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               23941  page reclaims
+                 561  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                 859  messages sent
+               98013  messages received
+                   0  signals received
+               19898  voluntary context switches
+                8700  involuntary context switches
+          2450780045  instructions retired
+          1521248020  cycles elapsed
+            14631464  peak memory footprint

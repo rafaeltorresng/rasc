@@ -84,7 +84,11 @@ Evals/**/run.log
 
 # Python
 Scripts/__pycache__/
+**/__pycache__/
 *.py[cod]
+
+# Local-only regenerated Round 4 corpus audio (keep 5 CC-BY-4.0 examples + manifests)
+Experiments/VoiceCapture/Round4/corpus/*/audio/
 
 # Xcode coverage
 *.profraw

@@ -1,0 +1,4 @@
+Starting recording with the Core ML template. Launching process: VoiceStudy. Time limit: 9.0 s
+Ctrl-C to stop the recording
+Target app exited, ending recording...
+Export failed: Document Missing Template Error

@@ -1,0 +1,6 @@
+Executable=/private/tmp/rasc-parakeet-signed.8JjKpz/RascParakeetProbe.app/Contents/MacOS/ParakeetProbe
+# designated => cdhash H"fc8468a5cfd3d88f225e83139c37cc0a6fd46ba6"
+[Dict]
+	[Key] com.apple.security.app-sandbox
+	[Value]
+		[Bool] true

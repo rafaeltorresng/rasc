@@ -1,0 +1,8 @@
+build=1 mic=0 launch
+build=1 mic=3 permission-allowed
+build=1 mic=3 launch
+build=1 mic=3 sparkle-found-update
+build=1 mic=3 sparkle-ready-to-relaunch
+build=2 mic=0 launch
+build=1 mic=3 launch
+build=1 mic=3 launch

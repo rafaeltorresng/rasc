@@ -1,0 +1,10 @@
+[0/1] Planning build
+Building for production...
+[0/4] Write sources
+[1/4] Write swift-version--58304C5D6DBC2206.txt
+[3/5] Compiling Probe ActiveNoteStore.swift
+[3/5] Write Objects.LinkFileList
+[4/5] Linking Probe
+Build of product 'Probe' complete! (3.37s)
+PASS: concurrent replay, scratch isolation, committed read, FTS, empty/collision rejection, rollback/retry, soft discard/restore, stale replay
+50 serial SQLite commits, milliseconds: p50 0.390541, p95 0.686417, max 0.758584
