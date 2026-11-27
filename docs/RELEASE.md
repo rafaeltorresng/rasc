@@ -10,8 +10,8 @@ The current ad-hoc updater release path is documented in [SPARKLE-RELEASE.md](SP
 | --- | --- |
 | Product name | Rasc |
 | Bundle identifier | `com.rafaeltorres.rasc` |
-| Marketing version | `0.1.15` (candidate 2026-11-24) |
-| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`21` for v0.1.15; `20` for archived v0.1.14) |
+| Marketing version | `0.1.16` in current source (`0.1.15` latest published DMG) |
+| Build number | `CURRENT_PROJECT_VERSION` in Xcode (`22` in current source; `21` for published v0.1.15) |
 | Deployment target | macOS 14.0 |
 | First public artifact | Apple silicon (`arm64`); `archive.sh` fixes the architecture |
 | Hardened Runtime | Enabled for Debug and Release |
@@ -24,20 +24,24 @@ The current ad-hoc updater release path is documented in [SPARKLE-RELEASE.md](SP
 
 ### Entitlements
 
-Release builds use `Rasc/Rasc.entitlements` with only:
+Release builds scope `RASC_APP_ENTITLEMENTS` to the main `Rasc` app target (`Rasc/Rasc.entitlements`), with:
 
 - `com.apple.security.app-sandbox`
+- `com.apple.security.device.audio-input` (requested at OS level only when the user opts into Voice Capture / Dictate)
 - `com.apple.security.files.user-selected.read-write` for files and folders the
-  user chooses for portable export
+  user chooses for portable export and manual database backups
 
-No Accessibility, Contacts, Calendar, Location, Camera, Microphone, outgoing network, file-provider, or temporary exception entitlements are enabled in the default Release build.
+No Accessibility entitlement (managed dynamically via macOS TCC only if opted in), Contacts, Calendar, Location, Camera, outgoing network, or temporary exception entitlements are enabled in the default Release app target.
 
-An updater-enabled build that embeds Sparkle uses
+The embedded XPC helper (`Contents/XPCServices/com.rafaeltorres.rasc.VoiceModelDownloader.xpc`) keeps its own `VoiceModelDownloader/VoiceModelDownloader.entitlements` (`com.apple.security.app-sandbox` and `com.apple.security.network.client` only). Both `build-private-beta.sh` and `build-rc.sh` sign inside-out (`sign_app_inside_out`) without `--deep` so `VoiceModelDownloader.xpc` preserves its own entitlements.
+
+An updater-enabled build that embeds Sparkle sets `RASC_APP_ENTITLEMENTS` to
 `Rasc/Rasc.sparkle.entitlements` instead. It adds the two mach-lookup exceptions
 for Sparkle's sandboxed Installer and Downloader XPC services (`-spks` and
 `-spki`) plus `com.apple.security.cs.disable-library-validation`, paired with a
-Library Load Constraint that pins the signed Sparkle framework. The default Release
-does not need or use them.
+Library Load Constraint that pins the `cdhash` of every shipped Mach-O framework
+and dylib slice in `Contents/Frameworks/` (including `Sparkle.framework` and
+`libswiftCompatibilitySpan.dylib`). The default Release does not need or use them.
 
 ## Published release
 
@@ -230,7 +234,10 @@ The exported app should not contain `Contents/PlugIns/RascTests.xctest` or other
 | Target | Debug | Release |
 | --- | --- | --- |
 | Rasc | `com.rafaeltorres.rasc` | `com.rafaeltorres.rasc` |
+| VoiceModelDownloader | `com.rafaeltorres.rasc.VoiceModelDownloader` | `com.rafaeltorres.rasc.VoiceModelDownloader` |
 | RascTests | `com.rafaeltorres.rasc.tests` | `com.rafaeltorres.rasc.tests` |
+
+`Scripts/test-native.sh` overrides only `RASC_APP_BUNDLE_IDENTIFIER=com.rafaeltorres.rasc.testhost` so `VoiceModelDownloader.xpc` retains its own identifier and copy path during AppKit tests.
 
 Debug is unsandboxed for local evaluation tools; Release uses the sandbox.
 Ad-hoc Xcode builds may include `get-task-allow` and Xcode can disable hardened

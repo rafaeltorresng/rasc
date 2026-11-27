@@ -1,7 +1,9 @@
 # Native UI acceptance checklist
 
-Run against the exact candidate app/artifact. Record version/build, SHA256,
-macOS/hardware, date and results. An unchecked item is **not verified**.
+Run `bash Scripts/test-native.sh` (which sets `RASC_APP_BUNDLE_IDENTIFIER=com.rafaeltorres.rasc.testhost`
+on an unlocked macOS desktop session or GitHub Actions `macos-26` CI runner) before claiming
+automated AppKit coverage, then run this manual checklist against the exact candidate app/artifact.
+Record version/build, SHA256, macOS/hardware, date and results. An unchecked item is **not verified**.
 Use synthetic thoughts and a temporary test account/profile when exercising failure cases.
 
 ## Window and focus
@@ -23,7 +25,8 @@ Use synthetic thoughts and a temporary test account/profile when exercising fail
 - [ ] Selected rows stay visible without gratuitous scrolling; clicking blank list space does not draw stray focus-ring lines.
 - [ ] Discard/Undo restores text, Kept and dates in Home and Scratchpad.
 - [ ] Undo while writing a new thought leaves the new text intact.
-- [ ] A failed write gives actionable feedback, preserves content and can be retried.
+- [ ] A failed write gives actionable feedback (`Retry`, `Reveal Data Folder`, `Quit Rasc`), preserves content and can be retried; **Back Up Database…** creates a readable snapshot without quitting.
+- [ ] Batch discarding more than 10 notes in Home shows a confirmation dialog before deleting.
 
 ## Export
 
@@ -65,6 +68,8 @@ Use synthetic thoughts and a temporary test account/profile when exercising fail
 
 ## Distribution and energy
 
+- [ ] Release updater builds embedding `Sparkle.framework` and `libswiftCompatibilitySpan.dylib` launch cleanly on macOS 14/15 as well as macOS 26 (confirming LLC pins cover all `Contents/Frameworks/` binaries), and `VoiceModelDownloader.xpc` downloads inside the sandbox cleanly.
+- [ ] Direct Dictate `AXSelectedText` insertion (including Electron apps and Secure Input refusal) and physical 5-minute / Bluetooth / external mic captures succeed without leaks or focus theft.
 - [ ] Packaged app matches the source revision, version and build; previously published artifacts remain unchanged.
 - [ ] Verify the published checksum, sandbox and signing status; record notarization only when a notarized build is claimed. Test ordinary first-install and upgrade paths.
 - [ ] Inspect icon at Finder/DMG sizes and bundled dependency notices.

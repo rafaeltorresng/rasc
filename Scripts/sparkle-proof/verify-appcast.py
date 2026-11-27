@@ -32,14 +32,41 @@ SPARKLE_NS = "http://www.andymatuschak.org/xml-namespaces/sparkle"
 NS = {"sparkle": SPARKLE_NS}
 
 
+def resolve_openssl() -> str:
+    candidates: list[str] = []
+    env_bin = os.environ.get("OPENSSL_BIN", "").strip()
+    if env_bin:
+        candidates.append(env_bin)
+    candidates.extend([
+        "/opt/homebrew/opt/openssl@3/bin/openssl",
+        "/usr/local/opt/openssl@3/bin/openssl",
+    ])
+    which_bin = shutil.which("openssl")
+    if which_bin:
+        candidates.append(which_bin)
+
+    for candidate in candidates:
+        resolved = shutil.which(candidate) or candidate
+        if not resolved or not os.path.exists(resolved):
+            continue
+        version = subprocess.run([resolved, "version"], capture_output=True, text=True)
+        if version.returncode == 0 and version.stdout.strip().startswith("OpenSSL 3."):
+            return resolved
+
+    raise RuntimeError(
+        "OpenSSL 3 binary not found (install Homebrew openssl@3 or set OPENSSL_BIN)."
+    )
+
+
 def run_openssl_verify(public_key: str, payload: str, signature: bytes) -> tuple[bool, str]:
+    openssl_bin = resolve_openssl()
     with tempfile.NamedTemporaryFile(delete=False) as handle:
         handle.write(signature)
         signature_path = handle.name
     try:
         result = subprocess.run(
             [
-                "openssl",
+                openssl_bin,
                 "pkeyutl",
                 "-verify",
                 "-pubin",

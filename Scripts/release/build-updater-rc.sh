@@ -20,9 +20,12 @@
 # Environment overrides:
 #   RASC_RC_VERSION                  marketing version                   (default: from project)
 #   RASC_RC_BUILD                    build number                       (default: from project)
+#   RASC_RC_OUTPUT_DIR               output directory override          (default: build/updater-rc/<ver>)
 #   RASC_RC_ARCHS                    shipped architectures, e.g. arm64  (default: arm64; an
-#                                    LLC entry is computed per shipped slice of the final
-#                                    signed Sparkle framework)
+#                                    LLC entry is computed per shipped slice of every Mach-O
+#                                    framework/dylib in Contents/Frameworks)
+#   RASC_SIGNING_IDENTITY            codesign identity                  (default: "-" ad-hoc)
+#   RASC_NOTARY_PROFILE              notarytool keychain profile        (optional; Developer ID only)
 #   RASC_RC_FEED_URL                 SUFeedURL                            (default: https://rasc.app/appcast.xml)
 #   SPARKLE_ACCOUNT                  named login-keychain account used for public-key lookup
 #                                    and Sparkle's signing tools        (default: rasc-sparkle)
@@ -49,7 +52,9 @@ RC_VERSION="${RASC_RC_VERSION:-$(marketing_version_from_project)}"
 RC_BUILD="${RASC_RC_BUILD:-$(build_number_from_project)}"
 RC_ARCHS="${RASC_RC_ARCHS:-arm64}"
 RC_FEED_URL="${RASC_RC_FEED_URL:-https://rasc.app/appcast.xml}"
-RC_DIR="${BUILD_DIR}/updater-rc/${RC_VERSION}"
+RC_DIR="${RASC_RC_OUTPUT_DIR:-${BUILD_DIR}/updater-rc/${RC_VERSION}}"
+SIGNING_IDENTITY="${RASC_SIGNING_IDENTITY:--}"
+NOTARY_PROFILE="${RASC_NOTARY_PROFILE:-}"
 RC_DERIVED_DATA="${RC_DIR}/DerivedData"
 RC_EXPORT_DIR="${RC_DIR}/export"
 RC_APP_PATH="${RC_EXPORT_DIR}/Rasc.app"
@@ -59,8 +64,6 @@ CHECKSUM_PATH="${DMG_PATH}.sha256"
 
 SPARKLE_FRAMEWORK_SOURCE="${ROOT_DIR}/Vendor/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework"
 SPARKLE_ENTITLEMENTS_SOURCE="${ROOT_DIR}/Rasc/Rasc.sparkle.entitlements"
-VOICE_DOWNLOADER_ENTITLEMENTS="${ROOT_DIR}/VoiceModelDownloader/VoiceModelDownloader.entitlements"
-VOICE_DOWNLOADER_XPC_REL="Contents/XPCServices/com.rafaeltorres.rasc.VoiceModelDownloader.xpc"
 SPARKLE_TOOLS_BIN="${ROOT_DIR}/build/sparkle-tools/bin"
 SPARKLE_ACCOUNT="${SPARKLE_ACCOUNT:-rasc-sparkle}"
 
@@ -108,13 +111,19 @@ if [[ -d "${RC_DIR}" ]]; then
 fi
 mkdir -p "${RC_EXPORT_DIR}"
 
-echo "==> Clean Release build (ARCHS=${RC_ARCHS}, ad-hoc signing, Sparkle entitlements)..."
+XCODE_DESTINATION="platform=macOS,arch=${RC_ARCHS}"
+if [[ "${RC_ARCHS}" == *" "* ]]; then
+  XCODE_DESTINATION="generic/platform=macOS"
+fi
+
+echo "==> Clean Release build (ARCHS=${RC_ARCHS}, signing identity='${SIGNING_IDENTITY}', Sparkle entitlements)..."
 xcodebuild \
   -project "${PROJECT_PATH}" \
   -scheme "${SCHEME}" \
   -configuration "${CONFIGURATION}" \
   -derivedDataPath "${RC_DERIVED_DATA}" \
-  -destination "platform=macOS,arch=arm64" \
+  -destination "${XCODE_DESTINATION}" \
+  ${SHARED_SOURCE_PACKAGES_ARGS[@]+"${SHARED_SOURCE_PACKAGES_ARGS[@]}"} \
   clean build \
   ARCHS="${RC_ARCHS}" \
   ONLY_ACTIVE_ARCH=NO \
@@ -122,7 +131,7 @@ xcodebuild \
   CODE_SIGN_IDENTITY=- \
   DEVELOPMENT_TEAM= \
   CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO \
-  CODE_SIGN_ENTITLEMENTS="${SPARKLE_ENTITLEMENTS_SOURCE}" \
+  RASC_APP_ENTITLEMENTS="${SPARKLE_ENTITLEMENTS_SOURCE}" \
   MARKETING_VERSION="${RC_VERSION}" \
   CURRENT_PROJECT_VERSION="${RC_BUILD}"
 
@@ -171,93 +180,142 @@ fi
 echo "==> Copying app to ${RC_APP_PATH}..."
 ditto "${BUILT_APP}" "${RC_APP_PATH}"
 
-VOICE_DOWNLOADER_XPC="${RC_APP_PATH}/${VOICE_DOWNLOADER_XPC_REL}"
-if [[ -d "${VOICE_DOWNLOADER_XPC}" ]]; then
-  if [[ ! -f "${VOICE_DOWNLOADER_ENTITLEMENTS}" ]]; then
-    echo "error: VoiceModelDownloader entitlements not found at ${VOICE_DOWNLOADER_ENTITLEMENTS}" >&2
-    exit 1
-  fi
-  echo "==> Re-signing VoiceModelDownloader.xpc (xcodebuild applies Sparkle entitlements to every target)..."
-  codesign --force --sign - --options runtime \
-    --entitlements "${VOICE_DOWNLOADER_ENTITLEMENTS}" \
-    "${VOICE_DOWNLOADER_XPC}"
-  VOICE_ENTITLEMENTS_OUT="$(codesign -d --entitlements :- "${VOICE_DOWNLOADER_XPC}" 2>/dev/null)"
-  if ! grep -q 'network.client' <<< "${VOICE_ENTITLEMENTS_OUT}"; then
-    echo "error: VoiceModelDownloader.xpc must carry com.apple.security.network.client" >&2
-    exit 1
-  fi
-  if grep -q 'device.audio-input' <<< "${VOICE_ENTITLEMENTS_OUT}"; then
-    echo "error: VoiceModelDownloader.xpc must not inherit the main app's Sparkle entitlements" >&2
-    exit 1
-  fi
-fi
+sign_voice_downloader_xpc "${RC_APP_PATH}" "${SIGNING_IDENTITY}"
 
 embed_and_sign_sparkle() {
   local app="$1"
+  local identity="$2"
   local framework="${app}/Contents/Frameworks/Sparkle.framework"
   mkdir -p "${app}/Contents/Frameworks"
   ditto "${SPARKLE_FRAMEWORK_SOURCE}" "${framework}"
-  codesign --force --sign - --options runtime \
+  codesign_with_identity "${identity}" \
     --preserve-metadata=identifier,entitlements \
     "${framework}/Versions/B/XPCServices/Installer.xpc"
-  codesign --force --sign - --options runtime \
+  codesign_with_identity "${identity}" \
     --preserve-metadata=identifier,entitlements \
     "${framework}/Versions/B/XPCServices/Downloader.xpc"
-  codesign --force --sign - --options runtime \
+  codesign_with_identity "${identity}" \
     --preserve-metadata=identifier,entitlements \
     "${framework}/Versions/B/Autoupdate"
-  codesign --force --sign - --options runtime \
+  codesign_with_identity "${identity}" \
     --preserve-metadata=identifier,entitlements \
     "${framework}/Versions/B/Updater.app"
-  codesign --force --sign - --options runtime \
+  codesign_with_identity "${identity}" \
     --preserve-metadata=identifier,entitlements \
     "${framework}"
 }
 
-cdhash_of() {
-  # cdhash of one arch slice (codesign reports the arm64 slice for fat binaries)
-  codesign -dvvv --arch "$1" "$2" 2>&1 | awk -F= '/^CDHash=/{print $2}'
-}
-
-embed_and_sign_sparkle "${RC_APP_PATH}"
-FRAMEWORK_BIN="${RC_APP_PATH}/Contents/Frameworks/Sparkle.framework/Versions/B/Sparkle"
-
-echo "==> Computing the Library Load Constraint for shipped archs..."
-SPARKLE_ARCHES="$(lipo -info "${FRAMEWORK_BIN}" | awk -F: '{print $2}')"
-echo "    framework archs: ${SPARKLE_ARCHES}"
-
-LLC_PLIST="${RC_DIR}/library-constraint.plist"
-python3 - "${LLC_PLIST}" "${RC_ARCHS}" "${FRAMEWORK_BIN}" <<'PY'
+run_llc_tool() {
+  local mode="$1"
+  local plist_path="$2"
+  python3 - "${mode}" "${plist_path}" "${RC_ARCHS}" "${RC_APP_PATH}/Contents/Frameworks" <<'PY'
+import os
 import plistlib
 import subprocess
 import sys
 
-destination, shipped_archs, framework = sys.argv[1], sys.argv[2].split(), sys.argv[3]
-entries = []
-for arch in shipped_archs:
-    result = subprocess.run(
-        ["codesign", "-dvvv", "--arch", arch, framework],
-        capture_output=True, text=True, check=True,
-    )
-    cdhash = None
-    for line in result.stderr.splitlines():
-        if line.startswith("CDHash="):
-            cdhash = line.split("=", 1)[1].strip()
-            break
-    if cdhash is None:
-        print(f"error: could not read cdhash for arch {arch}", file=sys.stderr)
-        sys.exit(1)
-    entries.append(bytes.fromhex(cdhash))
-constraint = {"cdhash": {"$in": entries}}
-with open(destination, "wb") as handle:
-    plistlib.dump(constraint, handle)
-print(f"pinned {len(entries)} arch slice(s): {', '.join(e.hex() for e in entries)}")
+mode, plist_path, shipped_archs_str, frameworks_dir = sys.argv[1:5]
+shipped_archs = shipped_archs_str.split()
+
+def discover_binaries(root: str) -> list[str]:
+    bins: dict[str, str] = {}
+    if not os.path.isdir(root):
+        return []
+    for entry in sorted(os.listdir(root)):
+        full = os.path.join(root, entry)
+        if entry.endswith(".dylib") and os.path.isfile(full):
+            real = os.path.realpath(full)
+            bins[real] = full
+        elif entry.endswith(".framework") and os.path.isdir(full):
+            info_candidates = [
+                os.path.join(full, "Versions", "Current", "Resources", "Info.plist"),
+                os.path.join(full, "Resources", "Info.plist"),
+            ]
+            exec_name = os.path.splitext(entry)[0]
+            for info_path in info_candidates:
+                if os.path.isfile(info_path):
+                    with open(info_path, "rb") as handle:
+                        exec_name = plistlib.load(handle).get("CFBundleExecutable", exec_name)
+                    break
+            candidate = os.path.join(full, "Versions", "Current", exec_name)
+            if not os.path.isfile(candidate):
+                candidate = os.path.join(full, exec_name)
+            if not os.path.isfile(candidate):
+                raise SystemExit(f"error: framework executable missing under {full}")
+            real = os.path.realpath(candidate)
+            bins[real] = candidate
+    return [bins[k] for k in sorted(bins)]
+
+def read_cdhashes(binary: str) -> list[tuple[str, str]]:
+    archs_out = subprocess.run(["lipo", "-archs", binary], capture_output=True, text=True, check=True)
+    avail = archs_out.stdout.split()
+    targets = [a for a in shipped_archs if a in avail]
+    if not targets:
+        raise SystemExit(
+            f"error: {binary} has archs {avail}, none matching shipped archs {shipped_archs}"
+        )
+    out = []
+    for arch in targets:
+        cmd = ["codesign", "-dvvv"]
+        if len(avail) > 1:
+            cmd.extend(["--arch", arch])
+        cmd.append(binary)
+        res = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        cdhash = None
+        for line in res.stderr.splitlines():
+            if line.startswith("CDHash="):
+                cdhash = line.split("=", 1)[1].strip()
+                break
+        if cdhash is None:
+            raise SystemExit(f"error: could not read CDHash for {binary} ({arch})")
+        out.append((arch, cdhash))
+    return out
+
+binaries = discover_binaries(frameworks_dir)
+if not binaries:
+    raise SystemExit(f"error: no embedded frameworks or dylibs discovered in {frameworks_dir}")
+
+discovered = []
+for binary in binaries:
+    rel = os.path.relpath(binary, frameworks_dir)
+    for arch, cdhash in read_cdhashes(binary):
+        discovered.append((rel, arch, cdhash))
+
+if mode == "generate":
+    entries = []
+    seen = set()
+    for rel, arch, cdhash in discovered:
+        print(f"    pin {rel} [{arch}]: {cdhash}")
+        if cdhash not in seen:
+            seen.add(cdhash)
+            entries.append(bytes.fromhex(cdhash))
+    with open(plist_path, "wb") as handle:
+        plistlib.dump({"cdhash": {"$in": entries}}, handle)
+elif mode == "verify":
+    with open(plist_path, "rb") as handle:
+        constraint = plistlib.load(handle)
+    pinned = {bytes(v).hex() for v in constraint["cdhash"]["$in"]}
+    missing = [(rel, arch, h) for rel, arch, h in discovered if h not in pinned]
+    if missing:
+        msg = ", ".join(f"{rel}[{arch}]={h}" for rel, arch, h in missing)
+        raise SystemExit(f"error: embedded library cdhashes missing from LLC plist: {msg}")
+    print(f"verified {len(discovered)} embedded library slice(s) against {plist_path}")
+else:
+    raise SystemExit(f"unknown mode: {mode}")
 PY
+}
+
+embed_and_sign_sparkle "${RC_APP_PATH}" "${SIGNING_IDENTITY}"
+sign_loose_framework_dylibs "${RC_APP_PATH}" "${SIGNING_IDENTITY}"
+
+echo "==> Computing the Library Load Constraint for shipped archs..."
+LLC_PLIST="${RC_DIR}/library-constraint.plist"
+run_llc_tool generate "${LLC_PLIST}"
 
 codesign --validate-constraint "${LLC_PLIST}"
 
 echo "==> Re-signing the app with the LLC..."
-codesign --force --sign - --options runtime \
+codesign_with_identity "${SIGNING_IDENTITY}" \
   --entitlements "${XCENT}" \
   --library-constraint "${LLC_PLIST}" \
   "${RC_APP_PATH}"
@@ -272,33 +330,7 @@ if ! grep -q 'Has Library Load Constraints' <<< "${DISPLAY_OUT}"; then
   exit 1
 fi
 
-python3 - "${LLC_PLIST}" "${RC_ARCHS}" "${FRAMEWORK_BIN}" <<'PY'
-import plistlib
-import subprocess
-import sys
-
-plist_path, shipped_archs, framework = sys.argv[1], sys.argv[2].split(), sys.argv[3]
-with open(plist_path, "rb") as handle:
-    constraint = plistlib.load(handle)
-pinned = {bytes(v).hex() for v in constraint["cdhash"]["$in"]}
-missing = []
-for arch in shipped_archs:
-    result = subprocess.run(
-        ["codesign", "-dvvv", "--arch", arch, framework],
-        capture_output=True, text=True, check=True,
-    )
-    cdhash = None
-    for line in result.stderr.splitlines():
-        if line.startswith("CDHash="):
-            cdhash = line.split("=", 1)[1].strip()
-            break
-    if cdhash not in pinned:
-        missing.append(cdhash)
-if missing:
-    print("error: shipped-arch cdhashes not found in the embedded pin:", ", ".join(missing), file=sys.stderr)
-    sys.exit(1)
-print("constraint covers every shipped-arch cdhash of the final signed Sparkle framework")
-PY
+run_llc_tool verify "${LLC_PLIST}"
 
 echo "==> Confirming no network entitlement on the signed main app..."
 ENTITLEMENTS_OUT="$(codesign -d --entitlements :- "${RC_APP_PATH}" 2>/dev/null)"
@@ -307,13 +339,9 @@ if grep -q 'network.client' <<< "${ENTITLEMENTS_OUT}"; then
   exit 1
 fi
 
-if [[ -d "${VOICE_DOWNLOADER_XPC}" ]]; then
+if [[ -d "${RC_APP_PATH}/${VOICE_DOWNLOADER_XPC_REL}" ]]; then
   echo "==> Confirming VoiceModelDownloader.xpc network entitlement after LLC re-sign..."
-  VOICE_ENTITLEMENTS_OUT="$(codesign -d --entitlements :- "${VOICE_DOWNLOADER_XPC}" 2>/dev/null)"
-  if ! grep -q 'network.client' <<< "${VOICE_ENTITLEMENTS_OUT}"; then
-    echo "error: VoiceModelDownloader.xpc lost com.apple.security.network.client after re-sign" >&2
-    exit 1
-  fi
+  verify_voice_downloader_entitlements "${RC_APP_PATH}/${VOICE_DOWNLOADER_XPC_REL}"
 fi
 
 echo "==> Packaging DMG..."
@@ -321,6 +349,17 @@ package_dmg "${RC_APP_PATH}" "${DMG_PATH}" "${RC_STAGING_DIR}"
 
 echo "==> Writing SHA-256 checksum..."
 write_sha256_checksum "${DMG_PATH}" "${CHECKSUM_PATH}"
+
+if [[ "${SIGNING_IDENTITY}" != "-" && -n "${NOTARY_PROFILE}" ]]; then
+  require_command xcrun
+  require_command spctl
+  echo "==> Submitting DMG for notarization (profile ${NOTARY_PROFILE})..."
+  xcrun notarytool submit "${DMG_PATH}" --keychain-profile "${NOTARY_PROFILE}" --wait
+  xcrun stapler staple "${DMG_PATH}"
+  xcrun stapler validate "${DMG_PATH}"
+  echo "==> Gatekeeper assessment..."
+  spctl --assess --type execute --verbose=4 "${RC_APP_PATH}"
+fi
 
 cat <<EOF
 

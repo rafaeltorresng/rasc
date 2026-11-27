@@ -6,8 +6,9 @@ project; macOS simply cannot tie it to a registered Apple developer.
 
 ## Before you start
 
-- **App:** the published release is **v0.1.15, build 21**, an Apple silicon DMG for
-  macOS 14 or later. It is ad-hoc signed and not notarized.
+- **App:** the latest published release is **v0.1.15, build 21**, an Apple silicon DMG for
+  macOS 14 or later. It is ad-hoc signed and not notarized. Current `main` source
+  is ahead at **v0.1.16, build 22+** with post-0.1.15 fixes when built from source.
 - **Refine:** additionally requires macOS 26 or later, an Apple Intelligence-capable
   Mac, Apple Intelligence enabled, and its on-device model ready. Capture, Keep,
   Home and Search work without it.
@@ -22,7 +23,7 @@ project; macOS simply cannot tie it to a registered Apple developer.
 2. Verify the checksum:
 
    ```sh
-   shasum -a 256 -c Rasc-0.1.14-updater.dmg.sha256
+   shasum -a 256 -c Rasc-0.1.15-updater.dmg.sha256
    ```
 
    The command should report `Rasc-0.1.15-updater.dmg: OK`. The published SHA-256 is
