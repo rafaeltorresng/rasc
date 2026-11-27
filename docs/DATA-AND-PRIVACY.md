@@ -101,5 +101,12 @@ Feedback opens an email draft with version information and never attaches notes.
 
 Refine proposals may still change meaning or uncertainty. Review Suggested, or the
 word-level Changes diff, against Original before accepting. Automated language/literal
-checks do not prove semantic equivalence. Cancellation and failed acceptance keep the
-original intact.
+checks do not prove semantic equivalence (validation `n=57` / holdout `n=72` at `30c5c14`
+recorded `0` user-visible protected-literal corruptions and `0.0%` proposal failures, with
+bare-question prompts documented as an open boundary). Cancellation and failed acceptance keep
+the original intact.
+
+Isolated container upgrade (`0.1.15` → `0.1.16-final-rc` under `com.rafaeltorres.rasc.rcverify`)
+and backup/restore round-trip tests verify `v10 → v11_scale_indexes_and_origin` schema integrity,
+`notes` (`origin`), `refinement_revisions`, and `FTS5` search preservation with personal databases
+byte-identical (`shasum -a 256` verified before and after).

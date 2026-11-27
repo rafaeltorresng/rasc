@@ -325,8 +325,22 @@ completed run records belong in the release notes.
 - [ ] Website download link changed only after the feed is live and verified
 - [ ] `git status --porcelain` shows only the intended files; no `build/`
 
-## Current status (2026-11-24)
+## Current status (2026-11-27)
 
+- **Latest final local RC (`0.1.16`, build `22`, commit `30c5c14`):** Built cleanly in
+  `build/updater-rc/0.1.16-final-rc` (`Rasc.app` `46,660,045 B` / `44.50 MiB`;
+  `Rasc-0.1.16-updater.dmg` `13,782,657 B`, SHA-256
+  `208d426e4448c6de918b712e7947a84a6631cb7954a1b9055ac76c188a8c839f`) while keeping
+  `build/updater-rc/0.1.15` and `build/updater-rc/0.1.16` untouched. Passed
+  `verify-rc-bundle.sh`, `codesign --verify --deep --strict`, `Has Library Load Constraints`
+  pinning both `Sparkle` (`0e66f4ed0b19cb8b52fd8063740ba80e1481366a`) and
+  `libswiftCompatibilitySpan.dylib` (`c3228a12b0782b9b402391c99f9627f4c9e2456b`), zero
+  `network.client` on main app, isolated `VoiceModelDownloader.xpc` entitlements,
+  staging Ed25519 appcast + `Rasc22-21.delta` (`3,378,602 B`) + `--tamper` rejection, and
+  an isolated `0.1.15 → 0.1.16` sandboxed container upgrade (`com.rafaeltorres.rasc.rcverify`:
+  `v11_scale_indexes_and_origin` applied, seeded notes/revisions/FTS preserved, 15s standby
+  `31 MB` / `0.0%` CPU, personal DBs unchanged). Ad-hoc signed & unnotarized; Developer ID
+  and macOS 14–25 verification remain open.
 - **Candidate (local, not published):** v0.1.15/build 21, source merge `9a9b471`
   ([PR #96](https://github.com/rafaeltorresng/rasc/pull/96)), DMG
   `Rasc-0.1.15-updater.dmg`, SHA-256

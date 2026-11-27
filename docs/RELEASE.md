@@ -65,6 +65,20 @@ Earlier published artifacts remain unchanged; see the archived
 [v0.1.14 notes](RELEASE-NOTES-v0.1.14.md) and
 [v0.1.13 notes](RELEASE-NOTES-v0.1.13.md).
 
+### Verified final local RC (`0.1.16`, build `22`, commit `30c5c14`)
+
+An updated local release candidate was built and verified in `build/updater-rc/0.1.16-final-rc`
+(retaining `0.1.15` and prior `0.1.16` artifacts untouched; ad-hoc signed with `cdhash`-pinned
+Library Load Constraints, unnotarized — Developer ID & Apple notarization remain deferred):
+
+| Asset / Check | Verified Value |
+|---|---|
+| `Rasc.app` | `46,660,045 B` (`44.50 MiB`), `arm64`, zero `network.client` on main app |
+| `Rasc-0.1.16-updater.dmg` | `13,782,657 B` (`13.14 MiB`), SHA-256 `208d426e4448c6de918b712e7947a84a6631cb7954a1b9055ac76c188a8c839f` |
+| LLC pins (`Contents/Frameworks/`) | `Sparkle` (`0e66f4ed0b19cb8b52fd8063740ba80e1481366a`), `libswiftCompatibilitySpan.dylib` (`c3228a12b0782b9b402391c99f9627f4c9e2456b`) |
+| Delta & Ed25519 appcast | `Rasc22-21.delta` (`3,378,602 B`); `verify-appcast.py --tamper` passed (`Signature Verified Successfully` / tamper rejected) |
+| Isolated `0.1.15 → 0.1.16` upgrade | Launched `com.rafaeltorres.rasc.rcverify` across clean container: `PRAGMA integrity_check = ok`, `v11_scale_indexes_and_origin` applied, seeded notes/revisions/`FTS5` preserved, 15s standby `31 MB` / `0.0%` CPU, personal DBs untouched |
+
 ## Prerequisites
 
 The prerequisites below apply to the optional Developer ID/notarization path. The

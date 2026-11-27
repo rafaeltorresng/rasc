@@ -1,0 +1,237 @@
+{
+  "generated_at": "2026-11-27T16:25:00-0300",
+  "commit": "30c5c14",
+  "synthetic_data_only": true,
+  "count": 38,
+  "note": "All screenshots rendered from actual Rasc SwiftUI/AppKit views in Light & Dark modes with synthetic notes. Voice HUD PNGs rendered via NSHostingView.cacheDisplay show a cosmetic 1px layer-edge tangent artifact outside the capsule border that does not appear in ImageRenderer or live macOS panels.",
+  "screenshots": [
+    {
+      "file": "screenshots/scratchpad-empty-light.png",
+      "label": "Scratchpad empty (Light \u00b7 Graphite Paper)",
+      "bytes": 35485,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/scratchpad-empty-dark.png",
+      "label": "Scratchpad empty (Dark \u00b7 Graphite Paper)",
+      "bytes": 35476,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/scratchpad-text-light.png",
+      "label": "Scratchpad with active note (Light)",
+      "bytes": 70173,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/scratchpad-text-dark.png",
+      "label": "Scratchpad with active note (Dark)",
+      "bytes": 69728,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/refine-preview-suggested-light.png",
+      "label": "Refine comparison: Suggested view (Light)",
+      "bytes": 56916,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/refine-preview-suggested-dark.png",
+      "label": "Refine comparison: Suggested view (Dark)",
+      "bytes": 56261,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/refine-preview-changes-light.png",
+      "label": "Refine comparison: Word-level Changes diff (Light)",
+      "bytes": 61240,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/refine-preview-changes-dark.png",
+      "label": "Refine comparison: Word-level Changes diff (Dark)",
+      "bytes": 60134,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/home-list-light.png",
+      "label": "Home library list view (Light)",
+      "bytes": 147672,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/home-list-dark.png",
+      "label": "Home library list view (Dark)",
+      "bytes": 145928,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/home-cards-light.png",
+      "label": "Home library card grid view (Light)",
+      "bytes": 150970,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/home-cards-dark.png",
+      "label": "Home library card grid view (Dark)",
+      "bytes": 155233,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/home-batch-light.png",
+      "label": "Home multi-selection batch bar (Light)",
+      "bytes": 168059,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/home-batch-dark.png",
+      "label": "Home multi-selection batch bar (Dark)",
+      "bytes": 164090,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/home-empty-light.png",
+      "label": "Home empty state (Light)",
+      "bytes": 79044,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/home-empty-dark.png",
+      "label": "Home empty state (Dark)",
+      "bytes": 78662,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/quick-search-grat-light.png",
+      "label": "Quick Search prefix highlighting (Light)",
+      "bytes": 54784,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/quick-search-grat-dark.png",
+      "label": "Quick Search prefix highlighting (Dark)",
+      "bytes": 53312,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/command-palette-re-light.png",
+      "label": "Command Palette (Light)",
+      "bytes": 21327,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/command-palette-re-dark.png",
+      "label": "Command Palette (Dark)",
+      "bytes": 21117,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/voice-hud-listening-light.png",
+      "label": "Voice HUD Listening state (Light)",
+      "bytes": 17534,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/voice-hud-listening-dark.png",
+      "label": "Voice HUD Listening state (Dark)",
+      "bytes": 13932,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/voice-hud-transcribing-light.png",
+      "label": "Voice HUD Transcribing state (Light)",
+      "bytes": 16551,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/voice-hud-transcribing-dark.png",
+      "label": "Voice HUD Transcribing state (Dark)",
+      "bytes": 12881,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/voice-hud-permission-light.png",
+      "label": "Voice HUD Permission recovery state (Light)",
+      "bytes": 21013,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/voice-hud-permission-dark.png",
+      "label": "Voice HUD Permission recovery state (Dark)",
+      "bytes": 17166,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/onboarding-welcome-light.png",
+      "label": "Onboarding Welcome choice (Light)",
+      "bytes": 533274,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/onboarding-welcome-dark.png",
+      "label": "Onboarding Welcome choice (Dark)",
+      "bytes": 581019,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/onboarding-v2-voice-light.png",
+      "label": "Onboarding Voice & Dictate setup (Light)",
+      "bytes": 433980,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/onboarding-v2-voice-denied-mic-dark.png",
+      "label": "Onboarding Microphone denied recovery (Dark)",
+      "bytes": 435113,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/settings-general-light.png",
+      "label": "Settings \u2192 General (Light)",
+      "bytes": 131029,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/settings-general-dark.png",
+      "label": "Settings \u2192 General (Dark)",
+      "bytes": 127455,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/settings-theme-light.png",
+      "label": "Settings \u2192 Theme presets (Light)",
+      "bytes": 135998,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/settings-theme-dark.png",
+      "label": "Settings \u2192 Theme presets (Dark)",
+      "bytes": 132541,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/settings-shortcuts-light.png",
+      "label": "Settings \u2192 Shortcuts (Light)",
+      "bytes": 167541,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/settings-shortcuts-dark.png",
+      "label": "Settings \u2192 Shortcuts (Dark)",
+      "bytes": 163733,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/settings-voice-light.png",
+      "label": "Settings \u2192 Voice & Dictate (Light)",
+      "bytes": 161717,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    },
+    {
+      "file": "screenshots/settings-voice-dark.png",
+      "label": "Settings \u2192 Voice & Dictate (Dark)",
+      "bytes": 157374,
+      "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
+    }
+  ]
+}

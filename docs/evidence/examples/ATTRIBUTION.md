@@ -1,0 +1,4 @@
+# Attribution & Data Provenance for Publishable Examples
+
+- **Voice audio excerpts (`*.wav`, `examples.json`):** Sourced exclusively from the public **Google FLEURS** test split (`en_us` and `pt_br`), licensed under **CC BY 4.0** (Conneau et al., *"FLEURS: Few-shot Learning Evaluation of Universal Representations of Speech"*, IEEE SLT 2022). Attribution is preserved alongside each clip, and transcripts reflect exact unmodified `Fluid Speech Pro` verbatim outputs from Rasc.
+- **Refine examples (`refine_examples.json`):** Contains synthetic notes authored specifically for evaluation (`syn_*`) plus CC BY 4.0 FLEURS transcripts (`pt_br-*`, `mix-r3-*`) run on `SystemLanguageModel.default` (macOS 26.5.1 Apple Intelligence). No private user notes, recordings, or credentials appear anywhere in this folder.

@@ -75,7 +75,10 @@ Use synthetic thoughts and a temporary test account/profile when exercising fail
 - [ ] Inspect icon at Finder/DMG sizes and bundled dependency notices.
 - [ ] Profile idle/hidden windows and visible windows for CPU/energy; record actual measurements.
 
-Domain tests, headless layout captures and successful builds do not mark these native
-interaction checks as passed. Record the actual signing and notarization status of each
-candidate. Ad-hoc builds use the documented **Open Anyway** path in
+Domain tests (`608` tests / `49` suites + `AppReliabilityScaleTests`), `116` automated AppKit
+window tests (`16` suites in `Scripts/test-native.sh`), `38` Light/Dark offscreen UI
+snapshot checks (`docs/evidence/screenshots/`), and successful Release/RC builds do not mark
+these physical desktop interaction checks as passed. Record the actual signing and
+notarization status of each candidate (`0.1.16-final-rc` build 22 is ad-hoc signed with LLC
+and unnotarized). Ad-hoc builds use the documented **Open Anyway** path in
 [INSTALL-UNSIGNED.md](INSTALL-UNSIGNED.md); notarization is not required for them.
