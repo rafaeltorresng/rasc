@@ -1,0 +1,8 @@
+{
+  "repo": "mlx-community/whisper-large-v3-turbo",
+  "languageArg": null,
+  "coldFirstClipMs": 2009.96,
+  "peakMaxRssBytes": 1847492608,
+  "mlxActiveBytes": 1618307758,
+  "mlxPeakBytes": 2479615754
+}

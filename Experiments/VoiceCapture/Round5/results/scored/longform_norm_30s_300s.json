@@ -1,0 +1,609 @@
+{
+  "corpus": "longform_norm_30s_300s",
+  "engines": {
+    "rasc_fluid": {
+      "speechRecognition": {
+        "clips": 11,
+        "errors": 0,
+        "emptyTranscripts": 0,
+        "referenceWords": 3623,
+        "hypothesisWords": 3484,
+        "wordEdits": 348,
+        "werPercent": 9.605,
+        "cerPercent": 5.155,
+        "werPunctuationSensitivePercent": 12.43,
+        "warmTranscribeMs": {
+          "n": 11,
+          "mean": 823.391,
+          "p50": 821.347,
+          "p95": 1461.129,
+          "min": 154.087,
+          "max": 1461.129
+        },
+        "warmRtf": {
+          "n": 11,
+          "mean": 0.005,
+          "p50": 0.005,
+          "p95": 0.006,
+          "min": 0.004,
+          "max": 0.006
+        }
+      },
+      "speechRecognitionByGroup": {
+        "norm_180s_16k": {
+          "clips": 2,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 675,
+          "hypothesisWords": 659,
+          "wordEdits": 48,
+          "werPercent": 7.111,
+          "cerPercent": 3.17,
+          "werPunctuationSensitivePercent": 9.868,
+          "warmTranscribeMs": {
+            "n": 2,
+            "mean": 842.991,
+            "p50": 821.347,
+            "p95": 864.634,
+            "min": 821.347,
+            "max": 864.634
+          },
+          "warmRtf": {
+            "n": 2,
+            "mean": 0.005,
+            "p50": 0.005,
+            "p95": 0.005,
+            "min": 0.005,
+            "max": 0.005
+          }
+        },
+        "norm_300s_16k": {
+          "clips": 2,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 1107,
+          "hypothesisWords": 1094,
+          "wordEdits": 88,
+          "werPercent": 7.949,
+          "cerPercent": 3.481,
+          "werPunctuationSensitivePercent": 10.742,
+          "warmTranscribeMs": {
+            "n": 2,
+            "mean": 1407.29,
+            "p50": 1371.519,
+            "p95": 1443.061,
+            "min": 1371.519,
+            "max": 1443.061
+          },
+          "warmRtf": {
+            "n": 2,
+            "mean": 0.005,
+            "p50": 0.005,
+            "p95": 0.005,
+            "min": 0.005,
+            "max": 0.005
+          }
+        },
+        "norm_300s_48k_mono": {
+          "clips": 1,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 582,
+          "hypothesisWords": 566,
+          "wordEdits": 60,
+          "werPercent": 10.309,
+          "cerPercent": 4.834,
+          "werPunctuationSensitivePercent": 14.158,
+          "warmTranscribeMs": {
+            "n": 1,
+            "mean": 1461.129,
+            "p50": 1461.129,
+            "p95": 1461.129,
+            "min": 1461.129,
+            "max": 1461.129
+          },
+          "warmRtf": {
+            "n": 1,
+            "mean": 0.005,
+            "p50": 0.005,
+            "p95": 0.005,
+            "min": 0.005,
+            "max": 0.005
+          }
+        },
+        "norm_30s_16k": {
+          "clips": 2,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 121,
+          "hypothesisWords": 106,
+          "wordEdits": 17,
+          "werPercent": 14.05,
+          "cerPercent": 11.416,
+          "werPunctuationSensitivePercent": 15.942,
+          "warmTranscribeMs": {
+            "n": 2,
+            "mean": 167.733,
+            "p50": 154.087,
+            "p95": 181.379,
+            "min": 154.087,
+            "max": 181.379
+          },
+          "warmRtf": {
+            "n": 2,
+            "mean": 0.006,
+            "p50": 0.005,
+            "p95": 0.006,
+            "min": 0.005,
+            "max": 0.006
+          }
+        },
+        "norm_60s_16k": {
+          "clips": 2,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 228,
+          "hypothesisWords": 213,
+          "wordEdits": 28,
+          "werPercent": 12.281,
+          "cerPercent": 7.5,
+          "werPunctuationSensitivePercent": 15.209,
+          "warmTranscribeMs": {
+            "n": 2,
+            "mean": 282.703,
+            "p50": 277.166,
+            "p95": 288.241,
+            "min": 277.166,
+            "max": 288.241
+          },
+          "warmRtf": {
+            "n": 2,
+            "mean": 0.005,
+            "p50": 0.005,
+            "p95": 0.005,
+            "min": 0.005,
+            "max": 0.005
+          }
+        },
+        "norm_mixed_180s": {
+          "clips": 1,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 348,
+          "hypothesisWords": 325,
+          "wordEdits": 42,
+          "werPercent": 12.069,
+          "cerPercent": 7.637,
+          "werPunctuationSensitivePercent": 14.394,
+          "warmTranscribeMs": {
+            "n": 1,
+            "mean": 800.733,
+            "p50": 800.733,
+            "p95": 800.733,
+            "min": 800.733,
+            "max": 800.733
+          },
+          "warmRtf": {
+            "n": 1,
+            "mean": 0.004,
+            "p50": 0.004,
+            "p95": 0.004,
+            "min": 0.004,
+            "max": 0.004
+          }
+        },
+        "norm_mixed_300s": {
+          "clips": 1,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 562,
+          "hypothesisWords": 521,
+          "wordEdits": 65,
+          "werPercent": 11.566,
+          "cerPercent": 7.664,
+          "werPunctuationSensitivePercent": 13.902,
+          "warmTranscribeMs": {
+            "n": 1,
+            "mean": 1394.008,
+            "p50": 1394.008,
+            "p95": 1394.008,
+            "min": 1394.008,
+            "max": 1394.008
+          },
+          "warmRtf": {
+            "n": 1,
+            "mean": 0.005,
+            "p50": 0.005,
+            "p95": 0.005,
+            "min": 0.005,
+            "max": 0.005
+          }
+        }
+      }
+    },
+    "apple_speech_transcriber": {
+      "speechRecognition": {
+        "clips": 11,
+        "errors": 0,
+        "emptyTranscripts": 0,
+        "referenceWords": 3623,
+        "hypothesisWords": 3468,
+        "wordEdits": 595,
+        "werPercent": 16.423,
+        "cerPercent": 9.501,
+        "werPunctuationSensitivePercent": 21.105,
+        "warmTranscribeMs": {
+          "n": 11,
+          "mean": 1533.545,
+          "p50": 1140.651,
+          "p95": 3710.835,
+          "min": 284.588,
+          "max": 3710.835
+        },
+        "warmRtf": null
+      },
+      "speechRecognitionByGroup": {
+        "norm_180s_16k": {
+          "clips": 2,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 675,
+          "hypothesisWords": 647,
+          "wordEdits": 63,
+          "werPercent": 9.333,
+          "cerPercent": 5.844,
+          "werPunctuationSensitivePercent": 14.342,
+          "warmTranscribeMs": {
+            "n": 2,
+            "mean": 1638.659,
+            "p50": 918.443,
+            "p95": 2358.875,
+            "min": 918.443,
+            "max": 2358.875
+          },
+          "warmRtf": null
+        },
+        "norm_300s_16k": {
+          "clips": 2,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 1107,
+          "hypothesisWords": 1067,
+          "wordEdits": 113,
+          "werPercent": 10.208,
+          "cerPercent": 6.491,
+          "werPunctuationSensitivePercent": 15.482,
+          "warmTranscribeMs": {
+            "n": 2,
+            "mean": 2591.363,
+            "p50": 1471.89,
+            "p95": 3710.835,
+            "min": 1471.89,
+            "max": 3710.835
+          },
+          "warmRtf": null
+        },
+        "norm_300s_48k_mono": {
+          "clips": 1,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 582,
+          "hypothesisWords": 581,
+          "wordEdits": 51,
+          "werPercent": 8.763,
+          "cerPercent": 3.862,
+          "werPunctuationSensitivePercent": 14.307,
+          "warmTranscribeMs": {
+            "n": 1,
+            "mean": 3544.571,
+            "p50": 3544.571,
+            "p95": 3544.571,
+            "min": 3544.571,
+            "max": 3544.571
+          },
+          "warmRtf": null
+        },
+        "norm_30s_16k": {
+          "clips": 2,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 121,
+          "hypothesisWords": 122,
+          "wordEdits": 5,
+          "werPercent": 4.132,
+          "cerPercent": 1.826,
+          "werPunctuationSensitivePercent": 10.87,
+          "warmTranscribeMs": {
+            "n": 2,
+            "mean": 425.868,
+            "p50": 284.588,
+            "p95": 567.147,
+            "min": 284.588,
+            "max": 567.147
+          },
+          "warmRtf": null
+        },
+        "norm_60s_16k": {
+          "clips": 2,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 228,
+          "hypothesisWords": 228,
+          "wordEdits": 23,
+          "werPercent": 10.088,
+          "cerPercent": 3.468,
+          "werPunctuationSensitivePercent": 16.35,
+          "warmTranscribeMs": {
+            "n": 2,
+            "mean": 740.296,
+            "p50": 339.941,
+            "p95": 1140.651,
+            "min": 339.941,
+            "max": 1140.651
+          },
+          "warmRtf": null
+        },
+        "norm_mixed_180s": {
+          "clips": 1,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 348,
+          "hypothesisWords": 305,
+          "wordEdits": 132,
+          "werPercent": 37.931,
+          "cerPercent": 24.5,
+          "werPunctuationSensitivePercent": 41.162,
+          "warmTranscribeMs": {
+            "n": 1,
+            "mean": 905.883,
+            "p50": 905.883,
+            "p95": 905.883,
+            "min": 905.883,
+            "max": 905.883
+          },
+          "warmRtf": null
+        },
+        "norm_mixed_300s": {
+          "clips": 1,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 562,
+          "hypothesisWords": 518,
+          "wordEdits": 208,
+          "werPercent": 37.011,
+          "cerPercent": 20.872,
+          "werPunctuationSensitivePercent": 39.336,
+          "warmTranscribeMs": {
+            "n": 1,
+            "mean": 1626.167,
+            "p50": 1626.167,
+            "p95": 1626.167,
+            "min": 1626.167,
+            "max": 1626.167
+          },
+          "warmRtf": null
+        }
+      }
+    },
+    "whisper_large_v3_turbo": {
+      "speechRecognition": {
+        "clips": 11,
+        "errors": 0,
+        "emptyTranscripts": 0,
+        "referenceWords": 3623,
+        "hypothesisWords": 4169,
+        "wordEdits": 1270,
+        "werPercent": 35.054,
+        "cerPercent": 23.616,
+        "werPunctuationSensitivePercent": 37.121,
+        "warmTranscribeMs": {
+          "n": 10,
+          "mean": 9562.029,
+          "p50": 9424.144,
+          "p95": 15069.926,
+          "min": 1590.384,
+          "max": 15069.926
+        },
+        "warmRtf": {
+          "n": 10,
+          "mean": 0.055,
+          "p50": 0.05,
+          "p95": 0.079,
+          "min": 0.042,
+          "max": 0.079
+        }
+      },
+      "speechRecognitionByGroup": {
+        "norm_180s_16k": {
+          "clips": 2,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 675,
+          "hypothesisWords": 665,
+          "wordEdits": 43,
+          "werPercent": 6.37,
+          "cerPercent": 4.383,
+          "werPunctuationSensitivePercent": 9.737,
+          "warmTranscribeMs": {
+            "n": 2,
+            "mean": 9332.549,
+            "p50": 8742.126,
+            "p95": 9922.972,
+            "min": 8742.126,
+            "max": 9922.972
+          },
+          "warmRtf": {
+            "n": 2,
+            "mean": 0.052,
+            "p50": 0.049,
+            "p95": 0.055,
+            "min": 0.049,
+            "max": 0.055
+          }
+        },
+        "norm_300s_16k": {
+          "clips": 2,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 1107,
+          "hypothesisWords": 1306,
+          "wordEdits": 308,
+          "werPercent": 27.823,
+          "cerPercent": 19.231,
+          "werPunctuationSensitivePercent": 28.436,
+          "warmTranscribeMs": {
+            "n": 2,
+            "mean": 13613.257,
+            "p50": 12693.11,
+            "p95": 14533.405,
+            "min": 12693.11,
+            "max": 14533.405
+          },
+          "warmRtf": {
+            "n": 2,
+            "mean": 0.045,
+            "p50": 0.042,
+            "p95": 0.048,
+            "min": 0.042,
+            "max": 0.048
+          }
+        },
+        "norm_300s_48k_mono": {
+          "clips": 1,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 582,
+          "hypothesisWords": 788,
+          "wordEdits": 272,
+          "werPercent": 46.735,
+          "cerPercent": 32.78,
+          "werPunctuationSensitivePercent": 46.349,
+          "warmTranscribeMs": {
+            "n": 1,
+            "mean": 15069.926,
+            "p50": 15069.926,
+            "p95": 15069.926,
+            "min": 15069.926,
+            "max": 15069.926
+          },
+          "warmRtf": {
+            "n": 1,
+            "mean": 0.05,
+            "p50": 0.05,
+            "p95": 0.05,
+            "min": 0.05,
+            "max": 0.05
+          }
+        },
+        "norm_30s_16k": {
+          "clips": 2,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 121,
+          "hypothesisWords": 121,
+          "wordEdits": 1,
+          "werPercent": 0.826,
+          "cerPercent": 0.152,
+          "werPunctuationSensitivePercent": 4.348,
+          "warmTranscribeMs": {
+            "n": 1,
+            "mean": 1590.384,
+            "p50": 1590.384,
+            "p95": 1590.384,
+            "min": 1590.384,
+            "max": 1590.384
+          },
+          "warmRtf": {
+            "n": 1,
+            "mean": 0.053,
+            "p50": 0.053,
+            "p95": 0.053,
+            "min": 0.053,
+            "max": 0.053
+          }
+        },
+        "norm_60s_16k": {
+          "clips": 2,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 228,
+          "hypothesisWords": 329,
+          "wordEdits": 117,
+          "werPercent": 51.316,
+          "cerPercent": 41.855,
+          "werPunctuationSensitivePercent": 62.357,
+          "warmTranscribeMs": {
+            "n": 2,
+            "mean": 4434.78,
+            "p50": 4123.332,
+            "p95": 4746.228,
+            "min": 4123.332,
+            "max": 4746.228
+          },
+          "warmRtf": {
+            "n": 2,
+            "mean": 0.074,
+            "p50": 0.069,
+            "p95": 0.079,
+            "min": 0.069,
+            "max": 0.079
+          }
+        },
+        "norm_mixed_180s": {
+          "clips": 1,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 348,
+          "hypothesisWords": 354,
+          "wordEdits": 167,
+          "werPercent": 47.989,
+          "cerPercent": 28.293,
+          "werPunctuationSensitivePercent": 46.465,
+          "warmTranscribeMs": {
+            "n": 1,
+            "mean": 9424.144,
+            "p50": 9424.144,
+            "p95": 9424.144,
+            "min": 9424.144,
+            "max": 9424.144
+          },
+          "warmRtf": {
+            "n": 1,
+            "mean": 0.052,
+            "p50": 0.052,
+            "p95": 0.052,
+            "min": 0.052,
+            "max": 0.052
+          }
+        },
+        "norm_mixed_300s": {
+          "clips": 1,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 562,
+          "hypothesisWords": 606,
+          "wordEdits": 362,
+          "werPercent": 64.413,
+          "cerPercent": 41.23,
+          "werPunctuationSensitivePercent": 68.404,
+          "warmTranscribeMs": {
+            "n": 1,
+            "mean": 14774.666,
+            "p50": 14774.666,
+            "p95": 14774.666,
+            "min": 14774.666,
+            "max": 14774.666
+          },
+          "warmRtf": {
+            "n": 1,
+            "mean": 0.049,
+            "p50": 0.049,
+            "p95": 0.049,
+            "min": 0.049,
+            "max": 0.049
+          }
+        }
+      }
+    }
+  }
+}

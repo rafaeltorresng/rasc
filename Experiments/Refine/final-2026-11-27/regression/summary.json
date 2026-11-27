@@ -1,0 +1,447 @@
+{
+  "behavior" : {
+    "excessiveExpansionCount" : 0,
+    "noChangeCorrectCount" : 1,
+    "noChangeIncorrectCount" : 2,
+    "noChangeSpecifiedCount" : 3,
+    "unnecessaryEditCount" : 0
+  },
+  "breakdowns" : {
+    "byCategory" : {
+      "ambiguous" : {
+        "criticalFailures" : 1,
+        "objectivePassRate" : 0,
+        "runs" : 1
+      },
+      "invented-context" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 1
+      },
+      "language-drift" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 1
+      },
+      "over-expansion" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 1
+      },
+      "regression" : {
+        "criticalFailures" : 1,
+        "objectivePassRate" : 0.6666666666666666,
+        "runs" : 6
+      },
+      "selection-leak" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 1
+      },
+      "tiny" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 1
+      },
+      "unnecessary-edit" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 0,
+        "runs" : 1
+      }
+    },
+    "byInputLength" : {
+      "1" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 1
+      },
+      "2-3" : {
+        "criticalFailures" : 1,
+        "objectivePassRate" : 0.6666666666666666,
+        "runs" : 3
+      },
+      "4-8" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 0.5,
+        "runs" : 2
+      }
+    },
+    "byLanguage" : {
+      "pt" : {
+        "criticalFailures" : 1,
+        "objectivePassRate" : 0.6666666666666666,
+        "runs" : 6
+      }
+    },
+    "byScope" : {
+      "selection" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 1
+      },
+      "wholeNote" : {
+        "criticalFailures" : 1,
+        "objectivePassRate" : 0.6,
+        "runs" : 5
+      }
+    }
+  },
+  "configuration" : {
+    "caseCount" : 6,
+    "criticalStabilityOnly" : false,
+    "filterCategories" : [
+
+    ],
+    "filterTags" : [
+
+    ],
+    "repetitions" : 1,
+    "split" : "regression"
+  },
+  "criticalFailures" : [
+    {
+      "caseID" : "regression-pt-ambiguous-fragment-002",
+      "failures" : [
+        {
+          "kind" : "unexpectedChange",
+          "message" : "Expected strict noChange.",
+          "severity" : "critical"
+        }
+      ],
+      "input" : "ajustar aquilo depois",
+      "output" : "Ajustar aquilo depois"
+    }
+  ],
+  "decisionMetrics" : {
+    "alreadyGood" : {
+      "actionFlappingCaseCount" : 0,
+      "appropriateNoChangeCount" : 0,
+      "appropriateNoChangeRate" : 0,
+      "caseCount" : 0,
+      "casesWithMultipleRuns" : 0,
+      "changedCount" : 0,
+      "changedRate" : 0,
+      "excessiveExpansionCount" : 0,
+      "harmfulEditCount" : 0,
+      "harmfulEditRate" : 0,
+      "inventedInformationIndicatorCount" : 0,
+      "noChangeCount" : 0,
+      "noChangeRate" : 0,
+      "objectivePassCount" : 0,
+      "objectivePassRate" : 0,
+      "overAbstentionCount" : 0,
+      "overAbstentionEligibleCount" : 0,
+      "overAbstentionRate" : 0,
+      "passFailFlappingCaseCount" : 0,
+      "runCount" : 0,
+      "unnecessaryEditCount" : 0,
+      "usefulChangedCount" : 0,
+      "usefulChangedRate" : 0,
+      "wrongLanguageChangedCount" : 0
+    },
+    "byInputLength" : {
+      "1" : {
+        "actionFlappingCaseCount" : 0,
+        "appropriateNoChangeCount" : 1,
+        "appropriateNoChangeRate" : 1,
+        "caseCount" : 1,
+        "casesWithMultipleRuns" : 0,
+        "changedCount" : 0,
+        "changedRate" : 0,
+        "excessiveExpansionCount" : 0,
+        "harmfulEditCount" : 0,
+        "harmfulEditRate" : 0,
+        "inventedInformationIndicatorCount" : 0,
+        "noChangeCount" : 1,
+        "noChangeRate" : 1,
+        "objectivePassCount" : 1,
+        "objectivePassRate" : 1,
+        "overAbstentionCount" : 0,
+        "overAbstentionEligibleCount" : 0,
+        "overAbstentionRate" : 0,
+        "passFailFlappingCaseCount" : 0,
+        "runCount" : 1,
+        "unnecessaryEditCount" : 0,
+        "usefulChangedCount" : 0,
+        "usefulChangedRate" : 0,
+        "wrongLanguageChangedCount" : 0
+      },
+      "2-3" : {
+        "actionFlappingCaseCount" : 0,
+        "appropriateNoChangeCount" : 0,
+        "appropriateNoChangeRate" : 0,
+        "caseCount" : 3,
+        "casesWithMultipleRuns" : 0,
+        "changedCount" : 3,
+        "changedRate" : 1,
+        "excessiveExpansionCount" : 0,
+        "harmfulEditCount" : 0,
+        "harmfulEditRate" : 0,
+        "inventedInformationIndicatorCount" : 0,
+        "noChangeCount" : 0,
+        "noChangeRate" : 0,
+        "objectivePassCount" : 2,
+        "objectivePassRate" : 0.6666666666666666,
+        "overAbstentionCount" : 0,
+        "overAbstentionEligibleCount" : 0,
+        "overAbstentionRate" : 0,
+        "passFailFlappingCaseCount" : 0,
+        "runCount" : 3,
+        "unnecessaryEditCount" : 0,
+        "usefulChangedCount" : 2,
+        "usefulChangedRate" : 0.6666666666666666,
+        "wrongLanguageChangedCount" : 0
+      },
+      "4-8" : {
+        "actionFlappingCaseCount" : 0,
+        "appropriateNoChangeCount" : 0,
+        "appropriateNoChangeRate" : 0,
+        "caseCount" : 2,
+        "casesWithMultipleRuns" : 0,
+        "changedCount" : 2,
+        "changedRate" : 1,
+        "excessiveExpansionCount" : 0,
+        "harmfulEditCount" : 0,
+        "harmfulEditRate" : 0,
+        "inventedInformationIndicatorCount" : 0,
+        "noChangeCount" : 0,
+        "noChangeRate" : 0,
+        "objectivePassCount" : 1,
+        "objectivePassRate" : 0.5,
+        "overAbstentionCount" : 0,
+        "overAbstentionEligibleCount" : 1,
+        "overAbstentionRate" : 0,
+        "passFailFlappingCaseCount" : 0,
+        "runCount" : 2,
+        "unnecessaryEditCount" : 0,
+        "usefulChangedCount" : 1,
+        "usefulChangedRate" : 0.5,
+        "wrongLanguageChangedCount" : 0
+      },
+      "9+" : {
+        "actionFlappingCaseCount" : 0,
+        "appropriateNoChangeCount" : 0,
+        "appropriateNoChangeRate" : 0,
+        "caseCount" : 0,
+        "casesWithMultipleRuns" : 0,
+        "changedCount" : 0,
+        "changedRate" : 0,
+        "excessiveExpansionCount" : 0,
+        "harmfulEditCount" : 0,
+        "harmfulEditRate" : 0,
+        "inventedInformationIndicatorCount" : 0,
+        "noChangeCount" : 0,
+        "noChangeRate" : 0,
+        "objectivePassCount" : 0,
+        "objectivePassRate" : 0,
+        "overAbstentionCount" : 0,
+        "overAbstentionEligibleCount" : 0,
+        "overAbstentionRate" : 0,
+        "passFailFlappingCaseCount" : 0,
+        "runCount" : 0,
+        "unnecessaryEditCount" : 0,
+        "usefulChangedCount" : 0,
+        "usefulChangedRate" : 0,
+        "wrongLanguageChangedCount" : 0
+      }
+    },
+    "clearlyRefinableTelegraphic" : {
+      "actionFlappingCaseCount" : 0,
+      "appropriateNoChangeCount" : 0,
+      "appropriateNoChangeRate" : 0,
+      "caseCount" : 0,
+      "casesWithMultipleRuns" : 0,
+      "changedCount" : 0,
+      "changedRate" : 0,
+      "excessiveExpansionCount" : 0,
+      "harmfulEditCount" : 0,
+      "harmfulEditRate" : 0,
+      "inventedInformationIndicatorCount" : 0,
+      "noChangeCount" : 0,
+      "noChangeRate" : 0,
+      "objectivePassCount" : 0,
+      "objectivePassRate" : 0,
+      "overAbstentionCount" : 0,
+      "overAbstentionEligibleCount" : 0,
+      "overAbstentionRate" : 0,
+      "passFailFlappingCaseCount" : 0,
+      "runCount" : 0,
+      "unnecessaryEditCount" : 0,
+      "usefulChangedCount" : 0,
+      "usefulChangedRate" : 0,
+      "wrongLanguageChangedCount" : 0
+    },
+    "overall" : {
+      "actionFlappingCaseCount" : 0,
+      "appropriateNoChangeCount" : 1,
+      "appropriateNoChangeRate" : 1,
+      "caseCount" : 6,
+      "casesWithMultipleRuns" : 0,
+      "changedCount" : 5,
+      "changedRate" : 0.8333333333333334,
+      "excessiveExpansionCount" : 0,
+      "harmfulEditCount" : 0,
+      "harmfulEditRate" : 0,
+      "inventedInformationIndicatorCount" : 0,
+      "noChangeCount" : 1,
+      "noChangeRate" : 0.16666666666666666,
+      "objectivePassCount" : 4,
+      "objectivePassRate" : 0.6666666666666666,
+      "overAbstentionCount" : 0,
+      "overAbstentionEligibleCount" : 1,
+      "overAbstentionRate" : 0,
+      "passFailFlappingCaseCount" : 0,
+      "runCount" : 6,
+      "unnecessaryEditCount" : 0,
+      "usefulChangedCount" : 3,
+      "usefulChangedRate" : 0.6,
+      "wrongLanguageChangedCount" : 0
+    },
+    "structuralList" : {
+      "actionFlappingCaseCount" : 0,
+      "appropriateNoChangeCount" : 0,
+      "appropriateNoChangeRate" : 0,
+      "caseCount" : 0,
+      "casesWithMultipleRuns" : 0,
+      "changedCount" : 0,
+      "changedRate" : 0,
+      "excessiveExpansionCount" : 0,
+      "harmfulEditCount" : 0,
+      "harmfulEditRate" : 0,
+      "inventedInformationIndicatorCount" : 0,
+      "noChangeCount" : 0,
+      "noChangeRate" : 0,
+      "objectivePassCount" : 0,
+      "objectivePassRate" : 0,
+      "overAbstentionCount" : 0,
+      "overAbstentionEligibleCount" : 0,
+      "overAbstentionRate" : 0,
+      "passFailFlappingCaseCount" : 0,
+      "runCount" : 0,
+      "unnecessaryEditCount" : 0,
+      "usefulChangedCount" : 0,
+      "usefulChangedRate" : 0,
+      "wrongLanguageChangedCount" : 0
+    },
+    "tinyAmbiguous" : {
+      "actionFlappingCaseCount" : 0,
+      "appropriateNoChangeCount" : 1,
+      "appropriateNoChangeRate" : 1,
+      "caseCount" : 2,
+      "casesWithMultipleRuns" : 0,
+      "changedCount" : 1,
+      "changedRate" : 0.5,
+      "excessiveExpansionCount" : 0,
+      "harmfulEditCount" : 0,
+      "harmfulEditRate" : 0,
+      "inventedInformationIndicatorCount" : 0,
+      "noChangeCount" : 1,
+      "noChangeRate" : 0.5,
+      "objectivePassCount" : 1,
+      "objectivePassRate" : 0.5,
+      "overAbstentionCount" : 0,
+      "overAbstentionEligibleCount" : 0,
+      "overAbstentionRate" : 0,
+      "passFailFlappingCaseCount" : 0,
+      "runCount" : 2,
+      "unnecessaryEditCount" : 0,
+      "usefulChangedCount" : 0,
+      "usefulChangedRate" : 0,
+      "wrongLanguageChangedCount" : 0
+    }
+  },
+  "decomposedLanguageMetrics" : {
+    "finalUserVisibleLanguageSafe" : {
+      "failureCount" : 0,
+      "rate" : 1,
+      "requiresReviewCount" : 0,
+      "successCount" : 5
+    },
+    "inputLanguageResolution" : {
+      "failureCount" : 1,
+      "rate" : 0.8,
+      "requiresReviewCount" : 0,
+      "successCount" : 4
+    },
+    "languageValidatorOutcome" : {
+      "failureCount" : 0,
+      "rate" : 1,
+      "requiresReviewCount" : 0,
+      "successCount" : 5
+    },
+    "rawGenerationLanguageCorrect" : {
+      "failureCount" : 0,
+      "rate" : 1,
+      "requiresReviewCount" : 0,
+      "successCount" : 5
+    },
+    "technicalTermPreservation" : {
+      "failureCount" : 5,
+      "rate" : 0,
+      "requiresReviewCount" : 0,
+      "successCount" : 0
+    }
+  },
+  "environment" : {
+    "appVersion" : "0.1.16",
+    "modelAvailability" : "available",
+    "modelIdentifier" : "system-language-model.default",
+    "osVersion" : "Version 26.5.1 (Build 25F80)",
+    "promptVersion" : "refine-v2-language-preference",
+    "provider" : "foundation-models",
+    "runFinishedAt" : "2026-11-27T18:07:10Z",
+    "runStartedAt" : "2026-11-27T18:07:06Z",
+    "samplingConfiguration" : "production FoundationModelsRefinementProvider (unchanged in M12A)"
+  },
+  "languageMetrics" : {
+    "enDriftCases" : 0,
+    "esToEnDriftCases" : 0,
+    "falseRejections" : 0,
+    "generationContractViolations" : 0,
+    "generationLanguageCorrectRate" : 1,
+    "languageSafetyRejections" : 0,
+    "mixedLanguageFailures" : 0,
+    "ptToEnDriftCases" : 0,
+    "resolverMistakes" : 0,
+    "rootCauseCounts" : {
+      "evaluatorDisagreement" : 2,
+      "other" : 3
+    },
+    "userVisibleLanguageSafeRate" : 1,
+    "validatorCatches" : 0,
+    "validatorMisses" : 0
+  },
+  "latency" : {
+    "p50Ms" : 743.0570125579834,
+    "p95Ms" : 1258.0509185791016,
+    "sampleCount" : 6
+  },
+  "limitations" : [
+    "Deterministic scorers cannot fully judge semantic faithfulness or subtle invented context.",
+    "Language detection is heuristic and may mislabel tiny\/ambiguous inputs.",
+    "Foundation Models availability and sampling are environment-dependent.",
+    "Holdout cases should not inform M12B tuning decisions."
+  ],
+  "objectivePassRate" : 0.6666666666666666,
+  "overallPassRate" : 0,
+  "protectedLiteralMetrics" : {
+    "coveredRuns" : 0,
+    "guardRejectionCount" : 0,
+    "proposalFailureWithSafetySuccessCount" : 0,
+    "rawProposalCorruptionCount" : 0,
+    "rejectionsByClass" : {
+
+    },
+    "userVisibleProtectedLiteralCorruptionCount" : 0
+  },
+  "reviewQueueStatus" : "75-case review queue remains maintainer-unapproved; see Evals\/Refine\/review-queue.md",
+  "safetyMetrics" : {
+    "modelProposalFailureCount" : 0,
+    "modelProposalFailureRate" : 0,
+    "sampleCount" : 6,
+    "userVisibleHarmfulEditCount" : 4,
+    "userVisibleHarmfulEditRate" : 0.6666666666666666
+  },
+  "totalCases" : 6,
+  "totalRuns" : 6
+}

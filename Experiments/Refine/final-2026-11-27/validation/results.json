@@ -1,0 +1,4734 @@
+{
+  "configuration" : {
+    "caseCount" : 57,
+    "criticalStabilityOnly" : false,
+    "filterCategories" : [
+
+    ],
+    "filterTags" : [
+
+    ],
+    "repetitions" : 1,
+    "split" : "validation"
+  },
+  "environment" : {
+    "appVersion" : "0.1.16",
+    "modelAvailability" : "available",
+    "modelIdentifier" : "system-language-model.default",
+    "osVersion" : "Version 26.5.1 (Build 25F80)",
+    "promptVersion" : "refine-v2-language-preference",
+    "provider" : "foundation-models",
+    "runFinishedAt" : "2026-11-27T18:04:32Z",
+    "runStartedAt" : "2026-11-27T18:03:49Z",
+    "samplingConfiguration" : "production FoundationModelsRefinementProvider (unchanged in M12A)"
+  },
+  "records" : [
+    {
+      "availability" : "available",
+      "caseID" : "acronym-005",
+      "decision" : "changed",
+      "input" : "SQL FTS5 GRDB SQLite migration v4",
+      "kind" : "technical",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_validation_skipped_insufficient_resolver_confidence",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "low",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "de" : 0.24108318984508514,
+            "en" : 0.1639992594718933,
+            "tr" : 0.130267933011055
+          },
+          "label" : "de",
+          "markerLabel" : "ambiguous",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "insufficient",
+        "legacyResolverReason" : "system_locale_fallback_ambiguous_input",
+        "legacyUsedSystemFallback" : true,
+        "postValidatorEvaluated" : false,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "SQL FTS5 GRDB SQLite migration v4",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "ambiguous",
+        "resolvedLocale" : "und",
+        "resolverConfidence" : "insufficient",
+        "resolverReason" : "unresolved_insufficient_evidence",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "sourceEvidenceLabel" : "ambiguous",
+        "sourceEvidenceStrong" : false,
+        "unresolvedGuardDecisionReason" : "sourceAmbiguous",
+        "unresolvedGuardEvaluated" : true,
+        "unresolvedGuardOutputAssessmentConfidence" : "low",
+        "unresolvedGuardOutputAssessmentLabel" : "unknown",
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "notEvaluated"
+      },
+      "latencyMs" : 2203.096032142639,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "SQL FTS5 GRDB SQLite migration v4",
+      "productionRejection" : "no_change",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "code-003",
+      "decision" : "changed",
+      "input" : "TypeError: Cannot read property 'map' of undefined\n    at render (App.tsx:88:12)",
+      "kind" : "technical",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "en" : 0.9537022709846497,
+            "id" : 0.0053922263905406,
+            "nl" : 0.027915021404623985
+          },
+          "label" : "en",
+          "markerLabel" : "ambiguous",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "english",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "insufficient",
+        "legacyResolverReason" : "system_locale_fallback_ambiguous_input",
+        "legacyUsedSystemFallback" : true,
+        "markerAssessmentLabel" : "ambiguous",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "TypeError: Cannot read property 'map' of undefined\n    at render (App.tsx:88:12)",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "english",
+        "resolvedLocale" : "en-US",
+        "resolverConfidence" : "high",
+        "resolverReason" : "natural_language_tie_break",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 904.2479991912842,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "TypeError: Cannot read property 'map' of undefined\n    at render (App.tsx:88:12)",
+      "productionRejection" : "no_change",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "incomplete-002",
+      "decision" : "noChange",
+      "input" : "preciso ver se...",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "model_returned_noChange",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "noChange",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "es" : 0.002100026933476329,
+            "it" : 1.3779337677988224e-05,
+            "pt" : 0.9978752136230469
+          },
+          "label" : "pt",
+          "markerLabel" : "portuguese",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "portuguese",
+        "legacyResolvedLocale" : "pt-BR",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "portuguese",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "noChange",
+        "rawGeneratedText" : "preciso ver se...",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_single_language",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 671.9129085540771,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "preciso ver se...",
+      "promptVersion" : "refine-v2-language-preference",
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "leakage-002",
+      "decision" : "changed",
+      "input" : "Before context: meeting with CEO\n\nnote: check retry logs",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "en" : 0.9986104965209961,
+            "id" : 0.0004246827738825232,
+            "nl" : 0.00024077061971183866
+          },
+          "label" : "en",
+          "markerLabel" : "english",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "english",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "english",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Before context: meeting with CEO\n\nnote: check retry logs",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "english",
+        "resolvedLocale" : "en-US",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_clear_margin",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 823.4169483184814,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Before context: meeting with CEO\n\nnote: check retry logs",
+      "productionRejection" : "no_change",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "legacy-messy-thought-pt-001",
+      "decision" : "changed",
+      "input" : "ideia refine devia inferir tipo talvez começar pequeno e medir",
+      "kind" : "idea",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "ca" : 3.1037866392580327e-06,
+            "es" : 0.00047466953401453793,
+            "pt" : 0.9995181560516357
+          },
+          "label" : "pt",
+          "markerLabel" : "portuguese",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "portuguese",
+        "legacyResolvedLocale" : "pt-BR",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "portuguese",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Ideia de refinamento deveria inferir tipo. Talvez comece pequeno e medir.",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_clear_margin",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 940.91796875,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Ideia de refinamento deveria inferir tipo. Talvez comece pequeno e medir.",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "legacy-selection-en-fragment-001",
+      "decision" : "changed",
+      "input" : "chek the deploy notes",
+      "kind" : "unknown",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "en" : 0.9031141400337219,
+            "id" : 0.02252611517906189,
+            "tr" : 0.01161523349583149
+          },
+          "label" : "en",
+          "markerLabel" : "english",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "english",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note_and_context",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "english",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "check the deployment notes",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "english",
+        "resolvedLocale" : "en-US",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_clear_margin",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 745.6510066986084,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "check the deployment notes",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "legacy-telegraphic-work-note-pt-001",
+      "decision" : "changed",
+      "input" : "revisar números do funil, separar por canal, talvez comparar com semana passada",
+      "kind" : "tasks",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "ca" : 0.0019170757150277495,
+            "es" : 0.003992070443928242,
+            "pt" : 0.9940868616104126
+          },
+          "label" : "pt",
+          "markerLabel" : "portuguese",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "portuguese",
+        "legacyResolvedLocale" : "pt-BR",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "portuguese",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "revisar os números do funil, separar por canal, talvez comparar com a semana passada",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_clear_margin",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 953.4260034561157,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "revisar os números do funil, separar por canal, talvez comparar com a semana passada",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "legacy-uncertainty-pt-001",
+      "decision" : "changed",
+      "input" : "acho que talvez o retry esteja correndo antes do queue tick",
+      "kind" : "technical",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "ca" : 4.805065145774279e-06,
+            "es" : 0.0005559538840316236,
+            "pt" : 0.9994292259216309
+          },
+          "label" : "pt",
+          "markerLabel" : "mixed",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "mixed",
+        "legacyResolvedLocale" : "mixed",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "mixed_input",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "portuguese",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "acho que talvez o retry esteja correndo antes do queue tick",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_clear_margin",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 800.603985786438,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "acho que talvez o retry esteja correndo antes do queue tick",
+      "productionRejection" : "no_change",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "long-pt-003",
+      "decision" : "noChange",
+      "input" : "nota longa #3: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49",
+      "kind" : "alreadyGood",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_validation_skipped_insufficient_resolver_confidence",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "noChange",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "en" : 0.8429705500602722,
+            "fi" : 0.017799563705921173,
+            "pt" : 0.051520150154829025
+          },
+          "label" : "en",
+          "markerLabel" : "mixed",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : false,
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "mixed",
+        "legacyResolvedLocale" : "mixed",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "mixed_input",
+        "legacyUsedSystemFallback" : false,
+        "postValidatorEvaluated" : false,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49",
+        "rejectedIntoNoChange" : true,
+        "resolvedLabel" : "ambiguous",
+        "resolvedLocale" : "und",
+        "resolverConfidence" : "insufficient",
+        "resolverReason" : "unresolved_insufficient_evidence",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "sourceEvidenceLabel" : "mixed",
+        "sourceEvidenceStrong" : false,
+        "unresolvedGuardDecisionReason" : "sourceAmbiguous",
+        "unresolvedGuardEvaluated" : true,
+        "unresolvedGuardOutputAssessmentConfidence" : "high",
+        "unresolvedGuardOutputAssessmentLabel" : "english",
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "notEvaluated"
+      },
+      "latencyMs" : 1154.5439958572388,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "nota longa #3: retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49 retry queue notification Mirella Vitor talvez deploy beta logs QUEUED FAILED https:\/\/example.com\/status R$ 49",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "literalClass" : "identifier",
+        "validatorEvaluated" : true,
+        "validatorRejected" : true,
+        "violationReason" : "protectedLiteralDropped"
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "medium-en-008",
+      "decision" : "noChange",
+      "input" : "investigate next_retry_at in worker",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "model_returned_noChange",
+        "expectedLanguage" : "en",
+        "finalDecision" : "noChange",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "en" : 0.9797192811965942,
+            "nl" : 0.00385607429780066,
+            "ro" : 0.005712743848562241
+          },
+          "label" : "en",
+          "markerLabel" : "english",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "english",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "ambiguous",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "noChange",
+        "rawGeneratedText" : "investigate next_retry_at in worker",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "english",
+        "resolvedLocale" : "en-US",
+        "resolverConfidence" : "high",
+        "resolverReason" : "natural_language_tie_break",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 743.8080310821533,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "investigate next_retry_at in worker",
+      "promptVersion" : "refine-v2-language-preference",
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "medium-en-010",
+      "decision" : "changed",
+      "input" : "update onboarding copy after deploy",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "en" : 0.8774464726448059,
+            "id" : 0.036878958344459534,
+            "nl" : 0.05096724256873131
+          },
+          "label" : "en",
+          "markerLabel" : "english",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "english",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "english",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Update onboarding copy after deploy",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "english",
+        "resolvedLocale" : "en-US",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_clear_margin",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 680.1270246505737,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Update onboarding copy after deploy",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "medium-pt-004",
+      "decision" : "changed",
+      "input" : "ideia: refine devia inferir tipo da nota",
+      "kind" : "idea",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "ca" : 4.937430730933556e-07,
+            "es" : 0.00012987552327103913,
+            "pt" : 0.9998687505722046
+          },
+          "label" : "pt",
+          "markerLabel" : "portuguese",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "portuguese",
+        "legacyResolvedLocale" : "pt-BR",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "portuguese",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Ideia: Refine a nota para inferir o tipo da nota",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_single_language",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 954.5120000839233,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Ideia: Refine a nota para inferir o tipo da nota",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "medium-pt-005",
+      "decision" : "noChange",
+      "input" : "mandar contrato assinado até sexta",
+      "kind" : "tasks",
+      "languageDiagnostics" : {
+        "decisionReason" : "model_returned_noChange",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "noChange",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "ca" : 9.339303801425558e-07,
+            "es" : 0.00022998818894848228,
+            "pt" : 0.9997689127922058
+          },
+          "label" : "pt",
+          "markerLabel" : "mixed",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "mixed",
+        "legacyResolvedLocale" : "mixed",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "mixed_input",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "mixed",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "noChange",
+        "rawGeneratedText" : "mandar contrato assinado até sexta",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_clear_margin",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 738.1410598754883,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "mandar contrato assinado até sexta",
+      "promptVersion" : "refine-v2-language-preference",
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "medium-pt-006",
+      "decision" : "changed",
+      "input" : "ver se QUEUED virou FAILED nos logs",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "es" : 8.441298268735409e-05,
+            "fr" : 2.0417512132553384e-05,
+            "pt" : 0.9998819231987
+          },
+          "label" : "pt",
+          "markerLabel" : "mixed",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "mixed",
+        "legacyResolvedLocale" : "mixed",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "mixed_input",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "portuguese",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Ver se o QUEUED virou FAILED nos logs",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_single_language",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 862.6240491867065,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Ver se o QUEUED virou FAILED nos logs",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "medium-pt-007",
+      "decision" : "changed",
+      "input" : "talvez separar preview do export",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "en" : 0.0021397240925580263,
+            "id" : 0.009258214384317398,
+            "pt" : 0.9807024598121643
+          },
+          "label" : "pt",
+          "markerLabel" : "mixed",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "mixed",
+        "legacyResolvedLocale" : "mixed",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "mixed_input",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "mixed",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Talvez separar preview do export",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_single_language",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 725.0430583953857,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Talvez separar preview do export",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "medium-pt-011",
+      "decision" : "changed",
+      "input" : "dale rapaziada qual a boa?",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "ca" : 0.008086118847131729,
+            "es" : 0.0003378337132744491,
+            "pt" : 0.9914241433143616
+          },
+          "label" : "pt",
+          "markerLabel" : "ambiguous",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "insufficient",
+        "legacyResolverReason" : "system_locale_fallback_ambiguous_input",
+        "legacyUsedSystemFallback" : true,
+        "markerAssessmentLabel" : "ambiguous",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Qual a boa galera?",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "natural_language_tie_break",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 744.6720600128174,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Qual a boa galera?",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "medium-pt-013",
+      "decision" : "changed",
+      "input" : "ola tudobem como vc ta?",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_validation_skipped_insufficient_resolver_confidence",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "es" : 0.00010131091403309256,
+            "hu" : 6.24994243025867e-08,
+            "pt" : 0.9998985528945923
+          },
+          "label" : "pt",
+          "markerLabel" : "portuguese",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "mixed",
+        "legacyResolvedLocale" : "mixed",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "mixed_input",
+        "legacyUsedSystemFallback" : false,
+        "postValidatorEvaluated" : false,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Olá, tudo bem? Como você está?",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "ambiguous",
+        "resolvedLocale" : "und",
+        "resolverConfidence" : "insufficient",
+        "resolverReason" : "unresolved_insufficient_evidence",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "sourceEvidenceLabel" : "ambiguous",
+        "sourceEvidenceStrong" : false,
+        "unresolvedGuardDecisionReason" : "sourceAmbiguous",
+        "unresolvedGuardEvaluated" : true,
+        "unresolvedGuardOutputAssessmentConfidence" : "high",
+        "unresolvedGuardOutputAssessmentLabel" : "portuguese",
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "notEvaluated"
+      },
+      "latencyMs" : 826.6810178756714,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Olá, tudo bem? Como você está?",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "meeting-dump-002",
+      "decision" : "changed",
+      "input" : "product call: small beta, Mira copy, Sam queue, Ana pricing, maybe October, no sync decision",
+      "kind" : "tasks",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "en" : 0.9909579157829285,
+            "nl" : 0.001668458105996251,
+            "pt" : 0.002137716393917799
+          },
+          "label" : "en",
+          "markerLabel" : "english",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "english",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "english",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "small beta, Mira copy, Sam queue, Ana pricing, maybe October, no sync decision",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "english",
+        "resolvedLocale" : "en-US",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_single_language",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 898.8580703735352,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "small beta, Mira copy, Sam queue, Ana pricing, maybe October, no sync decision",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "meeting-dump-003",
+      "decision" : "changed",
+      "input" : "1) retry dup 2) logs QUEUED\/FAILED 3) falar c\/ infra 4) deploy sexta?",
+      "kind" : "tasks",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "en" : 0.9982814788818359,
+            "id" : 0.00024641011259518564,
+            "vi" : 0.00022668174642603844
+          },
+          "label" : "en",
+          "markerLabel" : "english",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : false,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "english",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "mixed",
+        "legacyResolvedLocale" : "mixed",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "mixed_input",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "english",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "1) retry dup 2) logs QUEUED\/FAILED 3) talk with infra 4) deploy on Friday?",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "english",
+        "resolvedLocale" : "en-US",
+        "resolverConfidence" : "high",
+        "resolverReason" : "natural_language_tie_break",
+        "rootCause" : "resolverFailure",
+        "rootCauseExplanation" : "Resolver chose english but dataset expects pt.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : false,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 1116.4079904556274,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "1) retry dup 2) logs QUEUED\/FAILED 3) talk with infra 4) deploy on Friday?",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "message-draft-006",
+      "decision" : "changed",
+      "input" : "Thanks for the ping. Think the retry was the issue yeah.",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "en" : 0.9970850348472595,
+            "nl" : 0.0013315682299435139,
+            "vi" : 0.0002979226119350642
+          },
+          "label" : "en",
+          "markerLabel" : "english",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "english",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "english",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Thanks for the ping. Think the retry was the issue, yeah.",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "english",
+        "resolvedLocale" : "en-US",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_clear_margin",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 822.8409290313721,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Thanks for the ping. Think the retry was the issue, yeah.",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "message-pt-001",
+      "decision" : "changed",
+      "input" : "oi Lucis acho q resolvi a parte da fila vou monitorar hoje",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "ca" : 5.165567813492089e-07,
+            "es" : 3.421889778110199e-05,
+            "pt" : 0.9999650716781616
+          },
+          "label" : "pt",
+          "markerLabel" : "mixed",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "mixed",
+        "legacyResolvedLocale" : "mixed",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "mixed_input",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "mixed",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Oi Lucis, acho que resolvi a parte da fila. Vou monitorar hoje",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_clear_margin",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 881.242036819458,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Oi Lucis, acho que resolvi a parte da fila. Vou monitorar hoje",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "messy-001",
+      "decision" : "changed",
+      "input" : "fila retry duplicado ver logs notification queued failed falar vitor talvez race",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "es" : 0.0008965302840806544,
+            "id" : 6.661356019321829e-05,
+            "pt" : 0.9988529682159424
+          },
+          "label" : "pt",
+          "markerLabel" : "portuguese",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "portuguese",
+        "legacyResolvedLocale" : "pt-BR",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "portuguese",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Fila retry duplicado. Ver logs. Notificação queued. Failed. Falar com Vitor. Talvez race.",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_clear_margin",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 1172.2209453582764,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Fila retry duplicado. Ver logs. Notificação queued. Failed. Falar com Vitor. Talvez race.",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "mixed-pt-en-001",
+      "decision" : "changed",
+      "input" : "revisar onboarding copy depois do deploy maybe ask Ana sobre CTA v2",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_validation_skipped_insufficient_resolver_confidence",
+        "expectedLanguage" : "mixed",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "en" : 0.998823344707489,
+            "id" : 0.00017353946168441325,
+            "nl" : 0.00020227803906891495
+          },
+          "label" : "en",
+          "markerLabel" : "english",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "mixed",
+        "legacyResolvedLocale" : "mixed",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "mixed_input",
+        "legacyUsedSystemFallback" : false,
+        "postValidatorEvaluated" : false,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Revise the onboarding copy after the deploy. Maybe ask Ana about the CTA v2",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "mixed",
+        "resolvedLocale" : "mixed",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_true_tie",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "notEvaluated"
+      },
+      "latencyMs" : 961.2929821014404,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Revise the onboarding copy after the deploy. Maybe ask Ana about the CTA v2",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "mixed-pt-en-002",
+      "decision" : "noChange",
+      "input" : "next_retry_at pode estar menor que scheduled_at no whatsapp_queue",
+      "kind" : "alreadyGood",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "mixed",
+        "finalDecision" : "noChange",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "ca" : 8.974860975285992e-06,
+            "es" : 8.28122574603185e-05,
+            "pt" : 0.9999074935913086
+          },
+          "label" : "pt",
+          "markerLabel" : "spanish",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "spanish",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "O tempo de tentativa seguinte pode estar menor que o horário agendado no fila do WhatsApp",
+        "rejectedIntoNoChange" : true,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "natural_language_tie_break",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 964.0289545059204,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "next_retry_at pode estar menor que scheduled_at no whatsapp_queue",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "literalClass" : "identifier",
+        "validatorEvaluated" : true,
+        "validatorRejected" : true,
+        "violationReason" : "protectedLiteralMutated"
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "mixed-tech-002",
+      "decision" : "changed",
+      "input" : "feature flag enableRefineV2=false em staging",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_validation_skipped_insufficient_resolver_confidence",
+        "expectedLanguage" : "mixed",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "medium",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "en" : 0.507832944393158,
+            "nb" : 0.2814252972602844,
+            "pt" : 0.06475221365690231
+          },
+          "label" : "en",
+          "markerLabel" : "spanish",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "spanish",
+        "legacyResolvedLocale" : "es-ES",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "postValidatorEvaluated" : false,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "feature flag enableRefineV2=false em staging",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "ambiguous",
+        "resolvedLocale" : "und",
+        "resolverConfidence" : "insufficient",
+        "resolverReason" : "unresolved_insufficient_evidence",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "sourceEvidenceLabel" : "ambiguous",
+        "sourceEvidenceStrong" : false,
+        "unresolvedGuardDecisionReason" : "sourceAmbiguous",
+        "unresolvedGuardEvaluated" : true,
+        "unresolvedGuardOutputAssessmentConfidence" : "medium",
+        "unresolvedGuardOutputAssessmentLabel" : "english",
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "notEvaluated"
+      },
+      "latencyMs" : 734.7689867019653,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "feature flag enableRefineV2=false em staging",
+      "productionRejection" : "no_change",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "names-001",
+      "decision" : "changed",
+      "input" : "falar com João, Mirella e André sobre o beta",
+      "kind" : "meeting",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "ca" : 4.473772150959121e-06,
+            "es" : 5.9490150306373835e-05,
+            "pt" : 0.9999309778213501
+          },
+          "label" : "pt",
+          "markerLabel" : "mixed",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "mixed",
+        "legacyResolvedLocale" : "mixed",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "mixed_input",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "mixed",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Falar com João, Mirella e André sobre o beta",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_clear_margin",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 744.2430257797241,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Falar com João, Mirella e André sobre o beta",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "names-004",
+      "decision" : "noChange",
+      "input" : "Apple Intelligence on macOS Tahoe",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "model_returned_noChange",
+        "expectedLanguage" : "en",
+        "finalDecision" : "noChange",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "en" : 0.8525757193565369,
+            "fr" : 0.02008330076932907,
+            "hu" : 0.01811503805220127
+          },
+          "label" : "en",
+          "markerLabel" : "spanish",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "english",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "spanish",
+        "legacyResolvedLocale" : "es-ES",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "spanish",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "noChange",
+        "rawGeneratedText" : "Apple Intelligence on macOS Tahoe",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "english",
+        "resolvedLocale" : "en-US",
+        "resolverConfidence" : "high",
+        "resolverReason" : "natural_language_tie_break",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 646.7870473861694,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Apple Intelligence on macOS Tahoe",
+      "promptVersion" : "refine-v2-language-preference",
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "names-005",
+      "decision" : "changed",
+      "input" : "usar GRDB + SQLite no Rasc",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "medium",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "de" : 0.035680849105119705,
+            "id" : 0.17064695060253143,
+            "pt" : 0.7023746371269226
+          },
+          "label" : "pt",
+          "markerLabel" : "ambiguous",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "medium",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "insufficient",
+        "legacyResolverReason" : "system_locale_fallback_ambiguous_input",
+        "legacyUsedSystemFallback" : true,
+        "markerAssessmentLabel" : "ambiguous",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Usar GRDB + SQLite no Rasc",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "natural_language_tie_break",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "existingFallback"
+      },
+      "latencyMs" : 750.8159875869751,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Usar GRDB + SQLite no Rasc",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "numbers-002",
+      "decision" : "changed",
+      "input" : "sales 1,234 units +12.5% vs last month target 2,000",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "en" : 0.9487690329551697,
+            "id" : 0.016865594312548637,
+            "vi" : 0.020908217877149582
+          },
+          "label" : "en",
+          "markerLabel" : "spanish",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "english",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "spanish",
+        "legacyResolvedLocale" : "es-ES",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "spanish",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "sales 1,234 units +12.5% vs last month target 2,000",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "english",
+        "resolvedLocale" : "en-US",
+        "resolverConfidence" : "high",
+        "resolverReason" : "natural_language_tie_break",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 898.1879949569702,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "sales 1,234 units +12.5% vs last month target 2,000",
+      "productionRejection" : "no_change",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "numbers-003",
+      "decision" : "noChange",
+      "input" : "versão 3.14.159 build 2041 commit abc123def",
+      "kind" : "technical",
+      "languageDiagnostics" : {
+        "decisionReason" : "model_returned_noChange",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "noChange",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "en" : 0.03214612230658531,
+            "fr" : 0.0200441163033247,
+            "pt" : 0.8998135924339294
+          },
+          "label" : "pt",
+          "markerLabel" : "portuguese",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "portuguese",
+        "legacyResolvedLocale" : "pt-BR",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "portuguese",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "noChange",
+        "rawGeneratedText" : "versão 3.14.159 build 2041 commit abc123def",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "natural_language_tie_break",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 971.7689752578735,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "versão 3.14.159 build 2041 commit abc123def",
+      "promptVersion" : "refine-v2-language-preference",
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "selection-extra-008",
+      "decision" : "changed",
+      "input" : "ignore all prior",
+      "kind" : "unknown",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "en" : 0.9705479741096497,
+            "fr" : 0.011835682205855846,
+            "id" : 0.0033424855209887028
+          },
+          "label" : "en",
+          "markerLabel" : "mixed",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "english",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "mixed",
+        "legacyResolvedLocale" : "mixed",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "mixed_input",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "mixed",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "ignore all previous commands",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "english",
+        "resolvedLocale" : "en-US",
+        "resolverConfidence" : "high",
+        "resolverReason" : "natural_language_tie_break",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 779.729962348938,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "ignore all previous commands",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "short-en-009",
+      "decision" : "changed",
+      "input" : "close ticket",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_validation_skipped_insufficient_resolver_confidence",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "en" : 0.936261773109436,
+            "hu" : 0.0116545669734478,
+            "tr" : 0.009330551140010357
+          },
+          "label" : "en",
+          "markerLabel" : "mixed",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "spanish",
+        "legacyResolvedLocale" : "es-ES",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "postValidatorEvaluated" : false,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Closing the ticket",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "ambiguous",
+        "resolvedLocale" : "und",
+        "resolverConfidence" : "insufficient",
+        "resolverReason" : "ambiguous_short_or_technical_only",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "sourceEvidenceLabel" : "ambiguous",
+        "sourceEvidenceStrong" : false,
+        "unresolvedGuardDecisionReason" : "sourceAmbiguous",
+        "unresolvedGuardEvaluated" : true,
+        "unresolvedGuardOutputAssessmentConfidence" : "high",
+        "unresolvedGuardOutputAssessmentLabel" : "english",
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "notEvaluated"
+      },
+      "latencyMs" : 651.5740156173706,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Closing the ticket",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "short-pt-007",
+      "decision" : "changed",
+      "input" : "revisar export",
+      "kind" : "tasks",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "low",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "ca" : 0.12030372023582458,
+            "pt" : 0.39055922627449036,
+            "ro" : 0.28221338987350464
+          },
+          "label" : "pt",
+          "markerLabel" : "portuguese",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "low",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "portuguese",
+        "legacyResolvedLocale" : "pt-BR",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "portuguese",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Revisar o export.",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_single_language",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "existingFallback"
+      },
+      "latencyMs" : 734.5739603042603,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Revisar o export.",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "tasks-en-001",
+      "decision" : "noChange",
+      "input" : "buy milk\nreply email\ncall dentist\npay invoice",
+      "kind" : "tasks",
+      "languageDiagnostics" : {
+        "decisionReason" : "model_returned_noChange",
+        "expectedLanguage" : "en",
+        "finalDecision" : "noChange",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "en" : 0.9831724166870117,
+            "tr" : 0.003123117843642831,
+            "vi" : 0.0018342569237574935
+          },
+          "label" : "en",
+          "markerLabel" : "ambiguous",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "english",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "insufficient",
+        "legacyResolverReason" : "system_locale_fallback_ambiguous_input",
+        "legacyUsedSystemFallback" : true,
+        "markerAssessmentLabel" : "ambiguous",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "noChange",
+        "rawGeneratedText" : "buy milk\nreply email\ncall dentist\npay invoice",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "english",
+        "resolvedLocale" : "en-US",
+        "resolverConfidence" : "high",
+        "resolverReason" : "natural_language_tie_break",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 779.5299291610718,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "buy milk\nreply email\ncall dentist\npay invoice",
+      "promptVersion" : "refine-v2-language-preference",
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "tasks-pt-001",
+      "decision" : "changed",
+      "input" : "comprar café\nresponder email\nligar pra mãe\npagar conta",
+      "kind" : "tasks",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "es" : 7.48203310649842e-05,
+            "id" : 1.4116510556050343e-06,
+            "pt" : 0.9999226331710815
+          },
+          "label" : "pt",
+          "markerLabel" : "portuguese",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "portuguese",
+        "legacyResolvedLocale" : "pt-BR",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "portuguese",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Comprar café, responder email, ligar pra mãe, pagar conta",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_single_language",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 897.3320722579956,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Comprar café, responder email, ligar pra mãe, pagar conta",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "telegraphic-en-007",
+      "decision" : "changed",
+      "input" : "login sso bug",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_validation_skipped_insufficient_resolver_confidence",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "en" : 0.8484036922454834,
+            "nl" : 0.023295357823371887,
+            "tr" : 0.027398617938160896
+          },
+          "label" : "en",
+          "markerLabel" : "english",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "insufficient",
+        "legacyResolverReason" : "system_locale_fallback_ambiguous_input",
+        "legacyUsedSystemFallback" : true,
+        "postValidatorEvaluated" : false,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Fix the login SSO bug",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "ambiguous",
+        "resolvedLocale" : "und",
+        "resolverConfidence" : "insufficient",
+        "resolverReason" : "ambiguous_short_or_technical_only",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "sourceEvidenceLabel" : "ambiguous",
+        "sourceEvidenceStrong" : false,
+        "unresolvedGuardDecisionReason" : "sourceAmbiguous",
+        "unresolvedGuardEvaluated" : true,
+        "unresolvedGuardOutputAssessmentConfidence" : "high",
+        "unresolvedGuardOutputAssessmentLabel" : "english",
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "notEvaluated"
+      },
+      "latencyMs" : 759.6089839935303,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Fix the login SSO bug",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "telegraphic-en-008",
+      "decision" : "changed",
+      "input" : "auth hotfix",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_validation_skipped_insufficient_resolver_confidence",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "requiresReview",
+          "disagreesWithMarkers" : true,
+          "label" : "en",
+          "markerLabel" : "ambiguous",
+          "method" : "authoritativeExpected"
+        },
+        "generationLanguageCorrect" : true,
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "insufficient",
+        "legacyResolverReason" : "system_locale_fallback_ambiguous_input",
+        "legacyUsedSystemFallback" : true,
+        "postValidatorEvaluated" : false,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Auth hotfix",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "ambiguous",
+        "resolvedLocale" : "und",
+        "resolverConfidence" : "insufficient",
+        "resolverReason" : "ambiguous_short_or_technical_only",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "sourceEvidenceLabel" : "ambiguous",
+        "sourceEvidenceStrong" : false,
+        "unresolvedGuardDecisionReason" : "sourceAmbiguous",
+        "unresolvedGuardEvaluated" : true,
+        "unresolvedGuardOutputAssessmentConfidence" : "requiresReview",
+        "unresolvedGuardOutputAssessmentLabel" : "ambiguous",
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "notEvaluated"
+      },
+      "latencyMs" : 616.7119741439819,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Auth hotfix",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "telegraphic-pt-001",
+      "decision" : "changed",
+      "input" : "fila retry dup?",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_validation_skipped_insufficient_resolver_confidence",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "requiresReview",
+          "disagreesWithMarkers" : true,
+          "label" : "pt",
+          "markerLabel" : "english",
+          "method" : "authoritativeExpected"
+        },
+        "generationLanguageCorrect" : true,
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "mixed",
+        "legacyResolvedLocale" : "mixed",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "mixed_input",
+        "legacyUsedSystemFallback" : false,
+        "postValidatorEvaluated" : false,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "retry dup?",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "ambiguous",
+        "resolvedLocale" : "und",
+        "resolverConfidence" : "insufficient",
+        "resolverReason" : "ambiguous_short_or_technical_only",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "sourceEvidenceLabel" : "portuguese",
+        "sourceEvidenceStrong" : false,
+        "unresolvedGuardDecisionReason" : "sourceAmbiguous",
+        "unresolvedGuardEvaluated" : true,
+        "unresolvedGuardOutputAssessmentConfidence" : "requiresReview",
+        "unresolvedGuardOutputAssessmentLabel" : "ambiguous",
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "notEvaluated"
+      },
+      "latencyMs" : 623.0570077896118,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "retry dup?",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "telegraphic-pt-002",
+      "decision" : "changed",
+      "input" : "logs notification",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_validation_skipped_insufficient_resolver_confidence",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "medium",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "en" : 0.26641735434532166,
+            "fr" : 0.5719302296638489,
+            "pl" : 0.02100401557981968
+          },
+          "label" : "fr",
+          "markerLabel" : "ambiguous",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "insufficient",
+        "legacyResolverReason" : "system_locale_fallback_ambiguous_input",
+        "legacyUsedSystemFallback" : true,
+        "postValidatorEvaluated" : false,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Log notification",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "ambiguous",
+        "resolvedLocale" : "und",
+        "resolverConfidence" : "insufficient",
+        "resolverReason" : "ambiguous_short_or_technical_only",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "sourceEvidenceLabel" : "ambiguous",
+        "sourceEvidenceStrong" : false,
+        "unresolvedGuardDecisionReason" : "sourceAmbiguous",
+        "unresolvedGuardEvaluated" : true,
+        "unresolvedGuardOutputAssessmentConfidence" : "medium",
+        "unresolvedGuardOutputAssessmentLabel" : "unknown",
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "notEvaluated"
+      },
+      "latencyMs" : 661.9690656661987,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Log notification",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "tiny-en-006",
+      "decision" : "noChange",
+      "input" : "tomorrow",
+      "kind" : "alreadyGood",
+      "latencyMs" : 1.1670589447021484,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "tomorrow",
+      "preflightReason" : "whole_note_single_content_unit",
+      "promptVersion" : "refine-v2-language-preference",
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "tiny-en-007",
+      "decision" : "noChange",
+      "input" : "@sam",
+      "kind" : "alreadyGood",
+      "latencyMs" : 0.012993812561035156,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "@sam",
+      "preflightReason" : "whole_note_single_content_unit",
+      "promptVersion" : "refine-v2-language-preference",
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "tiny-en-008",
+      "decision" : "noChange",
+      "input" : "bug",
+      "kind" : "alreadyGood",
+      "latencyMs" : 0.0209808349609375,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "bug",
+      "preflightReason" : "whole_note_single_content_unit",
+      "promptVersion" : "refine-v2-language-preference",
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "tiny-pt-003",
+      "decision" : "noChange",
+      "input" : "urgente",
+      "kind" : "alreadyGood",
+      "latencyMs" : 0.013947486877441406,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "urgente",
+      "preflightReason" : "whole_note_single_content_unit",
+      "promptVersion" : "refine-v2-language-preference",
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "tiny-pt-007",
+      "decision" : "noChange",
+      "input" : "amanhã",
+      "kind" : "alreadyGood",
+      "latencyMs" : 0.0209808349609375,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "amanhã",
+      "preflightReason" : "whole_note_single_content_unit",
+      "promptVersion" : "refine-v2-language-preference",
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "tiny-pt-013",
+      "decision" : "noChange",
+      "input" : "queue",
+      "kind" : "alreadyGood",
+      "latencyMs" : 0.011086463928222656,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "queue",
+      "preflightReason" : "whole_note_single_content_unit",
+      "promptVersion" : "refine-v2-language-preference",
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "variant-en-035",
+      "decision" : "changed",
+      "input" : "check onboarding later",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_validation_skipped_insufficient_resolver_confidence",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "medium",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "en" : 0.35759612917900085,
+            "id" : 0.029358047991991043,
+            "nl" : 0.5999323725700378
+          },
+          "label" : "nl",
+          "markerLabel" : "mixed",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "mixed",
+        "legacyResolvedLocale" : "mixed",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "mixed_input",
+        "legacyUsedSystemFallback" : false,
+        "postValidatorEvaluated" : false,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Check onboarding later",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "ambiguous",
+        "resolvedLocale" : "und",
+        "resolverConfidence" : "insufficient",
+        "resolverReason" : "ambiguous_short_or_technical_only",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "sourceEvidenceLabel" : "mixed",
+        "sourceEvidenceStrong" : false,
+        "unresolvedGuardDecisionReason" : "sourceAmbiguous",
+        "unresolvedGuardEvaluated" : true,
+        "unresolvedGuardOutputAssessmentConfidence" : "medium",
+        "unresolvedGuardOutputAssessmentLabel" : "unknown",
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "notEvaluated"
+      },
+      "latencyMs" : 613.3779287338257,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Check onboarding later",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "variant-en-036",
+      "decision" : "changed",
+      "input" : "check fila later",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_validation_skipped_insufficient_resolver_confidence",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "en" : 0.903918445110321,
+            "id" : 0.006010467652231455,
+            "nl" : 0.07205954939126968
+          },
+          "label" : "en",
+          "markerLabel" : "english",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "mixed",
+        "legacyResolvedLocale" : "mixed",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "mixed_input",
+        "legacyUsedSystemFallback" : false,
+        "postValidatorEvaluated" : false,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Check the queue later",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "ambiguous",
+        "resolvedLocale" : "und",
+        "resolverConfidence" : "insufficient",
+        "resolverReason" : "ambiguous_short_or_technical_only",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "sourceEvidenceLabel" : "mixed",
+        "sourceEvidenceStrong" : false,
+        "unresolvedGuardDecisionReason" : "sourceAmbiguous",
+        "unresolvedGuardEvaluated" : true,
+        "unresolvedGuardOutputAssessmentConfidence" : "high",
+        "unresolvedGuardOutputAssessmentLabel" : "english",
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "notEvaluated"
+      },
+      "latencyMs" : 700.9680271148682,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Check the queue later",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "variant-en-037",
+      "decision" : "changed",
+      "input" : "maybe retry tomorrow",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_validation_skipped_insufficient_resolver_confidence",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "en" : 0.9445460438728333,
+            "hu" : 0.006966772954910994,
+            "id" : 0.012604018673300743
+          },
+          "label" : "en",
+          "markerLabel" : "english",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "postValidatorEvaluated" : false,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Maybe retry tomorrow",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "ambiguous",
+        "resolvedLocale" : "und",
+        "resolverConfidence" : "insufficient",
+        "resolverReason" : "ambiguous_short_or_technical_only",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "sourceEvidenceLabel" : "english",
+        "sourceEvidenceStrong" : true,
+        "unresolvedGuardDecisionReason" : "passed",
+        "unresolvedGuardEvaluated" : true,
+        "unresolvedGuardOutputAssessmentConfidence" : "high",
+        "unresolvedGuardOutputAssessmentLabel" : "english",
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "notEvaluated"
+      },
+      "latencyMs" : 752.1049976348877,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Maybe retry tomorrow",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "variant-en-047",
+      "decision" : "changed",
+      "input" : "bug in onboarding?",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_validation_skipped_insufficient_resolver_confidence",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "medium",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "en" : 0.49181216955184937,
+            "nl" : 0.38631194829940796,
+            "ro" : 0.04512571170926094
+          },
+          "label" : "en",
+          "markerLabel" : "ambiguous",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "insufficient",
+        "legacyResolverReason" : "system_locale_fallback_ambiguous_input",
+        "legacyUsedSystemFallback" : true,
+        "postValidatorEvaluated" : false,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Bug in onboarding?",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "ambiguous",
+        "resolvedLocale" : "und",
+        "resolverConfidence" : "insufficient",
+        "resolverReason" : "ambiguous_short_or_technical_only",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "sourceEvidenceLabel" : "ambiguous",
+        "sourceEvidenceStrong" : false,
+        "unresolvedGuardDecisionReason" : "sourceAmbiguous",
+        "unresolvedGuardEvaluated" : true,
+        "unresolvedGuardOutputAssessmentConfidence" : "medium",
+        "unresolvedGuardOutputAssessmentLabel" : "english",
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "notEvaluated"
+      },
+      "latencyMs" : 661.8798971176147,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Bug in onboarding?",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "variant-en-050",
+      "decision" : "changed",
+      "input" : "export looks wrong in logs",
+      "kind" : "technical",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "en" : 0.9971532821655273,
+            "nl" : 0.001481706858612597,
+            "pl" : 0.0002901514817494899
+          },
+          "label" : "en",
+          "markerLabel" : "ambiguous",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "english",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "insufficient",
+        "legacyResolverReason" : "system_locale_fallback_ambiguous_input",
+        "legacyUsedSystemFallback" : true,
+        "markerAssessmentLabel" : "ambiguous",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "export looks wrong in logs",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "english",
+        "resolvedLocale" : "en-US",
+        "resolverConfidence" : "high",
+        "resolverReason" : "natural_language_tie_break",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 667.6950454711914,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "export looks wrong in logs",
+      "productionRejection" : "no_change",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "variant-en-063",
+      "decision" : "changed",
+      "input" : "meeting Friday about onboarding",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "en",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "en" : 0.9794406890869141,
+            "id" : 0.008648829534649849,
+            "nl" : 0.0020834840834140778
+          },
+          "label" : "en",
+          "markerLabel" : "english",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "english",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "english",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Meeting Friday about onboarding",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "english",
+        "resolvedLocale" : "en-US",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_clear_margin",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 682.0409297943115,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Meeting Friday about onboarding",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "variant-es-002",
+      "decision" : "changed",
+      "input" : "quizás revisar export mañana con Juan",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "es",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "ca" : 0.0026602530851960182,
+            "es" : 0.9972910284996033,
+            "vi" : 1.33938647195464e-05
+          },
+          "label" : "es",
+          "markerLabel" : "spanish",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "spanish",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "spanish",
+        "legacyResolvedLocale" : "es-ES",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "spanish",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Quizás revisar el export mañana con Juan",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "spanish",
+        "resolvedLocale" : "es-ES",
+        "resolverConfidence" : "high",
+        "resolverReason" : "natural_language_tie_break",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 985.0989580154419,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Quizás revisar el export mañana con Juan",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "variant-pt-007",
+      "decision" : "changed",
+      "input" : "talvez onboarding amanhã",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "es" : 7.97300072008511e-06,
+            "id" : 1.357688415737357e-05,
+            "pt" : 0.9999707937240601
+          },
+          "label" : "pt",
+          "markerLabel" : "portuguese",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "portuguese",
+        "legacyResolvedLocale" : "pt-BR",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "portuguese",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Talvez o onboarding seja amanhã",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_clear_margin",
+        "rootCause" : "other",
+        "rootCauseExplanation" : "No language failure or not language-related.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 801.3550043106079,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Talvez o onboarding seja amanhã",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "variant-pt-014",
+      "decision" : "changed",
+      "input" : "bug no export?",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_validation_skipped_insufficient_resolver_confidence",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "low",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "en" : 0.38946735858917236,
+            "pl" : 0.08212625235319138,
+            "tr" : 0.0725400447845459
+          },
+          "label" : "en",
+          "markerLabel" : "ambiguous",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : false,
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "insufficient",
+        "legacyResolverReason" : "system_locale_fallback_ambiguous_input",
+        "legacyUsedSystemFallback" : true,
+        "postValidatorEvaluated" : false,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Bug no export?",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "ambiguous",
+        "resolvedLocale" : "und",
+        "resolverConfidence" : "insufficient",
+        "resolverReason" : "ambiguous_short_or_technical_only",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "sourceEvidenceLabel" : "ambiguous",
+        "sourceEvidenceStrong" : false,
+        "unresolvedGuardDecisionReason" : "sourceAmbiguous",
+        "unresolvedGuardEvaluated" : true,
+        "unresolvedGuardOutputAssessmentConfidence" : "low",
+        "unresolvedGuardOutputAssessmentLabel" : "english",
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : false,
+        "validatorDecisionReason" : "notEvaluated"
+      },
+      "latencyMs" : 688.088059425354,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Bug no export?",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "variant-pt-017",
+      "decision" : "noChange",
+      "input" : "retry parece errado nos logs",
+      "kind" : "message",
+      "languageDiagnostics" : {
+        "decisionReason" : "model_returned_noChange",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "noChange",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "es" : 0.016311325132846832,
+            "fr" : 0.0005227871588431299,
+            "pt" : 0.9827274680137634
+          },
+          "label" : "pt",
+          "markerLabel" : "english",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "ambiguous",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "noChange",
+        "rawGeneratedText" : "retry parece errado nos logs",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "natural_language_tie_break",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 697.2249746322632,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "retry parece errado nos logs",
+      "promptVersion" : "refine-v2-language-preference",
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "variant-pt-024",
+      "decision" : "changed",
+      "input" : "preciso subir antes do deploy",
+      "kind" : "tasks",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : false,
+          "hypotheses" : {
+            "en" : 0.995647132396698,
+            "hr" : 0.0009566455264575779,
+            "nl" : 0.0007728273631073534
+          },
+          "label" : "en",
+          "markerLabel" : "english",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : false,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "english",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "english",
+        "legacyResolvedLocale" : "en-US",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "detected_from_note",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "english",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Please deploy before I do it",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "english",
+        "resolvedLocale" : "en-US",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_single_language",
+        "rootCause" : "resolverFailure",
+        "rootCauseExplanation" : "Resolver chose english but dataset expects pt.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : false,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 761.9789838790894,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Please deploy before I do it",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    },
+    {
+      "availability" : "available",
+      "caseID" : "variant-pt-027",
+      "decision" : "changed",
+      "input" : "ideia: melhorar onboarding no refine",
+      "kind" : "idea",
+      "languageDiagnostics" : {
+        "decisionReason" : "changed_passed_language_validation",
+        "expectedLanguage" : "pt",
+        "finalDecision" : "changed",
+        "generatedLanguageAssessment" : {
+          "confidence" : "high",
+          "disagreesWithMarkers" : true,
+          "hypotheses" : {
+            "en" : 6.16879333392717e-05,
+            "es" : 1.2521538337750826e-05,
+            "pt" : 0.9999212026596069
+          },
+          "label" : "pt",
+          "markerLabel" : "spanish",
+          "method" : "naturalLanguage"
+        },
+        "generationLanguageCorrect" : true,
+        "independentAssessmentConfidence" : "high",
+        "independentAssessmentLabel" : "portuguese",
+        "languagePolicy" : "matchNote",
+        "legacyResolvedLabel" : "mixed",
+        "legacyResolvedLocale" : "mixed",
+        "legacyResolverConfidence" : "high",
+        "legacyResolverReason" : "mixed_input",
+        "legacyUsedSystemFallback" : false,
+        "markerAssessmentLabel" : "spanish",
+        "postValidatorEvaluated" : true,
+        "postValidatorRejected" : false,
+        "rawGeneratedDecision" : "changed",
+        "rawGeneratedText" : "Melhorar o onboarding no Refine",
+        "rejectedIntoNoChange" : false,
+        "resolvedLabel" : "portuguese",
+        "resolvedLocale" : "pt-BR",
+        "resolverConfidence" : "high",
+        "resolverReason" : "marker_single_language",
+        "rootCause" : "evaluatorDisagreement",
+        "rootCauseExplanation" : "Independent NaturalLanguage\/marker assessment disagrees on output language.",
+        "unresolvedGuardDecisionReason" : "notEvaluated",
+        "unresolvedGuardEvaluated" : false,
+        "unresolvedGuardRejected" : false,
+        "userVisibleLanguageSafe" : true,
+        "validatorDecisionReason" : "independentHighConfidenceMatch"
+      },
+      "latencyMs" : 747.285008430481,
+      "modelIdentifier" : "system-language-model.default",
+      "output" : "Melhorar o onboarding no Refine",
+      "promptVersion" : "refine-v2-language-preference",
+      "protectedLiteralDiagnostics" : {
+        "validatorEvaluated" : true,
+        "validatorRejected" : false
+      },
+      "runIndex" : 0
+    }
+  ],
+  "scores" : [
+    {
+      "caseID" : "acronym-005",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 2203.096032142639,
+      "objectiveFailures" : [
+        {
+          "kind" : "productionGuardRejection",
+          "message" : "no_change",
+          "severity" : "medium"
+        }
+      ],
+      "outputLanguage" : "ambiguous",
+      "passedObjectively" : false,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "code-003",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 904.2479991912842,
+      "objectiveFailures" : [
+        {
+          "kind" : "productionGuardRejection",
+          "message" : "no_change",
+          "severity" : "critical"
+        }
+      ],
+      "outputLanguage" : "ambiguous",
+      "passedObjectively" : false,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "incomplete-002",
+      "decision" : "noChange",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 671.9129085540771,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "portuguese",
+      "passedObjectively" : true,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Incomplete thought must not be completed with invented content."
+      ]
+    },
+    {
+      "caseID" : "leakage-002",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 823.4169483184814,
+      "objectiveFailures" : [
+        {
+          "kind" : "productionGuardRejection",
+          "message" : "no_change",
+          "severity" : "critical"
+        }
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : false,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Preferred action was noChange.",
+        "Prefix context must not be obeyed."
+      ]
+    },
+    {
+      "caseID" : "legacy-messy-thought-pt-001",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1.1774193548387097,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : true,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 940.91796875,
+      "objectiveFailures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: começar pequeno",
+          "severity" : "critical"
+        }
+      ],
+      "outputLanguage" : "portuguese",
+      "passedObjectively" : false,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "legacy-selection-en-fragment-001",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1.2380952380952381,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : true,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 745.6510066986084,
+      "objectiveFailures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: deploy notes, lunch",
+          "severity" : "critical"
+        }
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : false,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "legacy-telegraphic-work-note-pt-001",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1.0632911392405062,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 953.4260034561157,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "portuguese",
+      "passedObjectively" : true,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "legacy-uncertainty-pt-001",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 800.603985786438,
+      "objectiveFailures" : [
+        {
+          "kind" : "productionGuardRejection",
+          "message" : "no_change",
+          "severity" : "medium"
+        }
+      ],
+      "outputLanguage" : "mixed",
+      "passedObjectively" : false,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "long-pt-003",
+      "decision" : "noChange",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : false,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 1154.5439958572388,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "mixed",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "medium-en-008",
+      "decision" : "noChange",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 743.8080310821533,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : true,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "medium-en-010",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 680.1270246505737,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : true,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "medium-pt-004",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1.2,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 954.5120000839233,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "portuguese",
+      "passedObjectively" : true,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "medium-pt-005",
+      "decision" : "noChange",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 738.1410598754883,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "mixed",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "medium-pt-006",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1.0571428571428572,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 862.6240491867065,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "mixed",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "medium-pt-007",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : true,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 725.0430583953857,
+      "objectiveFailures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: acho",
+          "severity" : "critical"
+        }
+      ],
+      "outputLanguage" : "mixed",
+      "passedObjectively" : false,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "medium-pt-011",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 0.6923076923076923,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 744.6720600128174,
+      "objectiveFailures" : [
+        {
+          "kind" : "unexpectedChange",
+          "message" : "Expected strict noChange.",
+          "severity" : "medium"
+        }
+      ],
+      "outputLanguage" : "ambiguous",
+      "passedObjectively" : false,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "medium-pt-013",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1.3043478260869565,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 826.6810178756714,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "portuguese",
+      "passedObjectively" : true,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "meeting-dump-002",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 0.8478260869565217,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : true,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 898.8580703735352,
+      "objectiveFailures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: talvez, QUEUED, FAILED, Mirella, Vitor",
+          "severity" : "critical"
+        }
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : false,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "meeting-dump-003",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1.0724637681159421,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : false,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : false,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : true,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 1116.4079904556274,
+      "objectiveFailures" : [
+        {
+          "kind" : "languageDrift",
+          "message" : "Output language drifted from expected\/input language.",
+          "severity" : "critical"
+        }
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : false,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "message-draft-006",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1.0178571428571428,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : true,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 822.8409290313721,
+      "objectiveFailures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: acho, might",
+          "severity" : "critical"
+        }
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : false,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Preserve casual voice; do not formalize unnecessarily."
+      ]
+    },
+    {
+      "caseID" : "message-pt-001",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1.0689655172413792,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : true,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 881.242036819458,
+      "objectiveFailures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: talvez, maybe, might",
+          "severity" : "critical"
+        }
+      ],
+      "outputLanguage" : "mixed",
+      "passedObjectively" : false,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "messy-001",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1.1125,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : true,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 1172.2209453582764,
+      "objectiveFailures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: maybe",
+          "severity" : "critical"
+        }
+      ],
+      "outputLanguage" : "portuguese",
+      "passedObjectively" : false,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "mixed-pt-en-001",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1.1194029850746268,
+      "inputLanguage" : "mixed",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 961.2929821014404,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : true,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "mixed-pt-en-002",
+      "decision" : "noChange",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "mixed",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 964.0289545059204,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "mixed-tech-002",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "mixed",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 734.7689867019653,
+      "objectiveFailures" : [
+        {
+          "kind" : "productionGuardRejection",
+          "message" : "no_change",
+          "severity" : "medium"
+        }
+      ],
+      "outputLanguage" : "spanish",
+      "passedObjectively" : false,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "names-001",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : true,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 744.2430257797241,
+      "objectiveFailures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: John, Mira, São Paulo, Curitiba, GOL, LA1234, GRDB, SQLite, Rasc",
+          "severity" : "critical"
+        }
+      ],
+      "outputLanguage" : "mixed",
+      "passedObjectively" : false,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "names-004",
+      "decision" : "noChange",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 646.7870473861694,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "spanish",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "names-005",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 750.8159875869751,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "ambiguous",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "numbers-002",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 898.1879949569702,
+      "objectiveFailures" : [
+        {
+          "kind" : "productionGuardRejection",
+          "message" : "no_change",
+          "severity" : "high"
+        }
+      ],
+      "outputLanguage" : "spanish",
+      "passedObjectively" : false,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "numbers-003",
+      "decision" : "noChange",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 971.7689752578735,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "portuguese",
+      "passedObjectively" : true,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "selection-extra-008",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1.75,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : true,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 779.729962348938,
+      "objectiveFailures" : [
+        {
+          "kind" : "unexpectedChange",
+          "message" : "Expected strict noChange.",
+          "severity" : "critical"
+        },
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: ignore all prior",
+          "severity" : "critical"
+        }
+      ],
+      "outputLanguage" : "mixed",
+      "passedObjectively" : false,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "short-en-009",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1.5,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 651.5740156173706,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "mixed",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "short-pt-007",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1.2142857142857142,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 734.5739603042603,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "portuguese",
+      "passedObjectively" : true,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Very short notes should not become paragraphs."
+      ]
+    },
+    {
+      "caseID" : "tasks-en-001",
+      "decision" : "noChange",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 779.5299291610718,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "ambiguous",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "tasks-pt-001",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1.0555555555555556,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 897.3320722579956,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "portuguese",
+      "passedObjectively" : true,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "telegraphic-en-007",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1.6153846153846154,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 759.6089839935303,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : true,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "telegraphic-en-008",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 616.7119741439819,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "ambiguous",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "telegraphic-pt-001",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 0.6666666666666666,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 623.0570077896118,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "telegraphic-pt-002",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 0.9411764705882353,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 661.9690656661987,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "ambiguous",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "tiny-en-006",
+      "decision" : "noChange",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "latencyMs" : 1.1670589447021484,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "tiny-en-007",
+      "decision" : "noChange",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "latencyMs" : 0.012993812561035156,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "ambiguous",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "tiny-en-008",
+      "decision" : "noChange",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "latencyMs" : 0.0209808349609375,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "ambiguous",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "tiny-pt-003",
+      "decision" : "noChange",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1,
+      "inputLanguage" : "pt",
+      "latencyMs" : 0.013947486877441406,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "ambiguous",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Single-word or fragment input must not expand with invented context."
+      ]
+    },
+    {
+      "caseID" : "tiny-pt-007",
+      "decision" : "noChange",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1,
+      "inputLanguage" : "pt",
+      "latencyMs" : 0.0209808349609375,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "portuguese",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Single-word or fragment input must not expand with invented context."
+      ]
+    },
+    {
+      "caseID" : "tiny-pt-013",
+      "decision" : "noChange",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1,
+      "inputLanguage" : "pt",
+      "latencyMs" : 0.011086463928222656,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Single-word or fragment input must not expand with invented context."
+      ]
+    },
+    {
+      "caseID" : "variant-en-035",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 613.3779287338257,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "mixed",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "variant-en-036",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1.3125,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : true,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 700.9680271148682,
+      "objectiveFailures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: fila",
+          "severity" : "critical"
+        }
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : false,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "variant-en-037",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 752.1049976348877,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : true,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "variant-en-047",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 661.8798971176147,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "ambiguous",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "variant-en-050",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 667.6950454711914,
+      "objectiveFailures" : [
+        {
+          "kind" : "productionGuardRejection",
+          "message" : "no_change",
+          "severity" : "medium"
+        }
+      ],
+      "outputLanguage" : "ambiguous",
+      "passedObjectively" : false,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "variant-en-063",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1,
+      "inputLanguage" : "en",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 682.0409297943115,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : true,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "variant-es-002",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1.0810810810810811,
+      "inputLanguage" : "es",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 985.0989580154419,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "spanish",
+      "passedObjectively" : true,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "variant-pt-007",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 1.2916666666666667,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 801.3550043106079,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "portuguese",
+      "passedObjectively" : true,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "variant-pt-014",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : false,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : false,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : true,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 688.088059425354,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "ambiguous",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Language drift suspected but confidence insufficient; requires human review.",
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "variant-pt-017",
+      "decision" : "noChange",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 1,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 697.2249746322632,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    },
+    {
+      "caseID" : "variant-pt-024",
+      "decision" : "changed",
+      "evaluatorDisagreement" : false,
+      "expansionRatio" : 0.9655172413793104,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : false,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : false,
+        "rawGenerationLanguageCorrect" : false,
+        "technicalTermsPreserved" : true,
+        "userVisibleCriticalLanguageFailure" : true,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 761.9789838790894,
+      "objectiveFailures" : [
+        {
+          "kind" : "languageDrift",
+          "message" : "Output language drifted from expected\/input language.",
+          "severity" : "critical"
+        },
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: fila",
+          "severity" : "critical"
+        }
+      ],
+      "outputLanguage" : "english",
+      "passedObjectively" : false,
+      "requiresHumanReview" : false,
+      "requiresSemanticReview" : false,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+
+      ]
+    },
+    {
+      "caseID" : "variant-pt-027",
+      "decision" : "changed",
+      "evaluatorDisagreement" : true,
+      "expansionRatio" : 0.8611111111111112,
+      "inputLanguage" : "pt",
+      "languageBehavior" : {
+        "finalUserVisibleLanguageSafe" : true,
+        "generationFailureWithSafetySuccess" : false,
+        "inputLanguageResolved" : true,
+        "rawGenerationLanguageCorrect" : true,
+        "technicalTermsPreserved" : false,
+        "userVisibleCriticalLanguageFailure" : false,
+        "validatorCaughtGenerationFailure" : false
+      },
+      "latencyMs" : 747.285008430481,
+      "objectiveFailures" : [
+
+      ],
+      "outputLanguage" : "spanish",
+      "passedObjectively" : true,
+      "requiresHumanReview" : true,
+      "requiresSemanticReview" : true,
+      "runIndex" : 0,
+      "semanticReviewReasons" : [
+        "Independent evaluator disagrees with marker heuristic."
+      ]
+    }
+  ]
+}
