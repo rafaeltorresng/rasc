@@ -65,7 +65,7 @@ Earlier published artifacts remain unchanged; see the archived
 [v0.1.14 notes](RELEASE-NOTES-v0.1.14.md) and
 [v0.1.13 notes](RELEASE-NOTES-v0.1.13.md).
 
-### Verified final local RC (`0.1.16`, build `22`, commit `30c5c14`)
+### Retained local RC (`0.1.16`, build `22`, commit `30c5c14`)
 
 An updated local release candidate was built and verified in `build/updater-rc/0.1.16-final-rc`
 (retaining `0.1.15` and prior `0.1.16` artifacts untouched; ad-hoc signed with `cdhash`-pinned
@@ -78,6 +78,32 @@ Library Load Constraints, unnotarized — Developer ID & Apple notarization rema
 | LLC pins (`Contents/Frameworks/`) | `Sparkle` (`0e66f4ed0b19cb8b52fd8063740ba80e1481366a`), `libswiftCompatibilitySpan.dylib` (`c3228a12b0782b9b402391c99f9627f4c9e2456b`) |
 | Delta & Ed25519 appcast | `Rasc22-21.delta` (`3,378,602 B`); `verify-appcast.py --tamper` passed (`Signature Verified Successfully` / tamper rejected) |
 | Isolated `0.1.15 → 0.1.16` upgrade | Launched `com.rafaeltorres.rasc.rcverify` across clean container: `PRAGMA integrity_check = ok`, `v11_scale_indexes_and_origin` applied, seeded notes/revisions/`FTS5` preserved, 15s standby `31 MB` / `0.0%` CPU, personal DBs untouched |
+
+### Isolated reliability candidate (`0.1.16`, build `25`)
+
+Use `build/updater-rc/0.1.16-reliability-25/export/Rasc.app` for the independent
+feature-freeze pass. The DMG, checksum and `candidate-manifest.json` are in
+`build/updater-rc/0.1.16-reliability-25`. Verify the DMG with
+`shasum -a 256 -c Rasc-0.1.16-updater.dmg.sha256` from that directory.
+
+| Field | Value |
+|---|---|
+| Base commit | `5c4e5ad411b16738262451f930eb39074628ade6` |
+| Build inputs | `candidate-source.patch`, SHA-256 `3fac0e536de267a4f102686936fd0edcdbd96db8ace0834b244a00b0e7b8eb9d`, relative to the base commit |
+| Bundle | `com.rafaeltorres.rasc.reliabilityrc`, arm64, deployment target macOS 14.0 |
+| DMG | `13,791,653 B`, SHA-256 `0114f1d1dc656999c0d538bb8ac7547af9d554336b14082224472a07fb0469b2` |
+| App bundle | `46,738,030 B` logical regular-file bytes, optional model stored separately |
+| Signing | Ad-hoc, Hardened Runtime, App Sandbox and cdhash-pinned LLC, unnotarized |
+| Update isolation | Automatic checks off and `https://127.0.0.1:9/appcast.xml` as the feed |
+
+This local build has a separate bundle and container for independent testing.
+The feature-freeze commit consolidates the exact build inputs recorded in the
+patch. Its commit message records the patch and DMG checksums, and the retained
+manifest records the consolidating commit. Build 25 is a packaging override.
+The checksum, read-only mount, embedded signatures and entitlements were verified
+on macOS 26.5.1. The preceding DMGs have been retained.
+Use the documented Open Anyway flow after verifying the checksum.
+[Install guide](INSTALL-UNSIGNED.md), [Independent checklist](NATIVE-UI-VALIDATION.md#independent-reliability-candidate-pass)
 
 ## Prerequisites
 

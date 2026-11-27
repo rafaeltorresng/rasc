@@ -1271,10 +1271,14 @@ struct VoiceCaptureTests {
         #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
     }
 
-    @Test func micBufferLazilyAllocatesChunksScalesTo300sAndPicksActiveUsbChannel() throws {
-        let buffer = MicBuffer(rate: 16_000)
-        #expect(buffer.maxDurationSeconds == 300)
-        #expect(buffer.status().remainingSeconds == 300)
+    @Test func micBufferEnforcesTwoMinuteCapAndPicksActiveUsbChannel() throws {
+        let buffer = MicBuffer(rate: 100)
+        #expect(buffer.maxDurationSeconds == 120)
+        #expect(buffer.status().remainingSeconds == 120)
+        let overCap = Array(repeating: Float(0.2), count: 12_150)
+        overCap.withUnsafeBufferPointer { buffer.append($0) }
+        #expect(buffer.status().full)
+        #expect(buffer.status().count == 12_000)
 
         let limited = MicBuffer(rate: 100, maxDurationSeconds: 1.0)
         let samples = Array(repeating: Float(0.2), count: 150)
@@ -1665,6 +1669,35 @@ private actor VoiceHandoffRefinementProvider: RefinementProvider {
 
 @Suite(.serialized)
 struct VoiceAudioPipelineTests {
+    @Test(arguments: [240_001, 255_999, 480_000, 4_800_000])
+    func longDecodeWindowsCoverEverySampleInOrder(frameCount: Int) {
+        let windows = VoiceRecordingTranscription.windows(in: [Float](repeating: 0.04, count: frameCount))
+        #expect(windows.first?.lowerBound == 0)
+        #expect(windows.last?.upperBound == frameCount)
+        #expect(windows.allSatisfy { (16_000...240_000).contains($0.count) })
+        for (left, right) in zip(windows, windows.dropFirst()) {
+            #expect(left.upperBound == right.lowerBound)
+        }
+    }
+
+    @Test
+    func longDecodePrefersPauseNearBoundary() {
+        var samples = [Float](repeating: 0.04, count: 480_000)
+        let pause = 220_160..<225_280
+        samples.replaceSubrange(pause, with: repeatElement(0, count: pause.count))
+        let windows = VoiceRecordingTranscription.windows(in: samples)
+        #expect(windows.first.map { pause.contains($0.upperBound) } == true)
+    }
+
+    @Test
+    func coverageRetryUsesUnaccountedAudioAndIgnoresSilence() {
+        var samples = [Float](repeating: 0, count: 96_000)
+        samples.replaceSubrange(16_000..<76_000, with: repeatElement(0.004, count: 60_000))
+        #expect(VoiceRecordingTranscription.uncoveredFrames(in: samples[...], tokenStarts: []) >= 10)
+        #expect(VoiceRecordingTranscription.uncoveredFrames(in: samples[...], tokenStarts: [1.1, 2.0, 3.0, 4.3]) == 0)
+        #expect(VoiceRecordingTranscription.uncoveredFrames(in: samples[..<16_000], tokenStarts: []) == 0)
+    }
+
     @Test func mono16kFastPathSanitizesNonFiniteAndPreservesLength() throws {
         var samples: [Float] = [0.25, .nan, -0.25, .infinity, 0.5]
         samples.append(contentsOf: repeatElement(Float(0.1), count: 15_995))

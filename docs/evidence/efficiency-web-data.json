@@ -12,14 +12,15 @@
     "is_sandboxed": true,
     "personal_db_unchanged": true,
     "screen_locked": false,
-    "sparkle_distribution": false
+    "sparkle_distribution": false,
+    "scope": "Later evidence package / scale and resampling follow-up. Each workload and artifact has its own provenance."
   },
   "scope": {
     "hardware": "Apple M3 Pro",
     "memory_gb": 18.0,
     "macos": "26.5.1 (25F80)",
     "build_configuration": "Release (App Sandbox enabled, ad-hoc signed; Sparkle + LLC audited separately)",
-    "workload_distinction": "Standard accelerated workday suite (~4-5 min) is distinct from the detached long-running 8h soak + 24h Voice-On idle harness; full 8h/24h data is reported separately once completed.",
+    "workload_distinction": "The accelerated workday, isolated updater artifact, and prolonged workload are separate measurements. The prolonged study used the earlier PR #107 sandboxed non-Sparkle build: 8.00 h wall (~4.33 h active) for soak and 8.50 h of 24 h planned for standby.",
     "not_measured": [
       "Full-SoC wall power / battery-life hours (sudo powermetrics unavailable without elevated privileges; Xcode Power Profiler does not support macOS)",
       "Other Apple silicon SKUs (8 GB M1/M2/M4), Intel Macs, or macOS 14/15 idle behavior",
@@ -32,12 +33,12 @@
     "sparkle_app_bundle_mib": 44.5,
     "speech_model_separate_bytes": 652304885,
     "speech_model_separate_mib": 622.09,
-    "note": "Standard local Release Rasc.app (~40.5 MiB) does not embed Sparkle or the 622 MiB speech model; GitHub Release builds embed Sparkle + cdhash-pinned Library Load Constraints (~44.4 MiB), and the speech model remains an opt-in one-time download.",
+    "note": "Sizes are logical bytes: standard Release bundle, retained Sparkle build 22 bundle, compressed retained DMG, and the separate optional speech model pack. Bundle bytes exclude optional models and local user data. APFS allocated space can differ.",
     "sparkle_app_bundle_bytes": 46660045,
     "sparkle_dmg_bytes": 13782657,
     "sparkle_dmg_mib": 13.14,
     "sparkle_dmg_sha256": "208d426e4448c6de918b712e7947a84a6631cb7954a1b9055ac76c188a8c839f",
-    "rc_label": "0.1.16 (build 22) ad-hoc final RC (unnotarized; 0.1.15 build 21 remains latest public release)"
+    "rc_label": "Retained 0.1.16 build 22 local candidate (ad-hoc, unnotarized)"
   },
   "states": {
     "idle_voice_off": {
@@ -3452,12 +3453,13 @@
     "run_dir": "build/efficiency-long-running/20261126-191517-full-32h",
     "provenance": {
       "started_at": "2026-11-26T19:15:31-0300",
-      "commit_context": "PR #107 (perf/everyday-efficiency, baseline before PRs #108-#111)",
+      "commit_context": "PR #107 (perf/everyday-efficiency), before PRs #108–#114. The run manifest did not record an exact git SHA.",
       "bundle_id": "com.rafaeltorres.rasc.longrun",
       "sparkle_distribution": false,
       "model_revision": "3b9d38a93d606f84011e5a0a669b7ea146375a22",
       "target_soak_s": 28800.0,
-      "target_idle_s": 86400.0
+      "target_idle_s": 86400.0,
+      "artifact_scope": "Isolated Release sandbox build, without Sparkle; not the retained build 22 or the final reliability candidate."
     },
     "personal_db_unchanged": true,
     "stage_1_soak": {
@@ -3749,7 +3751,14 @@
           "elapsed_s": 14416.9
         }
       ],
-      "leaks_summary": "8 periodic snapshots: constant 288 nodes (14,400 B), 100% Apple LNDaemonApplicationInterface NSXPCConnection cycle; 0 Rasc leaks; open FDs 58-62"
+      "leaks_summary": "8 periodic snapshots: constant 288 nodes (14,400 B), 100% Apple LNDaemonApplicationInterface NSXPCConnection cycle; 0 Rasc leaks; open FDs 58-62",
+      "rss_mib": {
+        "min": 0.03,
+        "p50": 57.08,
+        "p95": 140.45,
+        "max": 748.2
+      },
+      "active_hours": 4.332
     },
     "stage_2_idle_voice_on": {
       "status": "interrupted_at_8.50h",
@@ -3988,9 +3997,18 @@
           "elapsed_s": 28810.5
         }
       ],
-      "leaks_summary": "16 periodic snapshots across 8.50h: constant 288 nodes (14,400 B), 100% Apple LNDaemonApplicationInterface NSXPCConnection cycle; 0 Rasc leaks; open FDs constant at 47"
+      "leaks_summary": "16 periodic snapshots across 8.50h: constant 288 nodes (14,400 B), 100% Apple LNDaemonApplicationInterface NSXPCConnection cycle; 0 Rasc leaks; open FDs constant at 47",
+      "rss_mib": {
+        "min": 43.17,
+        "p50": 85.98,
+        "p95": 132.33,
+        "max": 712.53
+      },
+      "active_hours": 8.503,
+      "planned_wall_seconds": 86400,
+      "planned_wall_fraction_observed": 0.354295
     },
-    "honest_disclosure": "Stage 1 8h soak completed full 28,801.45 s wall (15,594.13 s active across 15 macOS sleeps); Stage 2 Voice-On idle captured 8.50 h of 24.0 h before the host stopped cleanly at 2026-11-27T11:46:05-0300 \u2014 reported verbatim without extrapolation."
+    "honest_disclosure": "Stage 1 reached 28,801.45 s wall (8.00 h) with 15,594.13 s active (4.33 h) across 15 system sleeps. Stage 2 captured 30,611.08 s wall (8.50 h, 35.43% of the 24 h target), with no detected sleep. Its last retained sample was 2026-11-27T11:46:05-0300."
   },
   "scale_benchmark_1k_5k": {
     "initial_stage1_commit_578d02a": [
@@ -4152,5 +4170,45 @@
       "standby_15s_footprint_mb": 31,
       "standby_15s_cpu_pct": 0.0
     }
+  },
+  "memory_metric_definitions": {
+    "phys_footprint": "Process physical footprint charged by XNU; the primary memory figure in this study.",
+    "rss": "Resident size of mappings, which can include shared or reclaimable pages. Report separately.",
+    "neural_footprint": "XNU neural footprint accounting; median and lifetime peak are separate. Do not add to physical footprint or interpret as installed model size.",
+    "disk_sizes": "Compressed DMG, logical installed bundle bytes, and on-disk model assets have different denominators and do not measure RAM."
+  },
+  "final_reliability_candidate": {
+    "version": "0.1.16",
+    "build": 25,
+    "base_commit": "5c4e5ad411b16738262451f930eb39074628ade6",
+    "source_state": "Build inputs from the stated base plus the verified patch, consolidated unchanged in the feature-freeze commit. The retained local manifest records the consolidating commit.",
+    "source_patch": "candidate-source.patch",
+    "source_patch_sha256": "3fac0e536de267a4f102686936fd0edcdbd96db8ace0834b244a00b0e7b8eb9d",
+    "isolation_build_settings": "candidate-isolation.xcconfig",
+    "dmg": "Rasc-0.1.16-updater.dmg",
+    "dmg_bytes": 13791653,
+    "dmg_sha256": "0114f1d1dc656999c0d538bb8ac7547af9d554336b14082224472a07fb0469b2",
+    "app_logical_regular_file_bytes": 46738030,
+    "bundle_id": "com.rafaeltorres.rasc.reliabilityrc",
+    "arch": "arm64",
+    "deployment_target": "macOS 14.0",
+    "verification_host": "macOS 26.5.1 (25F80)",
+    "signing": "Ad-hoc, Hardened Runtime, Sparkle and swiftCompatibilitySpan CDHash Library Load Constraints; unnotarized",
+    "updater_feed": "https://127.0.0.1:9/appcast.xml",
+    "automatic_update_checks": false,
+    "contains_speech_model": false,
+    "verification": {
+      "mounted_read_only": true,
+      "checksum_verified": true,
+      "codesign_deep_strict": true,
+      "main_app_network_client": false,
+      "voice_downloader_network_client": true,
+      "xcode_test_passed": 660,
+      "xcode_test_failed": 5,
+      "native_failure_context": "Locked desktop; the same five tests failed on the baseline."
+    },
+    "artifact_directory": "build/updater-rc/0.1.16-reliability-25",
+    "historical_comparability": "Disk/signing verification only. The extended efficiency study used the earlier non-Sparkle PR #107 build.",
+    "test_app": "build/updater-rc/0.1.16-reliability-25/export/Rasc.app"
   }
 }

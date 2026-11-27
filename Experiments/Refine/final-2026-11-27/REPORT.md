@@ -65,3 +65,21 @@
 | **PT-BR Uncertainty Preservation** (Synthetic `syn_pt_uncertainty`) | *"talvez o gargalo esteja no checkpoint do SQLite WAL ou no debounce do editor, ainda preciso medir"* | *"talvez o gargalo esteja no checkpoint do SQLite WAL ou no debounce do editor, ainda preciso medir"* | **Win** (hypothesis & IDs intact) |
 | **Honest `noChange` Restraint** (`VoiceArena dict_0083`, `CC-BY-NC-4.0`) | *"Hey, just wanted to say, great job on the presentation today. The client clearly loved it and you handled their questions really well."* | Unchanged (`noChange`) | **Win** (voice & intent preserved) |
 | **Honest Limitation — Bare Question** (`VoiceArena dict_0182`, `CC-BY-NC-4.0`) | *"How do I fix a squeaky door hinge?"* | *"Try lubricating the hinge with WD-40 or a silicone spray..."* | **Boundary** (3B FM answers bare questions; preview prevents blind overwrite) |
+
+## Reliability follow-up after `5c4e5ad`
+
+The note JSON boundary already treated input as data, yet the model still answered questions and executed drafting requests. The follow-up made the editorial role explicit, removed the conflicting suggestion that text inside a draft could authorize translation, and added a narrow output check. The check compares question boundaries and recognized drafting verbs, and limits replacement/expansion for likely prompts in Match Note. It applies to the fragment being edited and preserves the original on rejection. An explicitly selected translation can change the language while retaining the question or request.
+
+[Intent cases](../intent-cases.json) were run twice with the original prompt, the prompt-only change and the prompt plus output check. The 20 authored cases were paired with 22 VoiceArena `ai_prompt` intended-text cases. Manual review counted proposals that answered or executed the draft, including partial deliverables. NC inputs and hypotheses stay in the local run directory.
+
+| Variant | Synthetic runs answering or executing (of 40) | VoiceArena prompt runs answering or executing (of 44) |
+|---|---:|---:|
+| Original | 10 | 7 |
+| Prompt only | 7 | 4 |
+| Final prompt and guard (build 25) | 0 | 0 |
+
+The baseline produced 17 answers or executions in 84 attempts. The final variant produced none, with one provider `contextTooLarge` error that left the input intact. Two targeted edits added unsupported details to a selected fragment. The fixed-target question stayed unchanged in both runs, while a separate fixed-target translation control succeeded once. Positive cases included preserving a draft question, tasks, a meeting note and local selection typo cleanup.
+
+On the frozen validation, holdout and regression sets, objective passes were **82/135 → 79/135**, useful changes **55 → 50**, and measured over-abstentions **5/26 → 4/26**. Validation moved **30/57 → 32/57**, holdout **48/72 → 43/72**, and the permanent regressions **4/6 → 4/6**. These are fresh, same-host paired cases with one generation per frozen case. The earlier study above is a separate sample. No data or expectations in the frozen sets changed.
+
+During iteration, an over-broad command match rejected a legitimate task list. Excluding routine reply verbs restored that case, with a deterministic regression test. The final guard still set aside one useful conversational question cleanup in the frozen run. The experiment supports a narrower failure mode, draft execution, and shows ordinary suggestions are still possible. It does not establish a broad gain in edit quality. [Machine-readable results](../../../docs/evidence/refine-web-data.json)

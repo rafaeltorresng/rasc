@@ -45,8 +45,8 @@ can import that same directory through **Choose Model Folder…**.
   Accessibility trust without keylogging unrelated events). When Scratchpad already has
   focus, its native key handler also consumes the assigned shortcut so it cannot type into
   the note. The capsule is a non-activating `.screenSaver`-level HUD during capture
-  and shows a countdown warning during the final 15 s of the **300 s (5-minute)** limit.
-- Audio capture allocates memory lazily in 5 s chunks up to 300 s (`MicBuffer`), selects
+  and shows a countdown warning during the final 15 s of the temporary **120 s (2-minute)** limit.
+- Audio capture allocates memory lazily in 5 s chunks up to the capture limit (`MicBuffer`), selects
   the active channel via `vDSP.maximumMagnitude` on multi-channel/USB interfaces, compacts
   short captures off the CoreAudio callback, resamples non-16 kHz streams through a reusable
   continuous `15 s` chunked `AVAudioConverter` loop inside `autoreleasepool` without
@@ -98,13 +98,19 @@ can import that same directory through **Choose Model Folder…**.
   This is an egress-denied inference test, with microphone and full-app
   latency measured separately in the earlier study. Path and configuration
   affect Core ML's device-specific cache. [Apple Core ML lifecycle](https://developer.apple.com/videos/play/wwdc2023/10049/)
-- The pinned batch path does not use FluidAudio’s streaming or vocabulary
-  rescoring calls. `VoiceTranscriptSanitizer.clean` normalizes spacing and strips
+- Audio up to 15 s uses one Fluid Speech Pro window. Longer audio decodes in contiguous
+  windows chosen near pauses, in recording order. A bounded retry can recover a gap
+  that contains audio energy. The retry adjusts gain only for wide level differences
+  and is accepted only when it accounts for more audio and retains most earlier token IDs.
+  The 120 s cap bounds capture while a five-minute gain-stress omission remains open.
+  [Long-form follow-up](../Experiments/VoiceCapture/Round5/REPORT.md#reliability-follow-up-after-5c4e5ad)
+- The pinned batch path uses no streaming decoder or vocabulary rescoring.
+  `VoiceTranscriptSanitizer.clean` normalizes spacing and strips
   isolated ASR filler/hallucination artifacts; Scratchpad and Dictate remain
   verbatim. Refine is invoked separately by the user. Recognition diagnostics
   record timing only. For current metrics see:
   - Round 4 FLEURS (`5.354%` pooled WER, `69.90 ms` p50 warm): `Experiments/VoiceCapture/Round4/RESULTS.md`.
-  - Round 5 paired competitive & `30s–300s` evaluations on Release `RascBench` (`30c5c14` streaming `mono16k()`: `4.961%` FLEURS WER, `8.925%` VoiceArena WER, `14.151%` Round 3 Held WER, `9.605%` normalized `30s–300s` WER, `21.66 ms` `300 s @ 48 kHz` streaming resample, `65.55 ms` awake E2E warm finish→transcript): `Experiments/VoiceCapture/Round5/REPORT.md` and `docs/evidence/voice-competitive-web-data.json`.
+  - Historical engine comparisons, software timing endpoints and the final reliability follow-up have separate provenance. [Voice evidence](evidence/voice-competitive-web-data.json)
 
 ## Release gates
 

@@ -233,5 +233,6 @@
       "bytes": 157374,
       "source": "HomeSnapshotTests (offscreen AppKit NSHostingView, synthetic seed data, commit 30c5c14)"
     }
-  ]
+  ],
+  "scope": "Historical visual assets from source 30c5c14 with synthetic notes. The PNGs do not validate final-candidate behavior or live window timing."
 }

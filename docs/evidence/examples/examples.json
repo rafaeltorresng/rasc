@@ -1,5 +1,5 @@
 {
-  "note": "Real human read speech, Google FLEURS CC-BY-4.0. Reference=raw_transcription. Hypothesis=Rasc verbatim. No editing. Includes honest error + <unk> + proper-name cases.",
+  "note": "Historical Round 5 FLEURS probe. Audio was staged as mono 16 kHz PCM. Reference is the dataset raw transcription. rascVerbatim is the engine hypothesis before the Rasc display sanitizer; timestamps are pipeline-only. See ATTRIBUTION.md.",
   "examples": [
     {
       "id": "en_us-000001683",
@@ -8,7 +8,11 @@
       "reference": "There are still many men and women alive who survived their time here, and many more who had loved ones who were murdered or worked to death there, Jews and non-Jews alike.",
       "rascVerbatim": "There are still many men and women alive who survived their time here, and many more who had loved ones who were murdered or worked to death there, Jews and non-Jews alike.",
       "audioSeconds": 11.1,
-      "inferenceMs": 63.82
+      "inferenceMs": 63.82,
+      "source": "Google FLEURS test split",
+      "source_url": "https://huggingface.co/datasets/google/fleurs",
+      "license": "CC BY 4.0",
+      "audio_sha256": "ee70a63a6715304a986f8a23f66d253ab16d6b1972b438aeae08373e60797b43"
     },
     {
       "id": "en_us-000001664",
@@ -17,7 +21,11 @@
       "reference": "Swirl the two dry powders together and then, with clean wet hands, squeeze them into a ball.",
       "rascVerbatim": "Swirl the two dry powers together and then with clean wet hands squeeze them into a ball.",
       "audioSeconds": 8.36,
-      "inferenceMs": 67.75
+      "inferenceMs": 67.75,
+      "source": "Google FLEURS test split",
+      "source_url": "https://huggingface.co/datasets/google/fleurs",
+      "license": "CC BY 4.0",
+      "audio_sha256": "879e374dc9da502cc38d915920573e696b223cc8ad642ff42897b8d560cf19d8"
     },
     {
       "id": "pt_br-000001674",
@@ -26,7 +34,11 @@
       "reference": "Em algumas áreas, ferver a água por um minuto é suficiente; em outras, muitos minutos são necessários.",
       "rascVerbatim": "Em algumas áreas, ferver a água por um minuto é suficiente, em outras, muitos minutos são necessários.",
       "audioSeconds": 10.14,
-      "inferenceMs": 51.83
+      "inferenceMs": 51.83,
+      "source": "Google FLEURS test split",
+      "source_url": "https://huggingface.co/datasets/google/fleurs",
+      "license": "CC BY 4.0",
+      "audio_sha256": "30b36854faf0a751de9a0c1f6edf9661f144caf21898862c89bcac56936f370a"
     },
     {
       "id": "pt_br-000001678",
@@ -35,7 +47,11 @@
       "reference": "Oliver Sacks, em seu artigo O Discurso do Presidente, indicou como as pessoas que são incapazes de entender a fala por causa de dano cerebral são, apesar disso, capazes de avaliar sinceridade com precisão.",
       "rascVerbatim": "Oliver Sachs, em seu artigo <unk>O Discurso do Presidente<unk>, indicou como as pessoas que são incapazes de entender a fala por causa de dano cerebral são, apesar disso, capazes de avaliar sinceridade com precisão.",
       "audioSeconds": 16.56,
-      "inferenceMs": 109.41
+      "inferenceMs": 109.41,
+      "source": "Google FLEURS test split",
+      "source_url": "https://huggingface.co/datasets/google/fleurs",
+      "license": "CC BY 4.0",
+      "audio_sha256": "6fcf0c74629f2cc27a8ae728ab84ded10d21fe92aede84737e8b329e0877571b"
     },
     {
       "id": "pt_br-000001891",
@@ -44,7 +60,11 @@
       "reference": "Lakkha Singh também apresentou o chhappan bhog bhajan. O cantor Raju Khandelwal estava acompanhando-o.",
       "rascVerbatim": "Laki Hassing também apresentou o Chapan de rogue <unk>Barrajan<unk>. O cantor Haju Kandewal estava acompanhando-o.",
       "audioSeconds": 11.04,
-      "inferenceMs": 57.49
+      "inferenceMs": 57.49,
+      "source": "Google FLEURS test split",
+      "source_url": "https://huggingface.co/datasets/google/fleurs",
+      "license": "CC BY 4.0",
+      "audio_sha256": "40f7ae99138e7a5b2431fb7f8a6e080324df93275118cccd473253f6ba4f921e"
     }
   ]
 }

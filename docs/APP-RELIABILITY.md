@@ -16,7 +16,7 @@ App-wide reliability audit for Rasc before RC. Scope: full product lifecycle, no
 | M12C-002 Global Refine Preference | **Rejected, reverted** — see `Evals/Refine/experiments/M12C-002-global-refine-preference/REJECTED.md` |
 | M12C-003 one-off instructions | Not started |
 
-Production Refine prompt: `refine-v2-language-preference`.
+The historical frozen prompt was `refine-v2-language-preference`. The reliability candidate uses `refine-v2-preserve-intent-guard`. [Intent evaluation](../Experiments/Refine/final-2026-11-27/REPORT.md#reliability-follow-up-after-5c4e5ad)
 
 ## Critical user journeys
 

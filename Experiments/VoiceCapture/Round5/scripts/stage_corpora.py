@@ -28,6 +28,7 @@ def stage_voicearena() -> None:
             repo_id="VoiceArena/Dictation_Dataset",
             filename="data/test-00000-of-00001.parquet",
             repo_type="dataset",
+            revision="ab671bb28d33defac2955fda2a588e75599a368b",
         )
     )
     table = pq.read_table(parquet_path)

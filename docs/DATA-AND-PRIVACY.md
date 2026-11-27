@@ -39,7 +39,7 @@ The Release entitlement file enables App Sandbox without network access.
 Voice Capture is off by default. Rasc requests microphone permission when you
 explicitly start a recording. It activates the microphone only for that
 recording, including a short end buffer. It stops before transcription and
-releases the tap and engine. Rasc caps a recording at **5 minutes (300 seconds)** and
+releases the tap and engine. The current reliability candidate caps a recording at **2 minutes (120 seconds)** and
 records microphone input only.
 
 Fluid Speech Pro transcribes on this Mac using Core ML. The main app has no
@@ -101,10 +101,10 @@ Feedback opens an email draft with version information and never attaches notes.
 
 Refine proposals may still change meaning or uncertainty. Review Suggested, or the
 word-level Changes diff, against Original before accepting. Automated language/literal
-checks do not prove semantic equivalence (validation `n=57` / holdout `n=72` at `30c5c14`
-recorded `0` user-visible protected-literal corruptions and `0.0%` proposal failures, with
-bare-question prompts documented as an open boundary). Cancellation and failed acceptance keep
-the original intact.
+checks have limited semantic coverage. The reliability candidate also checks
+that common questions and drafting instructions preserve their form. Cancellation,
+guard rejection and failed acceptance keep the original intact.
+[Intent and frozen-corpus results](evidence/refine-web-data.json)
 
 Isolated container upgrade (`0.1.15` → `0.1.16-final-rc` under `com.rafaeltorres.rasc.rcverify`)
 and backup/restore round-trip tests verify `v10 → v11_scale_indexes_and_origin` schema integrity,

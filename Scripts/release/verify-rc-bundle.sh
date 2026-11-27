@@ -46,9 +46,10 @@ for needle in "${FORBIDDEN_STRINGS[@]}"; do
 done
 echo "M12C-002 strings absent"
 
-echo "==> M12C-001 / refine-v2 baseline present"
-if ! grep -Fq 'refine-v2-language-preference' < <(strings "${EXECUTABLE}"); then
-  echo "error: expected production prompt version refine-v2-language-preference" >&2
+echo "==> Production Refine prompt and language settings present"
+PROMPT_VERSION="$(sed -n 's/^[[:space:]]*static let version = "\([^"]*\)"/\1/p' "${ROOT_DIR}/Rasc/AI/RefinementPrompt.swift")"
+if [[ -z "${PROMPT_VERSION}" ]] || ! grep -Fqx "${PROMPT_VERSION}" < <(strings "${EXECUTABLE}"); then
+  echo "error: expected production prompt version ${PROMPT_VERSION}" >&2
   exit 1
 fi
 if ! grep -Fq 'RefineLanguageSettingsStore' < <(strings "${EXECUTABLE}"); then

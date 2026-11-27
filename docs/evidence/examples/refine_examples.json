@@ -1,5 +1,5 @@
 {
-  "note": "Representative synthetic notes and CC BY 4.0 FLEURS transcripts illustrating both Refine wins and honest failure/refusal boundaries (macOS 26.5.1 SystemLanguageModel.default, commit 30c5c14).",
+  "note": "Historical provider-level examples plus two authored build 25 regression examples. Originals and generated suggestions are labeled. See ATTRIBUTION.md.",
   "examples": [
     {
       "availability": "available",
@@ -14,7 +14,10 @@
       "latencyMs": 1228.239417,
       "outputText": "chamada com Marina quinta 14h30 sobre orçamento Q4 -- acho que ficou em R$ 18.500 mas preciso confirmar se inclui infra AWS ou só o contrato base",
       "resolvedLocale": "pt-BR",
-      "resolverConfidence": "high"
+      "resolverConfidence": "high",
+      "provenance": "Synthetic evaluation input",
+      "evaluation_scope": "Historical provider-level result",
+      "publication_status": "Eligible as a labeled historical synthetic example"
     },
     {
       "availability": "available",
@@ -29,7 +32,10 @@
       "latencyMs": 907.801209,
       "outputText": "talvez o gargalo esteja no checkpoint do SQLite WAL ou no debounce do editor, ainda preciso medir",
       "resolvedLocale": "pt-BR",
-      "resolverConfidence": "high"
+      "resolverConfidence": "high",
+      "provenance": "Synthetic evaluation input",
+      "evaluation_scope": "Historical provider-level result",
+      "publication_status": "Eligible as a labeled historical synthetic example"
     },
     {
       "availability": "available",
@@ -44,7 +50,10 @@
       "latencyMs": 1413.407042,
       "outputText": "Invoice 8841 from northwind.io came in at 2400 dollars instead of 2100 dollars. Check with Priya.raman@northwind.io before Friday 5pm, discount was 12.5%",
       "resolvedLocale": "en-US",
-      "resolverConfidence": "high"
+      "resolverConfidence": "high",
+      "provenance": "Synthetic evaluation input",
+      "evaluation_scope": "Historical provider-level result",
+      "publication_status": "Eligible as a labeled historical synthetic example"
     },
     {
       "availability": "available",
@@ -59,7 +68,10 @@
       "latencyMs": 2979.023125,
       "outputText": "Para configurar a retenção automática do modelo no macOS 26, siga estes passos: 1. Acesse o macOS 26 e navegue até o aplicativo de desenvolvimento. 2. Abra o terminal e execute o comando `open -a /Applications/Developer/Xcode.app`. 3. Em Xcode, acesse o projeto do modelo e navegue para a guia de Configuração. 4. Ative a opção de retenção automática no painel de opções. 5. Salve o projeto e reinicie o modelo para garantir a configuração seja aplicada corretamente.",
       "resolvedLocale": "pt-BR",
-      "resolverConfidence": "high"
+      "resolverConfidence": "high",
+      "provenance": "Synthetic evaluation input",
+      "evaluation_scope": "Historical provider-level result",
+      "publication_status": "Eligible as a labeled historical synthetic example"
     },
     {
       "category": "fleurs_pt_voice",
@@ -87,60 +99,28 @@
       "rawTranscript": "Oliver Sachs, em seu artigo <unk>O Discurso do Presidente<unk>, indicou como as pessoas que são incapazes de entender a fala por causa de dano cerebral são, apesar disso, capazes de avaliar sinceridade com precisão.",
       "language": "pt-BR",
       "onsetPadMs": 0,
-      "modelReadyMs": 0.016625
+      "modelReadyMs": 0.016625,
+      "provenance": "Google FLEURS test split, CC BY 4.0",
+      "evaluation_scope": "Historical provider-level result",
+      "publication_status": "Eligible with attribution and disclosure"
     },
     {
-      "category": "cs_fleurs_pt_en_voice",
-      "audioSeconds": 15.9,
-      "physFootprintMiB": 66.9694595336914,
-      "audioPrepareMs": 0.181166,
-      "realTimeFactor": 0.007343207547169811,
-      "refineKind": "messyText",
-      "refineDecision": "changed",
-      "repetition": 1,
-      "cold": false,
-      "inferenceMs": 116.757,
-      "cleanupMs": 0.01925,
-      "id": "mix-r3-por_1689_CC",
-      "refineResolvedLanguage": "en-US",
-      "inputSampleRate": 16000,
-      "refineMs": 1252.508459,
-      "refinedText": "Europa is a relatively small continent, but with many independent countries. Under normal circumstances, traveling through multiple countries would mean having to go through visa applications and passport control multiple times.",
-      "transcribeTotalMs": 117.003542,
-      "initializeMs": 0.011375,
-      "audioLoadMs": 1.725209,
-      "transcript": "Europa é um continente relativamente small, but with many independent countries. Under circumstances normais, traveling through multiple countries would mean having to go through aplicações de visto and passport control multiples times.",
-      "reference": "A Europa é um continent relativamente small but with many independent countries. Under circumstances normais, travelling through multiple countries would mean having to go through aplicações de visto and passport control múltiplas times.",
-      "modelLoadMs": 0.010875,
-      "rawTranscript": "Europa é um continente relativamente small, but with many independent countries. Under circumstances normais, traveling through multiple countries would mean having to go through aplicações de visto and passport control multiples times.",
-      "language": "mixed",
-      "onsetPadMs": 0,
-      "modelReadyMs": 0.011167
+      "id": "rc25_pt-question",
+      "provenance": "Synthetic evaluation input",
+      "inputText": "Como configurar retenção automática do modelo no macOS 26?",
+      "outputText": "Como configurar a retenção automática do modelo no macOS 26?",
+      "decision": "changed",
+      "evaluation_scope": "0.1.16 build 25 source; production-faithful Debug eval with intent, language and protected literal checks",
+      "publication_status": "Eligible as a labeled synthetic example"
     },
     {
-      "refineError": "providerFailure",
-      "category": "cs_fleurs_pt_en_voice",
-      "cold": false,
-      "cleanupMs": 0.025917,
-      "transcript": "As igrejas mais tradicionais costumam realizar uma Easter Vigil no sábado à noite durante o fim de semana da Páscoa, com as congregações muitas vezes quebrando a celebração à meia-noite para celebrar a ressurreição de Cristo.",
-      "initializeMs": 0.013167,
-      "modelLoadMs": 0.00875,
-      "repetition": 1,
-      "language": "mixed",
-      "audioLoadMs": 1.74125,
-      "id": "mix-r3-por_1706_CC",
-      "realTimeFactor": 0.004992461895161291,
-      "audioPrepareMs": 0.116625,
-      "onsetPadMs": 0,
-      "physFootprintMiB": 67.1257095336914,
-      "refineMs": 1252.8203330000001,
-      "rawTranscript": "As igrejas mais tradicionais costumam realizar uma Easter Vigil no sábado à noite durante o fim de semana da Páscoa, com as congregações muitas vezes quebrando a celebração à meia-noite para celebrar a ressurreição de Cristo.",
-      "inferenceMs": 74.287833,
-      "audioSeconds": 14.88,
-      "inputSampleRate": 16000,
-      "transcribeTotalMs": 74.47975,
-      "modelReadyMs": 0.009166,
-      "reference": "As igrejas mais tradicionais costumam realizar uma Easter Vigil no sábado à noite durante o fim de semana da Páscoa, com as congregations muitas vezes quebrando a celebração à meia-noite para celebrar a ressurreição de Cristo."
+      "id": "rc25_messy-prompt",
+      "provenance": "Synthetic evaluation input",
+      "inputText": "can u explain whats wrong w this sqlite query its slow but only after a fresh launch",
+      "outputText": "Can you explain what's wrong with this SQLite query? It's slow, but only after a fresh launch",
+      "decision": "changed",
+      "evaluation_scope": "0.1.16 build 25 source; production-faithful Debug eval with intent, language and protected literal checks",
+      "publication_status": "Eligible as a labeled synthetic example"
     }
   ]
 }
