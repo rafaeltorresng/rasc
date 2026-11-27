@@ -141,7 +141,9 @@ final class ScratchpadSession {
     private(set) var searchResults: [Note] = []
     private(set) var hasMoreSearchResults = false
     private(set) var lastDiscard: NoteDiscardReceipt?
+    private static let maxDiscardUndoRegistrations = 50
     private var discardUndoRegistrations: [UUID: DiscardUndoRegistration] = [:]
+    private var discardUndoOrder: [UUID] = []
     private(set) var selectedSearchIndex = 0
     private(set) var focusRequest = 0
     private(set) var searchFocusRequest = 0
@@ -406,7 +408,7 @@ final class ScratchpadSession {
                     let registration = DiscardUndoRegistration(manager: undoManager) { [weak self] in
                         Task { await self?.undoDiscard(receipt) }
                     }
-                    discardUndoRegistrations[receipt.id] = registration
+                    recordDiscardUndoRegistration(id: receipt.id, registration)
                     registration.register()
                 }
             }
@@ -427,6 +429,7 @@ final class ScratchpadSession {
                 requestEditorFocus()
             }
             discardUndoRegistrations.removeValue(forKey: receipt.id)?.invalidate()
+            discardUndoOrder.removeAll { $0 == receipt.id }
             if lastDiscard == receipt {
                 discardBannerTask?.cancel()
                 discardBannerTask = nil
@@ -1543,6 +1546,16 @@ final class ScratchpadSession {
 
         cancelRefinement()
         clearMessage(returnToEditor: false)
+    }
+
+    private func recordDiscardUndoRegistration(id: UUID, _ registration: DiscardUndoRegistration) {
+        discardUndoRegistrations[id] = registration
+        discardUndoOrder.removeAll { $0 == id }
+        discardUndoOrder.append(id)
+        while discardUndoOrder.count > Self.maxDiscardUndoRegistrations {
+            let evicted = discardUndoOrder.removeFirst()
+            discardUndoRegistrations.removeValue(forKey: evicted)?.invalidate()
+        }
     }
 }
 

@@ -1128,7 +1128,7 @@ final class VoiceCapture: ObservableObject {
         standaloneHistoryTask = Task { [weak self] in
             await previous?.value
             do {
-                _ = try await repository.createScratch(content: text)
+                _ = try await repository.createScratch(content: text, origin: .dictation)
                 self?.onNotesChanged?()
             } catch {
                 // Standalone history must never block delivery of the transcript.

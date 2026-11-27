@@ -19,8 +19,11 @@ actor NoteRepository {
         case structuredContentRequiresDocument
     }
 
+    static let maxDiscardReceipts = 50
+
     private let database: DatabaseQueue
     private var discardReceipts: [UUID: NoteDiscardReceipt] = [:]
+    private var discardReceiptOrder: [UUID] = []
     // Retain at most one decoded note; the revision is checked in SQLite on every write.
     private var cachedDocument: (id: UUID, document: NoteDocument, revision: Int64)?
 
@@ -56,10 +59,22 @@ actor NoteRepository {
         }
     }
 
+    nonisolated static func ensurePrivateDirectory(at directory: URL) throws {
+        try FileManager.default.createDirectory(
+            at: directory,
+            withIntermediateDirectories: true,
+            attributes: [.posixPermissions: 0o700]
+        )
+        try? FileManager.default.setAttributes(
+            [.posixPermissions: 0o700],
+            ofItemAtPath: directory.path
+        )
+    }
+
     nonisolated static func openDefault() throws -> NoteRepository {
         let databaseURL = try defaultDatabaseURL
         let databaseDirectory = databaseURL.deletingLastPathComponent()
-        try FileManager.default.createDirectory(at: databaseDirectory, withIntermediateDirectories: true)
+        try ensurePrivateDirectory(at: databaseDirectory)
         return try NoteRepository(databaseURL: databaseURL)
     }
 
@@ -81,7 +96,7 @@ actor NoteRepository {
     private var testGate: NoteRepositoryTestGate?
     #endif
 
-    func createScratch(content: String) throws -> Note {
+    func createScratch(content: String, origin: Note.Origin = .scratch) throws -> Note {
         #if DEBUG
         testGate?.enter()
         #endif
@@ -97,7 +112,8 @@ actor NoteRepository {
                 createdAt: now,
                 updatedAt: now,
                 deletedAt: nil,
-                keptAt: nil
+                keptAt: nil,
+                origin: origin
             )
             try note.insert(database)
             return note
@@ -269,7 +285,7 @@ actor NoteRepository {
     }
 
     /// Structured content and its search projection are committed together.
-    func createScratch(document: NoteDocument) throws -> Note {
+    func createScratch(document: NoteDocument, origin: Note.Origin = .scratch) throws -> Note {
         #if DEBUG
         testGate?.enter()
         #endif
@@ -283,7 +299,7 @@ actor NoteRepository {
         let note: Note = try database.write { db in
             let now = Date()
             let note = Note(id: UUID(), content: document.text, createdAt: now,
-                            updatedAt: now, deletedAt: nil, keptAt: nil, hasImages: document.hasImages)
+                            updatedAt: now, deletedAt: nil, keptAt: nil, hasImages: document.hasImages, origin: origin)
             try note.insert(db)
             try db.execute(sql: "INSERT INTO note_document_bases (note_id, document) VALUES (?, ?)", arguments: [note.id, bytes])
             try db.execute(sql: "INSERT INTO note_document_edits (note_id, revision) VALUES (?, 0)", arguments: [note.id])
@@ -486,7 +502,9 @@ actor NoteRepository {
                     JOIN notes_fts ON notes_fts.rowid = notes.rowid
                     WHERE notes_fts MATCH ?
                       AND notes.deleted_at IS NULL
-                    ORDER BY bm25(notes_fts), notes.updated_at DESC, notes.rowid DESC
+                    ORDER BY bm25(notes_fts) - CASE WHEN notes.kept_at IS NOT NULL THEN 0.15 ELSE 0.0 END,
+                             notes.updated_at DESC,
+                             notes.rowid DESC
                     LIMIT ?
                     """,
                 arguments: [pattern, limit]
@@ -506,7 +524,7 @@ actor NoteRepository {
                 ])
             return count == 1 ? NoteDiscardReceipt(noteID: id, deletedAt: deletedAt) : nil
         }
-        if let receipt { discardReceipts[id] = receipt }
+        if let receipt { recordDiscardReceipt(receipt) }
         return receipt
     }
 
@@ -514,21 +532,35 @@ actor NoteRepository {
     @discardableResult
     func delete(ids: Set<UUID>) throws -> [NoteDiscardReceipt] {
         guard !ids.isEmpty else { return [] }
+        let sortedIDs = ids.sorted { $0.uuidString < $1.uuidString }
         let receipts: [NoteDiscardReceipt] = try database.write { database in
             let deletedAt = Date()
             var receipts: [NoteDiscardReceipt] = []
-            for id in ids.sorted(by: { $0.uuidString < $1.uuidString }) {
-                let count = try Note
-                    .filter(Note.Columns.id == id)
-                    .filter(Note.Columns.deletedAt == nil)
-                    .updateAll(database, [Note.Columns.deletedAt.set(to: deletedAt)])
-                if count == 1 {
+            receipts.reserveCapacity(sortedIDs.count)
+            for chunkStart in stride(from: 0, to: sortedIDs.count, by: 500) {
+                let chunk = Array(sortedIDs[chunkStart..<min(chunkStart + 500, sortedIDs.count)])
+                let placeholders = Array(repeating: "?", count: chunk.count).joined(separator: ",")
+                let activeIDs = try UUID.fetchAll(
+                    database,
+                    sql: "SELECT id FROM notes WHERE id IN (\(placeholders)) AND deleted_at IS NULL",
+                    arguments: StatementArguments(chunk)
+                )
+                guard !activeIDs.isEmpty else { continue }
+                let updatePlaceholders = Array(repeating: "?", count: activeIDs.count).joined(separator: ",")
+                var arguments: [any DatabaseValueConvertible] = [deletedAt]
+                arguments.append(contentsOf: activeIDs)
+                try database.execute(
+                    sql: "UPDATE notes SET deleted_at = ? WHERE id IN (\(updatePlaceholders)) AND deleted_at IS NULL",
+                    arguments: StatementArguments(arguments)
+                )
+                let activeSet = Set(activeIDs)
+                for id in chunk where activeSet.contains(id) {
                     receipts.append(NoteDiscardReceipt(noteID: id, deletedAt: deletedAt))
                 }
             }
             return receipts
         }
-        for receipt in receipts { discardReceipts[receipt.noteID] = receipt }
+        for receipt in receipts { recordDiscardReceipt(receipt) }
         return receipts
     }
 
@@ -554,7 +586,7 @@ actor NoteRepository {
             }
             return restored
         }
-        for receipt in receipts { discardReceipts[receipt.noteID] = nil }
+        for receipt in receipts { removeDiscardReceipt(for: receipt.noteID) }
         return restored
     }
 
@@ -570,8 +602,98 @@ actor NoteRepository {
             }
             return note
         }
-        discardReceipts[receipt.noteID] = nil
+        removeDiscardReceipt(for: receipt.noteID)
         return note
+    }
+
+    /// Permanently deletes soft-deleted notes older than `days`, removing dependent
+    /// `refinement_revisions` rows first to respect foreign key constraints.
+    @discardableResult
+    func purgeExpiredSoftDeletedNotes(olderThanDays days: Int = 7, now: Date = Date()) throws -> Int {
+        let cutoff = now.addingTimeInterval(-Double(days) * 86_400)
+        let expiredIDs: [UUID] = try database.write { database in
+            let ids = try UUID.fetchAll(
+                database,
+                sql: "SELECT id FROM notes WHERE deleted_at IS NOT NULL AND deleted_at < ?",
+                arguments: [cutoff]
+            )
+            guard !ids.isEmpty else { return [] }
+            for chunkStart in stride(from: 0, to: ids.count, by: 500) {
+                let chunk = Array(ids[chunkStart..<min(chunkStart + 500, ids.count)])
+                let placeholders = Array(repeating: "?", count: chunk.count).joined(separator: ",")
+                let args = StatementArguments(chunk)
+                try database.execute(
+                    sql: "DELETE FROM refinement_revisions WHERE note_id IN (\(placeholders))",
+                    arguments: args
+                )
+                try database.execute(
+                    sql: "DELETE FROM notes WHERE id IN (\(placeholders))",
+                    arguments: args
+                )
+            }
+            return ids
+        }
+        for id in expiredIDs {
+            removeDiscardReceipt(for: id)
+            if cachedDocument?.id == id { cachedDocument = nil }
+        }
+        return expiredIDs.count
+    }
+
+    func backup(to destinationURL: URL) throws {
+        let parentDirectory = destinationURL.deletingLastPathComponent()
+        if !FileManager.default.fileExists(atPath: parentDirectory.path) {
+            try FileManager.default.createDirectory(at: parentDirectory, withIntermediateDirectories: true)
+        }
+        let stagingURL = FileManager.default.temporaryDirectory
+            .appending(path: "rasc-backup-\(UUID().uuidString).sqlite")
+        defer {
+            try? FileManager.default.removeItem(at: stagingURL)
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: stagingURL.path + "-wal"))
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: stagingURL.path + "-shm"))
+        }
+
+        do {
+            let target = try DatabaseQueue(path: stagingURL.path)
+            try database.backup(to: target)
+            try target.close()
+        } catch {
+            throw error
+        }
+
+        if !FileManager.default.fileExists(atPath: destinationURL.path) {
+            try Data().write(to: destinationURL, options: [])
+        }
+        let reader = try FileHandle(forReadingFrom: stagingURL)
+        defer { try? reader.close() }
+        let writer = try FileHandle(forWritingTo: destinationURL)
+        defer { try? writer.close() }
+        try writer.truncate(atOffset: 0)
+        while true {
+            let chunk = try reader.read(upToCount: 1_048_576)
+            guard let chunk, !chunk.isEmpty else { break }
+            try writer.write(contentsOf: chunk)
+        }
+        try writer.synchronize()
+    }
+
+    func checkpointForTermination() {
+        AppDatabase.checkpointForTermination(database)
+    }
+
+    private func recordDiscardReceipt(_ receipt: NoteDiscardReceipt) {
+        discardReceipts[receipt.noteID] = receipt
+        discardReceiptOrder.removeAll { $0 == receipt.noteID }
+        discardReceiptOrder.append(receipt.noteID)
+        while discardReceiptOrder.count > Self.maxDiscardReceipts {
+            let evicted = discardReceiptOrder.removeFirst()
+            discardReceipts.removeValue(forKey: evicted)
+        }
+    }
+
+    private func removeDiscardReceipt(for noteID: UUID) {
+        discardReceipts.removeValue(forKey: noteID)
+        discardReceiptOrder.removeAll { $0 == noteID }
     }
 
     func keep(id: UUID) throws -> Note {

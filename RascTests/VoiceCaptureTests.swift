@@ -819,8 +819,13 @@ struct VoiceCaptureTests {
         try AppDatabase.migrator.migrate(oldQueue, upTo: "v9_voice_review")
         try await oldQueue.write { db in
             let now = Date()
-            try Note(id: typed, content: "Typed scratch", createdAt: now, updatedAt: now,
-                     deletedAt: nil, keptAt: nil).insert(db)
+            try db.execute(
+                sql: """
+                    INSERT INTO notes (id, content, created_at, updated_at, deleted_at, kept_at, has_images)
+                    VALUES (?, ?, ?, ?, NULL, NULL, 0)
+                    """,
+                arguments: [typed, "Typed scratch", now, now]
+            )
             try db.execute(sql: "INSERT INTO voice_review (slot, id, content) VALUES (1, ?, ?)",
                            arguments: [pending, "Legacy voice draft"])
         }
@@ -1209,6 +1214,7 @@ struct VoiceCaptureTests {
         #expect(await capture.flushForTermination())
         let saved = try await fixture.repository.fetchAllNonDeleted()
         #expect(saved.map(\.content) == ["Hello inline dictation"])
+        #expect(saved.map(\.origin) == [.dictation])
     }
 
     @Test func enableAndDownloadIfMissingTransitionsUncheckedThroughCheckToDownload() async throws {

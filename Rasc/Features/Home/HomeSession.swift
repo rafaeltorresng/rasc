@@ -27,7 +27,9 @@ final class HomeSession {
     private(set) var selectionAnchorID: UUID?
     private(set) var isSelectionMode = false
     private var keyboardRangeIDs: Set<UUID> = []
+    private static let maxDiscardUndoRegistrations = 50
     private var discardUndoRegistrations: [UUID: DiscardUndoRegistration] = [:]
+    private var discardUndoOrder: [UUID] = []
     private(set) var hasMoreSearchResults = false
 
     private(set) var showsHistoryHint = false
@@ -310,7 +312,7 @@ final class HomeSession {
             let registration = DiscardUndoRegistration(manager: undoManager, actionName: actionName) { [weak self] in
                 Task { await self?.undoDiscardBatch(receipts) }
             }
-            for receipt in receipts { discardUndoRegistrations[receipt.id] = registration }
+            for receipt in receipts { recordDiscardUndoRegistration(id: receipt.id, registration) }
             registration.register()
         }
         clearSelection()
@@ -323,7 +325,7 @@ final class HomeSession {
         guard !batch.isEmpty else { return }
         do {
             let restored = try await repository.restoreDiscards(batch)
-            for receipt in batch { discardUndoRegistrations.removeValue(forKey: receipt.id)?.invalidate() }
+            for receipt in batch { removeDiscardUndoRegistration(for: receipt.id)?.invalidate() }
             if lastDiscardBatch == batch { lastDiscardBatch = [] }
             actionErrorMessage = nil
             if restored.contains(where: \.isKept) { showsAllKept = true }
@@ -369,7 +371,8 @@ final class HomeSession {
                 let registration = DiscardUndoRegistration(manager: undoManager) { [weak self] in
                     Task { await self?.undoDiscard(receipt) }
                 }
-                discardUndoRegistrations[receipt.id] = registration
+                discardUndoRegistrations.removeValue(forKey: receipt.id)?.invalidate()
+                recordDiscardUndoRegistration(id: receipt.id, registration)
                 registration.register()
             }
         }
@@ -381,7 +384,7 @@ final class HomeSession {
         guard let receipt = receipt ?? lastDiscard else { return }
         do {
             let note = try await repository.restoreDiscard(receipt)
-            discardUndoRegistrations.removeValue(forKey: receipt.id)?.invalidate()
+            removeDiscardUndoRegistration(for: receipt.id)?.invalidate()
             if lastDiscard == receipt { lastDiscard = nil }
             actionErrorMessage = nil
             selectedNoteID = note.id
@@ -500,5 +503,21 @@ final class HomeSession {
         }
 
         selectedNoteID = notes.first?.id
+    }
+
+    private func recordDiscardUndoRegistration(id: UUID, _ registration: DiscardUndoRegistration) {
+        discardUndoRegistrations[id] = registration
+        discardUndoOrder.removeAll { $0 == id }
+        discardUndoOrder.append(id)
+        while discardUndoOrder.count > Self.maxDiscardUndoRegistrations {
+            let evicted = discardUndoOrder.removeFirst()
+            discardUndoRegistrations.removeValue(forKey: evicted)?.invalidate()
+        }
+    }
+
+    @discardableResult
+    private func removeDiscardUndoRegistration(for id: UUID) -> DiscardUndoRegistration? {
+        discardUndoOrder.removeAll { $0 == id }
+        return discardUndoRegistrations.removeValue(forKey: id)
     }
 }

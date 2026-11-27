@@ -307,6 +307,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
             let voiceFlushed = await VoiceCapture.shared.flushForTermination()
             let didFlush = await self?.bootstrap.panelIfReady()?.flushForTermination() ?? true
             if didFlush && voiceFlushed {
+                await self?.bootstrap.checkpointForTermination()
                 sender.reply(toApplicationShouldTerminate: true)
             } else {
                 let alert = NSAlert()
@@ -383,6 +384,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
 
     func menuBarQuit() {
         NSApp.terminate(nil)
+    }
+
+    var menuBarNeedsStorageRecovery: Bool {
+        bootstrap.hasLoadFailure
+    }
+
+    func menuBarRetryStorageRecovery() {
+        bootstrap.start()
     }
 
     #if DEBUG

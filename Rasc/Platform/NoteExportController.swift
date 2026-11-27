@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import UniformTypeIdentifiers
 
 @MainActor
 final class NoteExportController {
@@ -214,14 +215,21 @@ private struct NoteExportPicker: View {
 
     let notes: [Note]
     let onFinish: (NoteExportScope?) -> Void
-    @State private var mode = Mode.kept
+    @State private var mode: Mode
     @State private var query = ""
+    @State private var debouncedQuery = ""
     @State private var selection: Set<UUID> = []
     @FocusState private var searchFocused: Bool
     @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     // macOS draws white labels for these tinted native controls in both appearances.
     private var selectionTint: Color { RascSurfacePalette.standard.focus(for: .light) }
+
+    init(notes: [Note], onFinish: @escaping (NoteExportScope?) -> Void) {
+        self.notes = notes
+        self.onFinish = onFinish
+        _mode = State(initialValue: notes.contains(where: \.isKept) ? .kept : .all)
+    }
 
     private var scope: NoteExportScope {
         switch mode {
@@ -236,8 +244,8 @@ private struct NoteExportPicker: View {
         case .kept: notes.filter(\.isKept)
         case .all: notes
         case .selected:
-            query.isEmpty ? notes : notes.filter {
-                $0.displayTitle.localizedStandardContains(query) || $0.content.localizedStandardContains(query)
+            debouncedQuery.isEmpty ? notes : notes.filter {
+                $0.displayTitle.localizedStandardContains(debouncedQuery) || $0.content.localizedStandardContains(debouncedQuery)
             }
         }
     }
@@ -316,6 +324,15 @@ private struct NoteExportPicker: View {
         .padding(20)
         .frame(width: 478)
         .rascWindowSurface()
+        .task(id: query) {
+            if query.isEmpty {
+                debouncedQuery = ""
+                return
+            }
+            try? await Task.sleep(for: .milliseconds(150))
+            guard !Task.isCancelled else { return }
+            debouncedQuery = query
+        }
     }
 
     private func row(_ note: Note) -> some View {
