@@ -790,23 +790,24 @@ struct TransientPanelSizingTests {
         #expect(RascTransientPanelSizing.searchHeight(resultCount: 0) == 132)
         #expect(RascTransientPanelSizing.searchHeight(resultCount: 1) == 182)
         #expect(RascTransientPanelSizing.searchHeight(resultCount: 2) == 260)
-        #expect(RascTransientPanelSizing.searchHeight(resultCount: 5) == 440)
-        #expect(RascTransientPanelSizing.searchHeight(resultCount: 10) == 440)
-        #expect(RascTransientPanelSizing.searchHeight(resultCount: 12) == 440)
+        #expect(RascTransientPanelSizing.searchHeight(resultCount: 5) == RascTransientPanelSizing.searchMaximumHeight)
+        #expect(RascTransientPanelSizing.searchHeight(resultCount: 10) == RascTransientPanelSizing.searchMaximumHeight)
+        #expect(RascTransientPanelSizing.searchHeight(resultCount: 12) == RascTransientPanelSizing.searchMaximumHeight)
     }
 
     @Test
-    func palettePanelGrowsToFitAllCommands() {
+    func palettePanelGrowsWithinTheCompactEditorBound() {
         #expect(RascTransientPanelSizing.paletteHeight(commandCount: 0) == 132)
-        #expect(RascTransientPanelSizing.paletteHeight(commandCount: 6) == 370)
-        #expect(RascTransientPanelSizing.paletteHeight(commandCount: 10) == 578)
-        #expect(RascTransientPanelSizing.paletteHeight(commandCount: 20) == 700)
+        #expect(RascTransientPanelSizing.paletteHeight(commandCount: 6) == RascTransientPanelSizing.maximumHeight)
+        #expect(RascTransientPanelSizing.paletteHeight(commandCount: 10) == RascTransientPanelSizing.maximumHeight)
+        #expect(RascTransientPanelSizing.paletteHeight(commandCount: 20) == RascTransientPanelSizing.maximumHeight)
     }
 
     @Test
-    func paletteHeightLeavesRoomForEveryCommand() {
+    func paletteHeightStaysBelowTheDefaultEditorHeight() {
         let all = PaletteCommand.availableCommands(isKept: false, hasPersistableContent: true, canPerformCompletion: true)
-        #expect(RascTransientPanelSizing.paletteHeight(commandCount: all.count) >= 48 + CGFloat(all.count) * 52)
+        #expect(RascTransientPanelSizing.paletteHeight(commandCount: all.count) == RascTransientPanelSizing.maximumHeight)
+        #expect(RascTransientPanelSizing.maximumHeight < RascWindowMetrics.scratchpadDefault.height)
     }
 }
 

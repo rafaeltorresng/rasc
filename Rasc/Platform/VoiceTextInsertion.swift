@@ -87,6 +87,7 @@ enum VoiceTextInsertion {
         case noTargetApplication
         case noFocusedTextField
         case insertionFailed
+        case focusChanged
         case emptyText
     }
 
@@ -146,7 +147,8 @@ enum VoiceTextInsertion {
         }
         let snapshot = textSnapshot(of: element)
         let preparedText = textWithSmartLeadingSpace(text, precedingCharacter: precedingCharacter(in: snapshot))
-        if setSelectedText(preparedText, on: element, beforeSnapshot: snapshot) {
+        if setSelectedText(preparedText, on: element, beforeSnapshot: snapshot)
+            || setSelectedTextViaValue(preparedText, on: element, before: snapshot) {
             return .inserted
         }
         copy(text, to: pasteboard)
@@ -274,6 +276,45 @@ enum VoiceTextInsertion {
             if afterSnapshot.isReadable, afterSnapshot == beforeSnapshot {
                 return false
             }
+        }
+        return true
+    }
+
+    /// Some editors (notably Chromium/Electron and a few SwiftUI fields) expose
+    /// a focused element but do not implement `AXSelectedText`. Replace the
+    /// freshly read selection in `AXValue` instead, then move the caret after
+    /// the inserted text. This stays inside Accessibility and never posts
+    /// synthetic keystrokes.
+    private static func setSelectedTextViaValue(
+        _ text: String,
+        on element: AXUIElement,
+        before snapshot: AXTextSnapshot
+    ) -> Bool {
+        guard let value = snapshot.value,
+              let location = snapshot.rangeLocation,
+              let length = snapshot.rangeLength,
+              location >= 0, length >= 0
+        else {
+            return false
+        }
+        let utf16 = value.utf16
+        guard location <= utf16.count, length <= utf16.count - location else { return false }
+        let start = utf16.index(utf16.startIndex, offsetBy: location)
+        let end = utf16.index(start, offsetBy: length)
+        guard let startIndex = start.samePosition(in: value),
+              let endIndex = end.samePosition(in: value)
+        else {
+            return false
+        }
+        let replaced = String(value[value.startIndex..<startIndex]) + text + String(value[endIndex..<value.endIndex])
+        guard AXUIElementSetAttributeValue(element, valueAttribute as CFString, replaced as CFTypeRef) == .success,
+              textSnapshot(of: element).value == replaced
+        else {
+            return false
+        }
+        var caret = CFRange(location: location + text.utf16.count, length: 0)
+        if let rangeValue = withUnsafeMutablePointer(to: &caret, { AXValueCreate(.cfRange, $0) }) {
+            AXUIElementSetAttributeValue(element, selectedTextRangeAttribute as CFString, rangeValue)
         }
         return true
     }

@@ -213,9 +213,10 @@ enum RascTransientPanelSizing {
     static let headerHeight: CGFloat = 48
     static let bottomInset: CGFloat = 12
     static let transientMinimumHeight: CGFloat = 132
-    static let maximumHeight: CGFloat = 700
-    /// Search never grows past the editor's default height.
-    static let searchMaximumHeight: CGFloat = 440
+    /// Transient surfaces stay below the compact default editor height so a
+    /// one-line search never leaves a nearly full-size panel behind.
+    static let maximumHeight: CGFloat = RascWindowMetrics.scratchpadDefault.height - 10
+    static let searchMaximumHeight: CGFloat = RascWindowMetrics.scratchpadDefault.height
 
     static func searchHeight(resultCount: Int) -> CGFloat {
         // Search rows can contain a snippet, kept status, and an Open hint.

@@ -54,8 +54,8 @@ final class OnboardingWindowController: NSObject, NSWindowDelegate {
         window.titlebarAppearsTransparent = true
         window.isReleasedWhenClosed = false
         window.isMovableByWindowBackground = true
-        window.minSize = NSSize(width: 560, height: 480)
-        window.maxSize = NSSize(width: 820, height: 640)
+        window.minSize = RascWindowMetrics.onboardingMinimum
+        window.maxSize = RascWindowMetrics.onboardingMaximum
         window.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
         return window
     }

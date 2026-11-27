@@ -1,11 +1,46 @@
 import AppKit
 import SwiftUI
 
+/// Presentation rules for insertion fallbacks. Kept pure so the honesty of the
+/// capsule copy and the visibility of the Accessibility action can be tested
+/// without rendering the HUD.
+enum VoiceFallbackPresentation {
+    static func showsAccessibilityAction(
+        reason: VoiceTextInsertion.Reason?,
+        hasAccessibilityAccess: Bool
+    ) -> Bool {
+        reason == .noAccessibilityPermission && !hasAccessibilityAccess
+    }
+
+    static func fallbackTitle(
+        reason: VoiceTextInsertion.Reason?,
+        hasAccessibilityAccess: Bool,
+        reachedLimit: Bool
+    ) -> String {
+        if showsAccessibilityAction(reason: reason, hasAccessibilityAccess: hasAccessibilityAccess) {
+            return "Accessibility needed — copied"
+        }
+        let detail: String? = switch reason {
+        case .focusChanged: "Focus changed — copied"
+        case .noFocusedTextField: "No field focused — copied"
+        case .insertionFailed: "Can't insert here — copied"
+        case .noTargetApplication: "No target app — copied"
+        case .noAccessibilityPermission, .emptyText, .none: nil
+        }
+        if let detail {
+            return detail
+        }
+        return reachedLimit ? "2 min limit — ⌘V to paste" : "Copied — press ⌘V"
+    }
+}
+
 @MainActor
 final class VoiceCaptureWindows {
     private unowned let capture: VoiceCapture
     private(set) var status: NSPanel?
     private var previousApp: NSRunningApplication?
+    private var previousKeyWindow: NSWindow?
+    private var previousFirstResponder: NSResponder?
     private var screenFrame: CGRect?
 
     init(capture: VoiceCapture) {
@@ -40,6 +75,8 @@ final class VoiceCaptureWindows {
         }
         if !panel.isVisible {
             previousApp = NSWorkspace.shared.frontmostApplication
+            previousKeyWindow = NSApp.keyWindow
+            previousFirstResponder = previousKeyWindow?.firstResponder
             let target = NSApp.isActive ? NSApp.keyWindow?.screen : nil
             screenFrame = (target ?? WindowFramePlacement.targetPresentationScreen(
                 excludingProcessID: NSRunningApplication.current.processIdentifier
@@ -53,17 +90,35 @@ final class VoiceCaptureWindows {
             panel.setFrameOrigin(CGPoint(x: frame.midX - panel.frame.width / 2, y: frame.minY + 18))
         }
         panel.orderFrontRegardless()
+        restoreKeyboardFocusIfNeeded()
+    }
+
+    /// Ordering a borderless panel in front must not displace the text field
+    /// the user was typing in, including the onboarding Dictate practice field.
+    private func restoreKeyboardFocusIfNeeded() {
+        guard NSApp.isActive,
+              let window = previousKeyWindow,
+              let responder = previousFirstResponder,
+              window.firstResponder !== responder
+        else {
+            return
+        }
+        window.makeFirstResponder(responder)
     }
 
     func restorePreviousApplicationAfterPermission() {
         if NSApp.isActive, let previousApp, previousApp != .current, !previousApp.isTerminated {
             previousApp.activate()
+        } else if NSApp.isActive {
+            restoreKeyboardFocusIfNeeded()
         }
     }
 
     func hideStatus() {
         status?.orderOut(nil)
         previousApp = nil
+        previousKeyWindow = nil
+        previousFirstResponder = nil
     }
 
     func announce(_ phase: VoiceCapture.Phase) {
@@ -240,9 +295,12 @@ struct VoiceStatusView: View {
             case .copied, .inserted, .insertedAndCopied:
                 action("Dismiss", icon: "xmark") { capture.cancel() }
             case .copiedFallback:
-                if capture.lastFallbackReason == .noAccessibilityPermission {
-                    action("Allow…", accessibilityLabel: "Open Accessibility Settings") {
-                        capture.openAccessibilitySettings()
+                if VoiceFallbackPresentation.showsAccessibilityAction(
+                    reason: capture.lastFallbackReason,
+                    hasAccessibilityAccess: capture.hasAccessibilityAccess
+                ) {
+                    action("Allow…", accessibilityLabel: "Grant Accessibility access to this build") {
+                        capture.requestAccessibilityForInsertion()
                     }
                 }
                 action("Dismiss", icon: "xmark") { capture.cancel() }
@@ -273,16 +331,20 @@ struct VoiceStatusView: View {
         case .stopping:
             return "Cancelling…"
         case .ready:
-            return reachedLimit ? "Saved (5 min limit)" : "Thought saved"
+            return reachedLimit ? "Saved (2 min limit)" : "Thought saved"
         case .copied:
-            return reachedLimit ? "Copied (5 min limit)" : "Copied"
+            return reachedLimit ? "Copied (2 min limit)" : "Copied"
         case .inserted, .insertedAndCopied:
             if reachedLimit {
-                return "Inserted (5 min limit)"
+                return "Inserted (2 min limit)"
             }
             return capture.phase == .inserted ? "Inserted" : "Inserted & copied"
         case .copiedFallback:
-            return reachedLimit ? "5 min limit — ⌘V to paste" : "Copied — press ⌘V"
+            return VoiceFallbackPresentation.fallbackTitle(
+                reason: capture.lastFallbackReason,
+                hasAccessibilityAccess: capture.hasAccessibilityAccess,
+                reachedLimit: reachedLimit
+            )
         case .saving:
             return "Saving thought…"
         case .opening:
@@ -582,7 +644,11 @@ struct VoiceCaptureSettings: View {
         case .insertedAndCopied:
             detail("Inserted at cursor and copied to clipboard.")
         case .copiedFallback:
-            detail("Insertion unavailable; copied to clipboard. Press Command V.")
+            if capture.lastFallbackReason == .focusChanged {
+                detail("Focus moved during dictation; copied to clipboard. Press Command V.")
+            } else {
+                detail("Insertion unavailable; copied to clipboard. Press Command V.")
+            }
         case .saving, .opening:
             detail("Opening your thought in Scratchpad…")
         case .checking, .starting:

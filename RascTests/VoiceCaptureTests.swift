@@ -1197,7 +1197,7 @@ struct VoiceCaptureTests {
                 Issue.record("External AX fallback should not run when in-app editor accepted text")
                 return .copiedToClipboard(.noTargetApplication)
             },
-            insertInCurrentApp: { text in
+            insertInCurrentApp: { text, _ in
                 VoiceTextInsertion.insertIntoWindowEditor(text, window: window)
             }
         )
@@ -1343,7 +1343,7 @@ struct VoiceCaptureTests {
                 Issue.record("Background target app must not receive dictation when Rasc is frontmost")
                 return .inserted
             },
-            insertInCurrentApp: { _ in false },
+            insertInCurrentApp: { _, _ in false },
             isCurrentAppFrontmost: { true }
         )
         capture.setEnabled(true)
@@ -1396,6 +1396,80 @@ struct VoiceCaptureTests {
 
         capture.recover()
         try await wait { capture.phase == .idle }
+    }
+
+    @Test func fallbackCapsuleOnlyOffersAccessibilityWhenPermissionIsMissing() {
+        #expect(VoiceFallbackPresentation.showsAccessibilityAction(
+            reason: .noAccessibilityPermission,
+            hasAccessibilityAccess: false
+        ))
+        #expect(!VoiceFallbackPresentation.showsAccessibilityAction(
+            reason: .noAccessibilityPermission,
+            hasAccessibilityAccess: true
+        ))
+        #expect(!VoiceFallbackPresentation.showsAccessibilityAction(
+            reason: .insertionFailed,
+            hasAccessibilityAccess: false
+        ))
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: .noAccessibilityPermission,
+            hasAccessibilityAccess: false,
+            reachedLimit: false
+        ) == "Accessibility needed — copied")
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: .focusChanged,
+            hasAccessibilityAccess: true,
+            reachedLimit: false
+        ) == "Focus changed — copied")
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: .noFocusedTextField,
+            hasAccessibilityAccess: true,
+            reachedLimit: false
+        ) == "No field focused — copied")
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: .insertionFailed,
+            hasAccessibilityAccess: true,
+            reachedLimit: false
+        ) == "Can't insert here — copied")
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: .noTargetApplication,
+            hasAccessibilityAccess: true,
+            reachedLimit: false
+        ) == "No target app — copied")
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: nil,
+            hasAccessibilityAccess: true,
+            reachedLimit: true
+        ) == "2 min limit — ⌘V to paste")
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: nil,
+            hasAccessibilityAccess: true,
+            reachedLimit: false
+        ) == "Copied — press ⌘V")
+    }
+
+    @Test func focusChangePolicyProtectsCapturedExternalTargetOnly() {
+        let target = NSRunningApplication.current
+        #expect(!VoiceCapture.focusChangedDuringCapture(
+            startedWithExternalTarget: nil,
+            currentTarget: target,
+            rascIsFrontmost: false
+        ))
+        #expect(!VoiceCapture.focusChangedDuringCapture(
+            startedWithExternalTarget: target,
+            currentTarget: target,
+            rascIsFrontmost: false
+        ))
+        #expect(VoiceCapture.focusChangedDuringCapture(
+            startedWithExternalTarget: target,
+            currentTarget: nil,
+            rascIsFrontmost: false
+        ))
+        #expect(VoiceCapture.focusChangedDuringCapture(
+            startedWithExternalTarget: target,
+            currentTarget: target,
+            rascIsFrontmost: true
+        ))
     }
 
     @Test func smartLeadingSpaceCoversWordBoundariesPunctuationAndInAppEditor() {
@@ -1505,7 +1579,7 @@ struct VoiceCaptureTests {
                 accessibilityTrusted: resolvedAccessibilityTrusted,
                 pasteboard: pasteboard,
                 insertText: resolvedInsertText,
-                insertInCurrentApp: { _ in insertInCurrentApp },
+                insertInCurrentApp: { _, _ in insertInCurrentApp },
                 isCurrentAppFrontmost: { isCurrentAppFrontmost }
             )
             capture.connect(repository: repository)

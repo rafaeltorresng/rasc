@@ -25,6 +25,7 @@ struct OnboardingView: View {
         case completionFinish
     }
     @FocusState private var focusedTarget: FocusTarget?
+    @FocusState private var dictationPracticeFocused: Bool
     @State private var dictationPracticeDraft = ""
     @State private var shortcutRevision = 0
 
@@ -61,13 +62,17 @@ struct OnboardingView: View {
             .transition(RascMotion.stageTransition(reduceMotion: reduceMotion))
             .id(stageTransitionKey)
         }
+        // Stable ideal size prevents step-to-step resizing; finite bounds keep
+        // the hosting view from growing into a full-screen panel. The scroll
+        // view below remains the fallback on small displays and at large text
+        // sizes.
         .frame(
-            minWidth: 520,
+            minWidth: RascWindowMetrics.onboardingMinimum.width,
             idealWidth: RascWindowMetrics.onboarding.width,
-            maxWidth: .infinity,
-            minHeight: 460,
+            maxWidth: RascWindowMetrics.onboardingMaximum.width,
+            minHeight: RascWindowMetrics.onboardingMinimum.height,
             idealHeight: RascWindowMetrics.onboarding.height,
-            maxHeight: .infinity
+            maxHeight: RascWindowMetrics.onboardingMaximum.height
         )
         .tint(Color.primary)
         .animation(RascMotion.surface(reduceMotion: reduceMotion), value: stageTransitionKey)
@@ -97,32 +102,34 @@ struct OnboardingView: View {
 
     @ViewBuilder
     private var topChrome: some View {
-        HStack {
-            Spacer(minLength: 48)
-
+        // Progress is truly centered; Skip is layered on the trailing edge so
+        // its presence (or absence) never shifts the dots.
+        ZStack {
             if let progress = onboardingProgress {
                 onboardingProgressIndicator(progress)
             }
 
-            Spacer(minLength: 0)
-
-            Group {
-                if showsOnboardingSkip {
-                    Button("Skip") {
-                        coordinator.skipSetup()
+            HStack {
+                Spacer(minLength: 0)
+                Group {
+                    if showsOnboardingSkip {
+                        Button("Skip") {
+                            coordinator.skipSetup()
+                        }
+                        .buttonStyle(.plain)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(secondaryText)
+                        .accessibilityLabel("Skip setup")
+                        .help("Skip setup and open normal Rasc behavior")
+                    } else {
+                        Color.clear
+                            .frame(width: 36, height: 16)
                     }
-                    .buttonStyle(.plain)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(secondaryText)
-                    .accessibilityLabel("Skip setup")
-                    .help("Skip setup and open normal Rasc behavior")
-                } else {
-                    Color.clear
-                        .frame(width: 36, height: 16)
                 }
+                .frame(minWidth: 48, alignment: .trailing)
             }
-            .frame(minWidth: 48, alignment: .trailing)
         }
+        .frame(height: 16)
     }
 
     @ViewBuilder
@@ -469,7 +476,7 @@ struct OnboardingView: View {
                     .tracking(-0.35)
                     .foregroundStyle(palette.noteText(for: colorScheme))
 
-                Text("Same local model, two distinct workflows. Audio stays in memory on this Mac.")
+                Text("Two ways to speak. Audio stays on this Mac.")
                     .font(.callout)
                     .foregroundStyle(secondaryText)
                     .multilineTextAlignment(.center)
@@ -497,7 +504,7 @@ struct OnboardingView: View {
                     showsRestoreDefault: false
                 )
 
-                Text("Defaults for Dictate: inserts at your cursor, keeps a copy on the clipboard, and saves a local copy in Rasc. Change anytime in Settings → Voice.")
+                Text("Dictate inserts at your cursor, copies to the clipboard, and saves a local copy. Change in Settings → Voice.")
                     .font(.caption)
                     .foregroundStyle(metadataText)
                     .fixedSize(horizontal: false, vertical: true)
@@ -524,7 +531,7 @@ struct OnboardingView: View {
 
                 if coordinator.needsAccessibilityForVoiceSetup {
                     contextualPermissionRow(
-                        title: "Allow Accessibility to type directly at your cursor or use single-modifier triggers.",
+                        title: "Allow Accessibility to type at your cursor or use one-key shortcuts.",
                         buttonTitle: "Allow Accessibility…",
                         secondaryTitle: "Settings…",
                         action: { coordinator.requestAccessibilityPermission() },
@@ -540,9 +547,16 @@ struct OnboardingView: View {
                         Text("Try Dictate here")
                             .font(.caption.weight(.medium))
                             .foregroundStyle(secondaryText)
-                        TextField("Focus this field and press \(globalShortcuts.displayString(for: .voiceDictate))…", text: $dictationPracticeDraft)
+                        TextField("Press \(globalShortcuts.displayString(for: .voiceDictate)) and say something…", text: $dictationPracticeDraft)
                             .textFieldStyle(.roundedBorder)
                             .font(.callout)
+                            .focused($dictationPracticeFocused)
+                            .onChange(of: dictationPracticeFocused) { _, focused in
+                                // Keep the field focused through the whole
+                                // Dictate cycle; the step's Continue button
+                                // must not reclaim focus while typing here.
+                                if focused { focusedTarget = nil }
+                            }
                     }
                     .padding(.top, 2)
                 }

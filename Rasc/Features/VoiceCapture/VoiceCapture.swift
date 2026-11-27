@@ -152,8 +152,9 @@ final class VoiceCapture: ObservableObject {
     private let accessibilityTrusted: @Sendable () -> Bool
     private let pasteboard: NSPasteboard
     private let insertText: @MainActor @Sendable (String, NSRunningApplication?, NSPasteboard) -> VoiceTextInsertion.Result
-    private let insertInCurrentApp: @MainActor @Sendable (String) -> Bool
+    private let insertInCurrentApp: @MainActor @Sendable (String, NSWindow?) -> Bool
     private let isCurrentAppFrontmost: @MainActor @Sendable () -> Bool
+    private let frontmostApplicationProvider: @MainActor @Sendable () -> NSRunningApplication?
     private lazy var modifierMonitor = ModifierShortcutMonitor()
     private var repository: NoteRepository?
     private lazy var windows = VoiceCaptureWindows(capture: self)
@@ -182,6 +183,7 @@ final class VoiceCapture: ObservableObject {
     private var captureWasInterrupted: Bool { interruptionReason != .none }
     private var announcedTimeLimitWarning = false
     private var targetApplication: NSRunningApplication?
+    private var targetEditorWindow: NSWindow?
     private var deliveryDismissTask: Task<Void, Never>?
     private var standaloneHistoryTask: Task<Void, Never>?
     private var lastActivation: ContinuousClock.Instant?
@@ -227,9 +229,10 @@ final class VoiceCapture: ObservableObject {
         insertText: @escaping @MainActor @Sendable (String, NSRunningApplication?, NSPasteboard) -> VoiceTextInsertion.Result = {
             VoiceTextInsertion.insert($0, target: $1, pasteboard: $2)
         },
-        insertInCurrentApp: @escaping @MainActor @Sendable (String) -> Bool = { text in
+        insertInCurrentApp: @escaping @MainActor @Sendable (String, NSWindow?) -> Bool = { text, capturedWindow in
             guard NSApp.isActive,
-                  NSWorkspace.shared.frontmostApplication == .current
+                  NSWorkspace.shared.frontmostApplication == .current,
+                  capturedWindow == nil || NSApp.keyWindow === capturedWindow
             else {
                 return false
             }
@@ -237,6 +240,9 @@ final class VoiceCapture: ObservableObject {
         },
         isCurrentAppFrontmost: @escaping @MainActor @Sendable () -> Bool = {
             NSWorkspace.shared.frontmostApplication == .current
+        },
+        frontmostApplicationProvider: @escaping @MainActor @Sendable () -> NSRunningApplication? = {
+            NSWorkspace.shared.frontmostApplication
         }
     ) {
         self.preferences = preferences
@@ -255,6 +261,7 @@ final class VoiceCapture: ObservableObject {
         self.insertText = insertText
         self.insertInCurrentApp = insertInCurrentApp
         self.isCurrentAppFrontmost = isCurrentAppFrontmost
+        self.frontmostApplicationProvider = frontmostApplicationProvider
         modifierShortcut = modifierStore.shortcut
         let trusted = accessibilityTrusted()
         modifierShortcutHasAccess = trusted
@@ -448,7 +455,11 @@ final class VoiceCapture: ObservableObject {
     }
 
     func requestAccessibilityForInsertion() {
+        // Prompt for the identity of the *running* build. An isolated, ad-hoc
+        // signed RC is a different TCC client from the distributed app even
+        // when System Settings shows an enabled Rasc entry.
         ModifierShortcutAccess.request()
+        refreshAccessibilityStatus()
         refreshModifierShortcut()
     }
 
@@ -793,7 +804,16 @@ final class VoiceCapture: ObservableObject {
             return
         }
         activatedAt = .now
-        targetApplication = NSWorkspace.shared.frontmostApplication.flatMap { $0 == .current ? nil : $0 }
+        // Remember the destination before any permission prompt or HUD appears.
+        // Delivery only ever targets this app/window, never whichever app happens
+        // to be frontmost when transcription finishes.
+        if isCurrentAppFrontmost() {
+            targetApplication = nil
+            targetEditorWindow = NSApp.keyWindow
+        } else {
+            targetApplication = frontmostApplicationProvider()
+            targetEditorWindow = nil
+        }
         transition(.checking)
         if presentWindows { windows.showStatus() }
         observeResources()
@@ -828,10 +848,14 @@ final class VoiceCapture: ObservableObject {
                 return
             }
             transition(.starting)
-            // Remember where dictation started. Focus is never stolen; insertion
-            // follows the app that is frontmost at finish, falling back to this.
-            if let frontmost = NSWorkspace.shared.frontmostApplication, frontmost != .current {
+            // A system permission prompt can leave another app frontmost on
+            // return. Only adopt it when no destination was captured at start;
+            // otherwise keep the original target and let delivery detect the
+            // focus change.
+            if targetApplication == nil, !isCurrentAppFrontmost(),
+               let frontmost = frontmostApplicationProvider(), frontmost != .current {
                 targetApplication = frontmost
+                targetEditorWindow = nil
             }
             let input = self.input
             do {
@@ -1063,6 +1087,18 @@ final class VoiceCapture: ObservableObject {
         }
     }
 
+    /// Dictation started for an external app must never land in a different
+    /// app if focus moved while recording. When Rasc was frontmost at the
+    /// start, following an intentional switch to another app is allowed.
+    static func focusChangedDuringCapture(
+        startedWithExternalTarget: NSRunningApplication?,
+        currentTarget: NSRunningApplication?,
+        rascIsFrontmost: Bool
+    ) -> Bool {
+        guard let started = startedWithExternalTarget else { return false }
+        return rascIsFrontmost || currentTarget != started
+    }
+
     /// Deliver a finished transcript according to `activeIntent` and `dictationDelivery`.
     /// Focus is never stolen; no Scratchpad window opens in `.dictate` mode.
     private func deliverTranscript(_ text: String, owner token: UUID) async {
@@ -1079,37 +1115,30 @@ final class VoiceCapture: ObservableObject {
                 transition(.copied)
                 scheduleDeliveryDismiss(.copied, after: .milliseconds(1400))
             case .insertAtCursor:
-                if insertInCurrentApp(text) {
-                    if dictationAlsoCopiesToClipboard {
-                        VoiceTextInsertion.copy(text, to: pasteboard)
-                        transition(.insertedAndCopied)
-                        scheduleDeliveryDismiss(.insertedAndCopied, after: .milliseconds(1400))
-                    } else {
-                        transition(.inserted)
-                        scheduleDeliveryDismiss(.inserted, after: .milliseconds(1400))
-                    }
-                } else if isCurrentAppFrontmost() {
+                let frontmostIsRasc = isCurrentAppFrontmost()
+                let app = currentTargetApplication()
+                // Insertion is only valid for the destination captured when
+                // recording began. A changed app or editor window is reported
+                // honestly instead of typing into an unrelated field.
+                let focusChanged = Self.focusChangedDuringCapture(
+                    startedWithExternalTarget: targetApplication,
+                    currentTarget: app,
+                    rascIsFrontmost: frontmostIsRasc
+                )
+                if focusChanged {
+                    copyFallback(text, reason: .focusChanged)
+                } else if insertInCurrentApp(text, targetEditorWindow) {
+                    commitInsertion(text, owner: token)
+                } else if frontmostIsRasc {
                     // Rasc is frontmost with no editable field in focus; never leak into a background app.
-                    VoiceTextInsertion.copy(text, to: pasteboard)
-                    lastFallbackReason = .noFocusedTextField
-                    transition(.copiedFallback)
+                    copyFallback(text, reason: .noFocusedTextField)
                 } else {
-                    let app = currentTargetApplication()
                     let result = insertText(text, app, pasteboard)
                     switch result {
                     case .inserted:
-                        if dictationAlsoCopiesToClipboard {
-                            VoiceTextInsertion.copy(text, to: pasteboard)
-                            transition(.insertedAndCopied)
-                            scheduleDeliveryDismiss(.insertedAndCopied, after: .milliseconds(1400))
-                        } else {
-                            transition(.inserted)
-                            scheduleDeliveryDismiss(.inserted, after: .milliseconds(1400))
-                        }
+                        commitInsertion(text, owner: token)
                     case .copiedToClipboard(let reason):
-                        // Honest fallback: text is on the clipboard, keep the capsule up.
-                        lastFallbackReason = reason
-                        transition(.copiedFallback)
+                        copyFallback(text, reason: reason)
                     case .blockedBySecureInput:
                         canRetryAudio = false
                         transition(.issue(.secureInputBlocked))
@@ -1119,6 +1148,26 @@ final class VoiceCapture: ObservableObject {
             }
             enqueueStandaloneHistoryIfNeeded(text)
         }
+    }
+
+    private func commitInsertion(_ text: String, owner token: UUID) {
+        guard owns(token) else { return }
+        if dictationAlsoCopiesToClipboard {
+            VoiceTextInsertion.copy(text, to: pasteboard)
+            transition(.insertedAndCopied)
+            scheduleDeliveryDismiss(.insertedAndCopied, after: .milliseconds(1400))
+        } else {
+            transition(.inserted)
+            scheduleDeliveryDismiss(.inserted, after: .milliseconds(1400))
+        }
+    }
+
+    /// Honest fallback: the transcript is on the clipboard and the capsule stays
+    /// up until dismissed so the user knows exactly why insertion did not happen.
+    private func copyFallback(_ text: String, reason: VoiceTextInsertion.Reason) {
+        VoiceTextInsertion.copy(text, to: pasteboard)
+        lastFallbackReason = reason
+        transition(.copiedFallback)
     }
 
     /// Saves a copy in Rasc's local store only when the user asked for standalone history.
@@ -1138,7 +1187,7 @@ final class VoiceCapture: ObservableObject {
     }
 
     private func currentTargetApplication() -> NSRunningApplication? {
-        if let frontmost = NSWorkspace.shared.frontmostApplication, frontmost != .current { return frontmost }
+        if let frontmost = frontmostApplicationProvider(), frontmost != .current { return frontmost }
         return targetApplication
     }
 
@@ -1320,6 +1369,7 @@ final class VoiceCapture: ObservableObject {
         deliveryDismissTask?.cancel()
         deliveryDismissTask = nil
         targetApplication = nil
+        targetEditorWindow = nil
         modifierMonitor.reset()
         GlobalModifierDispatcher.shared.reset()
         resetInput()
