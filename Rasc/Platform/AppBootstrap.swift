@@ -43,7 +43,8 @@ final class AppBootstrap {
                 VoiceCapture.shared.onOpenScratch = { [weak controller] id, interrupted in
                     await controller?.openCapturedScratch(id: id, interrupted: interrupted) == true
                 }
-                let durationMs = Int((ContinuousClock.now - startedAt).components.attoseconds / 1_000_000_000_000_000)
+                let elapsed = ContinuousClock.now - startedAt
+                let durationMs = Int(elapsed.components.seconds * 1_000 + elapsed.components.attoseconds / 1_000_000_000_000_000)
                 AppDiagnostics.bootstrapReady(durationMs: max(durationMs, 0))
                 return controller
             } catch {
@@ -73,7 +74,7 @@ final class AppBootstrap {
         guard let panel = await awaitPanel() else { return }
 
         if panel.panel.isVisible {
-            await panel.hide()
+            await panel.hide(restorePreviousApplication: false)
         }
 
         let home = homeWindowController ?? HomeWindowController()
@@ -163,7 +164,7 @@ final class AppBootstrap {
 
     func prepareForSettingsPresentation() async {
         if let panel = await awaitPanel(), panel.panel.isVisible {
-            await panel.hide()
+            await panel.hide(restorePreviousApplication: false)
         }
     }
 

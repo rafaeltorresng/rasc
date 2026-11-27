@@ -1,4 +1,5 @@
 import AppKit
+import Carbon.HIToolbox
 import CoreGraphics
 import SwiftUI
 
@@ -8,6 +9,7 @@ struct PanelOcclusionWindow: Equatable, Sendable {
     var layer: Int
     var width: CGFloat
     var height: CGFloat
+    var bounds: CGRect = .zero
 }
 
 enum ScratchpadPanelLevelPolicy {
@@ -32,12 +34,16 @@ enum ScratchpadPanelLevelPolicy {
     /// Menu-bar strips and the Dock are always present and must not lower the scratchpad.
     static func systemInteractionNeedsPriority(
         windows: [PanelOcclusionWindow],
-        ourPID: pid_t
+        ourPID: pid_t,
+        panelScreenBounds: CGRect? = nil
     ) -> Bool {
         let ignoredOwners: Set<String> = ["Window Server", "Dock"]
         for window in windows where window.ownerPID != ourPID {
             guard window.layer >= modalLayer else { continue }
             if ignoredOwners.contains(window.ownerName) { continue }
+            if let panelScreenBounds, !window.bounds.isEmpty, !panelScreenBounds.intersects(window.bounds) {
+                continue
+            }
             // Menu bars and app strips sit above modal level but are not dialogs.
             if window.height < 120 { continue }
             if window.width >= 900, window.height < 200 { continue }
@@ -60,6 +66,7 @@ final class PanelController: NSObject, NSWindowDelegate {
 
     private let session: ScratchpadSession
     private let windowFrameStore: WindowFrameStore
+    private let occlusionWindowsProvider: @MainActor () -> [PanelOcclusionWindow]
     private var hostingController: NSHostingController<AnyView>!
     private var previousApplication: NSRunningApplication?
     private nonisolated(unsafe) var defaultObservers: [NSObjectProtocol] = []
@@ -98,14 +105,18 @@ final class PanelController: NSObject, NSWindowDelegate {
     init(
         repository: NoteRepository,
         refinementProvider: any RefinementProvider = FoundationModelsRefinementProvider(),
-        windowFrameStore: WindowFrameStore = .scratchpad()
+        windowFrameStore: WindowFrameStore = .scratchpad(),
+        occlusionWindowsProvider: @escaping @MainActor () -> [PanelOcclusionWindow] = PanelController.onScreenOcclusionWindows,
+        includesVoiceCapture: @escaping @MainActor () -> Bool = { VoiceCapture.shared.enabled }
     ) {
         self.repository = repository
         session = ScratchpadSession(
             repository: repository,
-            refinementProvider: refinementProvider
+            refinementProvider: refinementProvider,
+            includesVoiceCapture: includesVoiceCapture
         )
         self.windowFrameStore = windowFrameStore
+        self.occlusionWindowsProvider = occlusionWindowsProvider
         panel = ScratchpadPanel(
             contentRect: NSRect(origin: .zero, size: RascWindowMetrics.scratchpadDefault),
             styleMask: [.titled, .resizable, .fullSizeContentView, .nonactivatingPanel],
@@ -171,13 +182,15 @@ final class PanelController: NSObject, NSWindowDelegate {
     }
 
     func show() async {
-        do {
-            try await session.restore()
-        } catch NoteRepository.PersistenceError.structuredContentRequiresDocument {
-            session.markStructuredContentUnavailable()
-        } catch {
-            AppDiagnostics.panelRestoreFailed()
-            session.markLoadFailed()
+        if !panel.isVisible {
+            do {
+                try await session.restore()
+            } catch NoteRepository.PersistenceError.structuredContentRequiresDocument {
+                session.markStructuredContentUnavailable()
+            } catch {
+                AppDiagnostics.panelRestoreFailed()
+                session.markLoadFailed()
+            }
         }
 
         presentPanel()
@@ -263,7 +276,17 @@ final class PanelController: NSObject, NSWindowDelegate {
             let outcome = try await session.keepActiveNote()
             onboardingDelegate?.sessionDidKeepNote()
             if outcome == .keptShouldHide {
+                let keptIdentity = session.editorIdentity
+                let keptRevision = session.contentRevision
                 try? await Task.sleep(for: .milliseconds(450))
+                guard panel.isVisible,
+                      session.surface == .editor,
+                      session.editorIdentity == keptIdentity,
+                      session.contentRevision == keptRevision,
+                      session.text.isEmpty
+                else {
+                    return
+                }
                 await hide()
             }
         } catch {
@@ -380,12 +403,14 @@ final class PanelController: NSObject, NSWindowDelegate {
         panel.makeKeyAndOrderFront(nil)
         focusActiveSurface()
 
-        let durationMs = Int((ContinuousClock.now - startedAt).components.attoseconds / 1_000_000_000_000_000)
+        let elapsed = ContinuousClock.now - startedAt
+        let durationMs = Int(elapsed.components.seconds * 1_000 + elapsed.components.attoseconds / 1_000_000_000_000_000)
         AppDiagnostics.panelPresentCompleted(surface: surfaceLabel, durationMs: max(durationMs, 0))
         onboardingDelegate?.panelDidShow()
     }
 
-    func hide() async {
+    func hide(restorePreviousApplication: Bool = true) async {
+        guard panel.attachedSheet == nil else { return }
         session.cancelRefinement()
         session.closeCommandPalette()
         do {
@@ -397,7 +422,7 @@ final class PanelController: NSObject, NSWindowDelegate {
         stopOcclusionMonitoring()
         windowFrameStore.save(panel)
 
-        let shouldRestorePreviousApplication = NSApp.isActive && panel.isKeyWindow
+        let shouldRestorePreviousApplication = restorePreviousApplication && NSApp.isActive && panel.isKeyWindow
 
         panel.orderOut(nil)
 
@@ -539,10 +564,17 @@ final class PanelController: NSObject, NSWindowDelegate {
         // Preview Left/Right cycles Suggested → Changes → Original. Intercepted
         // before the responder chain because the preview's comparison picker
         // (an NSSegmentedControl) accepts first responder and would otherwise
-        // consume the arrows. The editor keeps its own arrows.
+        // consume the arrows. Plain Escape also dismisses surfaces like `.refining`
+        // that have no focusable SwiftUI control.
+        panel.escapeHandler = { [weak self] in
+            self?.handleEscapeKeyDown() ?? false
+        }
         panel.keyDownHandler = { [weak self] event in
             MainActor.assumeIsolated {
                 if self?.onVoiceCaptureShortcut?(event) == true { return true }
+                if self?.isPlainEscapeKeyDown(event) == true {
+                    return self?.handleEscapeKeyDown() ?? false
+                }
                 return self?.handlePreviewArrowKey(event) ?? false
             }
         }
@@ -557,6 +589,27 @@ final class PanelController: NSObject, NSWindowDelegate {
             }
             return handled ? nil : event
         }
+    }
+
+    private func isPlainEscapeKeyDown(_ event: NSEvent) -> Bool {
+        guard Int(event.keyCode) == kVK_Escape else { return false }
+        let modifiers = event.modifierFlags
+            .intersection(.deviceIndependentFlagsMask)
+            .intersection([.command, .option, .control, .shift])
+        return modifiers.isEmpty
+    }
+
+    private func handleEscapeKeyDown() -> Bool {
+        guard panel.isVisible, panel.attachedSheet == nil else { return false }
+        if let textView = panel.firstResponder as? NSTextView, textView.hasMarkedText() {
+            return false
+        }
+        if !session.handleEscape() {
+            Task { [weak self] in
+                await self?.hide()
+            }
+        }
+        return true
     }
 
     private func handlePreviewArrowKey(_ event: NSEvent) -> Bool {
@@ -686,8 +739,24 @@ final class PanelController: NSObject, NSWindowDelegate {
 
     private func systemInteractionNeedsPriority() -> Bool {
         ScratchpadPanelLevelPolicy.systemInteractionNeedsPriority(
-            windows: Self.onScreenOcclusionWindows(),
-            ourPID: ProcessInfo.processInfo.processIdentifier
+            windows: occlusionWindowsProvider(),
+            ourPID: ProcessInfo.processInfo.processIdentifier,
+            panelScreenBounds: currentPanelScreenQuartzBounds()
+        )
+    }
+
+    private func currentPanelScreenQuartzBounds() -> CGRect? {
+        guard let screen = panel.screen ?? NSScreen.main ?? NSScreen.screens.first else {
+            return nil
+        }
+        let primaryHeight = (NSScreen.screens.first { $0.frame.origin == .zero } ?? NSScreen.screens.first)?.frame.height
+            ?? screen.frame.maxY
+        let frame = screen.frame
+        return CGRect(
+            x: frame.minX,
+            y: primaryHeight - frame.maxY,
+            width: frame.width,
+            height: frame.height
         )
     }
 
@@ -713,18 +782,29 @@ final class PanelController: NSObject, NSWindowDelegate {
             return []
         }
         return info.compactMap { window in
+            if let alpha = window[kCGWindowAlpha as String] as? Double, alpha <= 0.01 {
+                return nil
+            }
             guard let ownerPID = window[kCGWindowOwnerPID as String] as? pid_t,
                   let layer = window[kCGWindowLayer as String] as? Int,
                   let bounds = window[kCGWindowBounds as String] as? [String: CGFloat]
             else {
                 return nil
             }
+            let width = bounds["Width"] ?? 0
+            let height = bounds["Height"] ?? 0
             return PanelOcclusionWindow(
                 ownerPID: ownerPID,
                 ownerName: window[kCGWindowOwnerName as String] as? String ?? "",
                 layer: layer,
-                width: bounds["Width"] ?? 0,
-                height: bounds["Height"] ?? 0
+                width: width,
+                height: height,
+                bounds: CGRect(
+                    x: bounds["X"] ?? 0,
+                    y: bounds["Y"] ?? 0,
+                    width: width,
+                    height: height
+                )
             )
         }
     }

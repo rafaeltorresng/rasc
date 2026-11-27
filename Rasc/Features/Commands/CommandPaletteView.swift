@@ -15,10 +15,17 @@ struct CommandPaletteView: View {
         VStack(spacing: 0) {
             paletteHeader
 
-            ScrollView {
-                commandList
+            ScrollViewReader { proxy in
+                ScrollView {
+                    commandList
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .onChange(of: session.selectedCommandIndex) { _, _ in
+                    if let selected = session.selectedCommand() {
+                        proxy.scrollTo(selected.id, anchor: .center)
+                    }
+                }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .onGlobalShortcutChange {
@@ -27,6 +34,16 @@ struct CommandPaletteView: View {
         }
         .onExitCommand {
             session.closeCommandPalette()
+        }
+        .onChange(of: session.selectedCommandIndex) { _, _ in
+            if let command = session.selectedCommand() {
+                RascAccessibility.announce(command.title)
+            }
+        }
+        .onChange(of: session.destructiveConfirmationRequested) { _, requested in
+            if requested {
+                RascAccessibility.announce("Press Return again to discard this thought")
+            }
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Command palette")
@@ -73,6 +90,7 @@ struct CommandPaletteView: View {
                         commandRow(command, isSelected: index == session.selectedCommandIndex)
                     }
                     .buttonStyle(.plain)
+                    .id(command.id)
                     .accessibilityLabel(command.title)
                     .accessibilityHint(
                         command == .discardNote && session.destructiveConfirmationRequested
@@ -111,9 +129,12 @@ struct CommandPaletteView: View {
                     .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(palette.destructiveText(for: colorScheme))
             } else {
-                Text(command.displayedShortcutLabel())
-                    .font(.system(size: RascSurfaceMetrics.searchTimestampFontSize, design: .monospaced))
-                    .foregroundStyle(palette.metadataText(for: colorScheme))
+                let shortcutLabel = command.displayedShortcutLabel()
+                if !shortcutLabel.isEmpty {
+                    Text(shortcutLabel)
+                        .font(.system(size: RascSurfaceMetrics.searchTimestampFontSize, design: .monospaced))
+                        .foregroundStyle(palette.metadataText(for: colorScheme))
+                }
             }
         }
         .rascTransientListRow(

@@ -566,6 +566,10 @@ struct HomeSessionTests {
         #expect(session.selectedNoteIDs == Set(orderedIDs[0...2]))
         #expect(session.selectedNoteID == orderedIDs[2])
         #expect(session.isSelectionMode)
+
+        session.extendSelection(.up, columns: 1)
+        #expect(session.selectedNoteIDs == Set(orderedIDs[0...1]))
+        #expect(session.selectedNoteID == orderedIDs[1])
     }
 
     @MainActor

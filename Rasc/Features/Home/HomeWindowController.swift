@@ -24,6 +24,7 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
     private nonisolated(unsafe) var memoryPressureSource: DispatchSourceMemoryPressure?
     private nonisolated(unsafe) var defaultObservers: [NSObjectProtocol] = []
     private nonisolated(unsafe) var workspaceObservers: [NSObjectProtocol] = []
+    private var suppressNextBecomeKeyReload = false
 
     deinit {
         deferredReleaseTask?.cancel()
@@ -75,9 +76,12 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
         deferredReleaseTask?.cancel()
         deferredReleaseTask = nil
 
+        let wasVisible = window?.isVisible == true
         let session = session ?? HomeSession(repository: repository, prepareForDuplicate: prepareForDuplicate)
         self.session = session
-        session.recordHomeVisit()
+        if !wasVisible {
+            session.recordHomeVisit()
+        }
         session.requestSearchFocus()
 
         callbacks.onOpenNote = onOpenNote
@@ -106,7 +110,9 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
 
         positionWindowIfNeeded(window)
         NSApp.activate(ignoringOtherApps: true)
+        suppressNextBecomeKeyReload = true
         window.makeKeyAndOrderFront(nil)
+        suppressNextBecomeKeyReload = false
         self.window = window
         onVisibilityChange?(true)
         reloadIfVisible()
@@ -125,6 +131,7 @@ final class HomeWindowController: NSObject, NSWindowDelegate {
     }
 
     func windowDidBecomeKey(_ notification: Notification) {
+        guard !suppressNextBecomeKeyReload else { return }
         reloadIfVisible()
     }
 

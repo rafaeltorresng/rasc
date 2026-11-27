@@ -365,7 +365,10 @@ final class InternalShortcutStore: ObservableObject {
         guard shortcut.includesChordModifier else {
             return "Use ⌘, ⌥, or ⌃."
         }
-        let reserved = Set(["cmd+q", "cmd+w", "cmd+,"])
+        let reserved = Set([
+            "cmd+q", "cmd+w", "cmd+,", "cmd+h", "cmd+m",
+            "cmd+c", "cmd+v", "cmd+x", "cmd+z", "shift+cmd+z", "cmd+a",
+        ])
         if reserved.contains(canonical(shortcut)) || shortcut.key == "\u{1b}" {
             return "That shortcut belongs to macOS."
         }
@@ -463,17 +466,16 @@ final class MainMenuShortcutBridge: NSObject, NSMenuDelegate {
         InternalShortcutStore.shared.applyKeyEquivalents()
     }
 
-    override func responds(to aSelector: Selector!) -> Bool {
-        if super.responds(to: aSelector) { return true }
-        return forwarded.values.contains { $0.responds(to: aSelector) }
+    func menuDidClose(_ menu: NSMenu) {
+        forwarded[ObjectIdentifier(menu)]?.menuDidClose?(menu)
     }
 
-    override func forwardingTarget(for aSelector: Selector!) -> Any? {
-        if aSelector == #selector(NSMenuDelegate.menuWillOpen(_:)) {
-            return nil
-        }
-        return forwarded.values.first { $0.responds(to: aSelector) }
-            ?? super.forwardingTarget(for: aSelector)
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        forwarded[ObjectIdentifier(menu)]?.menuNeedsUpdate?(menu)
+    }
+
+    func menu(_ menu: NSMenu, willHighlight item: NSMenuItem?) {
+        forwarded[ObjectIdentifier(menu)]?.menu?(menu, willHighlight: item)
     }
 
     private func attach(_ menu: NSMenu) {

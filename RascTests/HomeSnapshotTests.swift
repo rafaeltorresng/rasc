@@ -258,7 +258,7 @@ struct HomeSnapshotTests {
         )
         for (scheme, name) in [(ColorScheme.light, "light"), (.dark, "dark")] {
             try renderPNG(
-                SettingsView(themeStore: store), width: 460, height: minimumHeight, scheme: scheme,
+                SettingsView(themeStore: store), width: 500, height: minimumHeight, scheme: scheme,
                 name: "settings-custom-\(name)", palette: store.palette
             )
         }

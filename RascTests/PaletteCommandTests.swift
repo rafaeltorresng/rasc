@@ -44,6 +44,9 @@ struct PaletteCommandTests {
 
         #expect(PaletteCommand.openHome.displayedShortcutLabel() == custom.description)
         #expect(PaletteCommand.openHome.displayedShortcutLabel() == GlobalShortcutFormatting.currentHomeShortcutDisplay())
+
+        KeyboardShortcuts.setShortcut(nil, for: .toggleHome)
+        #expect(PaletteCommand.openHome.displayedShortcutLabel().isEmpty)
     }
 
     @Test

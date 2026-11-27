@@ -176,6 +176,7 @@ struct SettingsView: View {
             refreshLaunchAtLoginState()
             refreshLanguageSettings()
             voiceCapture.refreshAccessibilityStatus()
+            Task { await refreshRefineStatus() }
         }
     }
 
@@ -279,10 +280,10 @@ struct SettingsView: View {
             .listRowBackground(settingsSectionBackground)
 
             Section("Startup") {
-                Toggle("Launch at Login", isOn: $launchAtLogin)
-                    .onChange(of: launchAtLogin) { _, isEnabled in
-                        updateLaunchAtLogin(isEnabled)
-                    }
+                Toggle("Launch at Login", isOn: Binding(
+                    get: { launchAtLogin },
+                    set: { updateLaunchAtLogin($0) }
+                ))
 
                 if loginItemState == .requiresApproval {
                     HStack {
@@ -332,22 +333,24 @@ struct SettingsView: View {
             Section {
                 UnifiedShortcutRow(action: .toggleScratchpad)
                 UnifiedShortcutRow(action: .toggleHome)
-                UnifiedShortcutRow(action: .voiceScratchpad, showsRestoreDefault: false)
-                UnifiedShortcutRow(action: .voiceDictate, showsRestoreDefault: false)
+                if VoiceCapture.isSupported {
+                    UnifiedShortcutRow(action: .voiceScratchpad, showsRestoreDefault: false)
+                    UnifiedShortcutRow(action: .voiceDictate, showsRestoreDefault: false)
 
-                if !voiceCapture.enabled &&
-                    (globalShortcuts.trigger(for: .voiceScratchpad) != nil ||
-                     globalShortcuts.trigger(for: .voiceDictate) != nil) {
-                    HStack {
-                        Text("Voice shortcuts stay inactive while Voice is turned off.")
+                    if !voiceCapture.enabled &&
+                        (globalShortcuts.trigger(for: .voiceScratchpad) != nil ||
+                         globalShortcuts.trigger(for: .voiceDictate) != nil) {
+                        HStack {
+                            Text("Voice shortcuts stay inactive while Voice is turned off.")
+                                .font(.caption)
+                                .foregroundStyle(palette.secondaryText(for: colorScheme))
+                            Spacer()
+                            Button("Open Voice Tab") {
+                                selectedTab = .voice
+                            }
+                            .buttonStyle(.borderless)
                             .font(.caption)
-                            .foregroundStyle(palette.secondaryText(for: colorScheme))
-                        Spacer()
-                        Button("Open Voice Tab") {
-                            selectedTab = .voice
                         }
-                        .buttonStyle(.borderless)
-                        .font(.caption)
                     }
                 }
 
@@ -396,7 +399,7 @@ struct SettingsView: View {
             } header: {
                 Text("Inside Rasc")
             } footer: {
-                Text("Esc, ⌘W, ⌘,, and ⌘Q are reserved by macOS.")
+                Text("Esc, ⌘W, ⌘,, ⌘Q, ⌘H, ⌘M, and editing shortcuts are reserved by macOS.")
             }
             .listRowBackground(settingsSectionBackground)
         }
@@ -630,7 +633,9 @@ struct SettingsView: View {
     private func refreshLanguageSettings() {
         supportedFixedLocales = supportedLocales.supportedFixedLocaleOptions()
         languageResolution = languageSettings.resolveEffectivePreference()
-        selectedLanguage = pickerValue(for: languageResolution.stored)
+        selectedLanguage = languageResolution.isUsingFallback
+            ? .matchNote
+            : pickerValue(for: languageResolution.stored)
     }
 
     private func persistLanguageSelection(_ value: RefineLanguagePickerValue) {
@@ -666,101 +671,170 @@ struct SettingsView: View {
     }
 }
 
+@MainActor
+private final class InternalShortcutRecorderModel: ObservableObject {
+    @Published private(set) var isRecording = false
+    @Published var errorMessage: String?
+
+    private static weak var activeRecorder: InternalShortcutRecorderModel?
+
+    private let command: InternalCommand
+    private let store: InternalShortcutStore
+    private nonisolated(unsafe) var monitor: Any?
+    private nonisolated(unsafe) var resignObserver: (any NSObjectProtocol)?
+    private weak var anchorView: NSView?
+
+    init(command: InternalCommand, store: InternalShortcutStore = .shared) {
+        self.command = command
+        self.store = store
+    }
+
+    deinit {
+        if let monitor { NSEvent.removeMonitor(monitor) }
+        if let resignObserver { NotificationCenter.default.removeObserver(resignObserver) }
+    }
+
+    func attachAnchor(_ view: NSView) {
+        anchorView = view
+    }
+
+    func toggle() {
+        if isRecording {
+            cancel()
+        } else {
+            begin()
+        }
+    }
+
+    func begin() {
+        if let active = Self.activeRecorder, active !== self {
+            active.cancel()
+        }
+        endMonitor()
+        Self.activeRecorder = self
+        errorMessage = nil
+        isRecording = true
+        GlobalShortcutRecordingSuspension.begin()
+
+        monitor = NSEvent.addLocalMonitorForEvents(
+            matching: [.keyDown, .leftMouseDown, .rightMouseDown]
+        ) { [weak self] event in
+            let consume = MainActor.assumeIsolated {
+                self?.processEvent(event) ?? false
+            }
+            return consume ? nil : event
+        }
+        resignObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didResignActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.cancel()
+            }
+        }
+    }
+
+    func cancel() {
+        endMonitor()
+        isRecording = false
+    }
+
+    private func processEvent(_ event: NSEvent) -> Bool {
+        guard isRecording else { return false }
+        switch event.type {
+        case .keyDown:
+            if event.keyCode == 53,
+               event.modifierFlags.intersection([.command, .option, .control, .shift]).isEmpty {
+                errorMessage = nil
+                cancel()
+                return true
+            }
+            guard let shortcut = InternalShortcut(event: event) else {
+                errorMessage = "Use a key with ⌘, ⌥, or ⌃."
+                cancel()
+                return true
+            }
+            errorMessage = store.assign(shortcut, to: command)
+            cancel()
+            return true
+        case .leftMouseDown, .rightMouseDown:
+            if let anchorView, event.window === anchorView.window {
+                let point = anchorView.convert(event.locationInWindow, from: nil)
+                if anchorView.bounds.contains(point) {
+                    return false
+                }
+            }
+            cancel()
+            return false
+        default:
+            return false
+        }
+    }
+
+    private func endMonitor() {
+        if let monitor { NSEvent.removeMonitor(monitor) }
+        monitor = nil
+        if let resignObserver { NotificationCenter.default.removeObserver(resignObserver) }
+        resignObserver = nil
+        if Self.activeRecorder === self {
+            Self.activeRecorder = nil
+            GlobalShortcutRecordingSuspension.end()
+        }
+    }
+}
+
 private struct InternalShortcutEditor: View {
     let command: InternalCommand
 
     @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @ObservedObject private var store = InternalShortcutStore.shared
-    @State private var isRecording = false
-    @State private var message: String?
+    @StateObject private var model: InternalShortcutRecorderModel
+
+    init(command: InternalCommand) {
+        self.command = command
+        _model = StateObject(wrappedValue: InternalShortcutRecorderModel(command: command))
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             LabeledContent(command.title) {
-                Button(isRecording ? "Type shortcut…" : store.displayString(for: command)) {
-                    if isRecording {
-                        isRecording = false
-                        GlobalShortcutRecordingSuspension.end()
-                    } else {
-                        GlobalShortcutRecordingSuspension.begin()
-                        isRecording = true
-                        message = nil
-                    }
+                Button(model.isRecording ? "Type shortcut…" : store.displayString(for: command)) {
+                    model.toggle()
                 }
                 .buttonStyle(.bordered)
+                .background(InternalRecorderAnchorView { view in
+                    model.attachAnchor(view)
+                })
                 .accessibilityLabel("\(command.title) shortcut")
-                .accessibilityHint(isRecording ? "Type the new shortcut" : "Activate to record a new shortcut")
+                .accessibilityHint(model.isRecording ? "Type the new shortcut, or Escape to cancel" : "Activate to record a new shortcut")
             }
-            if let message {
+            if let message = model.errorMessage {
                 Text(message)
                     .font(.caption)
                     .foregroundStyle(palette.secondaryText(for: colorScheme))
             }
         }
         .onDisappear {
-            if isRecording {
-                isRecording = false
-                GlobalShortcutRecordingSuspension.end()
-            }
-        }
-        .background {
-            if isRecording {
-                InternalShortcutCapture(
-                    onCapture: { event in
-                        GlobalShortcutRecordingSuspension.end()
-                        guard let shortcut = InternalShortcut(event: event) else {
-                            message = "Use a key with ⌘, ⌥, or ⌃."
-                            isRecording = false
-                            return
-                        }
-                        message = store.assign(shortcut, to: command)
-                        isRecording = false
-                    },
-                    onCancel: {
-                        GlobalShortcutRecordingSuspension.end()
-                        message = nil
-                        isRecording = false
-                    }
-                )
-            }
+            model.cancel()
         }
     }
 }
 
-private struct InternalShortcutCapture: NSViewRepresentable {
-    var onCapture: (NSEvent) -> Void
-    var onCancel: () -> Void
+private struct InternalRecorderAnchorView: NSViewRepresentable {
+    let onAttach: (NSView) -> Void
 
-    func makeNSView(context: Context) -> CaptureView {
-        let view = CaptureView()
-        view.onCapture = onCapture
-        view.onCancel = onCancel
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView()
+        DispatchQueue.main.async {
+            onAttach(view)
+        }
         return view
     }
 
-    func updateNSView(_ view: CaptureView, context: Context) {
-        view.onCapture = onCapture
-        view.onCancel = onCancel
-        guard view.window?.firstResponder !== view else { return }
-        DispatchQueue.main.async {
-            view.window?.makeFirstResponder(view)
-        }
-    }
-
-    final class CaptureView: NSView {
-        var onCapture: ((NSEvent) -> Void)?
-        var onCancel: (() -> Void)?
-
-        override var acceptsFirstResponder: Bool { true }
-
-        override func keyDown(with event: NSEvent) {
-            if event.keyCode == 53 {
-                onCancel?()
-                return
-            }
-            onCapture?(event)
-        }
+    func updateNSView(_ nsView: NSView, context: Context) {
+        onAttach(nsView)
     }
 }
 

@@ -235,30 +235,43 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
         }
     }
 
+    private var activeKeyScratchpadPanel: PanelController? {
+        guard let panel = bootstrap.panelIfReady(),
+              panel.panel.isVisible,
+              panel.panel.isKeyWindow
+        else {
+            return nil
+        }
+        return panel
+    }
+
     func refine() {
-        bootstrap.panelIfReady()?.startRefinement()
+        activeKeyScratchpadPanel?.startRefinement()
     }
 
     func keepActiveNote() {
+        guard let panel = activeKeyScratchpadPanel else { return }
         Task { @MainActor in
-            await bootstrap.awaitPanel()?.keepActiveNote()
+            await panel.keepActiveNote()
         }
     }
 
     func unkeepActiveNote() {
+        guard let panel = activeKeyScratchpadPanel else { return }
         Task { @MainActor in
-            await bootstrap.awaitPanel()?.unkeepActiveNote()
+            await panel.unkeepActiveNote()
         }
     }
 
     func copyActiveNote() {
+        guard let panel = activeKeyScratchpadPanel else { return }
         Task { @MainActor in
-            await bootstrap.awaitPanel()?.copyActiveNote()
+            await panel.copyActiveNote()
         }
     }
 
     func shareActiveNote() {
-        bootstrap.panelIfReady()?.shareActiveNote()
+        activeKeyScratchpadPanel?.shareActiveNote()
     }
 
     func exportThought() {
@@ -270,8 +283,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
     }
 
     func discardActiveNote() {
+        guard let panel = activeKeyScratchpadPanel else { return }
         Task { @MainActor in
-            await bootstrap.awaitPanel()?.discardActiveNote()
+            await panel.discardActiveNote()
         }
     }
 

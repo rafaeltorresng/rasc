@@ -182,6 +182,7 @@ final class ScratchpadSession {
     private let refinementProvider: (any RefinementProvider)?
     private let activeNoteStore: ActiveNoteStore
     private let languageSettings: RefineLanguageSettingsStore
+    private let includesVoiceCapture: @MainActor () -> Bool
     private var noteID: UUID?
     /// Changes whenever the displayed scratch stops being the one a save was started for.
     private var sessionEpoch = 0
@@ -193,6 +194,7 @@ final class ScratchpadSession {
     private var acceptanceTask: Task<Void, Error>?
     private var messageTask: Task<Void, Never>?
     private var feedbackTask: Task<Void, Never>?
+    private var discardBannerTask: Task<Void, Never>?
     private var activeRefinementID: UUID?
     private var isApplyingAcceptedRefinement = false
     private var commandPaletteCompletionEligible = false
@@ -221,12 +223,14 @@ final class ScratchpadSession {
         repository: NoteRepository,
         refinementProvider: (any RefinementProvider)? = nil,
         userDefaults: UserDefaults = .standard,
-        languageSettings: RefineLanguageSettingsStore? = nil
+        languageSettings: RefineLanguageSettingsStore? = nil,
+        includesVoiceCapture: @escaping @MainActor () -> Bool = { VoiceCapture.shared.enabled }
     ) {
         self.repository = repository
         self.refinementProvider = refinementProvider
         activeNoteStore = ActiveNoteStore(userDefaults: userDefaults)
         self.languageSettings = languageSettings ?? RefineLanguageSettingsStore(userDefaults: userDefaults)
+        self.includesVoiceCapture = includesVoiceCapture
     }
 
     func requestEditorFocus() {
@@ -269,6 +273,11 @@ final class ScratchpadSession {
 
     func reportCompletionFailure(_ failure: CompletionFailure) { completionFailure = failure }
     func dismissCompletionFailure() { completionFailure = nil }
+    func dismissLastDiscard() {
+        discardBannerTask?.cancel()
+        discardBannerTask = nil
+        lastDiscard = nil
+    }
 
     var hasPersistableContent: Bool {
         document?.hasImages == true || !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -292,6 +301,10 @@ final class ScratchpadSession {
 
     func restore() async throws {
         try await acceptanceTask?.value
+        let pendingAutosave = autosaveTask
+        autosaveTask = nil
+        pendingAutosave?.cancel()
+        await pendingAutosave?.value
         cancelRefinement()
         clearMessage(returnToEditor: false)
         editorSelection = nil
@@ -385,13 +398,17 @@ final class ScratchpadSession {
         try await prepareForThoughtCompletionAction()
 
         if let noteID {
-            lastDiscard = try await repository.delete(id: noteID)
-            if let receipt = lastDiscard, let undoManager {
-                let registration = DiscardUndoRegistration(manager: undoManager) { [weak self] in
-                    Task { await self?.undoDiscard(receipt) }
+            let receipt = try await repository.delete(id: noteID)
+            lastDiscard = receipt
+            if let receipt {
+                scheduleDiscardBannerDismiss(for: receipt)
+                if let undoManager {
+                    let registration = DiscardUndoRegistration(manager: undoManager) { [weak self] in
+                        Task { await self?.undoDiscard(receipt) }
+                    }
+                    discardUndoRegistrations[receipt.id] = registration
+                    registration.register()
                 }
-                discardUndoRegistrations[receipt.id] = registration
-                registration.register()
             }
         }
         clearActiveScratchSession()
@@ -410,7 +427,11 @@ final class ScratchpadSession {
                 requestEditorFocus()
             }
             discardUndoRegistrations.removeValue(forKey: receipt.id)?.invalidate()
-            if lastDiscard == receipt { lastDiscard = nil }
+            if lastDiscard == receipt {
+                discardBannerTask?.cancel()
+                discardBannerTask = nil
+                lastDiscard = nil
+            }
             saveErrorMessage = nil
             showTransientFeedback("Restored. Available in Home.")
         } catch {
@@ -563,7 +584,8 @@ final class ScratchpadSession {
 
                 let startedAt = ContinuousClock.now
                 let results = try await repository.search(query, limit: 13)
-                let durationMs = Int((ContinuousClock.now - startedAt).components.attoseconds / 1_000_000_000_000_000)
+                let elapsed = ContinuousClock.now - startedAt
+                let durationMs = Int(elapsed.components.seconds * 1_000 + elapsed.components.attoseconds / 1_000_000_000_000_000)
                 guard !Task.isCancelled,
                       surface == .search,
                       searchQuery == query
@@ -1396,6 +1418,7 @@ final class ScratchpadSession {
     private func adoptDisplayedNote(_ note: Note, document: NoteDocument?) {
         if noteID != note.id { editorIdentity &+= 1 }
         sessionEpoch &+= 1
+        completionFailure = nil
         noteID = note.id
         self.document = document
         persistedDocument = document
@@ -1408,6 +1431,7 @@ final class ScratchpadSession {
     private func clearDisplayedIdentity() {
         sessionEpoch &+= 1
         editorIdentity &+= 1
+        completionFailure = nil
         noteID = nil
         document = nil
         persistedDocument = nil
@@ -1460,7 +1484,7 @@ final class ScratchpadSession {
             isKept: isActiveNoteKept,
             hasPersistableContent: hasPersistableContent,
             canPerformCompletion: canPerformThoughtCompletion,
-            includesVoiceCapture: VoiceCapture.shared.enabled
+            includesVoiceCapture: includesVoiceCapture()
         )
     }
 
@@ -1487,6 +1511,15 @@ final class ScratchpadSession {
             try? await Task.sleep(for: duration)
             guard !Task.isCancelled, self?.transientFeedback == message else { return }
             self?.transientFeedback = nil
+        }
+    }
+
+    private func scheduleDiscardBannerDismiss(for receipt: NoteDiscardReceipt, after duration: Duration = .seconds(8)) {
+        discardBannerTask?.cancel()
+        discardBannerTask = Task { [weak self] in
+            try? await Task.sleep(for: duration)
+            guard !Task.isCancelled, self?.lastDiscard == receipt else { return }
+            self?.lastDiscard = nil
         }
     }
 

@@ -144,7 +144,9 @@ struct HistorySearchView: View {
             .clipShape(Rectangle())
             .onChange(of: session.selectedSearchIndex) { _, index in
                 guard session.searchResults.indices.contains(index) else { return }
-                proxy.scrollTo(session.searchResults[index].id)
+                let note = session.searchResults[index]
+                proxy.scrollTo(note.id)
+                RascAccessibility.announce(note.displayTitle)
             }
         }
     }

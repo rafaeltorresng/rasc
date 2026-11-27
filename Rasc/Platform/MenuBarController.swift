@@ -87,7 +87,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
             keyEquivalent: ""
         ))
         menu.addItem(makeItem(
-            title: "Settings",
+            title: "Settings…",
             action: #selector(openSettings),
             keyEquivalent: ",",
             modifierMask: .command

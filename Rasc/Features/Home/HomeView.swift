@@ -138,13 +138,7 @@ struct HomeView: View {
                         onCopy: { message in
                             session.actionErrorMessage = nil
                             retryAction = nil
-                            copyFeedback = message
-                            copyFeedbackTask?.cancel()
-                            copyFeedbackTask = Task { @MainActor in
-                                try? await Task.sleep(for: .seconds(3))
-                                guard !Task.isCancelled else { return }
-                                copyFeedback = nil
-                            }
+                            showCopyFeedback(message)
                         },
                         onDiscardSucceeded: {
                             session.actionErrorMessage = nil
@@ -258,7 +252,17 @@ struct HomeView: View {
             session.selectAllVisible()
             return .handled
         }
+        .onKeyPress(KeyEquivalent("f"), phases: .down) { press in
+            guard press.modifiers == .command else { return .ignored }
+            session.requestSearchFocus()
+            return .handled
+        }
         .onExitCommand {
+            if !session.searchQuery.isEmpty {
+                session.searchQuery = ""
+                session.requestSearchFocus()
+                return
+            }
             guard session.selectedCount > 0 || session.isSelectionMode else { return }
             session.clearSelection()
         }
@@ -285,8 +289,13 @@ struct HomeView: View {
             .accessibilityLabel("Rasc")
 
             ThoughtSearchField(text: $session.searchQuery, isFocused: $searchIsFocused)
-                .onSubmit { searchIsFocused = false; listIsFocused = true }
+                .onSubmit {
+                    guard !session.displayedNotes.isEmpty else { return }
+                    searchIsFocused = false
+                    listIsFocused = true
+                }
                 .onKeyPress(.downArrow) {
+                    guard !session.displayedNotes.isEmpty else { return .ignored }
                     searchIsFocused = false
                     listIsFocused = true
                     return .handled
@@ -563,18 +572,24 @@ struct HomeView: View {
                 if document.hasImages {
                     let imageCount = document.parts.filter { if case .image = $0 { true } else { false } }.count
                     let imageOnly = imageCount == 1 && document.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                    copyFeedback = imageOnly ? "Image copied." : "Copied with images. Paste into a rich-text app."
-                    copyFeedbackTask?.cancel()
-                    copyFeedbackTask = Task { @MainActor in
-                        try? await Task.sleep(for: .seconds(3))
-                        guard !Task.isCancelled else { return }
-                        copyFeedback = nil
-                    }
+                    showCopyFeedback(imageOnly ? "Image copied." : "Copied with images. Paste into a rich-text app.")
+                } else {
+                    showCopyFeedback("Copied.")
                 }
             } catch {
                 session.actionErrorMessage = "Couldn't copy this thought. Try again."
                 retryAction = { copyNote(noteID) }
             }
+        }
+    }
+
+    private func showCopyFeedback(_ message: String) {
+        copyFeedback = message
+        copyFeedbackTask?.cancel()
+        copyFeedbackTask = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(3))
+            guard !Task.isCancelled else { return }
+            copyFeedback = nil
         }
     }
 
@@ -743,24 +758,50 @@ private struct HomeNoteRowView: View {
     }
 
     var body: some View {
-        Button {
-            handleClick()
-        } label: {
-            rowContent
+        HStack(alignment: .center, spacing: 8) {
+            Button {
+                handleClick()
+            } label: {
+                rowContent
+            }
+            .buttonStyle(.plain)
+            .focused($rowIsFocused)
+            .onChange(of: rowIsFocused) { _, focused in if focused { onSelect() } }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(accessibilityLabel)
+            .accessibilityHint(showsSelectionIndicator ? "Press Space to select or deselect" : "Press Return to open")
+            .accessibilityAddTraits(isSelected ? .isSelected : [])
+
+            noteActionsMenu
+                .opacity(showsTrailingActions ? 1 : 0)
+                .allowsHitTesting(showsTrailingActions)
+                .disabled(!showsTrailingActions)
+                .accessibilityHidden(!showsTrailingActions)
         }
-        .buttonStyle(.plain)
-        .focused($rowIsFocused)
-        .onChange(of: rowIsFocused) { _, focused in if focused { onSelect() } }
+        .padding(.horizontal, 10)
+        .frame(maxWidth: .infinity, minHeight: noteTextSize == .large ? 52 : 46, alignment: .center)
+        .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .background {
+            if isSelected {
+                RascTransientSelectionBackground(cornerRadius: 8)
+            } else if isHovered {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(palette.subtleFill(for: colorScheme))
+            }
+        }
+        .overlay {
+            if showsSelectionIndicator && isKeyboardFocused && !isSelected {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .strokeBorder(palette.focus(for: colorScheme).opacity(0.7), lineWidth: 1.25)
+                    .allowsHitTesting(false)
+            }
+        }
         .contextMenu {
             noteActionsMenuContent
         }
         .onHover { isHovered = $0 }
         .animation(RascMotion.micro(reduceMotion: reduceMotion), value: isHovered)
         .animation(RascMotion.selection(reduceMotion: reduceMotion), value: isSelected)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(accessibilityLabel)
-        .accessibilityHint(showsSelectionIndicator ? "Press Space to select or deselect" : "Press Return to open")
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private var rowContent: some View {
@@ -805,31 +846,9 @@ private struct HomeNoteRowView: View {
                 .monospacedDigit()
                 .foregroundStyle(palette.metadataText(for: colorScheme))
                 .lineLimit(1)
-
-            noteActionsMenu
-                .opacity(showsTrailingActions ? 1 : 0)
-                .allowsHitTesting(showsTrailingActions)
-                .disabled(!showsTrailingActions)
-                .accessibilityHidden(!showsTrailingActions)
         }
-        .padding(.horizontal, 10)
         .frame(maxWidth: .infinity, minHeight: noteTextSize == .large ? 52 : 46, alignment: .center)
-        .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .background {
-            if isSelected {
-                RascTransientSelectionBackground(cornerRadius: 8)
-            } else if isHovered {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(palette.subtleFill(for: colorScheme))
-            }
-        }
-        .overlay {
-            if showsSelectionIndicator && isKeyboardFocused && !isSelected {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .strokeBorder(palette.focus(for: colorScheme).opacity(0.7), lineWidth: 1.25)
-                    .allowsHitTesting(false)
-            }
-        }
+        .contentShape(Rectangle())
     }
 
     private var noteActionsMenu: some View {
@@ -1091,6 +1110,7 @@ private struct HomeNoteCardView: View {
     @Environment(\.colorSchemeContrast) private var colorSchemeContrast
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isHovered = false
+    @FocusState private var cardIsFocused: Bool
 
     private var matchMark: Color {
         palette.searchMark(for: colorScheme, increasedContrast: colorSchemeContrast == .increased)
@@ -1109,22 +1129,73 @@ private struct HomeNoteCardView: View {
     }
 
     var body: some View {
-        Button {
-            handleClick()
-        } label: {
-            cardContent
+        ZStack(alignment: .topTrailing) {
+            Button {
+                handleClick()
+            } label: {
+                cardContent
+            }
+            .buttonStyle(.plain)
+            .focused($cardIsFocused)
+            .onChange(of: cardIsFocused) { _, focused in if focused { onSelect() } }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(accessibilityLabel)
+            .accessibilityHint(showsSelectionIndicator ? "Press Space to select or deselect" : "Press Return to open")
+            .accessibilityAddTraits(isSelected ? .isSelected : [])
+
+            VStack(alignment: .trailing, spacing: 4) {
+                Text(timestamp)
+                    .font(.system(size: 11, weight: .medium))
+                    .monospacedDigit()
+                    .lineLimit(1)
+                    .hidden()
+                    .accessibilityHidden(true)
+
+                noteActionsMenu
+                    .opacity(showsTrailingActions ? 1 : 0)
+                    .allowsHitTesting(showsTrailingActions)
+                    .disabled(!showsTrailingActions)
+                    .accessibilityHidden(!showsTrailingActions)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
         }
-        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .contentShape(RoundedRectangle(cornerRadius: HomeLayout.gridItemCornerRadius, style: .continuous))
+        .background {
+            ZStack {
+                RoundedRectangle(cornerRadius: HomeLayout.gridItemCornerRadius, style: .continuous)
+                    .fill(palette.homeCardFill(for: colorScheme))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: HomeLayout.gridItemCornerRadius, style: .continuous)
+                            .strokeBorder(
+                                palette.homeCardBorder(
+                                    for: colorScheme,
+                                    isHovered: isHovered,
+                                    increasedContrast: colorSchemeContrast == .increased
+                                ),
+                                lineWidth: 0.85
+                            )
+                    }
+
+                if isSelected {
+                    // Behind the content, matching the row rendering; this is
+                    // decoration and must never intercept touches.
+                    RascTransientSelectionBackground(cornerRadius: HomeLayout.gridItemCornerRadius)
+                        .allowsHitTesting(false)
+                } else if showsSelectionIndicator && isKeyboardFocused {
+                    RoundedRectangle(cornerRadius: HomeLayout.gridItemCornerRadius, style: .continuous)
+                        .strokeBorder(palette.focus(for: colorScheme).opacity(0.7), lineWidth: 1.25)
+                        .allowsHitTesting(false)
+                }
+            }
+        }
         .contextMenu {
             noteActionsMenuContent
         }
         .onHover { isHovered = $0 }
         .animation(RascMotion.micro(reduceMotion: reduceMotion), value: isHovered)
         .animation(RascMotion.selection(reduceMotion: reduceMotion), value: isSelected)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(accessibilityLabel)
-        .accessibilityHint(showsSelectionIndicator ? "Press Space to select or deselect" : "Press Return to open")
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private var cardContent: some View {
@@ -1173,45 +1244,14 @@ private struct HomeNoteCardView: View {
                     .foregroundStyle(palette.metadataText(for: colorScheme))
                     .lineLimit(1)
 
-                noteActionsMenu
-                    .opacity(showsTrailingActions ? 1 : 0)
-                    .allowsHitTesting(showsTrailingActions)
-                    .disabled(!showsTrailingActions)
-                    .accessibilityHidden(!showsTrailingActions)
+                Color.clear
+                    .frame(width: 26, height: 26)
             }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .contentShape(RoundedRectangle(cornerRadius: HomeLayout.gridItemCornerRadius, style: .continuous))
-        .background {
-            ZStack {
-                RoundedRectangle(cornerRadius: HomeLayout.gridItemCornerRadius, style: .continuous)
-                    .fill(palette.homeCardFill(for: colorScheme))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: HomeLayout.gridItemCornerRadius, style: .continuous)
-                            .strokeBorder(
-                                palette.homeCardBorder(
-                                    for: colorScheme,
-                                    isHovered: isHovered,
-                                    increasedContrast: colorSchemeContrast == .increased
-                                ),
-                                lineWidth: 0.85
-                            )
-                    }
-
-                if isSelected {
-                    // Behind the content, matching the row rendering; this is
-                    // decoration and must never intercept touches.
-                    RascTransientSelectionBackground(cornerRadius: HomeLayout.gridItemCornerRadius)
-                        .allowsHitTesting(false)
-                } else if showsSelectionIndicator && isKeyboardFocused {
-                    RoundedRectangle(cornerRadius: HomeLayout.gridItemCornerRadius, style: .continuous)
-                        .strokeBorder(palette.focus(for: colorScheme).opacity(0.7), lineWidth: 1.25)
-                        .allowsHitTesting(false)
-                }
-            }
-        }
+        .contentShape(Rectangle())
     }
 
     private var noteActionsMenu: some View {

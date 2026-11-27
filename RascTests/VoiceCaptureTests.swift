@@ -1206,6 +1206,7 @@ struct VoiceCaptureTests {
 
         #expect(textView.string == "Hello inline dictation")
         #expect(pasteboard.string(forType: .string) == "Hello inline dictation")
+        #expect(await capture.flushForTermination())
         let saved = try await fixture.repository.fetchAllNonDeleted()
         #expect(saved.map(\.content) == ["Hello inline dictation"])
     }
@@ -1283,25 +1284,25 @@ struct VoiceCaptureTests {
             cancelConfirmationThreshold: Duration = .seconds(30),
             escapeConfirmGuard: Duration = .milliseconds(400),
             cancelConfirmationTimeout: Duration = .seconds(6),
-            accessibilityTrusted: Bool? = nil,
+            accessibilityTrusted: Bool = false,
             pasteboard: NSPasteboard = .general,
             insertResult: VoiceTextInsertion.Result? = nil,
             insertInCurrentApp: Bool = false,
             decode: @escaping @Sendable (VoiceAudio) async throws -> String = { _ in "Talvez não fazer o deploy ainda." }
         ) -> VoiceCapture {
             defaults.set(enabled, forKey: VoiceCapture.preferenceKey)
-            let resolvedAccessibilityTrusted: @Sendable () -> Bool =
-                if let accessibilityTrusted {
-                    { accessibilityTrusted }
-                } else {
-                    { ModifierShortcutAccess.isTrusted }
-                }
+            let resolvedAccessibilityTrusted: @Sendable () -> Bool = { accessibilityTrusted }
             let resolvedInsertText: @MainActor @Sendable (String, NSRunningApplication?, NSPasteboard) -> VoiceTextInsertion.Result =
                 if let insertResult {
                     { @MainActor _, _, _ in insertResult }
                 } else {
                     { @MainActor text, target, pasteboard in
-                        VoiceTextInsertion.insert(text, target: target, pasteboard: pasteboard)
+                        VoiceTextInsertion.insert(
+                            text,
+                            target: target,
+                            pasteboard: pasteboard,
+                            isTrusted: resolvedAccessibilityTrusted
+                        )
                     }
                 }
             let capture = VoiceCapture(

@@ -12,6 +12,7 @@ final class ScratchpadPanel: NSPanel {
     /// which controls in the responder chain (the comparison picker's segmented
     /// control) would otherwise swallow.
     var keyDownHandler: ((NSEvent) -> Bool)?
+    var escapeHandler: (() -> Bool)?
 
     override init(
         contentRect: NSRect,
@@ -25,6 +26,10 @@ final class ScratchpadPanel: NSPanel {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         nil
+    }
+
+    override func cancelOperation(_ sender: Any?) {
+        _ = escapeHandler?()
     }
 
     override func sendEvent(_ event: NSEvent) {
