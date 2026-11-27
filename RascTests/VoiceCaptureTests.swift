@@ -1662,3 +1662,76 @@ private actor VoiceHandoffRefinementProvider: RefinementProvider {
         return .init(decision: .changed, kind: .messyText, text: Self.suggestion)
     }
 }
+
+@Suite(.serialized)
+struct VoiceAudioPipelineTests {
+    @Test func mono16kFastPathSanitizesNonFiniteAndPreservesLength() throws {
+        var samples: [Float] = [0.25, .nan, -0.25, .infinity, 0.5]
+        samples.append(contentsOf: repeatElement(Float(0.1), count: 15_995))
+        let audio = VoiceAudio(samples: samples, rate: 16_000, peak: 0.5, activitySeconds: 1.0)
+        let out = try audio.mono16k()
+        #expect(out.count == 16_000)
+        #expect(out[1] == 0)
+        #expect(out[3] == 0)
+        #expect(out[0] == 0.25)
+        let outFinite = out.allSatisfy(\.isFinite)
+        #expect(outFinite)
+    }
+
+    @Test func mono16kStreams48kMultiChunkWithoutTruncationOrChunkBoundaryDrop() throws {
+        // 35 seconds at 48 kHz spans 3 streaming 15 s blocks cleanly.
+        let rate = 48_000.0
+        let durationSeconds = 35
+        let count = Int(rate) * durationSeconds
+        let samples = (0..<count).map { index in
+            Float(0.25 * sin(2.0 * .pi * 440.0 * Double(index) / rate))
+        }
+        let audio = VoiceAudio(samples: samples, rate: rate, peak: 0.25, activitySeconds: Double(durationSeconds))
+        let out = try audio.mono16k()
+
+        let expectedCount = 16_000 * durationSeconds
+        #expect(abs(out.count - expectedCount) <= 64)
+        let outFinite = out.allSatisfy(\.isFinite)
+        #expect(outFinite)
+
+        // Check signal energy across start, 15s chunk boundary, 30s chunk boundary, and tail.
+        for second in [1, 14, 15, 29, 30, 34] {
+            let start = second * 16_000
+            let end = min(out.count, start + 8_000)
+            let slice = Array(out[start..<end])
+            let rms = sqrt(slice.reduce(Float(0)) { $0 + $1 * $1 } / Float(slice.count))
+            #expect(rms > 0.14 && rms < 0.22)
+        }
+    }
+
+    @Test func mono16kHandles44100HzAndMicBufferSelectsStrongerStereoChannel() throws {
+        let rate44 = 44_100.0
+        let count44 = Int(rate44 * 6.0)
+        let samples44 = (0..<count44).map { i in Float(0.2 * sin(2.0 * .pi * 300.0 * Double(i) / rate44)) }
+        let out44 = try VoiceAudio(samples: samples44, rate: rate44, peak: 0.2, activitySeconds: 6.0).mono16k()
+        #expect(abs(out44.count - 96_000) <= 64)
+        let out44Finite = out44.allSatisfy(\.isFinite)
+        #expect(out44Finite)
+
+        let rate = 48_000.0
+        let micBuffer = MicBuffer(rate: rate, maxDurationSeconds: 10)
+        let format = try #require(AVAudioFormat(standardFormatWithSampleRate: rate, channels: 2))
+        let frameCount = 4800
+        for _ in 0..<10 {
+            let buf = try #require(AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(frameCount)))
+            buf.frameLength = AVAudioFrameCount(frameCount)
+            if let chData = buf.floatChannelData {
+                for i in 0..<frameCount {
+                    chData[0][i] = 0.0005 // quiet ambient hum on channel 0
+                    chData[1][i] = 0.25   // strong speech signal on channel 1
+                }
+            }
+            micBuffer.append(buf)
+        }
+        let captured = micBuffer.audio()
+        #expect(captured.samples.count == 48_000)
+        #expect(captured.peak > 0.2)
+        let selectedStrongChannel = captured.samples.allSatisfy { $0 > 0.2 }
+        #expect(selectedStrongChannel)
+    }
+}

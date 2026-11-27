@@ -20,38 +20,54 @@ struct VoiceAudio: Sendable {
     let activitySeconds: Double
     var seconds: Double { Double(samples.count) / rate }
 
-    // Conversion is performed outside the real-time audio callback.
+    // Conversion runs outside the real-time audio callback, streaming fixed-size blocks so
+    // long captures (e.g. 300 s at 48 kHz) keep a bounded buffer footprint and preserve FIR filter state.
     func mono16k() throws -> [Float] {
         guard !samples.isEmpty else { throw VoiceAudioIssue.noFrames }
         guard rate.isFinite, (8000...192000).contains(rate) else { throw VoiceAudioIssue.conversion }
         if rate == 16000 { return Self.finite(samples) }
         guard let inputFormat = AVAudioFormat(standardFormatWithSampleRate: rate, channels: 1),
               let outputFormat = AVAudioFormat(standardFormatWithSampleRate: 16000, channels: 1),
-              let input = AVAudioPCMBuffer(pcmFormat: inputFormat, frameCapacity: UInt32(samples.count)),
-              let output = AVAudioPCMBuffer(pcmFormat: outputFormat,
-                                            frameCapacity: UInt32(ceil(seconds * 16000) + 1024)),
               let converter = AVAudioConverter(from: inputFormat, to: outputFormat) else {
             throw VoiceAudioIssue.conversion
         }
-        input.frameLength = UInt32(samples.count)
-        samples.withUnsafeBufferPointer { source in
-            if let address = source.baseAddress { input.floatChannelData?[0].update(from: address, count: source.count) }
-        }
-        let feeder = Feeder(input)
-        var error: NSError?
-        let result = converter.convert(to: output, error: &error) { _, status in
-            if feeder.used {
-                status.pointee = .endOfStream
-                return nil
-            }
-            feeder.used = true
-            status.pointee = .haveData
-            return feeder.buffer
-        }
-        guard result != .error, let values = output.floatChannelData?[0], output.frameLength > 0 else {
+
+        let inputChunkFrames = min(samples.count, max(1600, Int(rate * 15.0)))
+        let outputChunkCapacity = AVAudioFrameCount(ceil(Double(inputChunkFrames) * (16000.0 / rate)) + 1024)
+        guard let input = AVAudioPCMBuffer(pcmFormat: inputFormat, frameCapacity: AVAudioFrameCount(inputChunkFrames)),
+              let output = AVAudioPCMBuffer(pcmFormat: outputFormat, frameCapacity: outputChunkCapacity) else {
             throw VoiceAudioIssue.conversion
         }
-        return Self.finite(Array(UnsafeBufferPointer(start: values, count: Int(output.frameLength))))
+
+        let feeder = Feeder(samples: samples, inputBuffer: input)
+        var converted: [Float] = []
+        converted.reserveCapacity(Int(ceil(seconds * 16000)) + 256)
+
+        while !feeder.done {
+            var shouldStop = false
+            try autoreleasepool {
+                output.frameLength = 0
+                var error: NSError?
+                let result = converter.convert(to: output, error: &error) { requestedPackets, status in
+                    feeder.supply(requestedPackets: requestedPackets, status: status)
+                }
+                guard result != .error else { throw VoiceAudioIssue.conversion }
+                if let values = output.floatChannelData?[0], output.frameLength > 0 {
+                    let count = Int(output.frameLength)
+                    for index in 0..<count {
+                        let sample = values[index]
+                        converted.append(sample.isFinite ? sample : 0)
+                    }
+                }
+                if result == .endOfStream || (result == .inputRanDry && feeder.offset >= samples.count) {
+                    shouldStop = true
+                }
+            }
+            if shouldStop { break }
+        }
+
+        guard !converted.isEmpty else { throw VoiceAudioIssue.conversion }
+        return converted
     }
 
     private static func finite(_ frames: [Float]) -> [Float] {
@@ -60,9 +76,34 @@ struct VoiceAudio: Sendable {
     }
 
     private final class Feeder: @unchecked Sendable {
-        let buffer: AVAudioPCMBuffer
-        var used = false
-        init(_ buffer: AVAudioPCMBuffer) { self.buffer = buffer }
+        let samples: [Float]
+        let inputBuffer: AVAudioPCMBuffer
+        var offset = 0
+        var done: Bool { false }
+
+        init(samples: [Float], inputBuffer: AVAudioPCMBuffer) {
+            self.samples = samples
+            self.inputBuffer = inputBuffer
+        }
+
+        func supply(requestedPackets: AVAudioPacketCount, status: UnsafeMutablePointer<AVAudioConverterInputStatus>) -> AVAudioBuffer? {
+            let remaining = samples.count - offset
+            guard remaining > 0 else {
+                status.pointee = .endOfStream
+                return nil
+            }
+            let maxCapacity = Int(inputBuffer.frameCapacity)
+            let count = min(max(1, Int(requestedPackets)), min(maxCapacity, remaining))
+            inputBuffer.frameLength = AVAudioFrameCount(count)
+            samples.withUnsafeBufferPointer { source in
+                if let address = source.baseAddress {
+                    inputBuffer.floatChannelData?[0].update(from: address.advanced(by: offset), count: count)
+                }
+            }
+            offset += count
+            status.pointee = .haveData
+            return inputBuffer
+        }
     }
 }
 
