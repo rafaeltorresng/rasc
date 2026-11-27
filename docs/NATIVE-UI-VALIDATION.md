@@ -106,7 +106,10 @@ target guards and fallback feedback. Automated coverage includes the full Xcode
 suite, `Scripts/test-domain.py`, and Light/Dark offscreen onboarding renders.
 These still need a physical desktop pass:
 
-1. **Onboarding focus.** On a fresh install, focus **Try Dictate here**, press
+1. **Onboarding focus.** Build 26 and 27 share a container, so before this pass
+   quit Rasc and launch with
+   `open .../0.1.16-ux-dictate-27/export/Rasc.app --args -resetOnboarding` to
+   replay from the welcome step. Then focus **Try Dictate here**, press
    `⌥`, speak and confirm the caret stays in that field and the text lands there
    exactly once. Verify the progress dots stay centered on every step and the
    window does not resize during the normal flow; resize down on a small display

@@ -116,6 +116,15 @@ If System Settings lists an older Rasc entry, remove it and add this exact
 bundle with **+**, then return to Rasc; **Allow…** now opens Accessibility with
 those instructions when the system prompt is suppressed.
 
+Because this build shares its container with build 26, a plain `open` resumes
+the existing onboarding state. To replay onboarding from the welcome step, quit
+Rasc first and launch with the reset argument:
+
+```sh
+osascript -e 'tell application "Rasc" to quit'
+open ~/Desktop/rasc/build/updater-rc/0.1.16-ux-dictate-27/export/Rasc.app --args -resetOnboarding
+```
+
 | Field | Value |
 |---|---|
 | Base commit | `02dbacc577e5fb65f4eeb3402484281b3a186709` |
