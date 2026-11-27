@@ -14,6 +14,17 @@ STAGING_DIR="${BUILD_DIR}/dmg-staging"
 
 BUNDLE_ID="com.rafaeltorres.rasc"
 ENTITLEMENTS_PATH="${ROOT_DIR}/Rasc/Rasc.entitlements"
+VOICE_DOWNLOADER_ENTITLEMENTS="${ROOT_DIR}/VoiceModelDownloader/VoiceModelDownloader.entitlements"
+VOICE_DOWNLOADER_XPC_REL="Contents/XPCServices/com.rafaeltorres.rasc.VoiceModelDownloader.xpc"
+SHARED_SOURCE_PACKAGES_DIR="${ROOT_DIR}/.derivedData/Rasc/SourcePackages"
+
+SHARED_SOURCE_PACKAGES_ARGS=()
+if [[ -d "${SHARED_SOURCE_PACKAGES_DIR}" ]]; then
+  SHARED_SOURCE_PACKAGES_ARGS=(
+    -clonedSourcePackagesDirPath "${SHARED_SOURCE_PACKAGES_DIR}"
+    -disableAutomaticPackageResolution
+  )
+fi
 
 BETA_DIR="${BUILD_DIR}/private-beta"
 BETA_DERIVED_DATA="${BETA_DIR}/DerivedData"
@@ -131,4 +142,87 @@ write_sha256_checksum() {
   )
 
   echo "SHA-256 checksum written to ${checksum_path}"
+}
+
+codesign_with_identity() {
+  local identity="$1"
+  shift
+  if [[ "${identity}" == "-" ]]; then
+    codesign --force --sign - --options runtime "$@"
+  else
+    codesign --force --sign "${identity}" --options runtime --timestamp "$@"
+  fi
+}
+
+verify_voice_downloader_entitlements() {
+  local xpc_path="$1"
+  local ent_out
+  ent_out="$(codesign -d --entitlements :- "${xpc_path}" 2>/dev/null)"
+  if ! grep -q 'com.apple.security.network.client' <<< "${ent_out}"; then
+    echo "error: VoiceModelDownloader.xpc must carry com.apple.security.network.client" >&2
+    exit 1
+  fi
+  if grep -q 'com.apple.security.device.audio-input' <<< "${ent_out}"; then
+    echo "error: VoiceModelDownloader.xpc must not carry com.apple.security.device.audio-input" >&2
+    exit 1
+  fi
+  if grep -q 'com.apple.security.files.user-selected.read-write' <<< "${ent_out}"; then
+    echo "error: VoiceModelDownloader.xpc must not carry com.apple.security.files.user-selected.read-write" >&2
+    exit 1
+  fi
+}
+
+sign_voice_downloader_xpc() {
+  local app_path="$1"
+  local identity="${2:--}"
+  local xpc_path="${app_path}/${VOICE_DOWNLOADER_XPC_REL}"
+  if [[ ! -d "${xpc_path}" ]]; then
+    return 0
+  fi
+  if [[ ! -f "${VOICE_DOWNLOADER_ENTITLEMENTS}" ]]; then
+    echo "error: VoiceModelDownloader entitlements not found at ${VOICE_DOWNLOADER_ENTITLEMENTS}" >&2
+    exit 1
+  fi
+  echo "==> Signing VoiceModelDownloader.xpc inside-out..."
+  codesign_with_identity "${identity}" \
+    --entitlements "${VOICE_DOWNLOADER_ENTITLEMENTS}" \
+    "${xpc_path}"
+  verify_voice_downloader_entitlements "${xpc_path}"
+}
+
+sign_loose_framework_dylibs() {
+  local app_path="$1"
+  local identity="${2:--}"
+  local frameworks_dir="${app_path}/Contents/Frameworks"
+  if [[ ! -d "${frameworks_dir}" ]]; then
+    return 0
+  fi
+  while IFS= read -r -d '' dylib; do
+    echo "==> Signing embedded dylib $(basename "${dylib}")..."
+    codesign_with_identity "${identity}" \
+      --preserve-metadata=identifier \
+      "${dylib}"
+  done < <(find "${frameworks_dir}" -maxdepth 1 -type f -name '*.dylib' -print0)
+}
+
+sign_app_inside_out() {
+  local app_path="$1"
+  local app_entitlements="$2"
+  local identity="${3:--}"
+  local llc_plist="${4:-}"
+
+  sign_voice_downloader_xpc "${app_path}" "${identity}"
+  sign_loose_framework_dylibs "${app_path}" "${identity}"
+
+  local sign_args=(--entitlements "${app_entitlements}")
+  if [[ -n "${llc_plist}" ]]; then
+    sign_args+=(--library-constraint "${llc_plist}")
+  fi
+  codesign_with_identity "${identity}" "${sign_args[@]}" "${app_path}"
+  codesign --verify --deep --strict --verbose=2 "${app_path}"
+
+  local xpc_path="${app_path}/${VOICE_DOWNLOADER_XPC_REL}"
+  if [[ -d "${xpc_path}" ]]; then
+    verify_voice_downloader_entitlements "${xpc_path}"
+  fi
 }

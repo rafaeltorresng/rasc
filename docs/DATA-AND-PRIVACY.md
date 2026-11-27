@@ -13,15 +13,20 @@ The Release entitlement file enables App Sandbox without network access.
 - These are separate stores. Installing a Release build does not import the
   unsandboxed development database automatically.
 - Notes contain a UUID, text, creation and update dates, optional discard and
-  Kept dates, and an image indicator. Ten ordered GRDB migrations preserve
-  earlier schemas. Mixed thoughts store ordered text and original image bytes,
-  with a separate text projection for search.
+  Kept dates, a note `origin` (`scratch` or `dictation`), and an image indicator.
+  Eleven ordered GRDB migrations (`v1`–`v11`) preserve earlier schemas. SQLite opens in
+  WAL mode (`synchronous = NORMAL`, 5 s busy timeout), verifies `PRAGMA quick_check(1)`,
+  refuses to open unknown newer schema versions without deleting user data (offering
+  Retry / Reveal Data Folder / Quit Rasc), and runs `PRAGMA wal_checkpoint(TRUNCATE)` on
+  app termination. Mixed thoughts store ordered text and original image bytes, with a
+  separate text projection for search.
 - FTS5 indexes note content with prefix matching and diacritic normalization.
-  Discarded notes are filtered out of retrieval; their rows/indexed content remain.
+  Discarded notes are filtered out of retrieval immediately; on app launch, soft-deleted
+  notes older than 7 days and their `refinement_revisions` are permanently purged.
 - Accepted refinements store both before and after text in `refinement_revisions`
   in the same transaction as the note update. There is no revision-browser UI.
-- Discard is a soft deletion. Undo is available in the running session; recovery
-  across restart and secure erasure are not product features.
+- Discard is a soft deletion. In-session Undo is capped at the 50 most recent discards;
+  recovery across restart and secure erasure are not product features.
 - Rasc does not encrypt the database. FileVault, account security and system
   backups are managed by macOS/the user. No app-level encrypted vault is promised.
 - UserDefaults stores preferences, window geometry, onboarding progress and the
@@ -29,13 +34,13 @@ The Release entitlement file enables App Sandbox without network access.
   labels rather than text. Historical eval tools can write synthetic input/output
   locally; they are DEBUG-only and excluded from the Release entry points.
 
-## Voice Capture
+## Voice Capture and Dictate
 
 Voice Capture is off by default. Rasc requests microphone permission when you
 explicitly start a recording. It activates the microphone only for that
 recording, including a short end buffer. It stops before transcription and
-releases the tap and engine. Rasc caps a recording at 90 seconds. It records
-microphone input only.
+releases the tap and engine. Rasc caps a recording at **5 minutes (300 seconds)** and
+records microphone input only.
 
 Fluid Speech Pro transcribes on this Mac using Core ML. The main app has no
 network client for Voice Capture, no remote fallback and no speech or audio
@@ -51,20 +56,23 @@ also remains available. Model preparation can occur without microphone access.
 
 Audio stays in memory. After a recognition failure it can be retried for up to
 two minutes, or discarded immediately. Audio recovery ends when Rasc quits or
-crashes. After transcription, Rasc saves the text as an ordinary unfinished
-thought in SQLite and opens it in Scratchpad. Edits autosave through the usual
-Scratchpad path. A pending transcript from an older preview migrates to an
-unfinished thought. Rasc stores the text and regular note metadata. Capture
-source is absent from the note record.
+crashes. For **Voice Capture**, Rasc saves the text as a regular unfinished thought
+(`origin = .scratch`) in SQLite and opens it in Scratchpad. For **Dictate**, Rasc
+requests Accessibility permission only when explicitly needed, writes to the focused
+field via `AXSelectedText` without synthetic keystrokes (refusing Secure Input or
+`AXSecureTextField` targets), or copies to the clipboard; if optional local history
+saving is enabled, it persists the note with `origin = .dictation`.
 
 ## Manual backup
 
-1. Quit Rasc normally. If it reports a failed save, keep it open and retry or copy
-   the unsaved text before proceeding.
-2. Copy the entire `Rasc` Application Support folder from the relevant path above
-   to a safe location. Include any `Rasc.sqlite-wal` and `Rasc.sqlite-shm` siblings.
-   Do not copy only the main database while the app is running.
-3. Keep backups private; they include discarded thoughts and refinement originals.
+1. Use **Settings → General → Back Up Database…** to write a consistent SQLite
+   snapshot (`DatabaseQueue.backup(to:)`) to a user-selected location without quitting
+   Rasc.
+2. Or quit Rasc normally (if it reports a failed save, keep it open and retry or copy
+   the unsaved text before proceeding) and copy the entire `Rasc` Application Support
+   folder (`Rasc.sqlite`, `Rasc.sqlite-wal`, `Rasc.sqlite-shm`). Do not copy raw
+   database files manually while the app is running.
+3. Keep backups private; they include any not-yet-purged discarded thoughts and refinement originals.
 4. Before restoring, quit Rasc and retain a copy of the current folder as well.
    Restore a compatible backup to the same store. Never reset/delete a database
    as an error-recovery step. Opening a newer schema with an older binary is not

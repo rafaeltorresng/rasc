@@ -1,9 +1,12 @@
-# Voice Capture
+# Voice Capture and Dictate
 
-Voice Capture is an opt-in feature for Apple silicon Macs running macOS 26 or
-later. Rasc itself still targets macOS 14. Voice Capture uses Fluid Speech Pro
-in verbatim mode. The transcript opens in Scratchpad as an unfinished thought.
-Refine remains available as an explicit Scratchpad action.
+Voice Capture and Dictate are opt-in features for Apple silicon Macs running macOS 26
+or later. Rasc itself still targets macOS 14. Speech recognition uses Fluid Speech Pro
+in verbatim mode (plus `VoiceTranscriptSanitizer` whitespace/hallucination cleanup).
+Voice Capture opens the transcript in Scratchpad as an unfinished thought (`origin = .scratch`),
+while Dictate inserts into the focused external app via `AXSelectedText` or copies to the
+clipboard (and optionally keeps a local note with `origin = .dictation`). Refine remains a
+separate explicit Scratchpad action.
 
 ## Try the local build
 
@@ -37,12 +40,21 @@ can import that same directory through **Choose Model Folder…**.
 
 ## Engineering and validation
 
-- The global shortcut uses KeyboardShortcuts key-down events. Settings shows
-  when macOS can’t register an assigned shortcut and offers a direct recording
-  button. When Scratchpad already has focus, its native key handler also
-  consumes the assigned shortcut so it cannot type into the note. The capsule
-  is non-activating during capture. Once the transcript is saved, the standard
-  Scratchpad opens and takes keyboard focus.
+- Shortcuts support both `KeyboardShortcuts` chords and clean single-modifier taps
+  (`Option`, `Command`, `Control`, or `Shift` via `ModifierShortcutMonitor`, checking
+  Accessibility trust without keylogging unrelated events). When Scratchpad already has
+  focus, its native key handler also consumes the assigned shortcut so it cannot type into
+  the note. The capsule is a non-activating `.screenSaver`-level HUD during capture
+  and shows a countdown warning during the final 15 s of the **300 s (5-minute)** limit.
+- Audio capture allocates memory lazily in 5 s chunks up to 300 s (`MicBuffer`), selects
+  the active channel via `vDSP.maximumMagnitude` on multi-channel/USB interfaces, compacts
+  short captures off the CoreAudio callback, guards audio-engine startup with a 5.5 s HAL
+  watchdog, and applies a dynamic transcription timeout (`max(30, audioSeconds * 0.5 + 15)`).
+- Dictate (`VoiceTextInsertion`) wakes Electron accessibility trees (`AXManualAccessibility` /
+  `AXEnhancedUserInterface`), refuses Secure Input (`IsSecureEventInputEnabled()` and
+  `AXSecureTextField`), inserts with `textWithSmartLeadingSpace` via `AXSelectedText` (never
+  synthetic keystrokes), isolates frontmost Rasc window-editor targets, and keeps a persistent
+  `.copiedFallback` HUD dismissible with `Esc` when Accessibility or editable focus is absent.
 - Standard Rasc distributions do not bundle the 622 MiB speech model. When you
   enable Voice Capture and choose **Download Speech Model**, an embedded
   sandboxed XPC helper (`com.rafaeltorres.rasc.VoiceModelDownloader.xpc`,
@@ -84,8 +96,11 @@ can import that same directory through **Choose Model Folder…**.
   latency measured separately in the earlier study. Path and configuration
   affect Core ML's device-specific cache. [Apple Core ML lifecycle](https://developer.apple.com/videos/play/wwdc2023/10049/)
 - The pinned batch path does not use FluidAudio’s streaming or vocabulary
-  rescoring calls. Scratchpad receives the returned text verbatim. Refine is
-  invoked separately by the user. Recognition diagnostics record timing only.
+  rescoring calls. `VoiceTranscriptSanitizer.clean` normalizes spacing and strips
+  isolated ASR filler/hallucination artifacts; Scratchpad and Dictate remain
+  verbatim. Refine is invoked separately by the user. Recognition diagnostics
+  record timing only. For current Round 4 FLEURS metrics (`5.354%` pooled WER,
+  `69.90 ms` p50 warm) see `Experiments/VoiceCapture/Round4/RESULTS.md`.
 
 ## Release gates
 

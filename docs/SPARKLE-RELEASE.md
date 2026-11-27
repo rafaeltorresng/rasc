@@ -22,10 +22,12 @@ proof, including the wrong-pin negative control.
 The required combination — do not split these:
 
 - App Sandbox + Hardened Runtime
-- **no network entitlement on the main app** (Sparkle's Downloader/Installer XPC services do the network I/O)
+- **no network entitlement on the main app** (Sparkle's Downloader/Installer XPC services and `VoiceModelDownloader.xpc` handle their own isolated network I/O)
 - `com.apple.security.cs.disable-library-validation`, and
-- an LLC embedded in the app signature that pins the `cdhash` of the **final signed**
-  `Sparkle.framework/Versions/B/Sparkle` for every shipped architecture.
+- an LLC embedded in the app signature that pins the `cdhash` of every **final signed**
+  Mach-O framework main binary and loose `*.dylib` in `Contents/Frameworks/`
+  (currently `Sparkle.framework/Versions/Current/Sparkle` and Xcode's embedded
+  `libswiftCompatibilitySpan.dylib`) for every shipped architecture.
 
 `Scripts/release/build-updater-rc.sh` produces the artifact and refuses to
 package if the constraint is missing or wrong (it hard-fails before the DMG
@@ -47,21 +49,27 @@ upgrades.
 One Release `xcodebuild` per version, strong-linked against Sparkle **not** used
 here (Release keeps the weak link); ad-hoc signature:
 
-1. Builds `Release` with `ARCHS=arm64`, ad-hoc signing, sandbox + Hardened
-   Runtime, Sparkle entitlements from `Rasc/Rasc.sparkle.entitlements`.
-2. Confirms no `com.apple.security.network.client` on the main app; re-signs
-   `VoiceModelDownloader.xpc` with its own entitlements because the updater
-   `xcodebuild` pass applies Sparkle entitlements to every target.
-3. Embeds and re-signs Sparkle with Hardened Runtime (nested XPCs,
-   `Autoupdate`, `Updater.app`, then the framework), preserving identifiers and
-   entitlements.
-4. Computes the `cdhash` for each shipped slice of the final signed framework,
-   validates the LLC with `codesign --validate-constraint`, and re-signs the
-   app with `--library-constraint` + the expanded entitlements.
-5. Deep-verifies, asserts `Has Library Load Constraints`, re-derives every
-   shipped-arch `cdhash` and asserts each is present in the pin, and refuses
-   to package if any check fails.
-6. Writes the DMG + `.sha256`.
+1. Builds `Release` with `ARCHS=arm64`, sandbox + Hardened Runtime, reusing
+   `.derivedData/Rasc/SourcePackages` when available, and setting `RASC_APP_ENTITLEMENTS`
+   (main app target only) to `Rasc/Rasc.sparkle.entitlements`.
+2. Confirms no `com.apple.security.network.client` on the main app; signs
+   `VoiceModelDownloader.xpc` inside-out with `VoiceModelDownloader/VoiceModelDownloader.entitlements`
+   and asserts it retains `network.client` without inheriting `device.audio-input`
+   or `files.user-selected.read-write`.
+3. Embeds and signs Sparkle helpers (`Installer.xpc`, `Downloader.xpc`,
+   `Autoupdate`, `Updater.app`, `Sparkle.framework`) plus any loose
+   `Contents/Frameworks/*.dylib` (such as `libswiftCompatibilitySpan.dylib`),
+   preserving identifiers and entitlements.
+4. Discovers every Mach-O framework binary and `*.dylib` under `Contents/Frameworks/`,
+   computes the `cdhash` for each shipped slice (`lipo -archs` intersected with
+   `RASC_RC_ARCHS`), validates the LLC with `codesign --validate-constraint`, and
+   re-signs the outer app bundle (without `--deep`) with `--library-constraint` +
+   the expanded entitlements.
+5. Deep-verifies (`codesign --verify --deep --strict`), asserts `Has Library Load Constraints`,
+   re-checks every embedded library/dylib `cdhash` against `library-constraint.plist`,
+   re-verifies `VoiceModelDownloader.xpc` entitlements, and refuses to package if any check fails.
+6. Writes the DMG + `.sha256` (and optionally runs `notarytool` + `stapler` + `spctl --assess`
+   when `RASC_SIGNING_IDENTITY` and `RASC_NOTARY_PROFILE` are configured).
 
 Routine builds take the public key from the **login keychain** account
 `rasc-sparkle` (see the key ceremony below) via `generate_keys -p --account`.
@@ -70,11 +78,16 @@ No raw private-key file is required for routine signing.
 Environment overrides:
 
 - `RASC_RC_VERSION=…` and `RASC_RC_BUILD=…` (default: project settings)
+- `RASC_RC_OUTPUT_DIR=…` (default: `build/updater-rc/<version>`)
 - `RASC_RC_ARCHS="arm64 x86_64"` (default `arm64`)
+- `RASC_SIGNING_IDENTITY=…` (default `-` ad-hoc) and `RASC_NOTARY_PROFILE=…` (optional notarytool profile)
 - `RASC_RC_FEED_URL=…` (default `https://rasc.app/appcast.xml`)
 - `RASC_RC_ED25519_PUBLIC_KEY=…` (rarely needed; normally comes from the keychain)
 - `SPARKLE_ACCOUNT=…` (default `rasc-sparkle`)
 - `RASC_RC_ED25519_ENFORCE=0` — build an intentionally inert candidate
+
+Notes on appcast verification (`Scripts/sparkle-proof/verify-appcast.py`):
+it automatically resolves OpenSSL 3 (`OPENSSL_BIN`, Homebrew `/opt/homebrew/opt/openssl@3/bin/openssl`, `/usr/local/opt/openssl@3/bin/openssl`, or `PATH`) so macOS LibreSSL on `/usr/bin/openssl` does not break Ed25519 `pkeyutl` verification.
 
 ```bash
 ./Scripts/release/build-updater-rc.sh                     # uses keychain account rasc-sparkle

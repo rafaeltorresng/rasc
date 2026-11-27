@@ -18,8 +18,12 @@ Private-beta access requests, checkout and licensing are not current priorities.
   offers Kept, All, and an explicit searchable selection. All includes unfinished
   thoughts. Export preserves the source thought and its lifecycle state.
 - Discard soft-deletes. Undo restores its content, original dates and Kept state while
-  the repository/session remains alive. No Trash screen or recovery across restart
-  is promised. A stale Undo receipt cannot restore a later discard.
+  the repository/session remains alive (up to 50 recent discard entries). No Trash
+  screen or recovery across restart is promised; expired discards older than 7 days
+  are purged automatically on app launch. A stale Undo receipt cannot restore a later
+  discard.
+- Settings → General also provides **Back Up Database…** to write a consistent SQLite
+  snapshot without quitting Rasc.
 - Undo never overwrites a newly typed scratch merely to bring back a discarded one;
   the restored thought remains available in Home.
 
@@ -31,15 +35,24 @@ one-line descriptions and live shortcuts, and states that Refine is optional. Af
 least three notes and a second Home visit, Home shows a one-time, dismissible Search tip.
 Established installs are migrated as onboarding-complete and never see a forced tour.
 
-## Voice Capture
+## Voice Capture and Dictate
 
-On Apple silicon with macOS 26 or later, enable Voice Capture in Settings and
-record a global shortcut. The menu bar can also start or finish a capture.
-Wait for Listening, speak naturally, then press again. The transcript opens in
-Scratchpad as a new unfinished thought with the caret at the end. Continue
-writing, use Refine, or Keep or Discard with the usual commands. Any previous
-scratch remains available in Home and Search. See the
-[local testing guide](VOICE-CAPTURE.md) for setup and the release gates.
+On Apple silicon with macOS 26 or later, enable Voice in Settings and record either a
+standard global shortcut or a clean single-modifier tap (`Option`, `Command`, `Control`,
+or `Shift`; Accessibility permission is requested only when using global modifier-only
+shortcuts or cursor insertion). The menu bar can also start, finish, or dismiss capture.
+
+- **Voice Capture** (max **5 minutes / 300 s** with a 15 s warning countdown): wait for
+  Listening, speak naturally, then press again. The transcript opens in Scratchpad as a
+  new unfinished thought (`origin = .scratch`) with the caret at the end. Continue writing,
+  use Refine, or Keep or Discard with the usual commands; any previous scratch stays
+  searchable in Home.
+- **Dictate:** inserts verbatim directly into the focused external text field via
+  Accessibility `AXSelectedText` (without synthetic keystrokes and refusing Secure Input /
+  password fields) or copies to the clipboard with a brief non-activating HUD feedback
+  capsule (`.copiedFallback` stays visible until `Esc` or dismissal). Defaults keep a copy
+  on the clipboard and save a local note in Rasc (`origin = .dictation`, shown with a
+  dictated marker in Home and Search). See [VOICE-CAPTURE.md](VOICE-CAPTURE.md).
 
 ## Refine
 
@@ -70,10 +83,12 @@ Arrows move within the visible order in both views — by row in the list, by ce
 the card view; there is no horizontal wrap. Search-field caret editing stays
 distinct from list navigation; Down or Return transfers focus to results.
 
-Both retrieval surfaces use local FTS, not AI. Snippets prefer context around an
-actual query term. Quick Search shows up to 12 results with a truncation hint;
-Home Search shows up to 500 with a hint to narrow the query. The visible action is
-Search thoughts (`⌘P`); legacy “find” remains a palette search alias.
+Home supports multi-selection (`⌘`-click, `Shift`-click/arrows, `⌘A`) with batch Copy,
+Export…, Discard (asking confirmation above 10 items), and Clear. Both retrieval surfaces
+use local FTS5 (not AI) with a slight rank tie-breaker for Kept notes (`-0.15` on BM25).
+Snippets prefer context around an actual query term. Quick Search shows up to 12 results
+with a truncation hint; Home Search shows up to 500 with a hint to narrow the query. The
+visible action is Search thoughts (`⌘P`); legacy “find” remains a palette search alias.
 
 ## Presentation
 

@@ -35,7 +35,11 @@ xcodebuild \
   -scheme "${SCHEME}" \
   -configuration "${CONFIGURATION}" \
   -derivedDataPath "${BETA_DERIVED_DATA}" \
+  -destination "platform=macOS,arch=${RASC_ARCHS:-arm64}" \
+  ${SHARED_SOURCE_PACKAGES_ARGS[@]+"${SHARED_SOURCE_PACKAGES_ARGS[@]}"} \
   clean build \
+  ARCHS="${RASC_ARCHS:-arm64}" \
+  ONLY_ACTIVE_ARCH=NO \
   CODE_SIGN_STYLE=Manual \
   CODE_SIGN_IDENTITY=- \
   DEVELOPMENT_TEAM=
@@ -49,11 +53,8 @@ fi
 echo "==> Copying app to ${BETA_EXPORT_DIR}..."
 ditto "${BUILT_APP}" "${BETA_APP_PATH}"
 
-echo "==> Ad-hoc signing with sandbox entitlements..."
-codesign --force --deep --sign - \
-  --options runtime \
-  --entitlements "${ENTITLEMENTS_PATH}" \
-  "${BETA_APP_PATH}"
+echo "==> Ad-hoc inside-out signing with sandbox entitlements..."
+sign_app_inside_out "${BETA_APP_PATH}" "${ENTITLEMENTS_PATH}" "-"
 
 echo "==> Packaging DMG..."
 package_dmg "${BETA_APP_PATH}" "${BETA_DMG_PATH}" "${BETA_STAGING_DIR}"
