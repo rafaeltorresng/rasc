@@ -137,6 +137,10 @@ struct InternalShortcutStoreTests {
         let system = store.assign(InternalShortcut(key: "w", command: true), to: .search)
         #expect(system == "That shortcut belongs to macOS.")
 
+        for (key, shift) in [("c", false), ("v", false), ("x", false), ("z", false), ("z", true), ("a", false), ("h", false), ("m", false)] {
+            #expect(store.assign(InternalShortcut(key: key, command: true, shift: shift), to: .search) == "That shortcut belongs to macOS.")
+        }
+
         let moved = store.assign(InternalShortcut(key: "k", command: true), to: .commandPalette)
         #expect(moved == nil)
         let keepOnCommandK = store.assign(InternalShortcut(key: "k", command: true, shift: true), to: .commandPalette)

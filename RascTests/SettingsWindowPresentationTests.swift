@@ -22,9 +22,11 @@ struct SettingsWindowPresentationTests {
 
     @Test
     func positionsSettingsWindowOnPresentationScreen() {
-        let screen = NSScreen.main ?? NSScreen.screens[0]
+        let screen = WindowFramePlacement.targetPresentationScreen(
+            excludingProcessID: ProcessInfo.processInfo.processIdentifier
+        ) ?? NSScreen.main ?? NSScreen.screens[0]
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 460, height: 420),
+            contentRect: NSRect(x: 0, y: 0, width: 500, height: 420),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
@@ -38,6 +40,7 @@ struct SettingsWindowPresentationTests {
             for: window.frame.size,
             in: screen.visibleFrame
         )
+        #expect(window.minSize.width == 500)
         #expect(abs(window.frame.origin.x - centeredOrigin.x) < 1)
         #expect(abs(window.frame.origin.y - centeredOrigin.y) < 1)
     }

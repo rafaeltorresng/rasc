@@ -32,8 +32,6 @@ struct ScratchpadView: View {
             surfaceBodyContent
                 .padding(.top, showsScratchpadChrome ? RascSurfaceLayout.scratchpadChromeToBodyGap : 0)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .id(session.surface)
-                .transition(RascMotion.bodyContentTransition(reduceMotion: reduceMotion))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .animation(RascMotion.bodyContentAnimation(reduceMotion: reduceMotion), value: session.surface)
@@ -69,15 +67,19 @@ struct ScratchpadView: View {
             } else if session.lastDiscard != nil {
                 feedbackRow("Thought discarded.") {
                     Button("Undo") { Task { await session.undoDiscard() } }
+                    Button("Dismiss") { session.dismissLastDiscard() }
                 }
             } else if session.scratchpadGuidance.isActive {
                 OnboardingScratchpadOverlay(guidance: session.scratchpadGuidance, editorText: session.text)
-            } else if let transientFeedback = session.transientFeedback {
-                feedbackRow(transientFeedback) { EmptyView() }
             }
         }
         .onChange(of: session.surface) { _, surface in
             if surface == .refinementPreview { RascAccessibility.announce("Refinement preview. Compare the suggestion with your original before accepting.") }
+        }
+        .onChange(of: session.previewMode) { _, _ in
+            if session.surface == .refinementPreview {
+                RascAccessibility.announce(refinementPreviewAccessibilityLabel)
+            }
         }
         .onChange(of: session.message) { _, message in
             if let message { RascAccessibility.announce(message.text) }
@@ -126,6 +128,7 @@ struct ScratchpadView: View {
     private var showsRefineAction: Bool {
         session.surface == .editor
             && session.hasPersistableContent
+            && session.document?.hasImages != true
             && session.canPerformThoughtCompletion
     }
 
@@ -233,6 +236,7 @@ struct ScratchpadView: View {
         )
         .opacity(isVisible ? 1 : 0)
         .allowsHitTesting(isVisible)
+        .disabled(!isVisible)
         .accessibilityHidden(!isVisible)
     }
 
@@ -247,29 +251,36 @@ struct ScratchpadView: View {
 
     @ViewBuilder
     private var surfaceBodyContent: some View {
-        switch session.surface {
-        case .editor, .message:
+        let showsEditorUnderlay = session.surface == .editor || session.surface == .message || session.surface == .refining
+        ZStack(alignment: .topLeading) {
             editorSurface
-        case .search:
-            HistorySearchView(session: session)
-        case .commandPalette:
-            CommandPaletteView(session: session, onExecute: onPaletteCommand)
-        case .refining:
-            refiningSurface
-        case .refinementPreview:
-            refinementPreviewSurface
+                .opacity(session.surface == .refining ? 0.78 : (showsEditorUnderlay ? 1 : 0))
+                .allowsHitTesting(session.surface == .editor || session.surface == .message)
+                .accessibilityHidden(!showsEditorUnderlay)
+
+            switch session.surface {
+            case .editor, .message, .refining:
+                EmptyView()
+            case .search:
+                HistorySearchView(session: session)
+            case .commandPalette:
+                CommandPaletteView(session: session, onExecute: onPaletteCommand)
+            case .refinementPreview:
+                refinementPreviewSurface
+            }
         }
     }
 
     @ViewBuilder
     private var editorSurface: some View {
+        let isEditable = session.surface != .refining && session.surface != .refinementPreview
         ZStack(alignment: .topLeading) {
-            ScratchEditor(session: session, onEscape: handleEscape)
+            ScratchEditor(session: session, isEditable: isEditable, onEscape: handleEscape)
                 .id(session.editorIdentity)
                 .padding(.horizontal, RascSurfaceMetrics.editorHorizontalPadding)
                 .padding(.top, RascSurfaceMetrics.editorTopPadding)
 
-            if session.surface == .editor, !session.hasPersistableContent {
+            if session.surface == .editor, session.text.isEmpty, session.document?.hasImages != true {
                 ScratchpadEmptyState()
                     .padding(.leading, RascSurfaceMetrics.editorHorizontalPadding)
                     .padding(.top, RascSurfaceMetrics.editorTopPadding)
@@ -277,24 +288,6 @@ struct ScratchpadView: View {
                     .transition(.opacity)
             }
         }
-    }
-
-    private var refiningSurface: some View {
-        TextEditor(text: .constant(session.text))
-            .scrollContentBackground(.hidden)
-            .background(.clear)
-            .font(.system(
-                size: noteTextSize.points(RascSurfaceMetrics.noteFontSize),
-                weight: .regular
-            ))
-            .lineSpacing(RascSurfaceMetrics.noteLineSpacing)
-            .foregroundStyle(palette.noteText(for: colorScheme, fallback: .primary.opacity(0.78)))
-            .padding(.horizontal, RascSurfaceMetrics.editorHorizontalPadding)
-            .padding(.top, RascSurfaceMetrics.editorTopPadding)
-            .disabled(true)
-            .accessibilityLabel("Scratch editor")
-            .accessibilityValue("Refining note")
-            .onExitCommand(perform: handleEscape)
     }
 
     private var refinementPreviewHeading: String {
@@ -472,6 +465,7 @@ struct ScratchpadView: View {
 /// A plain-text editor: list markers remain part of the note for search and handoff.
 private struct ScratchEditor: NSViewRepresentable {
     @Bindable var session: ScratchpadSession
+    let isEditable: Bool
     let onEscape: () -> Void
     @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
@@ -526,6 +520,8 @@ private struct ScratchEditor: NSViewRepresentable {
     func updateNSView(_ scroll: NSScrollView, context: Context) {
         guard let editor = scroll.documentView as? ListTextView else { return }
         context.coordinator.session = session
+        if editor.isEditable != isEditable { editor.isEditable = isEditable }
+        if editor.isSelectable != isEditable { editor.isSelectable = isEditable }
         editor.escapeAction = onEscape
         editor.imagePaste = { [weak coordinator = context.coordinator] source in coordinator?.pasteImage(source) }
         editor.imagePasteFailure = { session.reportImageImportFailure("Couldn't paste this mixed content. Try copying the image separately.") }
@@ -561,7 +557,7 @@ private struct ScratchEditor: NSViewRepresentable {
             }
             editor.applyParagraphStyles()
         }
-        if context.coordinator.focusRequest != session.focusRequest {
+        if isEditable, context.coordinator.focusRequest != session.focusRequest {
             context.coordinator.focusRequest = session.focusRequest
             editor.requestFocusWhenAttached()
         }
@@ -578,7 +574,7 @@ private struct ScratchEditor: NSViewRepresentable {
         init(session: ScratchpadSession) { self.session = session }
 
         func textDidChange(_ notification: Notification) {
-            guard let editor else { return }
+            guard let editor, session.surface == .editor || session.surface == .message else { return }
             if session.document != nil {
                 let document = editor.currentDocument()
                 renderedDocument = document
@@ -714,6 +710,9 @@ final class ListTextView: NSTextView {
     }
 
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        guard window?.firstResponder === self else {
+            return super.performKeyEquivalent(with: event)
+        }
         let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
         if flags == .command, event.charactersIgnoringModifiers?.lowercased() == "v" {
             paste(self)
@@ -965,7 +964,7 @@ final class ListTextView: NSTextView {
 
     func applyBodyAttributes() {
         typingAttributes = bodyAttributes
-        guard let storage = textStorage else { return }
+        guard !hasMarkedText(), let storage = textStorage else { return }
         storage.beginEditing()
         defer { storage.endEditing() }
         let text = storage.string as NSString

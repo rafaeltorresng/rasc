@@ -95,7 +95,7 @@ enum SettingsWindowPresentation {
             ?? NSScreen.main?.visibleFrame.height
             ?? 680
         let minimumHeight = fittedMinimumHeight(visibleHeight: visibleHeight)
-        window.minSize = NSSize(width: 460, height: minimumHeight)
+        window.minSize = NSSize(width: 500, height: minimumHeight)
         if window.frame.height < minimumHeight {
             var frame = window.frame
             let growth = minimumHeight - frame.height

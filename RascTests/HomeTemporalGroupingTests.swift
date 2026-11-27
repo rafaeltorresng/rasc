@@ -85,6 +85,14 @@ struct HomeTemporalGroupingTests {
         dateFormatter.timeZone = calendar.timeZone
         dateFormatter.setLocalizedDateFormatFromTemplate("MMMd")
         #expect(earlierLabel == dateFormatter.string(from: earlier))
+
+        let priorYear = try #require(calendar.date(from: DateComponents(year: 2025, month: 4, day: 12)))
+        let priorYearFormatter = DateFormatter()
+        priorYearFormatter.locale = calendar.locale ?? .current
+        priorYearFormatter.calendar = calendar
+        priorYearFormatter.timeZone = calendar.timeZone
+        priorYearFormatter.setLocalizedDateFormatFromTemplate("yMMMd")
+        #expect(HomeNoteTimestampFormatter.format(priorYear, calendar: calendar, now: now) == priorYearFormatter.string(from: priorYear))
     }
 
     private func makeNote(updatedAt: Date) -> Note {

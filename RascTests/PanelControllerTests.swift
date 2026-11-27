@@ -192,6 +192,166 @@ struct PanelControllerTests {
     }
 
     @Test
+    func transientPanelAutoSizesWithVoiceCommandsAndRestoresDefaultOnReturnToEditor() async throws {
+        let userDefaults = UserDefaults(suiteName: "RascTests.\(UUID().uuidString)")!
+        let store = WindowFrameStore.scratchpad(userDefaults: userDefaults)
+        let controller = try makeController(
+            windowFrameStore: store,
+            includesVoiceCapture: { true }
+        )
+        defer { controller.panel.orderOut(nil) }
+
+        await controller.openCommandPalette()
+        let paletteHeight = controller.panel.frame.height
+        let expectedPalette = RascTransientPanelSizing.paletteHeight(commandCount: controller.scratchpadSession.filteredCommands.count)
+        #expect(paletteHeight == expectedPalette)
+        #expect(paletteHeight <= RascTransientPanelSizing.maximumHeight)
+
+        controller.scratchpadSession.closeCommandPalette()
+        #expect(controller.panel.frame.height == RascWindowMetrics.scratchpadDefault.height)
+    }
+
+    @Test
+    func occlusionWindowOnPanelScreenLowersLevelAndEmptyRestoresScreenSaver() throws {
+        @MainActor
+        final class OcclusionState {
+            var occluded = false
+            var bounds: CGRect = .zero
+        }
+        let state = OcclusionState()
+        let controller = try makeController(occlusionWindowsProvider: {
+            guard state.occluded else { return [] }
+            return [
+                PanelOcclusionWindow(
+                    ownerPID: ProcessInfo.processInfo.processIdentifier + 1,
+                    ownerName: "SecurityAgent",
+                    layer: ScratchpadPanelLevelPolicy.modalLayer,
+                    width: state.bounds.width,
+                    height: state.bounds.height,
+                    bounds: state.bounds
+                )
+            ]
+        })
+        defer { controller.panel.orderOut(nil) }
+
+        controller.panel.setFrame(NSRect(x: 200, y: 200, width: 500, height: 330), display: false)
+        controller.panel.orderFrontRegardless()
+        let screen = controller.panel.screen ?? NSScreen.main ?? NSScreen.screens.first
+        let primaryHeight = (NSScreen.screens.first { $0.frame.origin == .zero } ?? NSScreen.screens.first)?.frame.height
+            ?? screen?.frame.maxY
+            ?? 900
+        let originX = (screen?.frame.minX ?? 0) + 100
+        let originY = primaryHeight - (screen?.frame.maxY ?? 900) + 100
+        state.bounds = CGRect(x: originX, y: originY, width: 400, height: 260)
+
+        #expect(controller.panel.level == .screenSaver)
+        state.occluded = true
+        controller.noteHomeVisibility(false)
+        #expect(controller.panel.level == .normal)
+
+        state.occluded = false
+        controller.noteHomeVisibility(false)
+        #expect(controller.panel.level == .screenSaver)
+    }
+
+    @Test
+    func showWhileVisiblePreservesUnsavedTypingInsideAutosaveDebounce() async throws {
+        let controller = try makeController()
+        defer { controller.panel.orderOut(nil) }
+        controller.panel.setFrame(NSRect(x: 220, y: 240, width: 500, height: 330), display: false)
+        controller.panel.orderFrontRegardless()
+
+        controller.scratchpadSession.text = "in-flight typing"
+        await controller.show()
+
+        #expect(controller.scratchpadSession.text == "in-flight typing")
+    }
+
+    @Test
+    func undoSurvivesOpeningAndClosingCommandPalette() async throws {
+        let controller = try makeController()
+        defer { controller.panel.orderOut(nil) }
+        controller.panel.setFrame(NSRect(x: 220, y: 240, width: 640, height: 420), display: true)
+        controller.panel.orderFrontRegardless()
+
+        let session = controller.scratchpadSession
+        session.text = "preserve undo across palette"
+        try await session.flush()
+
+        guard let textView = await waitForTextView(in: controller.panel, showing: "preserve undo across palette") else {
+            Issue.record("The scratchpad editor did not install a text view")
+            return
+        }
+        controller.panel.makeKey()
+        _ = controller.panel.makeFirstResponder(textView)
+        textView.selectAll(nil)
+        textView.deleteBackward(nil)
+        #expect(await waitUntil { session.text.isEmpty })
+
+        await controller.openCommandPalette()
+        #expect(session.surface == .commandPalette)
+        try await Task.sleep(for: .milliseconds(80))
+        session.closeCommandPalette()
+        #expect(session.surface == .editor)
+        #expect(await waitUntil { textView.isEditable })
+
+        textView.undoManager?.undo()
+        #expect(await waitUntil { session.text == "preserve undo across palette" })
+    }
+
+    @Test
+    func escapeDuringRefiningCancelsBackToEditor() async throws {
+        let controller = try makeController(refinementProvider: SlowRefinementProvider())
+        defer { controller.panel.orderOut(nil) }
+        controller.panel.setFrame(NSRect(x: 240, y: 260, width: 640, height: 420), display: false)
+        controller.panel.orderFrontRegardless()
+        let session = controller.scratchpadSession
+        session.text = "slow refinement"
+        session.startRefinement()
+        #expect(await waitUntil { session.surface == .refining })
+
+        if let event = NSEvent.keyEvent(
+            with: .keyDown,
+            location: .zero,
+            modifierFlags: [],
+            timestamp: ProcessInfo.processInfo.systemUptime,
+            windowNumber: controller.panel.windowNumber,
+            context: nil,
+            characters: "\u{1b}",
+            charactersIgnoringModifiers: "\u{1b}",
+            isARepeat: false,
+            keyCode: 53
+        ) {
+            controller.panel.sendEvent(event)
+        }
+
+        #expect(await waitUntil { session.surface == .editor })
+        #expect(controller.panel.isVisible)
+    }
+
+    @Test
+    func toggleDoesNotHidePanelWhileSheetIsAttached() async throws {
+        let controller = try makeController()
+        defer { controller.panel.orderOut(nil) }
+        controller.panel.setFrame(NSRect(x: 240, y: 260, width: 500, height: 330), display: false)
+        controller.panel.orderFrontRegardless()
+
+        let sheet = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 220, height: 120),
+            styleMask: [.titled],
+            backing: .buffered,
+            defer: false
+        )
+        sheet.isReleasedWhenClosed = false
+        controller.panel.beginSheet(sheet) { _ in }
+        defer { controller.panel.endSheet(sheet) }
+
+        await controller.toggle()
+        #expect(controller.panel.isVisible)
+        #expect(controller.panel.attachedSheet === sheet)
+    }
+
+    @Test
     func startNewScratchUsesTheSameEntryPointAsCommandN() async throws {
         let controller = try makeController()
         defer { controller.panel.orderOut(nil) }
@@ -514,7 +674,9 @@ struct PanelControllerTests {
 
     private func makeController(
         windowFrameStore: WindowFrameStore = WindowFrameStore(),
-        refinementProvider: (any RefinementProvider)? = nil
+        refinementProvider: (any RefinementProvider)? = nil,
+        occlusionWindowsProvider: @escaping @MainActor () -> [PanelOcclusionWindow] = { [] },
+        includesVoiceCapture: @escaping @MainActor () -> Bool = { false }
     ) throws -> PanelController {
         let databaseURL = FileManager.default.temporaryDirectory
             .appending(path: UUID().uuidString)
@@ -522,7 +684,9 @@ struct PanelControllerTests {
         return PanelController(
             repository: try NoteRepository(databaseURL: databaseURL),
             refinementProvider: refinementProvider ?? FoundationModelsRefinementProvider(),
-            windowFrameStore: windowFrameStore
+            windowFrameStore: windowFrameStore,
+            occlusionWindowsProvider: occlusionWindowsProvider,
+            includesVoiceCapture: includesVoiceCapture
         )
     }
 }
@@ -544,5 +708,22 @@ private struct PreviewArrowRefinementProvider: RefinementProvider {
             kind: .messyText,
             text: "Suggested rewrite of the memo"
         )
+    }
+}
+
+private struct SlowRefinementProvider: RefinementProvider {
+    let metadata = RefinementMetadata(
+        provider: "slow-test",
+        modelIdentifier: "slow-test",
+        promptVersion: "slow-test"
+    )
+
+    func availability(for _: RefinementRequest) async -> RefinementAvailability {
+        .available
+    }
+
+    func refine(_ request: RefinementRequest) async throws -> RefinementResult {
+        try await Task.sleep(for: .seconds(5))
+        return RefinementResult(decision: .noChange, kind: .messyText, text: request.inputText)
     }
 }

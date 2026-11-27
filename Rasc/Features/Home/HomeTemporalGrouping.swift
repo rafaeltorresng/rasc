@@ -55,34 +55,57 @@ enum HomeTemporalGrouping {
 
 @MainActor
 enum HomeNoteTimestampFormatter {
-    private static let timeFormatter = DateFormatter()
-    private static let dateFormatter = DateFormatter()
+    private struct FormatterKey: Hashable {
+        let template: String
+        let localeIdentifier: String
+        let calendarIdentifier: Calendar.Identifier
+        let timeZoneIdentifier: String
+    }
+
+    private static var formatters: [FormatterKey: DateFormatter] = [:]
+
     static func format(
         _ date: Date,
         calendar: Calendar,
         now: Date
     ) -> String {
         let startOfToday = calendar.startOfDay(for: now)
+        let sameYear = calendar.component(.year, from: date) == calendar.component(.year, from: now)
+        let dateTemplate = sameYear ? "MMMd" : "yMMMd"
         guard let startOfYesterday = calendar.date(byAdding: .day, value: -1, to: startOfToday) else {
-            return configured(dateFormatter, template: "MMMd", calendar: calendar).string(from: date)
+            return formatter(template: dateTemplate, calendar: calendar).string(from: date)
         }
 
         if date >= startOfToday {
-            return configured(timeFormatter, template: "jm", calendar: calendar).string(from: date)
+            return formatter(template: "jm", calendar: calendar).string(from: date)
         }
         if date >= startOfYesterday {
             return "Yesterday"
         }
-        return configured(dateFormatter, template: "MMMd", calendar: calendar).string(from: date)
+        return formatter(template: dateTemplate, calendar: calendar).string(from: date)
     }
 
-    private static func configured(_ formatter: DateFormatter, template: String, calendar: Calendar) -> DateFormatter {
+    private static func formatter(template: String, calendar: Calendar) -> DateFormatter {
         let locale = calendar.locale ?? .autoupdatingCurrent
+        let key = FormatterKey(
+            template: template,
+            localeIdentifier: locale.identifier,
+            calendarIdentifier: calendar.identifier,
+            timeZoneIdentifier: calendar.timeZone.identifier
+        )
+        if let cached = formatters[key] {
+            return cached
+        }
+        if formatters.count >= 16 {
+            formatters.removeAll(keepingCapacity: true)
+        }
+        let formatter = DateFormatter()
         formatter.locale = locale
         formatter.calendar = calendar
         formatter.timeZone = calendar.timeZone
         // "j" honors the user's 12/24-hour preference, including system overrides.
         formatter.setLocalizedDateFormatFromTemplate(template)
+        formatters[key] = formatter
         return formatter
     }
 }

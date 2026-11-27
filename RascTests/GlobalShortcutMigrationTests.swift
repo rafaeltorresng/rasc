@@ -1,3 +1,4 @@
+import Foundation
 import KeyboardShortcuts
 import Testing
 @testable import Rasc
@@ -88,6 +89,25 @@ struct GlobalShortcutMigrationTests {
             #expect(!GlobalShortcutFormatting.hasValidToggleShortcut())
             #expect(KeyboardShortcuts.getShortcut(for: .toggleHome) == homeCustom)
             #expect(GlobalShortcutFormatting.currentHomeShortcutDisplay() == homeCustom.description)
+        }
+    }
+
+    @Test
+    @MainActor
+    func migratesLegacyOptionSpaceOnceAndRespectsExplicitOptionSpaceAfterward() throws {
+        let suite = "GlobalShortcutMigrationTests.\(UUID())"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+
+        withPreservedGlobalShortcuts {
+            KeyboardShortcuts.setShortcut(GlobalShortcutMigration.previousDefault, for: .toggleScratchpad)
+            GlobalShortcutMigration.migrateFromPreviousDefaultIfNeeded(userDefaults: defaults)
+            #expect(KeyboardShortcuts.getShortcut(for: .toggleScratchpad) == GlobalShortcutMigration.currentDefault)
+            #expect(defaults.bool(forKey: GlobalShortcutMigration.migrationCompletedKey))
+
+            KeyboardShortcuts.setShortcut(GlobalShortcutMigration.previousDefault, for: .toggleScratchpad)
+            GlobalShortcutMigration.migrateFromPreviousDefaultIfNeeded(userDefaults: defaults)
+            #expect(KeyboardShortcuts.getShortcut(for: .toggleScratchpad) == GlobalShortcutMigration.previousDefault)
         }
     }
 

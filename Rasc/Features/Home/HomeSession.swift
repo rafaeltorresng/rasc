@@ -26,6 +26,7 @@ final class HomeSession {
     private(set) var selectedNoteIDs: Set<UUID> = []
     private(set) var selectionAnchorID: UUID?
     private(set) var isSelectionMode = false
+    private var keyboardRangeIDs: Set<UUID> = []
     private var discardUndoRegistrations: [UUID: DiscardUndoRegistration] = [:]
     private(set) var hasMoreSearchResults = false
 
@@ -185,6 +186,7 @@ final class HomeSession {
 
     /// Toggle a note in the multi-selection (Command-click). Does not open it.
     func toggleSelection(_ noteID: UUID) {
+        keyboardRangeIDs.removeAll()
         if selectedNoteIDs.contains(noteID) { selectedNoteIDs.remove(noteID) }
         else { selectedNoteIDs.insert(noteID) }
         selectedNoteID = noteID
@@ -194,6 +196,7 @@ final class HomeSession {
 
     /// Range selection from the anchor to `noteID` within visible order (Shift-click).
     func extendSelectionTo(_ noteID: UUID) {
+        keyboardRangeIDs.removeAll()
         let notes = displayedNotes
         let anchor = selectionAnchorID ?? selectedNoteID ?? noteID
         if selectionAnchorID == nil { selectionAnchorID = anchor }
@@ -212,18 +215,29 @@ final class HomeSession {
 
     /// Keyboard range selection (Shift+Arrow) anchored at the current anchor or focus.
     func extendSelection(_ direction: NavigationDirection, columns: Int) {
-        let anchor = selectionAnchorID ?? selectedNoteID ?? displayedNotes.first?.id
+        let notes = displayedNotes
+        let anchor = selectionAnchorID ?? selectedNoteID ?? notes.first?.id
         if selectionAnchorID == nil { selectionAnchorID = anchor }
-        if let anchor { selectedNoteIDs.insert(anchor) }
         moveSelection(direction, columns: columns)
-        guard let target = selectedNoteID else { return }
-        extendSelectionTo(target)
+        guard let anchor,
+              let target = selectedNoteID,
+              let start = notes.firstIndex(where: { $0.id == anchor }),
+              let end = notes.firstIndex(where: { $0.id == target })
+        else {
+            return
+        }
+        let nextRange = Set(notes[min(start, end)...max(start, end)].map(\.id))
+        selectedNoteIDs.subtract(keyboardRangeIDs)
+        selectedNoteIDs.formUnion(nextRange)
+        keyboardRangeIDs = nextRange
+        isSelectionMode = true
     }
 
     /// Select every visible/filtered note (Command-A).
     func selectAllVisible() {
         let notes = displayedNotes
         guard !notes.isEmpty else { return }
+        keyboardRangeIDs.removeAll()
         selectedNoteIDs = Set(notes.map(\.id))
         selectionAnchorID = notes.first?.id
         if selectedNoteID == nil { selectedNoteID = notes.first?.id }
@@ -232,6 +246,7 @@ final class HomeSession {
 
     /// Clear multi-selection and leave selection mode (Esc / explicit clear).
     func clearSelection() {
+        keyboardRangeIDs.removeAll()
         selectedNoteIDs = []
         selectionAnchorID = nil
         isSelectionMode = false
@@ -461,6 +476,7 @@ final class HomeSession {
         let notes = displayedNotes
         guard !notes.isEmpty else {
             selectedNoteID = nil
+            keyboardRangeIDs.removeAll()
             selectedNoteIDs = []
             selectionAnchorID = nil
             isSelectionMode = false
@@ -469,6 +485,7 @@ final class HomeSession {
 
         // Multi-selection follows reloads; drop notes that are no longer visible.
         let visible = Set(notes.map(\.id))
+        keyboardRangeIDs.formIntersection(visible)
         let pruned = selectedNoteIDs.intersection(visible)
         if pruned != selectedNoteIDs {
             selectedNoteIDs = pruned

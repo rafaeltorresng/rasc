@@ -84,24 +84,26 @@ enum PaletteCommand: String, CaseIterable, Identifiable, Equatable {
 
     @MainActor
     func displayedShortcutLabel() -> String {
+        let label: String
         switch self {
         case .openHome:
-            return GlobalShortcutFormatting.currentHomeShortcutDisplay()
+            label = GlobalShortcutFormatting.currentHomeShortcutDisplay()
         case .newScratch:
-            return InternalShortcutStore.shared.displayString(for: .newScratch)
+            label = InternalShortcutStore.shared.displayString(for: .newScratch)
         case .findNote:
-            return InternalShortcutStore.shared.displayString(for: .search)
+            label = InternalShortcutStore.shared.displayString(for: .search)
         case .refine:
-            return InternalShortcutStore.shared.displayString(for: .refine)
+            label = InternalShortcutStore.shared.displayString(for: .refine)
         case .keep:
-            return InternalShortcutStore.shared.displayString(for: .keep)
+            label = InternalShortcutStore.shared.displayString(for: .keep)
         case .voiceCapture:
-            return GlobalShortcutFormatting.currentVoiceShortcutDisplay()
+            label = GlobalShortcutFormatting.currentVoiceShortcutDisplay()
         case .dictate:
-            return GlobalShortcutFormatting.currentDictateShortcutDisplay()
+            label = GlobalShortcutFormatting.currentDictateShortcutDisplay()
         default:
-            return shortcutLabel
+            label = shortcutLabel
         }
+        return label == "—" ? "" : label
     }
 
     var accessibilityHint: String {
