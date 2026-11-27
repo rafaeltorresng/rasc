@@ -1,3 +1,4 @@
+import AVFoundation
 import AppKit
 import Foundation
 import SwiftUI
@@ -125,6 +126,13 @@ struct HomeSnapshotTests {
             scheme: .light,
             name: "quick-search-grat-light"
         )
+        try renderPNG(
+            HistorySearchView(session: session),
+            width: 560,
+            height: 250,
+            scheme: .dark,
+            name: "quick-search-grat-dark"
+        )
 
         try renderPNG(
             HistorySearchView(session: session), width: 560, height: 250, scheme: .dark,
@@ -142,6 +150,13 @@ struct HomeSnapshotTests {
             height: 240,
             scheme: .light,
             name: "command-palette-re-light"
+        )
+        try renderPNG(
+            CommandPaletteView(session: session, onExecute: { _ in }),
+            width: 560,
+            height: 240,
+            scheme: .dark,
+            name: "command-palette-re-dark"
         )
     }
 
@@ -231,6 +246,7 @@ struct HomeSnapshotTests {
             onUnkeep: {}
         )
         try renderPNG(view, width: 720, height: 480, scheme: .light, name: "refine-preview-suggested-light")
+        try renderPNG(view, width: 720, height: 480, scheme: .dark, name: "refine-preview-suggested-dark")
         let palette = RascSurfacePalette(preset: .custom, custom: Self.customColors)
         try renderPNG(view, width: 560, height: 320, scheme: .dark,
                       name: "refine-preview-custom-large-dark", palette: palette, textSize: .large)
@@ -245,6 +261,10 @@ struct HomeSnapshotTests {
         try renderPNG(
             SettingsView(themeStore: store), width: 500, height: 860, scheme: .light,
             name: "settings-theme-light"
+        )
+        try renderPNG(
+            SettingsView(themeStore: store), width: 500, height: 860, scheme: .dark,
+            name: "settings-theme-dark"
         )
         store.selectPreset(.slate)
         try renderPNG(
@@ -366,6 +386,176 @@ struct HomeSnapshotTests {
         HomeViewModeStore(userDefaults: .standard).save(.list)
         try renderPNG(homeView(session: listSession, scheme: .light), width: 760, height: 520, scheme: .light,
                       name: "home-list-custom-large-light", palette: palette, textSize: .large)
+
+        // Batch selection mode in Light & Dark
+        let batchSession = try await makeSeededSession()
+        let firstIDs = Array(batchSession.displayedNotes.prefix(2).map(\.id))
+        for id in firstIDs { batchSession.toggleSelection(id) }
+        try renderPNG(homeView(session: batchSession, scheme: .light), width: 1000, height: 560, scheme: .light, name: "home-batch-light")
+        try renderPNG(homeView(session: batchSession, scheme: .dark), width: 1000, height: 560, scheme: .dark, name: "home-batch-dark")
+
+        // Empty Home in Light & Dark
+        let emptyURL = FileManager.default.temporaryDirectory
+            .appending(path: "HomeEmptySnapshot.\(UUID().uuidString)")
+            .appendingPathExtension("sqlite")
+        let emptySession = HomeSession(repository: try NoteRepository(databaseURL: emptyURL))
+        await emptySession.reloadImmediately()
+        try renderPNG(homeView(session: emptySession, scheme: .light), width: 920, height: 480, scheme: .light, name: "home-empty-light")
+        try renderPNG(homeView(session: emptySession, scheme: .dark), width: 920, height: 480, scheme: .dark, name: "home-empty-dark")
+    }
+
+    @Test
+    func scratchpadVoiceAndOnboardingLightDarkRender() async throws {
+        // 1. Scratchpad empty + populated (Light & Dark)
+        let dbURL = FileManager.default.temporaryDirectory
+            .appending(path: "ScratchpadCoreSnapshots.\(UUID().uuidString)")
+            .appendingPathExtension("sqlite")
+        let suiteName = "ScratchpadCoreSnapshots.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suiteName))
+        defaults.removePersistentDomain(forName: suiteName)
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let repository = try NoteRepository(databaseURL: dbURL)
+        let scratchSession = ScratchpadSession(repository: repository, userDefaults: defaults)
+
+        let emptyScratch = ScratchpadView(
+            session: scratchSession,
+            onEscape: {}, onPaletteCommand: { _ in }, onOpenHome: {}, onKeep: {}, onUnkeep: {}
+        )
+        try renderPNG(emptyScratch, width: 720, height: 440, scheme: .light, name: "scratchpad-empty-light")
+        try renderPNG(emptyScratch, width: 720, height: 440, scheme: .dark, name: "scratchpad-empty-dark")
+
+        await MainActor.run {
+            scratchSession.text = "Follow up with Marina on Thursday at 14:30 — confirm budget R$ 18.500 includes staging capacity.\nCheck checkout_v2 worker retry queue before deploy."
+        }
+        try await scratchSession.flush()
+        let textScratch = ScratchpadView(
+            session: scratchSession,
+            onEscape: {}, onPaletteCommand: { _ in }, onOpenHome: {}, onKeep: {}, onUnkeep: {}
+        )
+        try renderPNG(textScratch, width: 720, height: 440, scheme: .light, name: "scratchpad-text-light")
+        try renderPNG(textScratch, width: 720, height: 440, scheme: .dark, name: "scratchpad-text-dark")
+
+        // 2. Voice HUD states (listening, transcribing, permission issue) in Light & Dark
+        let voiceSuite = "VoiceHUDSnapshots.\(UUID().uuidString)"
+        let voiceDefaults = try #require(UserDefaults(suiteName: voiceSuite))
+        voiceDefaults.removePersistentDomain(forName: voiceSuite)
+        defer { voiceDefaults.removePersistentDomain(forName: voiceSuite) }
+        let gate = SnapshotSpeechGate()
+        let micCapture = VoiceCapture(
+            preferences: voiceDefaults,
+            supported: true,
+            input: .init(
+                authorization: { .authorized },
+                requestAccess: { true },
+                start: { _, _ in
+                    let buffer = MicBuffer(rate: 16_000)
+                    let samples = (0..<16_000).map { Float(0.25) * sinf(Float($0) * 0.08) }
+                    samples.withUnsafeBufferPointer { buffer.append($0) }
+                    return buffer
+                },
+                stop: { _ in }
+            ),
+            presentWindows: false,
+            speech: .init(
+                assetsAvailable: { true },
+                prepare: {},
+                transcribe: { _, ready in
+                    await ready()
+                    return try await gate.wait()
+                },
+                release: {}
+            )
+        )
+        micCapture.setEnabled(true)
+        micCapture.connect(repository: repository)
+        micCapture.activate(intent: .scratchpad)
+        let deadline = Date().addingTimeInterval(2)
+        while micCapture.phase != .listening, Date() < deadline {
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        #expect(micCapture.phase == .listening)
+        try renderPNG(VoiceStatusView(capture: micCapture), width: 372, height: 74, scheme: .light, name: "voice-hud-listening-light")
+        try renderPNG(VoiceStatusView(capture: micCapture), width: 372, height: 74, scheme: .dark, name: "voice-hud-listening-dark")
+
+        micCapture.finish()
+        let trDeadline = Date().addingTimeInterval(2)
+        while micCapture.phase != .transcribing, Date() < trDeadline {
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        #expect(micCapture.phase == .transcribing)
+        try renderPNG(VoiceStatusView(capture: micCapture), width: 372, height: 74, scheme: .light, name: "voice-hud-transcribing-light")
+        try renderPNG(VoiceStatusView(capture: micCapture), width: 372, height: 74, scheme: .dark, name: "voice-hud-transcribing-dark")
+        await gate.resume(with: "Cancel clean")
+        micCapture.cancel()
+
+        let deniedCapture = VoiceCapture(
+            preferences: voiceDefaults,
+            supported: true,
+            input: .init(
+                authorization: { .denied },
+                requestAccess: { false },
+                start: { _, _ in MicBuffer(rate: 16_000) },
+                stop: { _ in }
+            ),
+            presentWindows: false,
+            speech: .init(assetsAvailable: { true }, prepare: {}, transcribe: { _, _ in "" }, release: {})
+        )
+        deniedCapture.setEnabled(true)
+        deniedCapture.connect(repository: repository)
+        deniedCapture.activate(intent: .scratchpad)
+        let issueDeadline = Date().addingTimeInterval(2)
+        while deniedCapture.phase != .issue(.permission), Date() < issueDeadline {
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        #expect(deniedCapture.phase == .issue(.permission))
+        try renderPNG(VoiceStatusView(capture: deniedCapture), width: 372, height: 74, scheme: .light, name: "voice-hud-permission-light")
+        try renderPNG(VoiceStatusView(capture: deniedCapture), width: 372, height: 74, scheme: .dark, name: "voice-hud-permission-dark")
+
+        // 3. OnboardingWelcome in Light & Dark
+        let onbSuite = "OnboardingSnapshots.\(UUID().uuidString)"
+        let onbDefaults = try #require(UserDefaults(suiteName: onbSuite))
+        onbDefaults.removePersistentDomain(forName: onbSuite)
+        defer { onbDefaults.removePersistentDomain(forName: onbSuite) }
+        let onbCoord = OnboardingCoordinator(
+            store: OnboardingStore(userDefaults: onbDefaults),
+            activeNoteStore: ActiveNoteStore(userDefaults: onbDefaults),
+            windowFrameStore: WindowFrameStore(userDefaults: onbDefaults),
+            loginItemController: LoginItemController(),
+            voiceCapture: micCapture,
+            isVoiceSupported: true,
+            presentUIWindows: false,
+            microphoneStatus: { .authorized },
+            accessibilityTrusted: { true },
+            refineAvailabilityCheck: { true },
+            requestMicrophoneAccessHandler: { true }
+        )
+        try renderPNG(
+            OnboardingView(coordinator: onbCoord),
+            width: RascWindowMetrics.onboarding.width,
+            height: RascWindowMetrics.onboarding.height,
+            scheme: .light,
+            name: "onboarding-welcome-light"
+        )
+        try renderPNG(
+            OnboardingView(coordinator: onbCoord),
+            width: RascWindowMetrics.onboarding.width,
+            height: RascWindowMetrics.onboarding.height,
+            scheme: .dark,
+            name: "onboarding-welcome-dark"
+        )
+    }
+}
+
+private actor SnapshotSpeechGate {
+    private var continuation: CheckedContinuation<String, Error>?
+
+    func wait() async throws -> String {
+        try await withCheckedThrowingContinuation { continuation = $0 }
+    }
+
+    func resume(with value: String) {
+        continuation?.resume(returning: value)
+        continuation = nil
     }
 }
 

@@ -1356,6 +1356,85 @@ struct NoteRepositoryTests {
         #expect(weightedResults.map(\.id) == [strongScratch.id, weakKept.id])
     }
 
+    @Test
+    func migratesDirectV10ToV11PreservingScratchOriginAndPersistingDictationOrigin() async throws {
+        let dbURL = makeDatabaseURL()
+        defer { removeDatabase(at: dbURL) }
+        let legacyID = UUID()
+
+        do {
+            let db = try DatabaseQueue(path: dbURL.path)
+            try AppDatabase.migrator.migrate(db, upTo: "v10_voice_review_to_scratch")
+            try await db.write { database in
+                try database.execute(
+                    sql: "INSERT INTO notes (id, content, created_at, updated_at, deleted_at, kept_at, has_images) VALUES (?, ?, ?, ?, NULL, NULL, 0)",
+                    arguments: [legacyID, "pre-v11 scratch note", Date(timeIntervalSince1970: 1_700_000_000), Date(timeIntervalSince1970: 1_700_000_000)]
+                )
+            }
+            try db.close()
+        }
+
+        let repository = try NoteRepository(databaseURL: dbURL)
+        defer { try? repository.closeForTesting() }
+
+        let migrated = try #require(try await repository.fetch(id: legacyID))
+        #expect(migrated.origin == .scratch)
+
+        let dictated = try await repository.createScratch(content: "post-v11 dictated note", origin: .dictation)
+        #expect(try await repository.fetch(id: dictated.id)?.origin == .dictation)
+    }
+
+    @Test
+    func backupRestoreRoundTripPreservesNotesRevisionsImagesOriginAndSearch() async throws {
+        let sourceURL = makeDatabaseURL()
+        let backupURL = makeDatabaseURL()
+        defer {
+            removeDatabase(at: sourceURL)
+            removeDatabase(at: backupURL)
+        }
+
+        let repository = try NoteRepository(databaseURL: sourceURL)
+        let dictated = try await repository.createScratch(content: "draft release notes v0.1.16 tomorrow", origin: .dictation)
+        _ = try await repository.keep(id: dictated.id)
+        let metadata = RefinementMetadata(
+            provider: "foundation-models",
+            modelIdentifier: "system-language-model.default",
+            promptVersion: "refine-v2"
+        )
+        _ = try await repository.acceptRefinement(
+            noteID: dictated.id,
+            beforeContent: dictated.content,
+            afterContent: "Draft release notes v0.1.16 tomorrow.",
+            metadata: metadata
+        )
+        let doc = NoteDocument(parts: [.text("snapshot header\n"), .image(data: testPNG, typeIdentifier: "public.png")])
+        let docNote = try await repository.createScratch(document: doc, origin: .scratch)
+
+        try await repository.backup(to: backupURL)
+        await repository.checkpointForTermination()
+        try repository.closeForTesting()
+
+        let restoredRepo = try NoteRepository(databaseURL: backupURL)
+        defer { try? restoredRepo.closeForTesting() }
+
+        let all = try await restoredRepo.fetchAllNonDeleted()
+        #expect(all.count == 2)
+        let fetchedDictated = try #require(try await restoredRepo.fetch(id: dictated.id))
+        #expect(fetchedDictated.isKept)
+        #expect(fetchedDictated.origin == .dictation)
+        #expect(fetchedDictated.content == "Draft release notes v0.1.16 tomorrow.")
+
+        let revisions = try await restoredRepo.refinementRevisions(for: dictated.id)
+        #expect(revisions.count == 1)
+        #expect(revisions.first?.beforeContent == "draft release notes v0.1.16 tomorrow")
+
+        let restoredDoc = try #require(try await restoredRepo.fetchDocument(id: docNote.id))
+        #expect(restoredDoc == doc)
+
+        let searchHits = try await restoredRepo.search("v0.1.16", limit: 10)
+        #expect(searchHits.map(\.id) == [dictated.id])
+    }
+
     private func makeRepository() throws -> NoteRepository {
         try NoteRepository(databaseURL: makeDatabaseURL())
     }
