@@ -105,6 +105,35 @@ on macOS 26.5.1. The preceding DMGs have been retained.
 Use the documented Open Anyway flow after verifying the checksum.
 [Install guide](INSTALL-UNSIGNED.md), [Independent checklist](NATIVE-UI-VALIDATION.md#independent-reliability-candidate-pass)
 
+### Focused UX / Dictate candidate (`0.1.16`, build `26`)
+
+Use `build/updater-rc/0.1.16-ux-dictate-26/export/Rasc.app` for the final
+Dictate, onboarding and window-geometry pass. The previous build 25 candidate is
+untouched. This is an isolated ad-hoc build with its own bundle identifier and
+container; its Accessibility permission is distinct from both the distributed
+app and build 25. If System Settings already lists another Rasc entry, remove
+it and grant Accessibility to this build, or use the capsule's **Allow…** action
+so macOS prompts for the running binary.
+
+| Field | Value |
+|---|---|
+| Base commit | `02dbacc577e5fb65f4eeb3402484281b3a186709` |
+| Consolidating commit | `936bfc2fa240fe212f4e0978a6df36bff921da52` |
+| Source patch | `candidate-source.patch`, SHA-256 `c5fbb744ea788122464574b14535419c861c3060b2fc86ec2d8997745bc6c43b` |
+| Bundle | `com.rafaeltorres.rasc.uxrc`, arm64, deployment target macOS 14.0 |
+| DMG | `Rasc-0.1.16-updater.dmg`, SHA-256 `f54ae642b4c093a4de8ccd188be3c691c7becb924b15b0e4b2d25092414c9e83` |
+| App executable | SHA-256 `116d52b63f5b55adb211f2e8e0085203970b64e4fadb4afe960f65f15795171f` |
+| Signing | Ad-hoc, Hardened Runtime, cdhash-pinned LLC, unnotarized |
+| Update isolation | Automatic checks off and `https://127.0.0.1:9/appcast.xml` as the feed |
+| Recording cap | 120 seconds (unchanged) |
+
+Automated validation: 670 Xcode tests, 617 `Scripts/test-domain.py` tests plus
+the scale suite, Debug and Release builds, `verify-rc-bundle.sh`, DMG checksum,
+deep strict codesign and embedded library pins. Physical desktop checks are
+still pending and listed in
+[NATIVE-UI-VALIDATION.md](NATIVE-UI-VALIDATION.md#focused-ux--dictate--geometry-pass-build-26).
+The production appcast and published release are unchanged.
+
 ## Prerequisites
 
 The prerequisites below apply to the optional Developer ID/notarization path. The
