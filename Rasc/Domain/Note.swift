@@ -3,6 +3,11 @@ import GRDB
 import ImageIO
 
 struct Note: Codable, Equatable, FetchableRecord, PersistableRecord, Sendable {
+    enum Origin: String, Codable, Equatable, Sendable {
+        case scratch
+        case dictation
+    }
+
     static let databaseTableName = "notes"
 
     let id: UUID
@@ -12,6 +17,7 @@ struct Note: Codable, Equatable, FetchableRecord, PersistableRecord, Sendable {
     var deletedAt: Date?
     var keptAt: Date?
     var hasImages: Bool = false
+    var origin: Origin = .scratch
 
     enum Columns: String, ColumnExpression {
         case id
@@ -21,6 +27,7 @@ struct Note: Codable, Equatable, FetchableRecord, PersistableRecord, Sendable {
         case deletedAt = "deleted_at"
         case keptAt = "kept_at"
         case hasImages = "has_images"
+        case origin
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -31,6 +38,39 @@ struct Note: Codable, Equatable, FetchableRecord, PersistableRecord, Sendable {
         case deletedAt = "deleted_at"
         case keptAt = "kept_at"
         case hasImages = "has_images"
+        case origin
+    }
+
+    init(
+        id: UUID,
+        content: String,
+        createdAt: Date,
+        updatedAt: Date,
+        deletedAt: Date?,
+        keptAt: Date?,
+        hasImages: Bool = false,
+        origin: Origin = .scratch
+    ) {
+        self.id = id
+        self.content = content
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
+        self.keptAt = keptAt
+        self.hasImages = hasImages
+        self.origin = origin
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        content = try container.decode(String.self, forKey: .content)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
+        keptAt = try container.decodeIfPresent(Date.self, forKey: .keptAt)
+        hasImages = try container.decodeIfPresent(Bool.self, forKey: .hasImages) ?? false
+        origin = try container.decodeIfPresent(Origin.self, forKey: .origin) ?? .scratch
     }
 
     var isKept: Bool {

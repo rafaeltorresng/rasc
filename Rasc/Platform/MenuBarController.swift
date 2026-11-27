@@ -12,6 +12,8 @@ protocol MenuBarControllerDelegate: AnyObject {
     func menuBarCheckForUpdates()
     func menuBarSendFeedback()
     func menuBarQuit()
+    var menuBarNeedsStorageRecovery: Bool { get }
+    func menuBarRetryStorageRecovery()
     #if DEBUG
     func menuBarResetOnboarding()
     #endif
@@ -30,6 +32,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
     }
 
     private var voiceItems: [NSMenuItem] = []
+    private var storageRecoveryItem: NSMenuItem?
 
     private func configureMenu() {
         guard let button = statusItem.button else { return }
@@ -45,6 +48,15 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         let menu = NSMenu()
         menu.autoenablesItems = false
         menu.delegate = self
+
+        let recoveryItem = makeItem(
+            title: "Retry Opening Notes…",
+            action: #selector(retryStorageRecovery),
+            keyEquivalent: ""
+        )
+        recoveryItem.isHidden = true
+        storageRecoveryItem = recoveryItem
+        menu.addItem(recoveryItem)
 
         let scratch = makeItem(
             title: "Open Scratch",
@@ -159,6 +171,7 @@ final class MenuBarController: NSObject, NSMenuDelegate {
     func menuWillOpen(_ menu: NSMenu) {
         KeyboardShortcuts.disable(.toggleScratchpad, .toggleHome)
         GlobalModifierDispatcher.shared.isSuspended = true
+        storageRecoveryItem?.isHidden = !(delegate?.menuBarNeedsStorageRecovery ?? false)
         guard voiceItems.count == 3 else { return }
         let capture = VoiceCapture.shared
         let phase = capture.phase
@@ -282,6 +295,10 @@ final class MenuBarController: NSObject, NSMenuDelegate {
 
     @objc private func quit() {
         delegate?.menuBarQuit()
+    }
+
+    @objc private func retryStorageRecovery() {
+        delegate?.menuBarRetryStorageRecovery()
     }
 
     #if DEBUG

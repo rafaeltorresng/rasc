@@ -2,14 +2,22 @@ import AppKit
 import Foundation
 
 @MainActor
+final class DatabaseBackupBridge {
+    static let shared = DatabaseBackupBridge()
+    var backupHandler: (@MainActor (URL) async throws -> Void)?
+}
+
+@MainActor
 final class AppBootstrap {
     private var panelController: PanelController?
     private var homeWindowController: HomeWindowController?
     private var loadTask: Task<PanelController?, Never>?
+    private(set) var hasLoadFailure = false
     private let startedAt = ContinuousClock.now
 
     func start() {
         guard loadTask == nil else { return }
+        hasLoadFailure = false
         AppDiagnostics.bootstrapStarted()
 
         loadTask = Task { @MainActor in
@@ -17,6 +25,12 @@ final class AppBootstrap {
                 let repository = try await Task.detached {
                     try NoteRepository.openDefault()
                 }.value
+                DatabaseBackupBridge.shared.backupHandler = { destinationURL in
+                    try await repository.backup(to: destinationURL)
+                }
+                Task.detached(priority: .utility) {
+                    _ = try? await repository.purgeExpiredSoftDeletedNotes()
+                }
                 let controller = PanelController(repository: repository)
                 controller.onOpenHome = { [weak self] in
                     Task { @MainActor in
@@ -35,6 +49,7 @@ final class AppBootstrap {
                     self?.reloadHomeIfVisible()
                 }
                 panelController = controller
+                hasLoadFailure = false
                 VoiceCapture.shared.connect(repository: repository)
                 VoiceCapture.shared.onNotesChanged = { [weak self, weak controller] in
                     self?.reloadHomeIfVisible()
@@ -48,13 +63,44 @@ final class AppBootstrap {
                 AppDiagnostics.bootstrapReady(durationMs: max(durationMs, 0))
                 return controller
             } catch {
+                loadTask = nil
+                hasLoadFailure = true
                 AppDiagnostics.bootstrapFailed()
-                let alert = NSAlert()
-                alert.messageText = "Couldn't open Rasc's local notes."
-                alert.informativeText = "Your existing notes were not changed."
-                alert.alertStyle = .critical
-                alert.runModal()
+                presentRecoveryAlert(for: error)
                 return nil
+            }
+        }
+    }
+
+    private func presentRecoveryAlert(for error: Error) {
+        let alert = NSAlert()
+        alert.messageText = "Couldn't open Rasc's local notes."
+        if case .newerSchemaVersion = error as? AppDatabaseError {
+            alert.informativeText = "This database was created by a newer version of Rasc. Update Rasc before opening it. Your existing notes were not changed."
+        } else {
+            alert.informativeText = "Your existing notes were not changed."
+        }
+        alert.alertStyle = .critical
+        alert.addButton(withTitle: "Retry")
+        alert.addButton(withTitle: "Reveal Data Folder")
+        alert.addButton(withTitle: "Quit Rasc")
+
+        switch alert.runModal() {
+        case .alertFirstButtonReturn:
+            start()
+        case .alertSecondButtonReturn:
+            revealDataFolder()
+        default:
+            NSApp.terminate(nil)
+        }
+    }
+
+    private func revealDataFolder() {
+        if let databaseURL = try? NoteRepository.defaultDatabaseURL {
+            if FileManager.default.fileExists(atPath: databaseURL.path) {
+                NSWorkspace.shared.activateFileViewerSelecting([databaseURL])
+            } else {
+                NSWorkspace.shared.open(databaseURL.deletingLastPathComponent())
             }
         }
     }
@@ -63,9 +109,16 @@ final class AppBootstrap {
         panelController
     }
 
+    func checkpointForTermination() async {
+        await panelController?.repository.checkpointForTermination()
+    }
+
     func awaitPanel() async -> PanelController? {
         if let panelController {
             return panelController
+        }
+        if loadTask == nil {
+            start()
         }
         return await loadTask?.value
     }

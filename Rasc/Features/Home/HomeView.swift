@@ -841,6 +841,13 @@ private struct HomeNoteRowView: View {
 
             Spacer(minLength: 16)
 
+            if note.origin == .dictation {
+                Image(systemName: "mic")
+                    .font(.system(size: 10.5, weight: .medium))
+                    .foregroundStyle(palette.metadataText(for: colorScheme))
+                    .accessibilityLabel("Dictated")
+            }
+
             Text(timestamp)
                 .font(.system(size: 11, weight: .medium))
                 .monospacedDigit()
@@ -900,6 +907,9 @@ private struct HomeNoteRowView: View {
         var components = [note.displayTitle]
         if note.isKept {
             components.append("Kept")
+        }
+        if note.origin == .dictation {
+            components.append("Dictated")
         }
         if let excerpt = rowExcerpt {
             components.append(excerpt)
@@ -1238,11 +1248,19 @@ private struct HomeNoteCardView: View {
             Spacer(minLength: 8)
 
             VStack(alignment: .trailing, spacing: 4) {
-                Text(timestamp)
-                    .font(.system(size: 11, weight: .medium))
-                    .monospacedDigit()
-                    .foregroundStyle(palette.metadataText(for: colorScheme))
-                    .lineLimit(1)
+                HStack(spacing: 4) {
+                    if note.origin == .dictation {
+                        Image(systemName: "mic")
+                            .font(.system(size: 10.5, weight: .medium))
+                            .foregroundStyle(palette.metadataText(for: colorScheme))
+                            .accessibilityLabel("Dictated")
+                    }
+                    Text(timestamp)
+                        .font(.system(size: 11, weight: .medium))
+                        .monospacedDigit()
+                        .foregroundStyle(palette.metadataText(for: colorScheme))
+                        .lineLimit(1)
+                }
 
                 Color.clear
                     .frame(width: 26, height: 26)
@@ -1304,6 +1322,9 @@ private struct HomeNoteCardView: View {
         if note.isKept {
             components.append("Kept")
         }
+        if note.origin == .dictation {
+            components.append("Dictated")
+        }
         if let excerpt = cardExcerpt {
             components.append(excerpt)
         }
@@ -1359,6 +1380,7 @@ struct HomeBatchActionsBar: View {
     @Environment(\.rascPalette) private var palette
     @Environment(\.colorScheme) private var colorScheme
     @State private var isWorking = false
+    @State private var confirmingLargeDiscardCount: Int?
 
     var body: some View {
         HStack(spacing: 10) {
@@ -1373,8 +1395,14 @@ struct HomeBatchActionsBar: View {
                 .disabled(isWorking)
             Button("Export…") { onExportSelected(session.selectedNoteIDs) }
                 .disabled(isWorking)
-            Button("Discard", role: .destructive) { discardSelected() }
-                .disabled(isWorking)
+            Button("Discard", role: .destructive) {
+                if session.selectedCount > 10 {
+                    confirmingLargeDiscardCount = session.selectedCount
+                } else {
+                    discardSelected()
+                }
+            }
+            .disabled(isWorking)
             Button("Clear") { session.clearSelection() }
                 .keyboardShortcut(.cancelAction)
                 .disabled(isWorking)
@@ -1392,6 +1420,23 @@ struct HomeBatchActionsBar: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Batch actions, \(session.selectedCount) selected")
+        .alert(
+            "Discard \(confirmingLargeDiscardCount ?? 0) thoughts?",
+            isPresented: Binding(
+                get: { confirmingLargeDiscardCount != nil },
+                set: { if !$0 { confirmingLargeDiscardCount = nil } }
+            )
+        ) {
+            Button("Discard", role: .destructive) {
+                confirmingLargeDiscardCount = nil
+                discardSelected()
+            }
+            Button("Cancel", role: .cancel) {
+                confirmingLargeDiscardCount = nil
+            }
+        } message: {
+            Text("You can still undo immediately afterward.")
+        }
     }
 
     private func copySelected() {

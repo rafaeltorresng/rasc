@@ -176,10 +176,18 @@ struct HistorySearchView: View {
             Spacer(minLength: 8)
 
             VStack(alignment: .trailing, spacing: 6) {
-                if note.isKept {
-                    Text("Kept")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(palette.metadataText(for: colorScheme))
+                HStack(spacing: 5) {
+                    if note.origin == .dictation {
+                        Image(systemName: "mic")
+                            .font(.system(size: 10.5, weight: .medium))
+                            .foregroundStyle(palette.metadataText(for: colorScheme))
+                            .accessibilityLabel("Dictated")
+                    }
+                    if note.isKept {
+                        Text("Kept")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(palette.metadataText(for: colorScheme))
+                    }
                 }
 
                 Text(HomeNoteTimestampFormatter.format(note.updatedAt, calendar: .current, now: .now))
@@ -204,6 +212,9 @@ struct HistorySearchView: View {
         var components = [note.displayTitle]
         if note.isKept {
             components.append("Kept")
+        }
+        if note.origin == .dictation {
+            components.append("Dictated")
         }
         if let snippet = note.retrievalSnippet(matching: session.searchQuery) {
             components.append(snippet)

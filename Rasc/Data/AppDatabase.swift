@@ -1,11 +1,55 @@
 import Foundation
 import GRDB
 
+enum AppDatabaseError: LocalizedError, Equatable {
+    case newerSchemaVersion([String])
+    case integrityCheckFailed(String)
+
+    var errorDescription: String? {
+        switch self {
+        case .newerSchemaVersion:
+            "This notes database was created by a newer version of Rasc."
+        case .integrityCheckFailed:
+            "Rasc’s local notes database failed an integrity check."
+        }
+    }
+}
+
 enum AppDatabase {
     static func open(at databaseURL: URL) throws -> DatabaseQueue {
-        let database = try DatabaseQueue(path: databaseURL.path)
+        var configuration = Configuration()
+        configuration.busyMode = .timeout(5.0)
+        configuration.prepareDatabase { database in
+            if !database.configuration.readonly {
+                try database.execute(sql: "PRAGMA journal_mode = WAL")
+                try database.execute(sql: "PRAGMA synchronous = NORMAL")
+            }
+        }
+
+        let database = try DatabaseQueue(path: databaseURL.path, configuration: configuration)
+        let migrator = self.migrator
+        try database.read { db in
+            let check = try String.fetchOne(db, sql: "PRAGMA quick_check(1)") ?? "unknown"
+            guard check.lowercased() == "ok" else {
+                throw AppDatabaseError.integrityCheckFailed(check)
+            }
+            if try db.tableExists("grdb_migrations") {
+                let applied = try migrator.appliedIdentifiers(db)
+                let unknown = applied.subtracting(migrator.migrations)
+                guard unknown.isEmpty else {
+                    throw AppDatabaseError.newerSchemaVersion(unknown.sorted())
+                }
+            }
+        }
+
         try migrator.migrate(database)
         return database
+    }
+
+    static func checkpointForTermination(_ database: DatabaseQueue) {
+        _ = try? database.writeWithoutTransaction { db in
+            try db.execute(sql: "PRAGMA wal_checkpoint(TRUNCATE)")
+        }
     }
 
     static var migrator: DatabaseMigrator {
@@ -110,13 +154,40 @@ enum AppDatabase {
         migrator.registerMigration("v10_voice_review_to_scratch") { database in
             if let row = try Row.fetchOne(database, sql: "SELECT id, content FROM voice_review WHERE slot = 1") {
                 let id: UUID = row["id"]
-                if try Note.fetchOne(database, key: id) == nil {
+                let exists = try Bool.fetchOne(
+                    database,
+                    sql: "SELECT EXISTS(SELECT 1 FROM notes WHERE id = ?)",
+                    arguments: [id]
+                ) ?? false
+                if !exists {
                     let now = Date()
-                    try Note(id: id, content: row["content"], createdAt: now, updatedAt: now,
-                             deletedAt: nil, keptAt: nil).insert(database)
+                    let content: String = row["content"]
+                    try database.execute(
+                        sql: """
+                            INSERT INTO notes (id, content, created_at, updated_at, deleted_at, kept_at, has_images)
+                            VALUES (?, ?, ?, ?, NULL, NULL, 0)
+                            """,
+                        arguments: [id, content, now, now]
+                    )
                 }
             }
             try database.drop(table: "voice_review")
+        }
+
+        migrator.registerMigration("v11_scale_indexes_and_origin") { database in
+            try database.execute(sql: """
+                CREATE INDEX IF NOT EXISTS notes_active_updated
+                ON notes(updated_at DESC)
+                WHERE deleted_at IS NULL
+                """)
+            try database.execute(sql: """
+                CREATE INDEX IF NOT EXISTS notes_kept_at
+                ON notes(kept_at DESC, updated_at DESC)
+                WHERE deleted_at IS NULL AND kept_at IS NOT NULL
+                """)
+            try database.alter(table: Note.databaseTableName) { table in
+                table.add(column: "origin", .text).notNull().defaults(to: Note.Origin.scratch.rawValue)
+            }
         }
 
         return migrator

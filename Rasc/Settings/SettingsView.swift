@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct RefineStatusDescription: Equatable, Sendable {
     let headline: String
@@ -77,6 +78,7 @@ struct SettingsView: View {
     private let languageSettings: RefineLanguageSettingsStore
     private let themeSettings: AppThemeSettingsStore
     private let supportedLocales: any RefineSupportedLocaleDiscovering
+    private let backupDatabase: (@MainActor (URL) async throws -> Void)?
 
     @ObservedObject private var themeStore: ThemeStore
     @ObservedObject private var voiceCapture = VoiceCapture.shared
@@ -92,6 +94,8 @@ struct SettingsView: View {
     @State private var launchAtLogin = false
     @State private var loginItemState = LoginItemState.disabled
     @State private var launchAtLoginError: String?
+    @State private var databaseBackupFeedback: String?
+    @State private var databaseBackupFailed = false
     @State private var refineStatus = RefineStatusDescription(
         headline: "Checking…",
         detail: "Checking Refine availability."
@@ -113,7 +117,8 @@ struct SettingsView: View {
         themeSettings: AppThemeSettingsStore = AppThemeSettingsStore(),
         themeStore: ThemeStore = .shared,
         supportedLocales: any RefineSupportedLocaleDiscovering = RefineSupportedLocales(),
-        initialTab: SettingsTab = .general
+        initialTab: SettingsTab = .general,
+        backupDatabase: (@MainActor (URL) async throws -> Void)? = nil
     ) {
         self.refinementProvider = refinementProvider
         self.loginItemController = loginItemController
@@ -123,6 +128,7 @@ struct SettingsView: View {
         self.themeStore = themeStore
         _customDraft = State(initialValue: themeStore.custom)
         self.supportedLocales = supportedLocales
+        self.backupDatabase = backupDatabase
         _selectedTab = State(initialValue: initialTab)
     }
 
@@ -301,6 +307,25 @@ struct SettingsView: View {
                     Text(launchAtLoginError)
                         .font(.caption)
                         .foregroundStyle(palette.destructiveText(for: colorScheme))
+                }
+            }
+            .listRowBackground(settingsSectionBackground)
+
+            Section("Local Storage") {
+                HStack {
+                    Button("Back Up Database…") {
+                        backUpDatabase()
+                    }
+                    Spacer()
+                }
+                if let databaseBackupFeedback {
+                    Text(databaseBackupFeedback)
+                        .font(.caption)
+                        .foregroundStyle(
+                            databaseBackupFailed
+                                ? palette.destructiveText(for: colorScheme)
+                                : palette.secondaryText(for: colorScheme)
+                        )
                 }
             }
             .listRowBackground(settingsSectionBackground)
@@ -617,6 +642,48 @@ struct SettingsView: View {
             launchAtLoginError = isEnabled
                 ? "Couldn't enable Launch at Login. Check System Settings and try again."
                 : "Couldn't disable Launch at Login. Try again in System Settings."
+        }
+    }
+
+    private static let backupFilenameDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    private func backUpDatabase() {
+        let panel = NSSavePanel()
+        panel.title = "Back Up Rasc Notes"
+        panel.prompt = "Save Backup"
+        panel.canCreateDirectories = true
+        panel.allowedContentTypes = [UTType(filenameExtension: "sqlite") ?? .data]
+        panel.nameFieldStringValue = "Rasc-Backup-\(Self.backupFilenameDateFormatter.string(from: Date())).sqlite"
+
+        let handler: (NSApplication.ModalResponse) -> Void = { response in
+            guard response == .OK, let url = panel.url else { return }
+            guard let performBackup = backupDatabase ?? DatabaseBackupBridge.shared.backupHandler else {
+                databaseBackupFailed = true
+                databaseBackupFeedback = "Local storage is unavailable."
+                return
+            }
+            Task { @MainActor in
+                do {
+                    try await performBackup(url)
+                    databaseBackupFailed = false
+                    databaseBackupFeedback = "Backup saved to \(url.lastPathComponent)."
+                } catch {
+                    databaseBackupFailed = true
+                    databaseBackupFeedback = "Couldn't create backup. Your existing notes were not changed."
+                }
+            }
+        }
+
+        if let window = NSApp.keyWindow {
+            panel.beginSheetModal(for: window, completionHandler: handler)
+        } else {
+            panel.begin(completionHandler: handler)
         }
     }
 

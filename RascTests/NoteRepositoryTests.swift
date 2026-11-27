@@ -83,7 +83,7 @@ struct NoteRepositoryTests {
         let columns = try await DatabaseQueue(path: databaseURL.path).read { database in
             try database.columns(in: Note.databaseTableName).map(\.name)
         }
-        #expect(columns == ["id", "content", "created_at", "updated_at", "deleted_at", "kept_at", "has_images"])
+        #expect(columns == ["id", "content", "created_at", "updated_at", "deleted_at", "kept_at", "has_images", "origin"])
     }
 
     @Test
@@ -362,7 +362,7 @@ struct NoteRepositoryTests {
         let columns = try await database.read { database in
             try database.columns(in: Note.databaseTableName).map(\.name)
         }
-        #expect(columns == ["id", "content", "created_at", "updated_at", "deleted_at", "kept_at", "has_images"])
+        #expect(columns == ["id", "content", "created_at", "updated_at", "deleted_at", "kept_at", "has_images", "origin"])
     }
 
     @Test
@@ -1123,6 +1123,237 @@ struct NoteRepositoryTests {
         print("RASC_SUFFIX_BENCHMARK bytes=\(bytes.count) milliseconds=\(milliseconds)")
         #expect(try await repository.fetchDocument(id: note.id) == session.document)
         try repository.closeForTesting()
+    }
+
+    @Test
+    func databaseOpensInWALModeAndPrivateDirectoryPermissions() async throws {
+        let root = FileManager.default.temporaryDirectory
+            .appending(path: "RascPerms.\(UUID().uuidString)", directoryHint: .isDirectory)
+        defer { try? FileManager.default.removeItem(at: root) }
+
+        let privateDir = root.appending(path: "Storage", directoryHint: .isDirectory)
+        try NoteRepository.ensurePrivateDirectory(at: privateDir)
+        let attrs = try FileManager.default.attributesOfItem(atPath: privateDir.path)
+        let posix = (attrs[.posixPermissions] as? NSNumber)?.intValue
+        #expect(posix == 0o700)
+
+        let dbURL = privateDir.appending(path: "rasc.sqlite")
+        let repository = try NoteRepository(databaseURL: dbURL)
+        defer { try? repository.closeForTesting() }
+
+        let mode = try await DatabaseQueue(path: dbURL.path).read { db in
+            try String.fetchOne(db, sql: "PRAGMA journal_mode")
+        }
+        #expect(mode?.lowercased() == "wal")
+    }
+
+    @Test
+    func refusesNewerSchemaOrCorruptDatabaseWithoutDeletingFile() throws {
+        let newerURL = makeDatabaseURL()
+        defer { removeDatabase(at: newerURL) }
+        do {
+            let repo = try NoteRepository(databaseURL: newerURL)
+            _ = try repo.closeForTesting()
+            let queue = try DatabaseQueue(path: newerURL.path)
+            try queue.write { db in
+                try db.execute(sql: "INSERT INTO grdb_migrations (identifier) VALUES ('v999_future_version')")
+            }
+            try queue.close()
+        }
+        let sizeBefore = try FileManager.default.attributesOfItem(atPath: newerURL.path)[.size] as? Int64
+        #expect(throws: AppDatabaseError.newerSchemaVersion(["v999_future_version"])) {
+            _ = try NoteRepository(databaseURL: newerURL)
+        }
+        #expect(FileManager.default.fileExists(atPath: newerURL.path))
+        let sizeAfter = try FileManager.default.attributesOfItem(atPath: newerURL.path)[.size] as? Int64
+        #expect(sizeAfter == sizeBefore)
+
+        let corruptURL = makeDatabaseURL()
+        defer { removeDatabase(at: corruptURL) }
+        let garbage = Data("not a valid sqlite database file at all".utf8)
+        try garbage.write(to: corruptURL)
+        do {
+            _ = try NoteRepository(databaseURL: corruptURL)
+            Issue.record("Expected corrupt database open to fail")
+        } catch {
+            #expect(FileManager.default.fileExists(atPath: corruptURL.path))
+            #expect(try Data(contentsOf: corruptURL) == garbage)
+        }
+    }
+
+    @Test
+    func migratesV9VoiceReviewThroughV10AndV11CreatingScaleIndexesAndOrigin() async throws {
+        let dbURL = makeDatabaseURL()
+        defer { removeDatabase(at: dbURL) }
+        let legacyID = UUID()
+
+        do {
+            let db = try DatabaseQueue(path: dbURL.path)
+            try AppDatabase.migrator.migrate(db, upTo: "v9_voice_review")
+            try await db.write { database in
+                try database.execute(
+                    sql: "INSERT INTO voice_review (slot, id, content) VALUES (1, ?, ?)",
+                    arguments: [legacyID, "legacy voice capture"]
+                )
+            }
+            try db.close()
+        }
+
+        let repository = try NoteRepository(databaseURL: dbURL)
+        defer { try? repository.closeForTesting() }
+
+        let recovered = try #require(try await repository.fetch(id: legacyID))
+        #expect(recovered.content == "legacy voice capture")
+        #expect(recovered.origin == .scratch)
+
+        let indexes = try await DatabaseQueue(path: dbURL.path).read { db in
+            try String.fetchAll(db, sql: "SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = 'notes'")
+        }
+        #expect(indexes.contains("notes_active_updated"))
+        #expect(indexes.contains("notes_kept_at"))
+    }
+
+    @Test
+    func dictationOriginPersistsAndRoundTripsAcrossDocuments() async throws {
+        let repository = try makeRepository()
+        let dictatedText = try await repository.createScratch(content: "dictated plain note", origin: .dictation)
+        let doc = NoteDocument(parts: [.text("dictated doc "), .image(data: testPNG, typeIdentifier: "public.png")])
+        let dictatedDoc = try await repository.createScratch(document: doc, origin: .dictation)
+        let scratch = try await repository.createScratch(content: "typed scratch")
+
+        #expect(dictatedText.origin == .dictation)
+        #expect(dictatedDoc.origin == .dictation)
+        #expect(scratch.origin == .scratch)
+        #expect(try await repository.fetch(id: dictatedText.id)?.origin == .dictation)
+        #expect(try await repository.fetch(id: dictatedDoc.id)?.origin == .dictation)
+        #expect(try await repository.fetch(id: scratch.id)?.origin == .scratch)
+    }
+
+    @Test
+    func purgeExpiredSoftDeletedNotesRemovesOldNotesAndRefinementRevisionsRespectingFK() async throws {
+        let dbURL = makeDatabaseURL()
+        defer { removeDatabase(at: dbURL) }
+        let repository = try NoteRepository(databaseURL: dbURL)
+        defer { try? repository.closeForTesting() }
+
+        let expired = try await repository.createScratch(content: "expired note")
+        let recentDeleted = try await repository.createScratch(content: "recent deleted")
+        let active = try await repository.createScratch(content: "active note")
+
+        _ = try await repository.acceptRefinement(
+            noteID: expired.id,
+            beforeContent: "expired note",
+            afterContent: "Expired note refined",
+            metadata: RefinementMetadata(provider: "t", modelIdentifier: "m", promptVersion: "1")
+        )
+        _ = try await repository.acceptRefinement(
+            noteID: recentDeleted.id,
+            beforeContent: "recent deleted",
+            afterContent: "Recent deleted refined",
+            metadata: RefinementMetadata(provider: "t", modelIdentifier: "m", promptVersion: "1")
+        )
+
+        _ = try await repository.delete(ids: [expired.id, recentDeleted.id])
+
+        let now = Date()
+        let eightDaysAgo = now.addingTimeInterval(-8 * 86_400)
+        let twoDaysAgo = now.addingTimeInterval(-2 * 86_400)
+        try await DatabaseQueue(path: dbURL.path).write { db in
+            try db.execute(sql: "UPDATE notes SET deleted_at = ? WHERE id = ?", arguments: [eightDaysAgo, expired.id])
+            try db.execute(sql: "UPDATE notes SET deleted_at = ? WHERE id = ?", arguments: [twoDaysAgo, recentDeleted.id])
+        }
+
+        let purgedCount = try await repository.purgeExpiredSoftDeletedNotes(olderThanDays: 7, now: now)
+        #expect(purgedCount == 1)
+
+        let counts = try await DatabaseQueue(path: dbURL.path).read { db in
+            (
+                try Int.fetchOne(db, sql: "SELECT COUNT(*) FROM notes WHERE id = ?", arguments: [expired.id]),
+                try Int.fetchOne(db, sql: "SELECT COUNT(*) FROM refinement_revisions WHERE note_id = ?", arguments: [expired.id]),
+                try Int.fetchOne(db, sql: "SELECT COUNT(*) FROM notes WHERE id = ?", arguments: [recentDeleted.id]),
+                try Int.fetchOne(db, sql: "SELECT COUNT(*) FROM refinement_revisions WHERE note_id = ?", arguments: [recentDeleted.id]),
+                try Int.fetchOne(db, sql: "SELECT COUNT(*) FROM notes WHERE id = ?", arguments: [active.id])
+            )
+        }
+        #expect(counts.0 == 0)
+        #expect(counts.1 == 0)
+        #expect(counts.2 == 1)
+        #expect(counts.3 == 1)
+        #expect(counts.4 == 1)
+    }
+
+    @Test
+    func discardReceiptsAreBoundedAndBatchDeleteRestoresAtomically() async throws {
+        let repository = try makeRepository()
+        defer { try? repository.closeForTesting() }
+
+        var receipts: [NoteDiscardReceipt] = []
+        for idx in 0..<52 {
+            let note = try await repository.createScratch(content: "receipt \(idx)")
+            if let receipt = try await repository.delete(id: note.id) {
+                receipts.append(receipt)
+            }
+        }
+        #expect(receipts.count == 52)
+        await #expect(throws: NoteRepository.PersistenceError.staleContent) {
+            try await repository.restoreDiscard(receipts[0])
+        }
+        await #expect(throws: NoteRepository.PersistenceError.staleContent) {
+            try await repository.restoreDiscard(receipts[1])
+        }
+        let third = try await repository.restoreDiscard(receipts[2])
+        #expect(third.content == "receipt 2")
+
+        var batchIDs: Set<UUID> = []
+        for idx in 0..<15 {
+            batchIDs.insert(try await repository.createScratch(content: "batch \(idx)").id)
+        }
+        let batchReceipts = try await repository.delete(ids: batchIDs)
+        #expect(batchReceipts.count == 15)
+        let restored = try await repository.restoreDiscards(batchReceipts)
+        #expect(Set(restored.map(\.id)) == batchIDs)
+    }
+
+    @Test
+    func backupCreatesReadableCopyOfLiveWALDatabaseAndCheckpointRuns() async throws {
+        let repository = try makeRepository()
+        defer { try? repository.closeForTesting() }
+        let note = try await repository.createScratch(content: "wal live backup note", origin: .dictation)
+
+        let backupURL = makeDatabaseURL()
+        defer { removeDatabase(at: backupURL) }
+        try await repository.backup(to: backupURL)
+
+        let copiedNotes = try await DatabaseQueue(path: backupURL.path).read { db in
+            try Note.fetchAll(db)
+        }
+        #expect(copiedNotes.map(\.id) == [note.id])
+        #expect(copiedNotes.first?.origin == .dictation)
+        await repository.checkpointForTermination()
+    }
+
+    @Test
+    func keptTieBreakerElevatesKeptNoteWithoutOverridingStrongerScratch() async throws {
+        let repository = try makeRepository()
+        defer { try? repository.closeForTesting() }
+
+        for index in 0..<10 {
+            _ = try await repository.createScratch(content: "unrelated filler thought number \(index)")
+        }
+
+        let keptTie = try await repository.createScratch(content: "alpha target note kept")
+        _ = try await repository.keep(id: keptTie.id)
+        let scratchTie = try await repository.createScratch(content: "alpha target note scratch")
+
+        let tieResults = try await repository.search("target", limit: 10)
+        #expect(tieResults.map(\.id) == [keptTie.id, scratchTie.id])
+
+        let weakKept = try await repository.createScratch(content: "deployment delta epsilon zeta eta theta iota kappa")
+        _ = try await repository.keep(id: weakKept.id)
+        let strongScratch = try await repository.createScratch(content: "deployment deployment deployment deployment deployment")
+
+        let weightedResults = try await repository.search("deployment", limit: 10)
+        #expect(weightedResults.map(\.id) == [strongScratch.id, weakKept.id])
     }
 
     private func makeRepository() throws -> NoteRepository {
