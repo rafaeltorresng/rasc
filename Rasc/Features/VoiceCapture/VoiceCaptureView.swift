@@ -15,10 +15,11 @@ enum VoiceFallbackPresentation {
     static func fallbackTitle(
         reason: VoiceTextInsertion.Reason?,
         hasAccessibilityAccess: Bool,
-        reachedLimit: Bool
+        reachedLimit: Bool,
+        needsManualGrant: Bool = false
     ) -> String {
         if showsAccessibilityAction(reason: reason, hasAccessibilityAccess: hasAccessibilityAccess) {
-            return "Accessibility needed — copied"
+            return needsManualGrant ? "Add this build in Accessibility" : "Accessibility needed — copied"
         }
         let detail: String? = switch reason {
         case .focusChanged: "Focus changed — copied"
@@ -299,7 +300,12 @@ struct VoiceStatusView: View {
                     reason: capture.lastFallbackReason,
                     hasAccessibilityAccess: capture.hasAccessibilityAccess
                 ) {
-                    action("Allow…", accessibilityLabel: "Grant Accessibility access to this build") {
+                    action(
+                        "Allow…",
+                        accessibilityLabel: capture.accessibilitySetupGuidance
+                            ? "Open Accessibility Settings for this build"
+                            : "Grant Accessibility access to this build"
+                    ) {
                         capture.requestAccessibilityForInsertion()
                     }
                 }
@@ -343,7 +349,8 @@ struct VoiceStatusView: View {
             return VoiceFallbackPresentation.fallbackTitle(
                 reason: capture.lastFallbackReason,
                 hasAccessibilityAccess: capture.hasAccessibilityAccess,
-                reachedLimit: reachedLimit
+                reachedLimit: reachedLimit,
+                needsManualGrant: capture.accessibilitySetupGuidance
             )
         case .saving:
             return "Saving thought…"
@@ -559,6 +566,9 @@ struct VoiceCaptureSettings: View {
                                     Button("Open System Settings…") {
                                         capture.openAccessibilitySettings()
                                     }
+                                }
+                                if capture.accessibilitySetupGuidance {
+                                    detail(capture.accessibilitySetupInstructions)
                                 }
                             }
                             .padding(.vertical, 2)

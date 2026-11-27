@@ -123,6 +123,7 @@ final class VoiceCapture: ObservableObject {
     @Published private(set) var modifierShortcutIsActive = false
     @Published private(set) var modifierShortcutHasAccess = true
     @Published private(set) var hasAccessibilityAccess = true
+    @Published private(set) var accessibilitySetupGuidance = false
     @Published private(set) var output: VoiceCaptureOutput
     @Published private(set) var dictationDelivery: VoiceDictationDelivery
     @Published private(set) var dictationAlsoCopiesToClipboard: Bool
@@ -150,6 +151,9 @@ final class VoiceCapture: ObservableObject {
     private let presentWindows: Bool
     private let modifierStore: ModifierShortcutStore
     private let accessibilityTrusted: @Sendable () -> Bool
+    private let accessibilityPrompt: @Sendable () -> Void
+    private let accessibilitySettingsOpener: @MainActor @Sendable () -> Void
+    private let promptSettlingDelay: Duration
     private let pasteboard: NSPasteboard
     private let insertText: @MainActor @Sendable (String, NSRunningApplication?, NSPasteboard) -> VoiceTextInsertion.Result
     private let insertInCurrentApp: @MainActor @Sendable (String, NSWindow?) -> Bool
@@ -186,6 +190,7 @@ final class VoiceCapture: ObservableObject {
     private var targetEditorWindow: NSWindow?
     private var deliveryDismissTask: Task<Void, Never>?
     private var standaloneHistoryTask: Task<Void, Never>?
+    private var accessibilityPromptTask: Task<Void, Never>?
     private var lastActivation: ContinuousClock.Instant?
     private var activatedAt: ContinuousClock.Instant?
     private var recordingStartedAt: ContinuousClock.Instant?
@@ -225,6 +230,11 @@ final class VoiceCapture: ObservableObject {
         cancelConfirmationTimeout: Duration = .seconds(6),
         modifierStore: ModifierShortcutStore = .shared,
         accessibilityTrusted: @escaping @Sendable () -> Bool = { ModifierShortcutAccess.isTrusted },
+        accessibilityPrompt: @escaping @Sendable () -> Void = { ModifierShortcutAccess.request() },
+        accessibilitySettingsOpener: @escaping @MainActor @Sendable () -> Void = {
+            ModifierShortcutAccess.openSettings()
+        },
+        promptSettlingDelay: Duration = .seconds(1.2),
         pasteboard: NSPasteboard = .general,
         insertText: @escaping @MainActor @Sendable (String, NSRunningApplication?, NSPasteboard) -> VoiceTextInsertion.Result = {
             VoiceTextInsertion.insert($0, target: $1, pasteboard: $2)
@@ -257,6 +267,9 @@ final class VoiceCapture: ObservableObject {
         self.cancelConfirmationTimeout = cancelConfirmationTimeout
         self.modifierStore = modifierStore
         self.accessibilityTrusted = accessibilityTrusted
+        self.accessibilityPrompt = accessibilityPrompt
+        self.accessibilitySettingsOpener = accessibilitySettingsOpener
+        self.promptSettlingDelay = promptSettlingDelay
         self.pasteboard = pasteboard
         self.insertText = insertText
         self.insertInCurrentApp = insertInCurrentApp
@@ -448,23 +461,51 @@ final class VoiceCapture: ObservableObject {
         dictationDelivery == .insertAtCursor && !hasAccessibilityAccess
     }
 
+    /// Concrete resolution for ad-hoc builds: macOS may keep one Rasc entry
+    /// that belongs to an older build and silently skip the prompt, so the user
+    /// must replace that entry with this exact app bundle.
+    var accessibilitySetupInstructions: String {
+        "Remove the existing Rasc entry in Accessibility, choose + and add this build: \(Bundle.main.bundleURL.path). Then return to Rasc."
+    }
+
     func refreshAccessibilityStatus() {
         let trusted = accessibilityTrusted()
         hasAccessibilityAccess = trusted
         modifierShortcutHasAccess = trusted
+        if trusted {
+            accessibilitySetupGuidance = false
+            accessibilityPromptTask?.cancel()
+            accessibilityPromptTask = nil
+        }
     }
 
     func requestAccessibilityForInsertion() {
-        // Prompt for the identity of the *running* build. An isolated, ad-hoc
-        // signed RC is a different TCC client from the distributed app even
-        // when System Settings shows an enabled Rasc entry.
-        ModifierShortcutAccess.request()
+        // macOS shows its Accessibility prompt at most once per app identity.
+        // For an ad-hoc rebuild it can be suppressed entirely while an older
+        // Rasc entry stays enabled, leaving the user with no way to grant.
+        // Prompt first, then, if trust did not change, open Settings once and
+        // explain how to replace that entry with this build.
+        accessibilityPrompt()
         refreshAccessibilityStatus()
         refreshModifierShortcut()
+        guard !hasAccessibilityAccess else {
+            accessibilitySetupGuidance = false
+            return
+        }
+        accessibilityPromptTask?.cancel()
+        accessibilityPromptTask = Task { [weak self] in
+            do { try await Task.sleep(for: self?.promptSettlingDelay ?? .seconds(1.2)) } catch { return }
+            guard let self, !Task.isCancelled else { return }
+            self.refreshAccessibilityStatus()
+            guard !self.hasAccessibilityAccess else { return }
+            self.accessibilitySetupGuidance = true
+            self.accessibilitySettingsOpener()
+        }
     }
 
     func openAccessibilitySettings() {
         ModifierShortcutAccess.openSettings()
+        if !hasAccessibilityAccess { accessibilitySetupGuidance = true }
     }
 
     func resetModifierShortcutState() {

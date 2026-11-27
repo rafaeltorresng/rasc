@@ -352,6 +352,7 @@ struct OnboardingView: View {
                         action: { coordinator.requestAccessibilityPermission() },
                         secondaryAction: { coordinator.openAccessibilitySettings() }
                     )
+                    accessibilityGuidance
                 }
             }
             .padding(.horizontal, 24)
@@ -537,6 +538,7 @@ struct OnboardingView: View {
                         action: { coordinator.requestAccessibilityPermission() },
                         secondaryAction: { coordinator.openAccessibilitySettings() }
                     )
+                    accessibilityGuidance
                 }
 
                 if voiceCapture.enabled
@@ -687,6 +689,18 @@ struct OnboardingView: View {
         }
         .padding(10)
         .background(palette.subtleFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+
+    @ViewBuilder
+    private var accessibilityGuidance: some View {
+        if voiceCapture.accessibilitySetupGuidance {
+            Text(voiceCapture.accessibilitySetupInstructions)
+                .font(.caption)
+                .foregroundStyle(secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 4)
+                .accessibilityLabel("Accessibility setup: \(voiceCapture.accessibilitySetupInstructions)")
+        }
     }
 
     // MARK: - Completion

@@ -351,12 +351,12 @@ final class OnboardingCoordinator {
     }
 
     func requestAccessibilityPermission() {
-        ModifierShortcutAccess.request()
+        voiceCapture.requestAccessibilityForInsertion()
         refreshEnvironmentSync()
     }
 
     func openAccessibilitySettings() {
-        ModifierShortcutAccess.openSettings()
+        voiceCapture.openAccessibilitySettings()
     }
 
     func continueFromVoiceSetup() {

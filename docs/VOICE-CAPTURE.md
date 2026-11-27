@@ -63,9 +63,12 @@ can import that same directory through **Choose Model Folder…**.
   honest clipboard fallback instead of inserting elsewhere. The HUD distinguishes missing
   Accessibility, no focused field, incompatible target, failed insertion, and focus changes.
   Accessibility trust is re-read when Rasc becomes active, so the **Allow…** action appears
-  only while this running build truly lacks permission and prompts for its own TCC identity.
-  An isolated, ad-hoc signed RC is a distinct Accessibility client from the distributed app:
-  if System Settings already lists Rasc, remove that entry and add the RC explicitly.
+  only while this running build truly lacks permission. **Allow…** first prompts for this
+  build's TCC identity; macOS may silently skip that prompt when an older Rasc entry is
+  still enabled, so if trust has not changed Rasc opens Accessibility once and shows the
+  concrete resolution: remove the old entry, add this exact bundle with **+**, then return.
+  The same guidance appears onboarding and in Settings → Voice. An ad-hoc RC is a distinct
+  Accessibility client from the distributed app and from every other ad-hoc build.
 - Standard Rasc distributions do not bundle the 622 MiB speech model. When you
   enable Voice Capture and choose **Download Speech Model**, an embedded
   sandboxed XPC helper (`com.rafaeltorres.rasc.VoiceModelDownloader.xpc`,

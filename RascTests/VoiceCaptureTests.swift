@@ -1446,6 +1446,39 @@ struct VoiceCaptureTests {
             hasAccessibilityAccess: true,
             reachedLimit: false
         ) == "Copied — press ⌘V")
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: .noAccessibilityPermission,
+            hasAccessibilityAccess: false,
+            reachedLimit: false,
+            needsManualGrant: true
+        ) == "Add this build in Accessibility")
+    }
+
+    @Test func accessibilityRequestGuidesManualGrantWhenPromptIsSuppressed() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let flow = AccessibilityFlowBox()
+
+        let capture = VoiceCapture(
+            preferences: fixture.defaults,
+            supported: true,
+            input: .init(
+                authorization: { .authorized },
+                requestAccess: { true },
+                start: { id, route in await fixture.input.start(id, audible: true, route: route) },
+                stop: { id in await fixture.input.stop(id) }
+            ),
+            accessibilityTrusted: { false },
+            accessibilityPrompt: { flow.prompts += 1 },
+            accessibilitySettingsOpener: { flow.settingsOpens += 1 },
+            promptSettlingDelay: .milliseconds(10)
+        )
+
+        capture.requestAccessibilityForInsertion()
+        try await wait { capture.accessibilitySetupGuidance && flow.settingsOpens == 1 }
+        #expect(flow.prompts == 1)
+        #expect(flow.settingsOpens == 1)
+        #expect(capture.accessibilitySetupInstructions.contains(Bundle.main.bundleURL.path))
     }
 
     @Test func focusChangePolicyProtectsCapturedExternalTargetOnly() {
@@ -1586,6 +1619,11 @@ struct VoiceCaptureTests {
             return capture
         }
     }
+}
+
+private final class AccessibilityFlowBox: @unchecked Sendable {
+    nonisolated(unsafe) var prompts = 0
+    nonisolated(unsafe) var settingsOpens = 0
 }
 
 private actor FakeMicrophone {

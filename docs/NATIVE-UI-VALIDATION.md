@@ -121,8 +121,12 @@ These still need a physical desktop pass:
    the newly focused app. Check Secure Input still refuses without copying.
 4. **Accessibility honesty.** With an isolated ad-hoc RC running alongside the
    distributed app, confirm **Allow…** appears only when `AXIsProcessTrusted()`
-   is false for this build, prompts for this build, and disappears after
-   returning from System Settings with permission granted to this build.
+   is false for this build. If the macOS prompt is suppressed because an older
+   Rasc entry exists, the action must open Accessibility exactly once and show
+   the bundle path to add with **+** after removing the old entry. Confirm the
+   capsule title changes to **Add this build in Accessibility**, that returning
+   with this build granted clears the guidance, and that onboarding and
+   Settings → Voice show the same instructions.
 5. **Geometry and appearance.** Check the compact Scratchpad (600 × 350), Home,
    Onboarding, Quick Search, Command Palette, Refine and the Voice HUD in Light
    and Dark, on the active screen, across Spaces and with a fullscreen app.
