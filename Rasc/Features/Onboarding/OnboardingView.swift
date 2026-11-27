@@ -62,17 +62,12 @@ struct OnboardingView: View {
             .transition(RascMotion.stageTransition(reduceMotion: reduceMotion))
             .id(stageTransitionKey)
         }
-        // Stable ideal size prevents step-to-step resizing; finite bounds keep
-        // the hosting view from growing into a full-screen panel. The scroll
-        // view below remains the fallback on small displays and at large text
-        // sizes.
+        // One exact frame for every step: the window never resizes or moves
+        // during the normal flow. The scroll view remains the fallback on very
+        // small displays and at large accessibility text sizes.
         .frame(
-            minWidth: RascWindowMetrics.onboardingMinimum.width,
-            idealWidth: RascWindowMetrics.onboarding.width,
-            maxWidth: RascWindowMetrics.onboardingMaximum.width,
-            minHeight: RascWindowMetrics.onboardingMinimum.height,
-            idealHeight: RascWindowMetrics.onboarding.height,
-            maxHeight: RascWindowMetrics.onboardingMaximum.height
+            width: RascWindowMetrics.onboarding.width,
+            height: RascWindowMetrics.onboarding.height
         )
         .tint(Color.primary)
         .animation(RascMotion.surface(reduceMotion: reduceMotion), value: stageTransitionKey)

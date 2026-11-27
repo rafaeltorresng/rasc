@@ -98,7 +98,7 @@ with the display locked. The cases below still require a live desktop pass.
 4. **Check Refine.** Refine a direct question, a drafting command and a messy task list. Test a selected fragment and one fixed-target translation. Verify that the questions and commands remain drafts, ordinary edits still help, and Original, Esc and Undo preserve the text.
 5. **Record failures with context.** Note the candidate build, macOS, mic and route, elapsed time, and the first/last missing words from a reproducible non-private sample.
 
-## Focused UX / Dictate / geometry pass (build 26)
+## Focused UX / Dictate / geometry pass (build 28)
 
 The focused fixes changed first-run shortcuts (`⌘\` for Voice to Scratchpad,
 `⌥` for Dictate), onboarding stability, compact Scratchpad geometry, insertion
@@ -106,10 +106,8 @@ target guards and fallback feedback. Automated coverage includes the full Xcode
 suite, `Scripts/test-domain.py`, and Light/Dark offscreen onboarding renders.
 These still need a physical desktop pass:
 
-1. **Onboarding focus.** Build 26 and 27 share a container, so before this pass
-   quit Rasc and launch with
-   `open .../0.1.16-ux-dictate-27/export/Rasc.app --args -resetOnboarding` to
-   replay from the welcome step. Then focus **Try Dictate here**, press
+1. **Onboarding focus.** Build 28 has its own bundle and container, so a plain
+   launch starts at the welcome step. Focus **Try Dictate here**, press
    `⌥`, speak and confirm the caret stays in that field and the text lands there
    exactly once. Verify the progress dots stay centered on every step and the
    window does not resize during the normal flow; resize down on a small display

@@ -1197,7 +1197,7 @@ struct VoiceCaptureTests {
                 Issue.record("External AX fallback should not run when in-app editor accepted text")
                 return .copiedToClipboard(.noTargetApplication)
             },
-            insertInCurrentApp: { text, _ in
+            insertInCurrentApp: { text, _, _ in
                 VoiceTextInsertion.insertIntoWindowEditor(text, window: window)
             }
         )
@@ -1343,7 +1343,7 @@ struct VoiceCaptureTests {
                 Issue.record("Background target app must not receive dictation when Rasc is frontmost")
                 return .inserted
             },
-            insertInCurrentApp: { _, _ in false },
+            insertInCurrentApp: { _, _, _ in false },
             isCurrentAppFrontmost: { true }
         )
         capture.setEnabled(true)
@@ -1530,6 +1530,29 @@ struct VoiceCaptureTests {
         #expect(textView.string == "Hello world")
     }
 
+    @Test func dictationFindsTheFieldEditorOfAnNSTextFieldFirstResponder() throws {
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 320, height: 120),
+            styleMask: [.titled], backing: .buffered, defer: false
+        )
+        let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 320, height: 120))
+        field.isEditable = true
+        field.stringValue = "Hello"
+        window.contentView = field
+        window.makeFirstResponder(field)
+
+        let editor = try #require(field.currentEditor() as? NSTextView)
+        editor.string = "Hello"
+        editor.setSelectedRange(NSRange(location: 5, length: 0))
+        let inserted = VoiceTextInsertion.insertIntoWindowEditor(
+            " world",
+            window: window,
+            responder: field
+        )
+        #expect(inserted)
+        #expect(editor.string == "Hello world")
+    }
+
     private func wait(until predicate: () -> Bool) async throws {
         let deadline = ContinuousClock.now.advanced(by: .seconds(10))
         while !predicate(), ContinuousClock.now < deadline {
@@ -1612,7 +1635,7 @@ struct VoiceCaptureTests {
                 accessibilityTrusted: resolvedAccessibilityTrusted,
                 pasteboard: pasteboard,
                 insertText: resolvedInsertText,
-                insertInCurrentApp: { _, _ in insertInCurrentApp },
+                insertInCurrentApp: { _, _, _ in insertInCurrentApp },
                 isCurrentAppFrontmost: { isCurrentAppFrontmost }
             )
             capture.connect(repository: repository)

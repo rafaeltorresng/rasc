@@ -94,6 +94,8 @@ enum VoiceTextInsertion {
     // AX attribute keys as strings; the AppKit constants are shared mutable state
     // under Swift 6 concurrency checking and are otherwise identical.
     private static let focusedElementAttribute = "AXFocusedUIElement"
+    private static let mainWindowAttribute = "AXMainWindow"
+    private static let windowAttribute = "AXWindow"
     private static let selectedTextAttribute = "AXSelectedText"
     private static let roleAttribute = "AXRole"
     private static let subroleAttribute = "AXSubrole"
@@ -129,14 +131,22 @@ enum VoiceTextInsertion {
             return .copiedToClipboard(.noTargetApplication)
         }
         let appElement = AXUIElementCreateApplication(app.processIdentifier)
-        let element: AXUIElement?
-        if let direct = focusedElement(of: appElement) {
-            element = direct
-        } else {
+        var element = focusedElement(of: appElement)
+        if element == nil {
             // Electron and Chromium apps often defer exposing their AX tree until requested.
             AXUIElementSetAttributeValue(appElement, manualAccessibilityAttribute as CFString, kCFBooleanTrue)
             AXUIElementSetAttributeValue(appElement, enhancedUserInterfaceAttribute as CFString, kCFBooleanTrue)
             element = focusedElement(of: appElement)
+        }
+        if element == nil {
+            // The system-wide element reliably exposes the focused control of
+            // the frontmost app when the app element does not.
+            element = focusedElement(of: AXUIElementCreateSystemWide())
+        }
+        if element == nil {
+            let window = uiElementAttribute(appElement, mainWindowAttribute)
+                ?? uiElementAttribute(appElement, windowAttribute)
+            element = window.flatMap(focusedElement(of:)) ?? window
         }
         guard let element else {
             copy(text, to: pasteboard)
@@ -162,17 +172,31 @@ enum VoiceTextInsertion {
         return pasteboard.setString(text, forType: .string)
     }
 
-    /// Inserts `text` at the current caret when `window` holds an editable `NSTextView`
-    /// first responder (such as an in-app SwiftUI `TextField` field editor).
+    /// Inserts `text` at the current caret of an editable AppKit editor. SwiftUI
+    /// `TextField` is backed by an `NSTextField` whose field editor is an
+    /// `NSTextView`; the field editor may be the first responder or the editor
+    /// of the text field that held focus when recording began.
     @MainActor
-    static func insertIntoWindowEditor(_ text: String, window: NSWindow?) -> Bool {
-        guard !text.isEmpty,
-              let window,
-              let textView = window.firstResponder as? NSTextView,
-              textView.isEditable
-        else {
-            return false
+    static func insertIntoWindowEditor(
+        _ text: String,
+        window: NSWindow?,
+        responder: NSResponder? = nil
+    ) -> Bool {
+        guard !text.isEmpty, let window else { return false }
+        let current = window.firstResponder
+        let candidates = [responder, current]
+        var textView: NSTextView?
+        for candidate in candidates {
+            if let direct = candidate as? NSTextView {
+                textView = direct
+                break
+            }
+            if let field = candidate as? NSTextField, let editor = field.currentEditor() as? NSTextView {
+                textView = editor
+                break
+            }
         }
+        guard let textView, textView.isEditable, textView.window === window else { return false }
         let range = textView.selectedRange()
         let preceding = precedingCharacter(in: textView.string, beforeUTF16Location: range.location)
         let prepared = textWithSmartLeadingSpace(text, precedingCharacter: preceding)
@@ -204,8 +228,12 @@ enum VoiceTextInsertion {
     }
 
     private static func focusedElement(of appElement: AXUIElement) -> AXUIElement? {
+        uiElementAttribute(appElement, focusedElementAttribute)
+    }
+
+    private static func uiElementAttribute(_ element: AXUIElement, _ attribute: String) -> AXUIElement? {
         var value: CFTypeRef?
-        let status = AXUIElementCopyAttributeValue(appElement, focusedElementAttribute as CFString, &value)
+        let status = AXUIElementCopyAttributeValue(element, attribute as CFString, &value)
         guard status == .success, let value, CFGetTypeID(value) == AXUIElementGetTypeID() else { return nil }
         // `value` is an AXUIElementRef delivered as a CFTypeRef.
         return unsafeDowncast(value, to: AXUIElement.self)

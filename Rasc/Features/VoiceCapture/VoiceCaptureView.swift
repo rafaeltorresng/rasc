@@ -77,7 +77,13 @@ final class VoiceCaptureWindows {
         if !panel.isVisible {
             previousApp = NSWorkspace.shared.frontmostApplication
             previousKeyWindow = NSApp.keyWindow
-            previousFirstResponder = previousKeyWindow?.firstResponder
+            if let responder = previousKeyWindow?.firstResponder {
+                // Restore the editable field editor, not just the NSTextField
+                // that SwiftUI places in the responder chain.
+                previousFirstResponder = (responder as? NSTextField)?.currentEditor() ?? responder
+            } else {
+                previousFirstResponder = nil
+            }
             let target = NSApp.isActive ? NSApp.keyWindow?.screen : nil
             screenFrame = (target ?? WindowFramePlacement.targetPresentationScreen(
                 excludingProcessID: NSRunningApplication.current.processIdentifier

@@ -38,7 +38,8 @@ struct WindowFramePlacementTests {
         #expect(RascWindowMetrics.onboardingMinimum.width < RascWindowMetrics.onboarding.width)
         #expect(RascWindowMetrics.onboarding.width < RascWindowMetrics.onboardingMaximum.width)
         #expect(RascWindowMetrics.onboardingMinimum.height < RascWindowMetrics.onboarding.height)
-        #expect(RascWindowMetrics.onboarding.height < RascWindowMetrics.onboardingMaximum.height)
+        #expect(RascWindowMetrics.onboarding.height <= RascWindowMetrics.onboardingMaximum.height)
+        #expect(RascWindowMetrics.onboarding.height >= 640)
 
         #expect(RascTransientPanelSizing.maximumHeight < RascWindowMetrics.scratchpadDefault.height)
         #expect(RascTransientPanelSizing.searchMaximumHeight <= RascWindowMetrics.scratchpadDefault.height)

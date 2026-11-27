@@ -156,7 +156,7 @@ final class VoiceCapture: ObservableObject {
     private let promptSettlingDelay: Duration
     private let pasteboard: NSPasteboard
     private let insertText: @MainActor @Sendable (String, NSRunningApplication?, NSPasteboard) -> VoiceTextInsertion.Result
-    private let insertInCurrentApp: @MainActor @Sendable (String, NSWindow?) -> Bool
+    private let insertInCurrentApp: @MainActor @Sendable (String, NSWindow?, NSResponder?) -> Bool
     private let isCurrentAppFrontmost: @MainActor @Sendable () -> Bool
     private let frontmostApplicationProvider: @MainActor @Sendable () -> NSRunningApplication?
     private lazy var modifierMonitor = ModifierShortcutMonitor()
@@ -188,6 +188,7 @@ final class VoiceCapture: ObservableObject {
     private var announcedTimeLimitWarning = false
     private var targetApplication: NSRunningApplication?
     private var targetEditorWindow: NSWindow?
+    private var targetEditorResponder: NSResponder?
     private var deliveryDismissTask: Task<Void, Never>?
     private var standaloneHistoryTask: Task<Void, Never>?
     private var accessibilityPromptTask: Task<Void, Never>?
@@ -239,14 +240,18 @@ final class VoiceCapture: ObservableObject {
         insertText: @escaping @MainActor @Sendable (String, NSRunningApplication?, NSPasteboard) -> VoiceTextInsertion.Result = {
             VoiceTextInsertion.insert($0, target: $1, pasteboard: $2)
         },
-        insertInCurrentApp: @escaping @MainActor @Sendable (String, NSWindow?) -> Bool = { text, capturedWindow in
+        insertInCurrentApp: @escaping @MainActor @Sendable (String, NSWindow?, NSResponder?) -> Bool = { text, capturedWindow, capturedResponder in
             guard NSApp.isActive,
                   NSWorkspace.shared.frontmostApplication == .current,
                   capturedWindow == nil || NSApp.keyWindow === capturedWindow
             else {
                 return false
             }
-            return VoiceTextInsertion.insertIntoWindowEditor(text, window: NSApp.keyWindow)
+            return VoiceTextInsertion.insertIntoWindowEditor(
+                text,
+                window: NSApp.keyWindow,
+                responder: capturedResponder
+            )
         },
         isCurrentAppFrontmost: @escaping @MainActor @Sendable () -> Bool = {
             NSWorkspace.shared.frontmostApplication == .current
@@ -851,9 +856,17 @@ final class VoiceCapture: ObservableObject {
         if isCurrentAppFrontmost() {
             targetApplication = nil
             targetEditorWindow = NSApp.keyWindow
+            if let responder = NSApp.keyWindow?.firstResponder {
+                // A SwiftUI TextField's first responder can be the NSTextField;
+                // remember its actual field editor before any HUD appears.
+                targetEditorResponder = (responder as? NSTextField)?.currentEditor() ?? responder
+            } else {
+                targetEditorResponder = nil
+            }
         } else {
-            targetApplication = frontmostApplicationProvider()
+            targetApplication = frontmostApplicationProvider().flatMap { $0 == .current ? nil : $0 }
             targetEditorWindow = nil
+            targetEditorResponder = nil
         }
         transition(.checking)
         if presentWindows { windows.showStatus() }
@@ -897,6 +910,7 @@ final class VoiceCapture: ObservableObject {
                let frontmost = frontmostApplicationProvider(), frontmost != .current {
                 targetApplication = frontmost
                 targetEditorWindow = nil
+                targetEditorResponder = nil
             }
             let input = self.input
             do {
@@ -1168,7 +1182,7 @@ final class VoiceCapture: ObservableObject {
                 )
                 if focusChanged {
                     copyFallback(text, reason: .focusChanged)
-                } else if insertInCurrentApp(text, targetEditorWindow) {
+                } else if insertInCurrentApp(text, targetEditorWindow, targetEditorResponder) {
                     commitInsertion(text, owner: token)
                 } else if frontmostIsRasc {
                     // Rasc is frontmost with no editable field in focus; never leak into a background app.
@@ -1411,6 +1425,7 @@ final class VoiceCapture: ObservableObject {
         deliveryDismissTask = nil
         targetApplication = nil
         targetEditorWindow = nil
+        targetEditorResponder = nil
         modifierMonitor.reset()
         GlobalModifierDispatcher.shared.reset()
         resetInput()

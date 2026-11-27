@@ -57,7 +57,9 @@ can import that same directory through **Choose Model Folder…**.
   `AXEnhancedUserInterface`), refuses Secure Input (`IsSecureEventInputEnabled()` and
   `AXSecureTextField`), and inserts with `textWithSmartLeadingSpace` through `AXSelectedText`,
   falling back to a verified `AXValue` range replacement for editors that do not implement
-  `AXSelectedText`. It never posts synthetic keystrokes, never activates another app, and
+  `AXSelectedText`. Focused elements are resolved from the app, the system-wide AX element
+  and the app's main window; in-app delivery uses the captured SwiftUI field editor rather
+  than only a bare first responder. It never posts synthetic keystrokes, never activates another app, and
   preserves the focused app, window, first responder and caret across the cycle. Delivery is
   restricted to the target captured at start; a changed app or editor window produces an
   honest clipboard fallback instead of inserting elsewhere. The HUD distinguishes missing
