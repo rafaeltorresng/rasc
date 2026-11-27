@@ -67,18 +67,24 @@ struct VoiceAudio: Sendable {
 }
 
 final class MicBuffer: @unchecked Sendable {
+    static let defaultMaxDurationSeconds: Double = 300
+
     struct Status {
         let count: Int
         let rms: Float
         let first: ContinuousClock.Instant?
         let last: ContinuousClock.Instant?
         let full: Bool
+        let elapsedSeconds: Double
+        let remainingSeconds: Double
     }
 
     let rate: Double
+    let maxDurationSeconds: Double
     private let limit: Int
+    private let chunkCapacity: Int
     private let lock = NSLock()
-    private var storage: [Float] = []
+    private var chunks: [[Float]] = []
     private var frameCount = 0
     private var level: Float = 0
     private var peak: Float = 0
@@ -89,15 +95,35 @@ final class MicBuffer: @unchecked Sendable {
     private var first: ContinuousClock.Instant?
     private var last: ContinuousClock.Instant?
 
-    init(rate: Double) {
+    init(rate: Double, maxDurationSeconds: Double = defaultMaxDurationSeconds) {
         self.rate = rate
-        limit = Int(rate * 90)
-        storage.reserveCapacity(limit)
+        self.maxDurationSeconds = maxDurationSeconds
+        limit = max(1, Int(rate * maxDurationSeconds))
+        chunkCapacity = max(1, min(limit, Int(rate * 5)))
     }
 
     func append(_ block: AVAudioPCMBuffer) {
-        guard let channel = block.floatChannelData?[0] else { return }
-        append(UnsafeBufferPointer(start: channel, count: Int(block.frameLength)))
+        let frameLength = Int(block.frameLength)
+        guard frameLength > 0, let channelData = block.floatChannelData else { return }
+        let channelCount = Int(block.format.channelCount)
+        guard channelCount > 0 else { return }
+
+        if channelCount == 1 {
+            append(UnsafeBufferPointer(start: channelData[0], count: frameLength))
+            return
+        }
+
+        var selectedChannel = 0
+        var bestMagnitude: Float = 0
+        for channelIndex in 0..<channelCount {
+            let channelBuffer = UnsafeBufferPointer(start: channelData[channelIndex], count: frameLength)
+            let channelPeak = vDSP.maximumMagnitude(channelBuffer)
+            if channelPeak.isFinite, channelPeak > bestMagnitude {
+                bestMagnitude = channelPeak
+                selectedChannel = channelIndex
+            }
+        }
+        append(UnsafeBufferPointer(start: channelData[selectedChannel], count: frameLength))
     }
 
     func append(_ frames: UnsafeBufferPointer<Float>) {
@@ -109,8 +135,21 @@ final class MicBuffer: @unchecked Sendable {
             if first == nil { first = timestamp }
             last = timestamp
             frameCount += count
+            var appended = 0
+            while appended < count {
+                if chunks.isEmpty || chunks[chunks.count - 1].count >= chunkCapacity {
+                    var nextChunk: [Float] = []
+                    nextChunk.reserveCapacity(chunkCapacity)
+                    chunks.append(nextChunk)
+                }
+                let lastIndex = chunks.count - 1
+                let room = chunkCapacity - chunks[lastIndex].count
+                let sliceLength = min(room, count - appended)
+                let slice = UnsafeBufferPointer(start: base.advanced(by: appended), count: sliceLength)
+                chunks[lastIndex].append(contentsOf: slice)
+                appended += sliceLength
+            }
             let values = UnsafeBufferPointer(start: base, count: count)
-            storage.append(contentsOf: values)
             let rms = vDSP.rootMeanSquare(values)
             let blockPeak = vDSP.maximumMagnitude(values)
             level = rms.isFinite ? rms : 0
@@ -136,22 +175,44 @@ final class MicBuffer: @unchecked Sendable {
     }
 
     func status() -> Status {
-        lock.withLock { Status(count: frameCount, rms: level, first: first, last: last, full: frameCount == limit) }
+        lock.withLock {
+            let elapsed = Double(frameCount) / rate
+            let remaining = max(0, Double(limit - frameCount) / rate)
+            return Status(
+                count: frameCount,
+                rms: level,
+                first: first,
+                last: last,
+                full: frameCount == limit,
+                elapsedSeconds: elapsed,
+                remainingSeconds: remaining
+            )
+        }
     }
 
     func audio() -> VoiceAudio {
         lock.withLock {
             sealed = true
             let remainder = windowEnergy > Float(windowFrames) * 0.000004 ? windowFrames : 0
-            // Compact short recordings after the audio tap stops so the 90s capacity tail is freed immediately.
             let finalSamples: [Float]
-            if storage.count < storage.capacity / 2 {
-                // Use an unsafe buffer copy so Swift does not retain the oversized CoW buffer via Array(storage).
-                finalSamples = storage.withUnsafeBufferPointer { Array($0) }
+            if chunks.isEmpty {
+                finalSamples = []
+            } else if chunks.count == 1 {
+                let only = chunks[0]
+                if only.count < only.capacity / 2 {
+                    finalSamples = only.withUnsafeBufferPointer { Array($0) }
+                } else {
+                    finalSamples = only
+                }
             } else {
-                finalSamples = storage
+                var flattened: [Float] = []
+                flattened.reserveCapacity(frameCount)
+                for chunk in chunks {
+                    flattened.append(contentsOf: chunk)
+                }
+                finalSamples = flattened
             }
-            storage = []
+            chunks = []
             return VoiceAudio(samples: finalSamples, rate: rate, peak: peak,
                               activitySeconds: Double(activeFrames + remainder) / rate)
         }

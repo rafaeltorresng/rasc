@@ -19,7 +19,7 @@ final class VoiceCaptureWindows {
         if let status {
             panel = status
         } else {
-            let rect = CGRect(origin: .zero, size: CGSize(width: 344, height: 74))
+            let rect = CGRect(origin: .zero, size: CGSize(width: 372, height: 74))
             panel = VoiceStatusPanel(
                 contentRect: rect,
                 styleMask: [.borderless, .nonactivatingPanel],
@@ -34,7 +34,7 @@ final class VoiceCaptureWindows {
             panel.hasShadow = false
             panel.hidesOnDeactivate = false
             panel.isReleasedWhenClosed = false
-            panel.level = .floating
+            panel.level = .screenSaver
             panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle]
             status = panel
         }
@@ -109,6 +109,18 @@ final class VoiceCaptureWindows {
             ]
         )
     }
+
+    func announceTimeLimitWarning(seconds: Int) {
+        guard let status, status.isVisible else { return }
+        NSAccessibility.post(
+            element: status,
+            notification: .announcementRequested,
+            userInfo: [
+                .announcement: "Recording stops in \(seconds) seconds",
+                .priority: NSAccessibilityPriorityLevel.high.rawValue
+            ]
+        )
+    }
 }
 
 private final class VoiceStatusPanel: NSPanel {
@@ -155,7 +167,7 @@ struct VoiceStatusView: View {
         }
         .padding(.leading, 10)
         .padding(.trailing, 8)
-        .frame(width: 308, height: 48)
+        .frame(width: 336, height: 48)
         .foregroundStyle(palette.noteText(for: scheme))
         .background {
             outline
@@ -169,7 +181,7 @@ struct VoiceStatusView: View {
             )
             .allowsHitTesting(false)
         }
-        .frame(width: 344, height: 74)
+        .frame(width: 372, height: 74)
         .accessibilityElement(children: .contain)
         .accessibilityLabel(capture.activeIntent == .dictate ? "Dictation" : "Voice Capture")
     }
@@ -194,26 +206,45 @@ struct VoiceStatusView: View {
                 }
                 action("Dismiss", icon: "xmark") { capture.cancel() }
             case .listening:
-                Text(formattedDuration(capture.recordingElapsedSeconds))
-                    .font(.caption2.weight(.medium))
-                    .monospacedDigit()
-                    .foregroundStyle(palette.secondaryText(for: scheme))
-                    .accessibilityLabel("Recording duration \(capture.recordingElapsedSeconds) seconds")
+                if let remaining = capture.timeLimitWarningSeconds {
+                    Text("\(remaining)s left")
+                        .font(.caption2.weight(.semibold))
+                        .monospacedDigit()
+                        .foregroundStyle(palette.focus(for: scheme))
+                        .accessibilityLabel("\(remaining) seconds remaining")
+                } else {
+                    Text(formattedDuration(capture.recordingElapsedSeconds))
+                        .font(.caption2.weight(.medium))
+                        .monospacedDigit()
+                        .foregroundStyle(palette.secondaryText(for: scheme))
+                        .accessibilityLabel("Recording duration \(capture.recordingElapsedSeconds) seconds")
+                }
                 VoiceLevelMeter(input: capture.inputLevel)
                 action("Finish recording", icon: "stop.fill") { capture.finish() }
                 action("Cancel recording", icon: "xmark") { capture.requestCancel(fromEscape: false) }
             case .issue(let issue):
-                if issue == .permission {
-                    action("Settings", accessibilityLabel: "Open Microphone Settings") { capture.openMicrophoneSettings() }
-                } else if capture.canRetryAudio {
-                    action("Retry", accessibilityLabel: "Retry transcription") { capture.recover() }
+                if issue == .secureInputBlocked {
+                    action("Dismiss", icon: "xmark") { capture.cancel() }
                 } else {
-                    action("Try again") { capture.recover() }
+                    if issue == .permission {
+                        action("Settings", accessibilityLabel: "Open Microphone Settings") { capture.openMicrophoneSettings() }
+                    } else if capture.canRetryAudio {
+                        action("Retry", accessibilityLabel: "Retry transcription") { capture.recover() }
+                    } else {
+                        action("Try again") { capture.recover() }
+                    }
+                    action(issue == .persistence ? "Discard capture" : "Dismiss", icon: "xmark") { capture.cancel() }
                 }
-                action(issue == .persistence ? "Discard capture" : "Dismiss", icon: "xmark") { capture.cancel() }
             case .checking, .starting, .finishing, .waitingForModel, .transcribing:
                 action("Cancel recording", icon: "xmark") { capture.requestCancel(fromEscape: false) }
-            case .copied, .inserted, .insertedAndCopied, .copiedFallback:
+            case .copied, .inserted, .insertedAndCopied:
+                action("Dismiss", icon: "xmark") { capture.cancel() }
+            case .copiedFallback:
+                if capture.lastFallbackReason == .noAccessibilityPermission {
+                    action("Allow…", accessibilityLabel: "Open Accessibility Settings") {
+                        capture.openAccessibilitySettings()
+                    }
+                }
                 action("Dismiss", icon: "xmark") { capture.cancel() }
             default:
                 EmptyView()
@@ -225,6 +256,7 @@ struct VoiceStatusView: View {
         if showsConfirmation {
             return "Discard \(formattedDuration(capture.confirmCancelDurationSeconds))?"
         }
+        let reachedLimit = capture.interruptionReason == .timeLimit
         switch capture.phase {
         case .checking where capture.awaitingMicrophonePermission:
             return "Allow microphone access"
@@ -241,15 +273,16 @@ struct VoiceStatusView: View {
         case .stopping:
             return "Cancelling…"
         case .ready:
-            return "Thought saved"
+            return reachedLimit ? "Saved (5 min limit)" : "Thought saved"
         case .copied:
-            return "Copied"
-        case .inserted:
-            return "Inserted"
-        case .insertedAndCopied:
-            return "Inserted & copied"
+            return reachedLimit ? "Copied (5 min limit)" : "Copied"
+        case .inserted, .insertedAndCopied:
+            if reachedLimit {
+                return "Inserted (5 min limit)"
+            }
+            return capture.phase == .inserted ? "Inserted" : "Inserted & copied"
         case .copiedFallback:
-            return "Copied — press ⌘V"
+            return reachedLimit ? "5 min limit — ⌘V to paste" : "Copied — press ⌘V"
         case .saving:
             return "Saving thought…"
         case .opening:
@@ -272,6 +305,8 @@ struct VoiceStatusView: View {
             return "Couldn’t save thought"
         case .issue(.blocked):
             return "Close the open dialog"
+        case .issue(.secureInputBlocked):
+            return "Secure field active"
         }
     }
 
@@ -290,6 +325,8 @@ struct VoiceStatusView: View {
             return "ellipsis"
         case .issue(.noSpeech):
             return "waveform.slash"
+        case .issue(.secureInputBlocked):
+            return "lock.fill"
         case .issue:
             return "exclamationmark"
         default:
@@ -558,8 +595,12 @@ struct VoiceCaptureSettings: View {
             Button("Cancel") { capture.requestCancel() }
         case .issue(let issue):
             detail(issue.message)
-            Button(capture.needsMicrophoneAccess ? "Open Microphone Settings…" : capture.canRetryAudio ? "Retry Transcription" : "Try Again") {
-                capture.recover()
+            if issue == .secureInputBlocked {
+                Button("Dismiss") { capture.cancel() }
+            } else {
+                Button(capture.needsMicrophoneAccess ? "Open Microphone Settings…" : capture.canRetryAudio ? "Retry Transcription" : "Try Again") {
+                    capture.recover()
+                }
             }
         default:
             EmptyView()

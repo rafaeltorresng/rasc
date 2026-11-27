@@ -503,3 +503,46 @@ actor VoiceModel {
         Int((start.duration(to: .now) / .milliseconds(1)).rounded())
     }
 }
+
+enum VoiceTranscriptSanitizer {
+    private static let artifactPatterns: [String] = [
+        #"<\s*unk\s*>"#,
+        #"\[\s*unk\s*\]"#,
+        #"<\|[^|<>]+\|>"#,
+        #"\[\s*blank_audio\s*\]"#,
+        #"\[\s*silence\s*\]"#,
+        #"\(\s*silence\s*\)"#,
+    ]
+
+    static func clean(_ raw: String) -> String {
+        var stripped = raw
+        for pattern in artifactPatterns {
+            stripped = stripped.replacingOccurrences(
+                of: pattern,
+                with: "",
+                options: [.regularExpression, .caseInsensitive]
+            )
+        }
+
+        let normalizedNewlines = stripped
+            .replacingOccurrences(of: "\r\n", with: "\n")
+            .replacingOccurrences(of: "\r", with: "\n")
+
+        let lines = normalizedNewlines.split(separator: "\n", omittingEmptySubsequences: false).map { line in
+            String(line)
+                .replacingOccurrences(of: #"[ \t]{2,}"#, with: " ", options: .regularExpression)
+                .trimmingCharacters(in: CharacterSet(charactersIn: " \t"))
+        }
+
+        var collapsed: [String] = []
+        collapsed.reserveCapacity(lines.count)
+        for line in lines {
+            if line.isEmpty, collapsed.last?.isEmpty == true {
+                continue
+            }
+            collapsed.append(line)
+        }
+
+        return collapsed.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}

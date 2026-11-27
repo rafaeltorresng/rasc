@@ -9,6 +9,13 @@ extension KeyboardShortcuts.Name {
     static let voiceCapture = Self("voiceCapture")
 }
 
+enum VoiceCaptureInterruptionReason: Equatable, Sendable {
+    case none
+    case timeLimit
+    case inputSilence
+    case hardwareInterrupted
+}
+
 @MainActor
 final class VoiceCapture: ObservableObject {
     static let shared = VoiceCapture()
@@ -33,7 +40,7 @@ final class VoiceCapture: ObservableObject {
     }
 
     enum Issue: Equatable {
-        case permission, microphone, noSpeech, modelUnavailable, modelTimeout, lowDiskSpace, transcription, persistence, blocked
+        case permission, microphone, noSpeech, modelUnavailable, modelTimeout, lowDiskSpace, transcription, persistence, blocked, secureInputBlocked
 
         var message: String {
             switch self {
@@ -46,6 +53,7 @@ final class VoiceCapture: ObservableObject {
             case .transcription: "Rasc couldn’t transcribe this recording."
             case .persistence: "Rasc couldn’t save the recorded thought. Try again to save it."
             case .blocked: "Finish the open dialog before recording."
+            case .secureInputBlocked: "Paused — a secure text field is active. Nothing was inserted or copied."
             }
         }
     }
@@ -127,6 +135,9 @@ final class VoiceCapture: ObservableObject {
     @Published private(set) var recordingElapsedSeconds = 0
     @Published private(set) var confirmCancelDurationSeconds = 0
     @Published private(set) var isEscapeCancelArmed = false
+    @Published private(set) var interruptionReason: VoiceCaptureInterruptionReason = .none
+    @Published private(set) var timeLimitWarningSeconds: Int?
+    @Published private(set) var lastFallbackReason: VoiceTextInsertion.Reason?
 
     private let preferences: UserDefaults
     private let support: Bool
@@ -142,6 +153,7 @@ final class VoiceCapture: ObservableObject {
     private let pasteboard: NSPasteboard
     private let insertText: @MainActor @Sendable (String, NSRunningApplication?, NSPasteboard) -> VoiceTextInsertion.Result
     private let insertInCurrentApp: @MainActor @Sendable (String) -> Bool
+    private let isCurrentAppFrontmost: @MainActor @Sendable () -> Bool
     private lazy var modifierMonitor = ModifierShortcutMonitor()
     private var repository: NoteRepository?
     private lazy var windows = VoiceCaptureWindows(capture: self)
@@ -167,7 +179,8 @@ final class VoiceCapture: ObservableObject {
     private var pendingTranscript: String?
     private var pendingConfirmedDelivery: (text: String, token: UUID)?
     private var capturedScratchID: UUID?
-    private var captureWasInterrupted = false
+    private var captureWasInterrupted: Bool { interruptionReason != .none }
+    private var announcedTimeLimitWarning = false
     private var targetApplication: NSRunningApplication?
     private var deliveryDismissTask: Task<Void, Never>?
     private var standaloneHistoryTask: Task<Void, Never>?
@@ -221,6 +234,9 @@ final class VoiceCapture: ObservableObject {
                 return false
             }
             return VoiceTextInsertion.insertIntoWindowEditor(text, window: NSApp.keyWindow)
+        },
+        isCurrentAppFrontmost: @escaping @MainActor @Sendable () -> Bool = {
+            NSWorkspace.shared.frontmostApplication == .current
         }
     ) {
         self.preferences = preferences
@@ -238,6 +254,7 @@ final class VoiceCapture: ObservableObject {
         self.pasteboard = pasteboard
         self.insertText = insertText
         self.insertInCurrentApp = insertInCurrentApp
+        self.isCurrentAppFrontmost = isCurrentAppFrontmost
         modifierShortcut = modifierStore.shortcut
         let trusted = accessibilityTrusted()
         modifierShortcutHasAccess = trusted
@@ -764,6 +781,10 @@ final class VoiceCapture: ObservableObject {
     private func begin() {
         guard repository != nil, setup != .importing else { return }
         resetInput()
+        interruptionReason = .none
+        timeLimitWarningSeconds = nil
+        lastFallbackReason = nil
+        announcedTimeLimitWarning = false
         let token = UUID()
         id = token
         if presentWindows, windows.hasBlockingSheet {
@@ -847,7 +868,7 @@ final class VoiceCapture: ObservableObject {
                     transition(.listening)
                     prepareModel()
                 }
-                if phase == .starting, started.duration(to: .now) > .seconds(2) {
+                if phase == .starting, started.duration(to: .now) > .seconds(5.5) {
                     interruptInput()
                     return
                 }
@@ -859,12 +880,24 @@ final class VoiceCapture: ObservableObject {
                             recordingElapsedSeconds = elapsed
                         }
                     }
+                    if state.remainingSeconds <= 15 && state.remainingSeconds > 0 {
+                        let remaining = max(1, Int(ceil(state.remainingSeconds)))
+                        if timeLimitWarningSeconds != remaining {
+                            timeLimitWarningSeconds = remaining
+                        }
+                        if !announcedTimeLimitWarning {
+                            announcedTimeLimitWarning = true
+                            if presentWindows { windows.announceTimeLimitWarning(seconds: remaining) }
+                        }
+                    } else if timeLimitWarningSeconds != nil {
+                        timeLimitWarningSeconds = nil
+                    }
                     if state.full {
-                        finish(interrupted: true)
+                        finish(interruption: .timeLimit)
                         return
                     }
                     if let last = state.last, last.duration(to: .now) > .milliseconds(850) {
-                        finish(interrupted: true)
+                        finish(interruption: .inputSilence)
                         return
                     }
                 }
@@ -875,7 +908,7 @@ final class VoiceCapture: ObservableObject {
 
     private func interruptInput() {
         if phase == .listening || phase == .finishing {
-            finish(interrupted: true)
+            finish(interruption: .hardwareInterrupted)
         } else if phase == .starting, let token = id {
             operation?.cancel()
             meter?.cancel()
@@ -889,11 +922,17 @@ final class VoiceCapture: ObservableObject {
     }
 
     func finish(interrupted: Bool = false) {
+        finish(interruption: interrupted ? .hardwareInterrupted : .none)
+    }
+
+    private func finish(interruption: VoiceCaptureInterruptionReason) {
+        let interrupted = interruption != .none
         guard phase == .listening || (interrupted && phase == .finishing),
               let token = id, let buffer else { return }
         if !interrupted {
             clearCancelConfirmation()
         }
+        timeLimitWarningSeconds = nil
         if let recordingStartedAt {
             recordedAudioDuration = max(recordedAudioDuration, recordingStartedAt.duration(to: .now))
         }
@@ -915,9 +954,13 @@ final class VoiceCapture: ObservableObject {
                 transition(.issue(interrupted ? .microphone : .noSpeech))
                 return
             }
-            captureWasInterrupted = interrupted
+            interruptionReason = interruption
             transcribe(audio, owner: token)
         }
+    }
+
+    static func transcriptionTimeoutSeconds(forAudioSeconds seconds: Double) -> Double {
+        max(30.0, seconds * 0.5 + 15.0)
     }
 
     private func transcribe(_ audio: VoiceAudio, owner token: UUID) {
@@ -927,6 +970,7 @@ final class VoiceCapture: ObservableObject {
         retryAudio = audio
         canRetryAudio = false
         recordedAudioDuration = max(recordedAudioDuration, .seconds(audio.activitySeconds))
+        let audioSeconds = audio.seconds
         transition(.finishing)
         let start = ContinuousClock.now
         slowPreparation = Task {
@@ -937,12 +981,13 @@ final class VoiceCapture: ObservableObject {
         armDeadline(modelTimeout, owner: token, attempt: attempt, issue: .modelTimeout)
         operation = Task {
             do {
-                let text = try await speech.transcribe(audio) { [weak self] in
-                    await self?.didPrepareModel(owner: token, attempt: attempt)
+                let rawText = try await speech.transcribe(audio) { [weak self] in
+                    await self?.didPrepareModel(owner: token, attempt: attempt, audioSeconds: audioSeconds)
                 }
                 guard owns(token), decodeID == attempt else { return }
                 clearDecodeTimers()
                 releaseAudio()
+                let text = VoiceTranscriptSanitizer.clean(rawText)
                 guard text.contains(where: { $0.isLetter || $0.isNumber }) else {
                     clearCancelConfirmation()
                     transition(.issue(.noSpeech))
@@ -969,13 +1014,13 @@ final class VoiceCapture: ObservableObject {
         }
     }
 
-    private func didPrepareModel(owner token: UUID, attempt: UUID) {
+    private func didPrepareModel(owner token: UUID, attempt: UUID, audioSeconds: Double) {
         guard owns(token), decodeID == attempt else { return }
         slowPreparation?.cancel()
         slowPreparation = nil
         if setup == .failed || setup == .lowDiskSpace { setup = .installed }
         transition(.transcribing)
-        armDeadline(.seconds(30), owner: token, attempt: attempt, issue: .transcription)
+        armDeadline(.seconds(Self.transcriptionTimeoutSeconds(forAudioSeconds: audioSeconds)), owner: token, attempt: attempt, issue: .transcription)
     }
 
     private func armDeadline(_ duration: Duration, owner token: UUID, attempt: UUID, issue: Issue) {
@@ -1000,6 +1045,10 @@ final class VoiceCapture: ObservableObject {
 
     func recover() {
         guard case .issue = phase, let token = id else { return }
+        if phase == .issue(.secureInputBlocked) {
+            dismiss()
+            return
+        }
         if needsMicrophoneAccess {
             openMicrophoneSettings()
             return
@@ -1023,6 +1072,7 @@ final class VoiceCapture: ObservableObject {
             await saveAndOpenScratch(owner: token)
         case .dictate:
             pendingTranscript = nil
+            lastFallbackReason = nil
             switch dictationDelivery {
             case .clipboard:
                 VoiceTextInsertion.copy(text, to: pasteboard)
@@ -1038,6 +1088,11 @@ final class VoiceCapture: ObservableObject {
                         transition(.inserted)
                         scheduleDeliveryDismiss(.inserted, after: .milliseconds(1400))
                     }
+                } else if isCurrentAppFrontmost() {
+                    // Rasc is frontmost with no editable field in focus; never leak into a background app.
+                    VoiceTextInsertion.copy(text, to: pasteboard)
+                    lastFallbackReason = .noFocusedTextField
+                    transition(.copiedFallback)
                 } else {
                     let app = currentTargetApplication()
                     let result = insertText(text, app, pasteboard)
@@ -1051,9 +1106,14 @@ final class VoiceCapture: ObservableObject {
                             transition(.inserted)
                             scheduleDeliveryDismiss(.inserted, after: .milliseconds(1400))
                         }
-                    case .copiedToClipboard:
+                    case .copiedToClipboard(let reason):
                         // Honest fallback: text is on the clipboard, keep the capsule up.
+                        lastFallbackReason = reason
                         transition(.copiedFallback)
+                    case .blockedBySecureInput:
+                        canRetryAudio = false
+                        transition(.issue(.secureInputBlocked))
+                        return
                     }
                 }
             }
@@ -1270,7 +1330,10 @@ final class VoiceCapture: ObservableObject {
         recordedAudioDuration = .zero
         pendingTranscript = nil
         capturedScratchID = nil
-        captureWasInterrupted = false
+        interruptionReason = .none
+        timeLimitWarningSeconds = nil
+        lastFallbackReason = nil
+        announcedTimeLimitWarning = false
         transition(.idle)
         if presentWindows { windows.hideStatus() }
     }
@@ -1313,7 +1376,7 @@ final class VoiceCapture: ObservableObject {
 
     private func updateEscapeInterceptor(for phase: Phase) {
         let shouldArm: Bool = switch phase {
-        case .checking, .starting, .listening, .finishing, .waitingForModel, .transcribing:
+        case .checking, .starting, .listening, .finishing, .waitingForModel, .transcribing, .copiedFallback:
             true
         default:
             false
