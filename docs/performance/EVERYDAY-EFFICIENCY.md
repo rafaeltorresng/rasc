@@ -102,13 +102,23 @@ To distinguish `~4–5 min` accelerated suites from multi-hour macOS residency, 
   - `CoreAnimation`: `20 MB (855 regions)` → **`256 KB (16 regions)`**
   - `CG image` + `CoreImage`: `3,584 KB (224)` + `3,568 KB (223)` → **`48 KB (3)`** + **`0 B`**
   - `MALLOC_SMALL`: `173 MB` → **`46 MB`**
-- **Auxiliary processes:** Zero persistent daemons/helpers; `VoiceModelDownloader.xpc` runs only on explicit download.
+- **Zero persistent background daemons.** Auxiliary processes exist only on-demand (`VoiceModelDownloader.xpc`).
+
+---
+
+## 2.5 Multi-Hour Longevity, `5,000`-Note Scale & Streaming `mono16k()` Follow-Up (2026-11-27)
+
+- **Multi-hour run analysis ([`Experiments/Efficiency/results/long_running_20261126/REPORT.md`](../../Experiments/Efficiency/results/long_running_20261126/REPORT.md), `20261126-191517-full-32h`):**
+  - **Stage 1 Active Soak (`completed`, `8.00 h` / `28,801.45 s` wall, `15,594.13 s` active, `3,112` samples, `15` macOS sleep events, `32` cycles, `260` notes, `32` Refine, `7` sleep/wake probes):** `phys_footprint` p50 **`73.70 MiB`** / end **`73.77 MiB`** / max `125.99 MiB` (`recovery -52.22 MiB`); `neural_footprint` `11.81 MiB` p50 (`598.44 MiB` peak); CPU **`0.0295%` p50** (`0.9485%` mean); wakeups **`0.0/s` p50** (`0.0065/s` mean); `471.5331 J` XNU CPU energy; FDs `58–62`; **`0` Rasc leaks** (`288` Apple `LNDaemonApplicationInterface` XPC nodes constant).
+  - **Stage 2 Voice-On Idle Standby (`interrupted_at_8.50h` of `24.0h`, `30,611.08 s` wall, `2,041` samples, host stop `2026-11-27T11:46:05-0300` — not extrapolated beyond `8.50h`):** `phys_footprint` dropped from `61.88 MiB` to **`30.94 MiB` end** (**`33.66 MiB` p50**, slope **`−1.0611 MiB/h`**); `neural_footprint` flat **`11.81 MiB`**; **`0.0%` p50 CPU** (`0.0048%` mean, `1,461.2 ms` total across `8.50h`); **`0.0/s` p50 wakeups** (`7` total in `8.50h` = `0.0002/s`); **`1.9586 J`** total XNU CPU energy (**`0.06 mW` mean**); FDs `47 → 46`; **`0` Rasc leaks**.
+- **Release `5,000`-Note Scale (`30c5c14`, `scale_1k_5k_final.json`):** At `5,000` notes (`1,000` kept), `bootstrap` `6.39 ms`, `fetchMostRecentP50` **`0.041 ms`**, `fetchAllNonDeleted` `11.54 ms`, `search(20)` **`4.48 ms`**, `search(500)` **`6.62 ms`**, `batchDiscard50` `0.59 ms`, `restore50` `3.93 ms`, `purge500` `8.06 ms`, `backup` **`6.24 ms`** (`3,227,648 B`), WAL truncate checkpoint `5.00 ms` (`2,282,512 B → 0 B`).
+- **Release Streaming `VoiceAudio.mono16k()` (`30c5c14`, `final_streaming_mono16k.json`):** Replacing full-buffer non-16 kHz conversion with reusable `15 s` chunked `AVAudioConverter` passes preserved **`4,800,000 / 4,800,000` (`100.0%`)** frames on `300 s @ 48 kHz` (`norm_en_us_300s_48k_mono`) in **`21.66 ms`**, settling at **`32.30 MiB`** post-release footprint with zero WER loss (`9.605%` across `longform_norm`).
 
 ---
 
 ## 4. Limitations & Open Manual Desktop Checks
 
 1. **Whole-SoC power / thermal / battery hours:** Not measured (`sudo powermetrics` unavailable; Xcode `Power Profiler` unsupported on macOS). XNU `ri_energy_nj` reflects per-process CPU energy only.
-2. **Multi-hour `8h` / `24h` totals:** Infrastructure and smoke tests are verified, and a detached `full-32h` run starts outside CI; multi-hour drift/sleep-wake numbers await completion of that run.
+2. **Stage 2 standby boundary:** Stage 1 completed its full `8.00 h` wall target; Stage 2 recorded `8.50 h` of continuous Voice-On standby before the host stopped cleanly, so claims are bounded strictly to the observed `8.50 h`.
 3. **Interactive desktop checks:** Live third-party modifier key taps, physical Bluetooth/USB audio routing, OS TCC modal approvals, external AX insertion, fullscreen Spaces/multi-monitor transitions, and VoiceOver traversal still require interactive macOS desktop testing.
 4. **Hardware scope:** Results reflect `Mac15,6` M3 Pro (18 GiB, macOS `26.5.1`). Do not extrapolate verbatim to 8 GiB Apple silicon Macs, Intel Macs, or macOS 14/15.

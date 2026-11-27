@@ -48,8 +48,11 @@ can import that same directory through **Choose Model Folder…**.
   and shows a countdown warning during the final 15 s of the **300 s (5-minute)** limit.
 - Audio capture allocates memory lazily in 5 s chunks up to 300 s (`MicBuffer`), selects
   the active channel via `vDSP.maximumMagnitude` on multi-channel/USB interfaces, compacts
-  short captures off the CoreAudio callback, guards audio-engine startup with a 5.5 s HAL
-  watchdog, and applies a dynamic transcription timeout (`max(30, audioSeconds * 0.5 + 15)`).
+  short captures off the CoreAudio callback, resamples non-16 kHz streams through a reusable
+  continuous `15 s` chunked `AVAudioConverter` loop inside `autoreleasepool` without
+  resetting FIR filter state (`VoiceAudio.mono16k()`), guards audio-engine startup with a
+  5.5 s HAL watchdog, and applies a dynamic transcription timeout
+  (`max(30, audioSeconds * 0.5 + 15)`).
 - Dictate (`VoiceTextInsertion`) wakes Electron accessibility trees (`AXManualAccessibility` /
   `AXEnhancedUserInterface`), refuses Secure Input (`IsSecureEventInputEnabled()` and
   `AXSecureTextField`), inserts with `textWithSmartLeadingSpace` via `AXSelectedText` (never
@@ -99,8 +102,9 @@ can import that same directory through **Choose Model Folder…**.
   rescoring calls. `VoiceTranscriptSanitizer.clean` normalizes spacing and strips
   isolated ASR filler/hallucination artifacts; Scratchpad and Dictate remain
   verbatim. Refine is invoked separately by the user. Recognition diagnostics
-  record timing only. For current Round 4 FLEURS metrics (`5.354%` pooled WER,
-  `69.90 ms` p50 warm) see `Experiments/VoiceCapture/Round4/RESULTS.md`.
+  record timing only. For current metrics see:
+  - Round 4 FLEURS (`5.354%` pooled WER, `69.90 ms` p50 warm): `Experiments/VoiceCapture/Round4/RESULTS.md`.
+  - Round 5 paired competitive & `30s–300s` evaluations on Release `RascBench` (`30c5c14` streaming `mono16k()`: `4.961%` FLEURS WER, `8.925%` VoiceArena WER, `14.151%` Round 3 Held WER, `9.605%` normalized `30s–300s` WER, `21.66 ms` `300 s @ 48 kHz` streaming resample, `65.55 ms` awake E2E warm finish→transcript): `Experiments/VoiceCapture/Round5/REPORT.md` and `docs/evidence/voice-competitive-web-data.json`.
 
 ## Release gates
 

@@ -1,9 +1,10 @@
-# Rasc Product Readiness & Competitive Quality Audit · 26 November 2026
+# Rasc Product Readiness & Competitive Quality Audit · 26–27 November 2026
 
-**Target codebase:** `main` consolidated up to `ca9c93f` + current release/readiness hardening branch `fix/distribution-llc-and-readiness-docs` (`0.1.16 build 22`, macOS deployment target `14.0`).  
-**Published baseline:** `v0.1.15 build 21` (separate ad-hoc signed DMG release).  
-**Test & measurement host:** MacBook Pro `Mac15,6` (Apple M3 Pro, 18 GiB RAM), macOS `26.5.1` (`25F80`), Xcode `26.2` (`17C52`), GitHub Actions `macos-26` CI runner.  
-**Live multi-hour efficiency run:** `build/efficiency-long-running/20261126-191517-full-32h` (preserved undisturbed throughout).
+**Target codebase:** `main` consolidated through `30c5c14` (PRs `#106`–`#113`, `0.1.16 build 22`, macOS deployment target `14.0`).
+**Published/retained baseline:** `v0.1.15 build 21` (separate ad-hoc signed DMG); **verified final local RC:** `build/updater-rc/0.1.16-final-rc` (`0.1.16 build 22`, SHA-256 `208d426e4448c6de918b712e7947a84a6631cb7954a1b9055ac76c188a8c839f`).
+**Test & measurement host:** MacBook Pro `Mac15,6` (Apple M3 Pro, 18 GiB RAM), macOS `26.5.1` (`25F80`), Xcode `26.2` (`17C52`), GitHub Actions `macos-26` CI runner.
+**Live multi-hour efficiency run:** `build/efficiency-long-running/20261126-191517-full-32h` (Stage 1 completed `8.00 h`; Stage 2 captured `8.50 h` of `24.0 h` before host stop; folder preserved untouched).
+**Web handoff package:** [`docs/evidence/HANDOFF.md`](../evidence/HANDOFF.md) & [`docs/evidence/EDITORIAL-BRIEF.md`](../evidence/EDITORIAL-BRIEF.md).
 
 ---
 
@@ -16,7 +17,10 @@
 | **#108** | `8526a7a` | Scoped `RASC_APP_ENTITLEMENTS` and `RASC_APP_BUNDLE_IDENTIFIER` to the `Rasc` app target so `Scripts/test-native.sh` no longer breaks `VoiceModelDownloader.xpc` copy; fixed `PanelControllerTests` occlusion/palette isolation and `HomeWindowController.defaultObservers` Sendability; blocked Scratchpad text editing (`isEditable`) during Refine/preview. | `python3 Scripts/test-domain.py` (`588` tests / `48` suites + `AppReliabilityScaleTests`), `bash Scripts/test-native.sh` (`116` tests / `16` suites), CI `macos` passed. |
 | **#109** | `3205cd1` | Voice Capture & Dictate hardening: `VoiceTranscriptSanitizer.clean`, lazy 5 s-chunked `300 s` `MicBuffer` + USB multi-channel `vDSP.maximumMagnitude` selection + `15 s` warning countdown, `5.5 s` HAL startup watchdog, dynamic `transcriptionTimeoutSeconds`, Secure Input refusal (`IsSecureEventInputEnabled()` + `AXSecureTextField`), Electron `AXManualAccessibility` wake-up, `textWithSmartLeadingSpace`, frontmost-Rasc isolation, `.screenSaver` HUD level, `"Allow…"` Accessibility button, and `Esc` dismissal on `.copiedFallback`. | `python3 Scripts/test-domain.py` (`594` tests / `48` suites + `AppReliabilityScaleTests`), `bash Scripts/test-native.sh` (`116` tests / `16` suites), CI `macos` passed. |
 | **#110** | `ca9c93f` | SQLite WAL + `synchronous = NORMAL` + `5.0 s` busy timeout, fail-closed `PRAGMA quick_check(1)` & newer-schema `AppDatabaseError` refusal (never deleting user data), `v11_scale_indexes_and_origin` (partial scale indexes + `Note.Origin` `.scratch`/`.dictation`), `7`-day launch purge of expired discarded notes & `refinement_revisions`, `maxDiscardReceipts = 50` undo cap, sandbox-safe `NoteRepository.backup(to:)` (**Settings → General → Back Up Database…**), 3-button launch recovery alert (**Retry / Reveal Data Folder / Quit Rasc**) + menu-bar retry, Home `> 10` batch-discard confirmation, export smart defaults + `150 ms` search debounce, `-0.15` Kept FTS5 tie-breaker, termination WAL truncate checkpoint. | `python3 Scripts/test-domain.py` (`602` tests / `48` suites + `AppReliabilityScaleTests`), `bash Scripts/test-native.sh` (`116` tests / `16` suites), CI `macos` passed. |
-| **Current branch** | `fix/distribution-llc-and-readiness-docs` | Inside-out release signing (`sign_app_inside_out`, removing `--deep` in `build-private-beta.sh` & `build-rc.sh` so `VoiceModelDownloader.xpc` preserves `network.client`), `build-updater-rc.sh` `RASC_APP_ENTITLEMENTS` scoping + dynamic LLC pinning across **all** `Contents/Frameworks/` `.framework` binaries and `*.dylib` files (`Sparkle` + `libswiftCompatibilitySpan.dylib`) + `RASC_RC_OUTPUT_DIR` / optional `RASC_SIGNING_IDENTITY` & `RASC_NOTARY_PROFILE`, `verify-appcast.py` OpenSSL 3 resolver, and canonical docs sync. | `bash -n`, `py_compile`, `verify-appcast.py` `resolve_openssl()` (`OpenSSL 3.6.3` with `PATH=/usr/bin:/bin`), isolated `/tmp/rasc-llc-verify` RC build + `verify-rc-bundle.sh` + LLC 2-slice pin verification. |
+| **#111** | `578d02a` | Inside-out release signing (`sign_app_inside_out`), `build-updater-rc.sh` `RASC_APP_ENTITLEMENTS` scoping + dynamic LLC pinning across **all** `Contents/Frameworks/` `.framework` binaries and `*.dylib` (`Sparkle` + `libswiftCompatibilitySpan.dylib`), `verify-appcast.py` OpenSSL 3 resolver, and canonical docs sync. | `bash -n`, `py_compile`, `verify-appcast.py` (`OpenSSL 3.6.3`), LLC 2-slice pin verification, CI `macos` passed. |
+| **#112** | `67283b5` | Read-only analysis of `20261126-191517-full-32h` (`8.00 h` soak + `8.50 h` idle), Release `1k/5k` scale benchmark, Round 5 paired Voice competitive benchmarks (`VoiceArena n=151`, `Round 3 Held n=168`, `FLEURS n=60`, `30s–300s` + `-20 dBFS`), and live `SystemLanguageModel.default` Refine validation (`Validation 57`, `Holdout 72`, `Regression 6`, `PT/Mixed 16`, `Synthetic 8`). | Release `RascBench`, live `SystemLanguageModel.default`, CI `macos` passed. |
+| **#113** | `30c5c14` | Stage 4 streaming `15 s` `AVAudioConverter` resampling in `VoiceAudio.mono16k()`, `VoiceAudioPipelineTests`, `v10 → v11` direct migration + backup/restore round-trip tests, and expanded `HomeSnapshotTests` across Light/Dark (`72` snapshots rendered, `38` curated views audited in [`docs/evidence/screenshots/`](../evidence/screenshots/manifest.json)). | `608` domain tests / `49` suites + `AppReliabilityScaleTests`, `116` native tests / `16` suites, CI `macos` passed. |
+| **Stage 5** | `docs/final-readiness-rc-and-web-handoff` | Final `0.1.16-final-rc` DMG + Ed25519 appcast + `Rasc22-21.delta` + isolated `0.1.15 → 0.1.16` container upgrade (`com.rafaeltorres.rasc.rcverify`), updated Release `scale_1k_5k_final` + `300 s @ 48 kHz` streaming `mono16k()` (`21.66 ms`), and definitive `docs/evidence/` + docs reconciliation. | `verify-rc-bundle.sh`, `codesign --verify --deep --strict`, `verify-appcast.py --tamper`, SQLite upgrade `integrity_check = ok`, Release `RascBench`, personal DB SHA-256 unchanged. |
 
 ---
 
@@ -56,14 +60,14 @@
 
 ---
 
-## 4. Live Multi-Hour Run Status (`20261126-191517-full-32h`)
+## 4. Multi-Hour Efficiency Run Summary (`20261126-191517-full-32h`)
 
-Preserved untouched (`supervisor_pid: 33231`, `child_pid: 33236`, `personal_db_unchanged: true`). Latest sampled snapshot (`2026-11-27T02:39:45-0300`, still in Stage 1/2 `soak`, target `28,800 s` active soak before Stage 2 `24h` Voice-On idle):
+Preserved untouched (`Experiments/Efficiency/results/long_running_20261126/REPORT.md`, `personal_db_checks.unchanged = true`):
 
-- **Samples / duration:** `2,683` samples; **`13,445.581 s`** (`~3.73 h`) active elapsed across **`26,652.872 s`** (`~7.40 h`) wall time (`15` detected macOS sleep events totaling `13,207.047 s` sleep gaps).
-- **Memory & Neural footprint:** `phys_footprint_mib` `65.50 MiB` p50 / `85.61 MiB` latest / `125.99 MiB` max (`recovery_delta_mib.from_peak_mib = -40.38 MiB`); `neural_footprint_mib` `11.81 MiB` p50 / `598.44 MiB` peak.
-- **CPU & wakeups:** `0.0291%` p50 CPU (`1.0377%` mean), **`0.0` p50 package idle wakeups/s** (`0.0069/s` mean).
-- Full `8h` soak + `24h` idle conclusions must wait until the detached run writes its final completion summary.
+- **Stage 1 Active Soak (`completed`, `8.00 h` / `28,801.45 s` wall, `15,594.13 s` active, `15` macOS sleeps):** `3,112` samples, `32` cycles, `260` notes, `32` Refine calls, `7` sleep/wake probes; `phys_footprint` **`73.70 MiB`** p50 / **`73.77 MiB`** end (`125.99 MiB` max); `neural_footprint` `11.81 MiB` p50 (`598.44 MiB` peak); **`0.0295%` p50 CPU** (`0.9485%` mean), **`0.0/s` p50 wakeups**, `471.5331 J` XNU CPU energy, FDs `58–62`, **`0` Rasc leaks** (`288` Apple `LNDaemonApplicationInterface` XPC nodes constant).
+- **Stage 2 Voice-On Idle Standby (`interrupted_at_8.50h` of `24.0 h`, stopped `2026-11-27T11:46:05-0300` — not extrapolated beyond `8.50 h`):** `2,041` samples across `30,611.08 s`; `phys_footprint` dropped from `61.88 → 30.94 MiB` end (**`33.66 MiB` p50**, `−1.0611 MiB/h` slope), `neural_footprint` flat `11.81 MiB`, **`0.0%` p50 CPU** (`0.0048%` mean, `1,461.2 ms` total), **`0.0/s` p50 wakeups** (`7` total in `8.50 h`), `1.9586 J` (`0.06 mW` mean), FDs `47 → 46`, **`0` Rasc leaks**.
+
+Also verified in Stage 5 on `30c5c14`: Release `scale_1k_5k_final.json` (`5,000` notes, `fetchMostRecent 0.041 ms`, `search(20) 4.48 ms`, `backup 6.24 ms`), streaming `VoiceAudio.mono16k()` (`300 s @ 48 kHz` `4.8M/4.8M` frames in `21.66 ms`), and isolated `0.1.15 → 0.1.16-final-rc` upgrade (`com.rafaeltorres.rasc.rcverify`, `PRAGMA integrity_check = ok`, `v11` applied, 15s standby `31 MB` / `0.0%` CPU).
 
 ---
 

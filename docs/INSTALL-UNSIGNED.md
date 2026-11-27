@@ -6,9 +6,8 @@ project; macOS simply cannot tie it to a registered Apple developer.
 
 ## Before you start
 
-- **App:** the latest published release is **v0.1.15, build 21**, an Apple silicon DMG for
-  macOS 14 or later. It is ad-hoc signed and not notarized. Current `main` source
-  is ahead at **v0.1.16, build 22+** with post-0.1.15 fixes when built from source.
+- **App:** the latest published/retained ad-hoc release is **v0.1.15, build 21**, an Apple silicon DMG for
+  macOS 14 or later. Current `main` source (`30c5c14`) is at **v0.1.16, build 22**, with a verified local final candidate at `build/updater-rc/0.1.16-final-rc/Rasc-0.1.16-updater.dmg` (`SHA-256 208d426e4448c6de918b712e7947a84a6631cb7954a1b9055ac76c188a8c839f`, ad-hoc signed with `cdhash`-pinned Library Load Constraints, unnotarized — Developer ID & Apple notarization remain deferred).
 - **Refine:** additionally requires macOS 26 or later, an Apple Intelligence-capable
   Mac, Apple Intelligence enabled, and its on-device model ready. Capture, Keep,
   Home and Search work without it.

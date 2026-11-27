@@ -99,9 +99,17 @@ Note Text Size offers Small, Default, and Large for Scratchpad, Refine compariso
 ## Validation boundaries
 
 Automated domain tests cannot validate VoiceOver, Full Keyboard Access, active-window
-focus or Spaces. Native window suites and the [manual checklist](NATIVE-UI-VALIDATION.md)
-remain required. UI render captures, if used, are layout evidence only.
+focus or Spaces (`608` domain tests in `49` suites + `AppReliabilityScaleTests`, and
+`116` native AppKit tests in `16` suites pass on `30c5c14`; synthetic Light/Dark UI
+captures in [docs/evidence/screenshots/](evidence/screenshots/manifest.json) are layout
+evidence only). Physical desktop interaction items remain tracked in the
+[manual checklist](NATIVE-UI-VALIDATION.md).
 
 No notes, clipboard contents or credentials belong in diagnostics. No backend,
 cloud fallback, telemetry, account, sync, folders, tags, assistant or project manager
 has been added.
+
+Streaming `16 kHz` audio resampling (`VoiceAudio.mono16k()` in `VoiceMicrophone.swift`),
+fail-closed SQLite WAL + `v11_scale_indexes_and_origin`, and ad-hoc Sparkle LLC
+distribution (`0.1.16-final-rc`, `44.50 MiB` `.app` / `13.14 MiB` DMG, isolated
+`0.1.15 → 0.1.16` container upgrade verified) are audited against commit `30c5c14`.

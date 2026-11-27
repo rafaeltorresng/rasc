@@ -1,8 +1,8 @@
 {
-  "schema_version": 2,
-  "generated_at": "2026-11-26T18:45:33-0300",
+  "schema_version": 3,
+  "generated_at": "2026-11-27T16:25:00-0300",
   "environment": {
-    "commit": "2a1bddf",
+    "commit": "30c5c14",
     "machine_cpu": "Apple M3 Pro",
     "memory_bytes": 19327352832,
     "macos_version": "26.5.1",
@@ -29,10 +29,15 @@
   "storage_distinction": {
     "app_bundle_mib": 40.54,
     "app_bundle_bytes": 42367708,
-    "sparkle_app_bundle_mib": 44.4,
+    "sparkle_app_bundle_mib": 44.5,
     "speech_model_separate_bytes": 652304885,
     "speech_model_separate_mib": 622.09,
-    "note": "Standard local Release Rasc.app (~40.5 MiB) does not embed Sparkle or the 622 MiB speech model; GitHub Release builds embed Sparkle + cdhash-pinned Library Load Constraints (~44.4 MiB), and the speech model remains an opt-in one-time download."
+    "note": "Standard local Release Rasc.app (~40.5 MiB) does not embed Sparkle or the 622 MiB speech model; GitHub Release builds embed Sparkle + cdhash-pinned Library Load Constraints (~44.4 MiB), and the speech model remains an opt-in one-time download.",
+    "sparkle_app_bundle_bytes": 46660045,
+    "sparkle_dmg_bytes": 13782657,
+    "sparkle_dmg_mib": 13.14,
+    "sparkle_dmg_sha256": "208d426e4448c6de918b712e7947a84a6631cb7954a1b9055ac76c188a8c839f",
+    "rc_label": "0.1.16 (build 22) ad-hoc final RC (unnotarized; 0.1.15 build 21 remains latest public release)"
   },
   "states": {
     "idle_voice_off": {
@@ -3441,6 +3446,711 @@
           }
         }
       }
+    }
+  },
+  "long_running_20261126": {
+    "run_dir": "build/efficiency-long-running/20261126-191517-full-32h",
+    "provenance": {
+      "started_at": "2026-11-26T19:15:31-0300",
+      "commit_context": "PR #107 (perf/everyday-efficiency, baseline before PRs #108-#111)",
+      "bundle_id": "com.rafaeltorres.rasc.longrun",
+      "sparkle_distribution": false,
+      "model_revision": "3b9d38a93d606f84011e5a0a669b7ea146375a22",
+      "target_soak_s": 28800.0,
+      "target_idle_s": 86400.0
+    },
+    "personal_db_unchanged": true,
+    "stage_1_soak": {
+      "status": "completed",
+      "active_elapsed_s": 15594.128,
+      "wall_elapsed_s": 28801.45,
+      "wall_hours": 8.0,
+      "sample_count": 3112,
+      "detected_sleep_events": 15,
+      "total_sleep_gap_s": 13207.047,
+      "cycles_completed": 32,
+      "note_count_at_end": 260,
+      "refine_executed": 32,
+      "phys_footprint_mib": {
+        "start": 0.08,
+        "end": 73.77,
+        "min": 0.08,
+        "p50": 73.7,
+        "p95": 110.49,
+        "max": 125.99,
+        "mean": 74.71,
+        "slope_mib_per_min": 0.0411,
+        "slope_mib_per_hour": 2.4667
+      },
+      "recovery_delta_mib": {
+        "from_peak_mib": -52.22,
+        "from_start_mib": 73.69
+      },
+      "quiet_standby_footprint_mib": {
+        "n": 2887,
+        "min": 50.58,
+        "p50": 73.67,
+        "p95": 110.49,
+        "max": 110.86,
+        "mean": 74.25
+      },
+      "neural_footprint_mib": {
+        "p50": 11.81,
+        "max": 598.44,
+        "lifetime_max": 598.44
+      },
+      "cpu_pct": {
+        "mean": 0.9485,
+        "p50": 0.0295,
+        "p95": 0.4893,
+        "max": 73.7948
+      },
+      "pkg_idle_wkups_per_s_p50": 0.0,
+      "pkg_idle_wkups_per_s_mean": 0.0065,
+      "xnu_cpu_energy_j": 471.5331,
+      "xnu_cpu_power_mw_p50": 0.05,
+      "xnu_cpu_power_mw_mean": 30.24,
+      "in_app_ops": {
+        "soak_voice_scratchpad": {
+          "count": 32,
+          "p95Ms": 157.321333,
+          "maxMs": 158.161375,
+          "p50Ms": 77.6685,
+          "meanMs": 91.3709009375
+        },
+        "soak_seed_notes": {
+          "count": 1,
+          "p95Ms": 70.5055,
+          "maxMs": 70.5055,
+          "p50Ms": 70.5055,
+          "meanMs": 70.5055
+        },
+        "soak_home_close": {
+          "meanMs": 100.05455984375,
+          "count": 32,
+          "maxMs": 353.388292,
+          "p95Ms": 344.119375,
+          "p50Ms": 6.352042
+        },
+        "soak_voice_dictate": {
+          "meanMs": 73.0580468125,
+          "count": 32,
+          "maxMs": 138.7345,
+          "p95Ms": 130.680333,
+          "p50Ms": 58.788625
+        },
+        "soak_home_batch_undo": {
+          "count": 16,
+          "p95Ms": 344.421625,
+          "maxMs": 344.421625,
+          "p50Ms": 130.574084,
+          "meanMs": 161.154104125
+        },
+        "soak_home_open": {
+          "meanMs": 34.692089843750004,
+          "count": 32,
+          "maxMs": 66.638708,
+          "p95Ms": 60.863958,
+          "p50Ms": 30.605291
+        },
+        "soak_sleep_wake_cycle": {
+          "count": 7,
+          "p95Ms": 22537.928875,
+          "maxMs": 22537.928875,
+          "p50Ms": 18027.590542,
+          "meanMs": 14223.45234542857
+        },
+        "soak_home_search": {
+          "meanMs": 23.429907593750002,
+          "count": 32,
+          "maxMs": 42.397583,
+          "p95Ms": 33.724916,
+          "p50Ms": 22.885
+        },
+        "soak_home_deferred_check": {
+          "meanMs": 0.9375,
+          "count": 32,
+          "maxMs": 1,
+          "p95Ms": 1,
+          "p50Ms": 1
+        },
+        "soak_scratchpad": {
+          "meanMs": 200.80973351041666,
+          "count": 96,
+          "maxMs": 700.714542,
+          "p95Ms": 559.955292,
+          "p50Ms": 47.897792
+        },
+        "soak_refine": {
+          "meanMs": 33467.3068268125,
+          "count": 32,
+          "maxMs": 995196.109417,
+          "p95Ms": 5102.856208,
+          "p50Ms": 2775.2239170000003
+        }
+      },
+      "refine_awake_only_ms": {
+        "n": 31,
+        "min": 960.37,
+        "p50": 2775.22,
+        "p95": 3141.64,
+        "max": 5102.86,
+        "mean": 2443.8
+      },
+      "refine_sleep_outlier": {
+        "ops": [
+          {
+            "durationMs": 995196.109417,
+            "phase": "soak_active_cycle",
+            "iteration": 12,
+            "op": "soak_refine"
+          }
+        ],
+        "cycle12_start": {
+          "timestamp": "2026-11-27T01:33:01Z",
+          "phase": "soak_active_cycle",
+          "elapsedS": 11848.427853167,
+          "detail": "cycle 12"
+        },
+        "cycle12_probe": {
+          "elapsedS": 16911.85834025,
+          "phase": "soak_sleep_wake_probe",
+          "timestamp": "2026-11-27T02:57:25Z",
+          "detail": "cycle 12"
+        },
+        "sleep_gaps_during_cycle12": [
+          {
+            "wall_iso": "2026-11-26T22:33:03-0300",
+            "elapsed_s": 10773.496,
+            "wall_gap_s": 1077.077,
+            "phys_footprint_mib": 60.92
+          },
+          {
+            "wall_iso": "2026-11-26T22:49:00-0300",
+            "elapsed_s": 10778.503,
+            "wall_gap_s": 952.74,
+            "phys_footprint_mib": 88.92
+          },
+          {
+            "wall_iso": "2026-11-26T23:08:57-0300",
+            "elapsed_s": 10783.509,
+            "wall_gap_s": 1191.304,
+            "phys_footprint_mib": 88.92
+          },
+          {
+            "wall_iso": "2026-11-26T23:24:28-0300",
+            "elapsed_s": 10788.537,
+            "wall_gap_s": 926.698,
+            "phys_footprint_mib": 88.94
+          },
+          {
+            "wall_iso": "2026-11-26T23:40:50-0300",
+            "elapsed_s": 10798.547,
+            "wall_gap_s": 971.644,
+            "phys_footprint_mib": 100.74
+          }
+        ]
+      },
+      "periodic_diagnostics": [
+        {
+          "captured_at": "2026-11-26T19:45:34-0300",
+          "prefix": "soak_t001801s",
+          "footprint_cli": "79 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 58,
+          "related_processes": [
+            "33236 33231  65056   0.0   0:12.78 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Bench/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 1801.7
+        },
+        {
+          "captured_at": "2026-11-26T20:15:37-0300",
+          "prefix": "soak_t003604s",
+          "footprint_cli": "53 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 58,
+          "related_processes": [
+            "33236 33231  45280   0.0   0:21.97 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Bench/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 3604.7
+        },
+        {
+          "captured_at": "2026-11-26T20:45:37-0300",
+          "prefix": "soak_t005404s",
+          "footprint_cli": "54 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 58,
+          "related_processes": [
+            "33236 33231  40128   0.0   0:37.36 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Bench/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 5404.8
+        },
+        {
+          "captured_at": "2026-11-26T21:15:39-0300",
+          "prefix": "soak_t007207s",
+          "footprint_cli": "54 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 58,
+          "related_processes": [
+            "33236 33231  31200   0.0   0:54.62 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Bench/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 7207.2
+        },
+        {
+          "captured_at": "2026-11-26T21:45:43-0300",
+          "prefix": "soak_t009011s",
+          "footprint_cli": "57 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 58,
+          "related_processes": [
+            "33236 33231  39168   0.0   1:07.37 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Bench/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 9011.2
+        },
+        {
+          "captured_at": "2026-11-27T00:30:41-0300",
+          "prefix": "soak_t010813s",
+          "footprint_cli": "72 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 62,
+          "related_processes": [
+            "33236 33231 285056   3.6   1:23.85 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Bench/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 10813.6
+        },
+        {
+          "captured_at": "2026-11-27T02:25:53-0300",
+          "prefix": "soak_t012613s",
+          "footprint_cli": "89 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 59,
+          "related_processes": [
+            "33236 33231  56096   0.0   2:15.42 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Bench/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 12613.8
+        },
+        {
+          "captured_at": "2026-11-27T02:55:56-0300",
+          "prefix": "soak_t014416s",
+          "footprint_cli": "88 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 59,
+          "related_processes": [
+            "33236 33231  73776   0.0   2:23.65 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Bench/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 14416.9
+        }
+      ],
+      "leaks_summary": "8 periodic snapshots: constant 288 nodes (14,400 B), 100% Apple LNDaemonApplicationInterface NSXPCConnection cycle; 0 Rasc leaks; open FDs 58-62"
+    },
+    "stage_2_idle_voice_on": {
+      "status": "interrupted_at_8.50h",
+      "note": "Host process stopped at 2026-11-27T11:46:05-0300 during machine restart/maintenance after 8.50h continuous awake residency (target was 24.0h). Do not extrapolate beyond 8.50h.",
+      "last_sample_iso": "2026-11-27T11:46:05-0300",
+      "active_elapsed_s": 30610.967,
+      "wall_elapsed_s": 30611.084,
+      "wall_hours": 8.5,
+      "sample_count": 2041,
+      "detected_sleep_events": 0,
+      "phys_footprint_mib": {
+        "start": 61.88,
+        "end": 30.94,
+        "min": 30.89,
+        "p50": 33.66,
+        "p95": 41.42,
+        "max": 61.88,
+        "mean": 35.18,
+        "slope_mib_per_min": -0.0177,
+        "slope_mib_per_hour": -1.0611
+      },
+      "first_half_vs_second_half_mib": {
+        "first_hour_mean": 42.55,
+        "last_hour_mean": 32.94
+      },
+      "neural_footprint_mib": {
+        "p50": 11.81,
+        "max": 11.81,
+        "lifetime_max": 598.44
+      },
+      "cpu_pct": {
+        "mean": 0.0048,
+        "p50": 0.0,
+        "p95": 0.0083,
+        "max": 3.0553
+      },
+      "cumulative_cpu_ms": 1461.2,
+      "pkg_idle_wkups_total": 7,
+      "pkg_idle_wkups_per_s_p50": 0.0,
+      "pkg_idle_wkups_per_s_mean": 0.0002,
+      "interrupt_wkups_per_s_p50": 0.0,
+      "xnu_cpu_energy_j": 1.9586,
+      "xnu_cpu_power_mw_p50": 0.0,
+      "xnu_cpu_power_mw_mean": 0.06,
+      "periodic_diagnostics": [
+        {
+          "captured_at": "2026-11-27T03:45:54-0300",
+          "prefix": "idle_voice_on_t001800s",
+          "footprint_cli": "41 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 47,
+          "related_processes": [
+            "16322 33231  91696   0.0   0:04.28 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 1800.7
+        },
+        {
+          "captured_at": "2026-11-27T04:15:55-0300",
+          "prefix": "idle_voice_on_t003601s",
+          "footprint_cli": "41 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 47,
+          "related_processes": [
+            "16322 33231  88240   0.0   0:04.31 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 3601.4
+        },
+        {
+          "captured_at": "2026-11-27T04:45:56-0300",
+          "prefix": "idle_voice_on_t005402s",
+          "footprint_cli": "41 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 47,
+          "related_processes": [
+            "16322 33231  88240   0.0   0:04.34 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 5402.1
+        },
+        {
+          "captured_at": "2026-11-27T05:15:56-0300",
+          "prefix": "idle_voice_on_t007202s",
+          "footprint_cli": "34 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 47,
+          "related_processes": [
+            "16322 33231  88240   0.0   0:04.37 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 7202.9
+        },
+        {
+          "captured_at": "2026-11-27T05:45:57-0300",
+          "prefix": "idle_voice_on_t009003s",
+          "footprint_cli": "34 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 47,
+          "related_processes": [
+            "16322 33231  88224   0.0   0:04.40 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 9003.5
+        },
+        {
+          "captured_at": "2026-11-27T06:15:58-0300",
+          "prefix": "idle_voice_on_t010804s",
+          "footprint_cli": "34 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 47,
+          "related_processes": [
+            "16322 33231  88560   0.0   0:04.43 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 10804.2
+        },
+        {
+          "captured_at": "2026-11-27T06:45:59-0300",
+          "prefix": "idle_voice_on_t012604s",
+          "footprint_cli": "34 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 47,
+          "related_processes": [
+            "16322 33231  89488   0.0   0:04.46 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 12604.9
+        },
+        {
+          "captured_at": "2026-11-27T07:15:59-0300",
+          "prefix": "idle_voice_on_t014405s",
+          "footprint_cli": "34 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 47,
+          "related_processes": [
+            "16322 33231  88048   0.0   0:04.50 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 14405.5
+        },
+        {
+          "captured_at": "2026-11-27T07:46:00-0300",
+          "prefix": "idle_voice_on_t016206s",
+          "footprint_cli": "34 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 47,
+          "related_processes": [
+            "16322 33231  88048   0.0   0:04.53 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 16206.2
+        },
+        {
+          "captured_at": "2026-11-27T08:16:00-0300",
+          "prefix": "idle_voice_on_t018006s",
+          "footprint_cli": "33 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 46,
+          "related_processes": [
+            "16322 33231  81904   0.0   0:04.56 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 18006.7
+        },
+        {
+          "captured_at": "2026-11-27T08:46:01-0300",
+          "prefix": "idle_voice_on_t019807s",
+          "footprint_cli": "33 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 46,
+          "related_processes": [
+            "16322 33231  81376   0.0   0:04.59 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 19807.3
+        },
+        {
+          "captured_at": "2026-11-27T09:16:02-0300",
+          "prefix": "idle_voice_on_t021607s",
+          "footprint_cli": "33 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 46,
+          "related_processes": [
+            "16322 33231  81376   0.0   0:04.62 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 21608.0
+        },
+        {
+          "captured_at": "2026-11-27T09:46:02-0300",
+          "prefix": "idle_voice_on_t023408s",
+          "footprint_cli": "33 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 46,
+          "related_processes": [
+            "16322 33231  81520   0.0   0:04.66 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 23408.6
+        },
+        {
+          "captured_at": "2026-11-27T10:16:03-0300",
+          "prefix": "idle_voice_on_t025209s",
+          "footprint_cli": "33 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 46,
+          "related_processes": [
+            "16322 33231  81792   0.0   0:04.69 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 25209.2
+        },
+        {
+          "captured_at": "2026-11-27T10:46:03-0300",
+          "prefix": "idle_voice_on_t027009s",
+          "footprint_cli": "33 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 46,
+          "related_processes": [
+            "16322 33231  81344   0.0   0:04.72 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 27009.7
+        },
+        {
+          "captured_at": "2026-11-27T11:16:04-0300",
+          "prefix": "idle_voice_on_t028810s",
+          "footprint_cli": "33 MB",
+          "leaks_count": 288,
+          "leaks_bytes": 14400,
+          "open_fds": 46,
+          "related_processes": [
+            "16322 33231  81376   0.0   0:04.75 ~/Desktop/rasc/build/efficiency-long-running/20261126-191517-full-32h/apps/Shipping/Rasc.app/Contents/MacOS/Rasc"
+          ],
+          "elapsed_s": 28810.5
+        }
+      ],
+      "leaks_summary": "16 periodic snapshots across 8.50h: constant 288 nodes (14,400 B), 100% Apple LNDaemonApplicationInterface NSXPCConnection cycle; 0 Rasc leaks; open FDs constant at 47"
+    },
+    "honest_disclosure": "Stage 1 8h soak completed full 28,801.45 s wall (15,594.13 s active across 15 macOS sleeps); Stage 2 Voice-On idle captured 8.50 h of 24.0 h before the host stopped cleanly at 2026-11-27T11:46:05-0300 \u2014 reported verbatim without extrapolation."
+  },
+  "scale_benchmark_1k_5k": {
+    "initial_stage1_commit_578d02a": [
+      {
+        "backupMs": 3.218375,
+        "backupSizeBytes": 806912,
+        "backupVerifiedNoteCount": 500,
+        "batchDiscard500Ms": 7.309834,
+        "batchDiscard50Ms": 0.799208,
+        "bootstrapMs": 19.409,
+        "checkpointMs": 3.347375,
+        "dbBytesBeforeCheckpoint": 630784,
+        "fetchAllNonDeletedMs": 2.382541,
+        "fetchMostRecentP50Ms": 0.04525,
+        "keptCount": 200,
+        "noteCount": 1000,
+        "purgeExpired500Ms": 6.816584,
+        "purgedRows": 500,
+        "restoreDiscards50Ms": 3.410417,
+        "searchLimit20P50Ms": 1.044792,
+        "searchLimit500Ms": 2.532834,
+        "seedMs": 184.644084,
+        "walBytesAfterCheckpoint": 0,
+        "walBytesBeforeCheckpoint": 3254832
+      },
+      {
+        "backupMs": 6.68825,
+        "backupSizeBytes": 3239936,
+        "backupVerifiedNoteCount": 4500,
+        "batchDiscard500Ms": 7.2475,
+        "batchDiscard50Ms": 0.692792,
+        "bootstrapMs": 4.167834,
+        "checkpointMs": 3.538208,
+        "dbBytesBeforeCheckpoint": 2846720,
+        "fetchAllNonDeletedMs": 11.53925,
+        "fetchMostRecentP50Ms": 0.0405,
+        "keptCount": 1000,
+        "noteCount": 5000,
+        "purgeExpired500Ms": 8.55,
+        "purgedRows": 500,
+        "restoreDiscards50Ms": 4.134833,
+        "searchLimit20P50Ms": 4.225834,
+        "searchLimit500Ms": 6.375334,
+        "seedMs": 863.822458,
+        "walBytesAfterCheckpoint": 0,
+        "walBytesBeforeCheckpoint": 1783992
+      }
+    ],
+    "final_main_commit_30c5c14": [
+      {
+        "backupMs": 4.011209,
+        "backupSizeBytes": 806912,
+        "backupVerifiedNoteCount": 500,
+        "batchDiscard500Ms": 7.200417,
+        "batchDiscard50Ms": 0.833042,
+        "bootstrapMs": 38.30725,
+        "checkpointMs": 3.506875,
+        "dbBytesBeforeCheckpoint": 630784,
+        "fetchAllNonDeletedMs": 2.415833,
+        "fetchMostRecentP50Ms": 0.043083,
+        "keptCount": 200,
+        "noteCount": 1000,
+        "purgeExpired500Ms": 6.699084,
+        "purgedRows": 500,
+        "restoreDiscards50Ms": 3.362584,
+        "searchLimit20P50Ms": 1.086792,
+        "searchLimit500Ms": 2.666959,
+        "seedMs": 233.061334,
+        "walBytesAfterCheckpoint": 0,
+        "walBytesBeforeCheckpoint": 3172432
+      },
+      {
+        "backupMs": 6.237667,
+        "backupSizeBytes": 3227648,
+        "backupVerifiedNoteCount": 4500,
+        "batchDiscard500Ms": 6.616583,
+        "batchDiscard50Ms": 0.588958,
+        "bootstrapMs": 6.39375,
+        "checkpointMs": 5.002041,
+        "dbBytesBeforeCheckpoint": 2830336,
+        "fetchAllNonDeletedMs": 11.544584,
+        "fetchMostRecentP50Ms": 0.041125,
+        "keptCount": 1000,
+        "noteCount": 5000,
+        "purgeExpired500Ms": 8.060917,
+        "purgedRows": 500,
+        "restoreDiscards50Ms": 3.929042,
+        "searchLimit20P50Ms": 4.478459,
+        "searchLimit500Ms": 6.622958,
+        "seedMs": 989.189667,
+        "walBytesAfterCheckpoint": 0,
+        "walBytesBeforeCheckpoint": 2282512
+      }
+    ]
+  },
+  "streaming_resampling_final": {
+    "commit": "30c5c14",
+    "fix": "VoiceAudio.mono16k() chunks non-16 kHz audio into reusable 15 s AVAudioConverter buffers inside autoreleasepool while keeping FIR filter continuity (zero .reset()) and 16 kHz fast path",
+    "corpus": "longform_norm (11 loudness-normalized clips at -20 dBFS)",
+    "released_footprint_mib": 32.298,
+    "sample_300s_48khz": {
+      "id": "norm_en_us_300s_48k_mono",
+      "input_rate_hz": 48000,
+      "audio_seconds": 300,
+      "expected_16k_frames": 4800000,
+      "actual_16k_frames": 4800000,
+      "frame_retention_pct": 100.0,
+      "streaming_resample_ms": 21.66,
+      "inference_ms": 1492.58,
+      "mem_released_after_run_mib": 32.3
+    },
+    "scored_accuracy": {
+      "clips": 11,
+      "errors": 0,
+      "emptyTranscripts": 0,
+      "referenceWords": 3623,
+      "hypothesisWords": 3484,
+      "wordEdits": 348,
+      "werPercent": 9.605,
+      "cerPercent": 5.155,
+      "werPunctuationSensitivePercent": 12.43,
+      "warmTranscribeMs": {
+        "n": 11,
+        "mean": 851.263,
+        "p50": 854.863,
+        "p95": 1508.101,
+        "min": 160.269,
+        "max": 1508.101
+      },
+      "warmRtf": null
+    }
+  },
+  "rc_0_1_16_final_verification": {
+    "rc_dir": "build/updater-rc/0.1.16-final-rc",
+    "version": "0.1.16",
+    "build": 22,
+    "arch": "arm64",
+    "signing": "ad-hoc (-) with Apple Library Load Constraints (unnotarized)",
+    "app_bytes": 46660045,
+    "app_mib": 44.5,
+    "dmg_bytes": 13782657,
+    "dmg_sha256": "208d426e4448c6de918b712e7947a84a6631cb7954a1b9055ac76c188a8c839f",
+    "llc_pinned_cdhashes": {
+      "Sparkle.framework/Versions/Current/Sparkle [arm64]": "0e66f4ed0b19cb8b52fd8063740ba80e1481366a",
+      "libswiftCompatibilitySpan.dylib [arm64]": "c3228a12b0782b9b402391c99f9627f4c9e2456b"
+    },
+    "ed25519_appcast_and_tamper_passed": true,
+    "delta_21_to_22_bytes": 3378602,
+    "isolated_upgrade_0_1_15_to_0_1_16": {
+      "container_bundle_id": "com.rafaeltorres.rasc.rcverify",
+      "personal_db_unchanged": true,
+      "pre_upgrade_migrations": "v1..v10_voice_review_to_scratch",
+      "post_upgrade_migrations": "v1..v11_scale_indexes_and_origin",
+      "pragma_integrity_check": "ok",
+      "seeded_notes_preserved": 2,
+      "seeded_revisions_preserved": 1,
+      "fts5_post_upgrade_match": true,
+      "standby_15s_rss_kib": 110832,
+      "standby_15s_footprint_mb": 31,
+      "standby_15s_cpu_pct": 0.0
     }
   }
 }
