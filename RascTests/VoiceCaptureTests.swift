@@ -1244,6 +1244,175 @@ struct VoiceCaptureTests {
         #expect(probe.prepares == 1)
     }
 
+    @Test func transcriptSanitizerStripsArtifactsAndUnknownOnlyTranscriptBecomesNoSpeech() async throws {
+        let cleaned = VoiceTranscriptSanitizer.clean(
+            "<unk> [BLANK_AUDIO]  <|en|>Hello   world\n  [silence] (silence) \n\nNext\t\tline  [unk]"
+        )
+        #expect(cleaned == "Hello world\n\nNext line")
+        #expect(VoiceTranscriptSanitizer.clean("Line 1   here\nLine 2  [unk]") == "Line 1 here\nLine 2")
+        #expect(VoiceTranscriptSanitizer.clean("  <unk> [silence]  ").isEmpty)
+
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let capture = fixture.capture(
+            presentWindows: false,
+            decode: { _ in "  <unk> [BLANK_AUDIO] <|nospeech|> " }
+        )
+        capture.activate(intent: .scratchpad)
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .issue(.noSpeech) }
+        #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
+    }
+
+    @Test func micBufferLazilyAllocatesChunksScalesTo300sAndPicksActiveUsbChannel() throws {
+        let buffer = MicBuffer(rate: 16_000)
+        #expect(buffer.maxDurationSeconds == 300)
+        #expect(buffer.status().remainingSeconds == 300)
+
+        let limited = MicBuffer(rate: 100, maxDurationSeconds: 1.0)
+        let samples = Array(repeating: Float(0.2), count: 150)
+        samples.withUnsafeBufferPointer { limited.append($0) }
+        let status = limited.status()
+        #expect(status.full)
+        #expect(status.count == 100)
+        #expect(status.remainingSeconds == 0)
+
+        let format = try #require(
+            AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16_000, channels: 2, interleaved: false)
+        )
+        let pcm = try #require(AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 64))
+        pcm.frameLength = 64
+        let ch0 = try #require(pcm.floatChannelData?[0])
+        let ch1 = try #require(pcm.floatChannelData?[1])
+        for i in 0..<64 {
+            ch0[i] = 0
+            ch1[i] = 0.25
+        }
+        let multiBuffer = MicBuffer(rate: 16_000)
+        multiBuffer.append(pcm)
+        let recorded = multiBuffer.audio()
+        #expect(recorded.samples == Array(repeating: Float(0.25), count: 64))
+        #expect(recorded.peak == 0.25)
+    }
+
+    @Test func transcriptionTimeoutScalesWithRecordingDuration() {
+        #expect(VoiceCapture.transcriptionTimeoutSeconds(forAudioSeconds: 10) == 30)
+        #expect(VoiceCapture.transcriptionTimeoutSeconds(forAudioSeconds: 120) == 75)
+        #expect(VoiceCapture.transcriptionTimeoutSeconds(forAudioSeconds: 300) == 165)
+    }
+
+    @Test func frontmostRascWithoutFocusedEditorFallsBackToClipboardWithoutLeakingToBackgroundApp() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+
+        let capture = VoiceCapture(
+            preferences: fixture.defaults,
+            supported: true,
+            input: .init(
+                authorization: { .authorized },
+                requestAccess: { true },
+                start: { id, route in await fixture.input.start(id, audible: true, route: route) },
+                stop: { id in await fixture.input.stop(id) }
+            ),
+            presentWindows: false,
+            speech: .init(
+                assetsAvailable: { true },
+                prepare: {},
+                transcribe: { _, ready in
+                    await ready()
+                    return "Stay inside Rasc"
+                },
+                release: {}
+            ),
+            accessibilityTrusted: { true },
+            pasteboard: pasteboard,
+            insertText: { _, _, _ in
+                Issue.record("Background target app must not receive dictation when Rasc is frontmost")
+                return .inserted
+            },
+            insertInCurrentApp: { _ in false },
+            isCurrentAppFrontmost: { true }
+        )
+        capture.setEnabled(true)
+        capture.connect(repository: fixture.repository)
+
+        capture.activate(intent: .dictate)
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .copiedFallback }
+
+        #expect(capture.lastFallbackReason == .noFocusedTextField)
+        #expect(pasteboard.string(forType: .string) == "Stay inside Rasc")
+        #expect(capture.isEscapeCancelArmed)
+        capture.requestCancel(fromEscape: true)
+        try await wait { capture.phase == .idle }
+    }
+
+    @Test func secureInputBlocksInsertionAndDoesNotCopyOrSaveHistory() async throws {
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+
+        let directResult = VoiceTextInsertion.insert(
+            "s3cr3t",
+            target: nil,
+            pasteboard: pasteboard,
+            isTrusted: { true },
+            isSecureInputEnabled: { true }
+        )
+        #expect(directResult == .blockedBySecureInput)
+        #expect(pasteboard.string(forType: .string) == nil)
+
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let capture = fixture.capture(
+            presentWindows: false,
+            pasteboard: pasteboard,
+            insertResult: .blockedBySecureInput,
+            isCurrentAppFrontmost: false
+        )
+        capture.setStandaloneKeepsHistory(true)
+
+        capture.activate(intent: .dictate)
+        try await wait { capture.phase == .listening }
+        capture.finish()
+        try await wait { capture.phase == .issue(.secureInputBlocked) }
+
+        #expect(pasteboard.string(forType: .string) == nil)
+        #expect(await capture.flushForTermination())
+        #expect(try await fixture.repository.fetchAllNonDeleted().isEmpty)
+
+        capture.recover()
+        try await wait { capture.phase == .idle }
+    }
+
+    @Test func smartLeadingSpaceCoversWordBoundariesPunctuationAndInAppEditor() {
+        #expect(VoiceTextInsertion.textWithSmartLeadingSpace("hello", precedingCharacter: "a") == " hello")
+        #expect(VoiceTextInsertion.textWithSmartLeadingSpace("hello", precedingCharacter: ".") == " hello")
+        #expect(VoiceTextInsertion.textWithSmartLeadingSpace("hello", precedingCharacter: "(") == "hello")
+        #expect(VoiceTextInsertion.textWithSmartLeadingSpace("hello", precedingCharacter: " ") == "hello")
+        #expect(VoiceTextInsertion.textWithSmartLeadingSpace(", world", precedingCharacter: "o") == ", world")
+
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 320, height: 120),
+            styleMask: [.titled],
+            backing: .buffered,
+            defer: false
+        )
+        let textView = NSTextView(frame: NSRect(x: 0, y: 0, width: 320, height: 120))
+        textView.isEditable = true
+        textView.string = "Hello"
+        textView.setSelectedRange(NSRange(location: 5, length: 0))
+        window.contentView = textView
+        window.makeFirstResponder(textView)
+
+        let inserted = VoiceTextInsertion.insertIntoWindowEditor("world", window: window)
+        #expect(inserted)
+        #expect(textView.string == "Hello world")
+    }
+
     private func wait(until predicate: () -> Bool) async throws {
         let deadline = ContinuousClock.now.advanced(by: .seconds(10))
         while !predicate(), ContinuousClock.now < deadline {
@@ -1288,6 +1457,7 @@ struct VoiceCaptureTests {
             pasteboard: NSPasteboard = .general,
             insertResult: VoiceTextInsertion.Result? = nil,
             insertInCurrentApp: Bool = false,
+            isCurrentAppFrontmost: Bool = false,
             decode: @escaping @Sendable (VoiceAudio) async throws -> String = { _ in "Talvez não fazer o deploy ainda." }
         ) -> VoiceCapture {
             defaults.set(enabled, forKey: VoiceCapture.preferenceKey)
@@ -1325,7 +1495,8 @@ struct VoiceCaptureTests {
                 accessibilityTrusted: resolvedAccessibilityTrusted,
                 pasteboard: pasteboard,
                 insertText: resolvedInsertText,
-                insertInCurrentApp: { _ in insertInCurrentApp }
+                insertInCurrentApp: { _ in insertInCurrentApp },
+                isCurrentAppFrontmost: { isCurrentAppFrontmost }
             )
             capture.connect(repository: repository)
             return capture

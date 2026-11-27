@@ -1,5 +1,6 @@
 import AppKit
 import ApplicationServices
+import Carbon.HIToolbox
 import Foundation
 
 /// Deliberate voice workflow selected by the user.
@@ -77,6 +78,8 @@ enum VoiceTextInsertion {
         case inserted
         /// Text was placed on the clipboard instead.
         case copiedToClipboard(Reason)
+        /// Secure input or a secure text field is active; nothing was inserted or copied.
+        case blockedBySecureInput
     }
 
     enum Reason: Equatable, Sendable {
@@ -91,16 +94,30 @@ enum VoiceTextInsertion {
     // under Swift 6 concurrency checking and are otherwise identical.
     private static let focusedElementAttribute = "AXFocusedUIElement"
     private static let selectedTextAttribute = "AXSelectedText"
+    private static let roleAttribute = "AXRole"
+    private static let subroleAttribute = "AXSubrole"
+    private static let valueAttribute = "AXValue"
+    private static let selectedTextRangeAttribute = "AXSelectedTextRange"
+    private static let manualAccessibilityAttribute = "AXManualAccessibility"
+    private static let enhancedUserInterfaceAttribute = "AXEnhancedUserInterface"
+    private static let secureTextFieldIdentifier = "AXSecureTextField"
+    private static let smartSpaceOpeningCharacters: Set<Character> = [
+        "(", "[", "{", "\"", "'", "“", "‘", "/", "-", "\n", "\t"
+    ]
 
     @MainActor
     static func insert(
         _ text: String,
         target: NSRunningApplication?,
         pasteboard: NSPasteboard = .general,
-        isTrusted: @Sendable () -> Bool = { AXIsProcessTrusted() }
+        isTrusted: @Sendable () -> Bool = { AXIsProcessTrusted() },
+        isSecureInputEnabled: @Sendable () -> Bool = { IsSecureEventInputEnabled() }
     ) -> Result {
         guard !text.isEmpty else {
             return .copiedToClipboard(.emptyText)
+        }
+        if isSecureInputEnabled() {
+            return .blockedBySecureInput
         }
         guard isTrusted() else {
             copy(text, to: pasteboard)
@@ -111,11 +128,25 @@ enum VoiceTextInsertion {
             return .copiedToClipboard(.noTargetApplication)
         }
         let appElement = AXUIElementCreateApplication(app.processIdentifier)
-        guard let element = focusedElement(of: appElement) else {
+        let element: AXUIElement?
+        if let direct = focusedElement(of: appElement) {
+            element = direct
+        } else {
+            // Electron and Chromium apps often defer exposing their AX tree until requested.
+            AXUIElementSetAttributeValue(appElement, manualAccessibilityAttribute as CFString, kCFBooleanTrue)
+            AXUIElementSetAttributeValue(appElement, enhancedUserInterfaceAttribute as CFString, kCFBooleanTrue)
+            element = focusedElement(of: appElement)
+        }
+        guard let element else {
             copy(text, to: pasteboard)
             return .copiedToClipboard(.noFocusedTextField)
         }
-        if setSelectedText(text, on: element) {
+        if isFocusedElementSecure(element) {
+            return .blockedBySecureInput
+        }
+        let snapshot = textSnapshot(of: element)
+        let preparedText = textWithSmartLeadingSpace(text, precedingCharacter: precedingCharacter(in: snapshot))
+        if setSelectedText(preparedText, on: element, beforeSnapshot: snapshot) {
             return .inserted
         }
         copy(text, to: pasteboard)
@@ -140,8 +171,34 @@ enum VoiceTextInsertion {
         else {
             return false
         }
-        textView.insertText(text, replacementRange: textView.selectedRange())
+        let range = textView.selectedRange()
+        let preceding = precedingCharacter(in: textView.string, beforeUTF16Location: range.location)
+        let prepared = textWithSmartLeadingSpace(text, precedingCharacter: preceding)
+        textView.insertText(prepared, replacementRange: range)
         return true
+    }
+
+    static func textWithSmartLeadingSpace(_ text: String, precedingCharacter: Character?) -> String {
+        guard !text.isEmpty,
+              let prev = precedingCharacter,
+              !prev.isWhitespace,
+              !smartSpaceOpeningCharacters.contains(prev),
+              let first = text.first,
+              first.isLetter || first.isNumber
+        else {
+            return text
+        }
+        return " " + text
+    }
+
+    private struct AXTextSnapshot: Equatable {
+        let value: String?
+        let rangeLocation: Int?
+        let rangeLength: Int?
+
+        var isReadable: Bool {
+            value != nil && rangeLocation != nil && rangeLength != nil
+        }
     }
 
     private static func focusedElement(of appElement: AXUIElement) -> AXUIElement? {
@@ -152,11 +209,72 @@ enum VoiceTextInsertion {
         return unsafeDowncast(value, to: AXUIElement.self)
     }
 
-    private static func setSelectedText(_ text: String, on element: AXUIElement) -> Bool {
+    private static func isFocusedElementSecure(_ element: AXUIElement) -> Bool {
+        for attribute in [roleAttribute, subroleAttribute] {
+            var value: CFTypeRef?
+            let status = AXUIElementCopyAttributeValue(element, attribute as CFString, &value)
+            if status == .success, let stringValue = value as? String, stringValue == secureTextFieldIdentifier {
+                return true
+            }
+        }
+        return false
+    }
+
+    private static func textSnapshot(of element: AXUIElement) -> AXTextSnapshot {
+        var rawValue: CFTypeRef?
+        let textValue: String? =
+            if AXUIElementCopyAttributeValue(element, valueAttribute as CFString, &rawValue) == .success {
+                rawValue as? String
+            } else {
+                nil
+            }
+
+        var rawRange: CFTypeRef?
+        var location: Int?
+        var length: Int?
+        if AXUIElementCopyAttributeValue(element, selectedTextRangeAttribute as CFString, &rawRange) == .success,
+           let rawRange,
+           CFGetTypeID(rawRange) == AXValueGetTypeID() {
+            let axValue = unsafeDowncast(rawRange, to: AXValue.self)
+            var range = CFRange()
+            if AXValueGetType(axValue) == .cfRange, AXValueGetValue(axValue, .cfRange, &range) {
+                location = range.location
+                length = range.length
+            }
+        }
+
+        return AXTextSnapshot(value: textValue, rangeLocation: location, rangeLength: length)
+    }
+
+    private static func precedingCharacter(in snapshot: AXTextSnapshot) -> Character? {
+        guard let value = snapshot.value, let location = snapshot.rangeLocation else { return nil }
+        return precedingCharacter(in: value, beforeUTF16Location: location)
+    }
+
+    private static func precedingCharacter(in string: String, beforeUTF16Location location: Int) -> Character? {
+        guard location > 0 else { return nil }
+        let utf16 = string.utf16
+        guard location <= utf16.count else { return nil }
+        let targetIndex = utf16.index(utf16.startIndex, offsetBy: location)
+        guard let scalarIndex = targetIndex.samePosition(in: string), scalarIndex > string.startIndex else {
+            return nil
+        }
+        return string[string.index(before: scalarIndex)]
+    }
+
+    private static func setSelectedText(_ text: String, on element: AXUIElement, beforeSnapshot: AXTextSnapshot) -> Bool {
         var settable: DarwinBoolean = false
         let settableStatus = AXUIElementIsAttributeSettable(element, selectedTextAttribute as CFString, &settable)
         guard settableStatus == .success, settable.boolValue else { return false }
         let status = AXUIElementSetAttributeValue(element, selectedTextAttribute as CFString, text as CFTypeRef)
-        return status == .success
+        guard status == .success else { return false }
+
+        if !text.isEmpty, beforeSnapshot.isReadable {
+            let afterSnapshot = textSnapshot(of: element)
+            if afterSnapshot.isReadable, afterSnapshot == beforeSnapshot {
+                return false
+            }
+        }
+        return true
     }
 }
