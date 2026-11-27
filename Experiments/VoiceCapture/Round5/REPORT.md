@@ -93,7 +93,7 @@ Corpus: Hugging Face `VoiceArena/Dictation_Dataset` (`test` split, `CC-BY-NC-4.0
 3. **Resampling & Memory (`VoiceAudio.mono16k()` vs `FluidAudio` `ChunkProcessor`):**
    - `VoiceAudio.mono16k()` keeps **100% of frames** (`4,800,000 / 4,800,000` frames at `300s @ 48 kHz`) and `MicBuffer` active-channel selection correctly chose channel 1 on `long_pt_br_300s_48k_stereo_ch1` (`5.143% WER`, whereas `BenchRunner` `apple-speech` read `channels.first` and returned empty `100% WER` on quiet channel 0).
    - However, single-shot `VoiceAudio.mono16k()` allocated full `14.4M`-frame input buffers (`3.2×` slower at `48 kHz / 300 s`: `17–40 ms` single-shot vs `12.5 ms` chunked and `+55 MiB` transient RAM spike). **Production fix scheduled for Stage 4.**
-   - **Verified FluidAudio chunk boundary artifact:** A standalone single-chunk probe (`[12.88s..27.76s]` of `norm_en_us_30s_16k.wav`) transcribed 100% of `"He has been unable to take the drugs needed to overcome his pain as they are banned from the games."`, whereas full `ChunkProcessor` merged decoding still drops ~1 short clause after the ~0.55s inter-speaker pause (`20.56s..25.76s`) and shows ~1 subword splice artifact per 300s (`"dri behver'savior"`, `"a Índ sóia"`) due to FluidAudio's timestamp sort (`ChunkProcessor.swift:71`). Documented transparently without forking `FluidAudio`.
+   - A standalone probe of `12.88–27.76 s` recognized the English clause missing around `20.56–25.76 s` in the combined transcript. The trace in the reliability follow-up below shows where the loss occurred. It also separates subword corruption at joins from missing decoder output.
 
 #### Summary: Loudness-Matched (`-20 dBFS`) `30s–300s` (`n = 11`)
 
@@ -119,11 +119,11 @@ Measured across 15 VoiceArena clips (`cold` `n=1`, `warm` `n=15`, `post_idle_rel
 | `AsrManager` `initialize` + `cleanup` | 0.065 ms | **0.040 ms** | 0.052 ms | 0.042 ms |
 | Core ML + TDT `inferenceMs` | 116.49 ms | **65.33 ms** | 147.74 ms | 109.55 ms |
 | `VoiceTranscriptSanitizer.clean` | 0.98 ms | **0.065 ms** | 0.096 ms | 0.070 ms |
-| **Finish → Transcript Ready** | **380.82 ms** | **65.55 ms** | **148.10 ms** | **205.86 ms** |
+| **Finish → Transcript Ready** | **380.82 ms** | **65.55 ms** | **169.34 ms** | **205.86 ms** |
 | GRDB Scratchpad `createScratch` + `fetchEditable` | 2.63 ms | **0.420 ms** | 1.001 ms | 0.417 ms |
-| **Finish → Scratchpad Editable** | **383.46 ms** | **65.95 ms** | **150.61 ms** | **206.26 ms** |
+| **Finish → Scratchpad Editable** | **383.46 ms** | **65.95 ms** | **169.78 ms** | **206.26 ms** |
 | `VoiceTextInsertion` prep + ephemeral copy | 0.316 ms | **0.121 ms** | 0.183 ms | 0.141 ms |
-| **Finish → Dictate Delivery** | **381.14 ms** | **65.67 ms** | **148.22 ms** | **205.99 ms** |
+| **Finish → Dictate Delivery** | **381.14 ms** | **65.67 ms** | **169.46 ms** | **205.99 ms** |
 
 *(Dictation insert-at-cursor skips clipboard fallback overhead when `AXUIElementSetAttributeValue` succeeds; end-to-end persistence and clipboard preparation add `< 0.5 ms` p50.)*
 
@@ -139,3 +139,40 @@ These numbers come from public third-party benchmarks with **different methodolo
   Reports NVIDIA Parakeet TDT 0.6B v3 around `11–51 ms/s` (`~80 MB` active footprint class) vs OpenAI Whisper `Large V3 Turbo Q5_0` / `Large V3` around `65–160+ ms/s` (`~700 MB–3.5 GB`). In Rasc's paired M3 Pro test (`5.6 ms/s` = `RTF 0.0056` warm on Fluid Speech Pro Core ML ANE), Rasc aligns with and exceeds the low-latency offline Parakeet profile while adding explicit on-device Apple Foundation Models Refine.
 - **Open ASR Leaderboard (model-level Linux GPU evaluation, non-Mac):**  
   `nvidia/parakeet-tdt-0.6b-v3` publishes `~6.34%` English average WER and `~4.81–5.06%` core European multilingual average WER at high server GPU throughput (`>1,500×` RTFx).
+
+## Reliability follow-up after `5c4e5ad`
+
+### Where the audio disappeared
+
+The previously cited **20.56 s** locates the clause near the start of the recording. The missing interval is around **20.56–25.76 s** (about **5.2 s**, 14–15 aligned words), repeated at the same shared offset in normalized English recordings of 30, 60, 180 and 300 s. The 16 kHz source shows the omission without resampling. The 300 s 48 kHz derivative retained all 4,800,000 resampled frames and showed the same omission.
+
+The pinned FluidAudio layout uses 14.88 s acoustic windows, a 12.88 s stride and 80 ms of left mel context after the first window. The original per-window trace shows window 1 (zero-based) going quiet after about 19.12 s in token time despite speech in its remaining PCM. Window 2 starts at 25.76 s and emits the tail of the clause. The merged token stream is already missing the words before its timestamp sort. A standalone decode of the same physical PCM from **12.80–27.76 s** also misses the clause. Moving the left boundary by 80 ms to **12.88 s**, with the right boundary fixed, recovers it. The isolated utterance also recovers it. This links the dropout to acoustic window composition and decoder behavior. The current evidence cannot identify which internal mel or TDT step controls the change.
+
+Timestamp order is a separate defect. In the same 300 s sample the pinned merge yields `dri behver'savior`. A local backport of the order-preserving clamp from FluidAudio #830 restores the word sequence at that seam, with normalized WER **9.605% → 9.384%**. The longest contiguous omission remains **19 words** across the set. Upstream #910 and #1056 cover related blank-window and leading-gap cases on upstream v3. Adopting those paths with the pinned Fluid Speech Pro pack was outside the validated dependency configuration. [Order fix](https://github.com/FluidInference/FluidAudio/pull/830), [Blank-window recovery](https://github.com/FluidInference/FluidAudio/pull/910), [Opening-gap repair](https://github.com/FluidInference/FluidAudio/pull/1056)
+
+Short Round 3 clips provide a different control. The same five empties (0.410–2.221 s) occur in the re-run on the single-window route. In the largest blank case, the source has a 2.31% RMS level and alternate recognizers detect fragments. Adding 200 ms of leading silence recovers some very short cases and creates new blanks or incorrect language on others. Nothing in this route can invoke the multi-chunk merger. These are single-window recognition failures on clipped or conversational material. The study does not attribute every short omission to the same acoustic mechanism.
+
+### Paired alternatives and acceptance
+
+The same M3 Pro, macOS 26.5.1 and 21 SHA-256-verified model files were used for the pinned route, fixed independent cuts, pause-seeking independent cuts, and a bounded re-decode. The final variant checks large token gaps for acoustic activity, tries two shorter windows, and compensates for large gain differences only on a retry. It adopts the retry when more audio has token support and most prior token IDs remain represented. Energy guides the retry, and a quiet or noisy span alone supplies no speech label. There is no model replacement, external inference or global padding change.
+
+| Suite | WER, before → after | Longest contiguous deletion | Deletions ≥5 words |
+|---|---:|---:|---:|
+| Loudness-matched, 30–300 s (11) | 9.605% → 4.720% | 19 → 2 | 11 → 0 |
+| Original raw-gain long stress (15 valid references) | 13.734% → 5.263% | 34 → 6 | 27 → 2 |
+| Dense multilingual, gain and boundary matrix (25) | 8.518% → 6.273% | 33 → 3 | 5 → 0 |
+
+The gain-stress comparison excludes the historical truncated tail and onset references. Its residual is the same six-word loss in one 300 s English source and its 48 kHz derivative. On the dense matrix, ordered exact-reference matches rose from **91.994% to 94.508%**, reference spans falling below half exact match fell **3 → 0**, and unmatched words next to annotated utterance boundaries fell **38 → 27**. The alignment identified no adjacent duplicate insertions in either matrix output. Fixed cuts were worse than pause-seeking cuts on the normalized corpus and created new boundary errors in continuous fixtures. The ordinary retry recovered the normalized omissions, and adding level handling recovered the long quiet passages in the raw stress set. These metrics use lexical alignment and utterance spans, with separate review of the instrumented decoder timings and specific seams.
+
+**Temporary limit of 120 s.** Across the seven fixtures at 120 s (EN, PT-BR, PT/EN within utterances, raw-gain variants and stereo speech at the cap), the longest aligned deletion after the fix was one word, with zero empty transcripts or failed decodes. The actual MicBuffer path selected the active stereo channel and converted **5,760,000 input frames at 48 kHz → 1,920,000 output frames at 16 kHz**, preserving the complete final sentence. The digital-silence and stationary-noise controls emitted no text. The 300 s paths remain diagnostic; one known omission and the absence of a sufficiently broad live microphone sample keep five minutes outside the candidate cap.
+
+The rerun kept all 312 outputs at or below 15 s byte-identical. Across entire shorter corpora (some clips exceed 15 s), VoiceArena was **8.925% → 8.119%**, Round 3 Held **14.151% → 14.241%**, and unique FLEURS **5.016% → 5.175%**. The historical FLEURS-60 result counted one WAV twice. Round 3 retained its five single-window blanks. The normalized long suite's median timed decode was **814 ms → 1,063 ms**, with the four 300 s normalized derivatives finishing at about 1.81–2.05 s on this machine. These are software timings from the Release runner.
+
+### Reproduction and boundaries
+
+1. Use the existing Round 3 `Bench/stage-held.py` and Round 5 `stage_corpora.py` / `stage_longform_norm.py` to stage the pinned inputs locally. Run [stage_reliability.py](scripts/stage_reliability.py) for the extra fixtures, context probes and unique FLEURS set.
+2. Build with [build_bench_runner.py](scripts/build_bench_runner.py). Run `RascBench voice-reliability --model <verified-model-dir> --manifest <manifest.json> --out <raw.jsonl> --strategies pinned,adaptive,fixed`. For the production-cap PCM test use `long-capture-bench --production-limit`.
+3. Run [prepare_seam_probe.py](scripts/prepare_seam_probe.py) against a local FluidAudio checkout to create an isolated source copy. Build the harness with `RASC_BENCH_FLUID_CHECKOUT` and a distinct `RASC_BENCH_DIR`. Set `RASC_TRACE_CHUNKS=1` for the pinned trace or `RASC_KEEP_TOKEN_ORDER=1` for the targeted clamp.
+4. Use [score_reliability.py](scripts/score_reliability.py) with the corpus manifest and run JSONL. The local runs and diagnostics are in `build/reliability-final`. Only aggregate restricted-corpus metrics are in the web package. [Machine-readable evidence](../../../docs/evidence/voice-competitive-web-data.json)
+
+The capture matrix uses repeated, stitched, lab-recorded sources and fixture audio. A physical microphone pass, target app AX insertion, Bluetooth behavior and exact hotkey/focus/rendering latency remain separate.

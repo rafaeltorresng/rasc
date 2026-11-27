@@ -21,6 +21,8 @@ enum BenchRunnerMain {
                 try await runScaleBench(args: Array(args.dropFirst()))
             case "long-capture-bench":
                 try await runLongCaptureBench(args: Array(args.dropFirst()))
+            case "voice-reliability":
+                try await runVoiceReliability(args: Array(args.dropFirst()))
             case "eval-voice":
                 try await runEvalVoice(args: Array(args.dropFirst()))
             case "apple-speech":
@@ -382,7 +384,8 @@ func runLongCaptureBench(args: [String]) async throws {
         let frameCount = channels.first?.count ?? 0
 
         let memBase = currentFootprintMiB()
-        let micBuffer = MicBuffer(rate: rate, maxDurationSeconds: 300)
+        let captureLimit = hasFlag("--production-limit", in: args) ? MicBuffer.defaultMaxDurationSeconds : 300
+        let micBuffer = MicBuffer(rate: rate, maxDurationSeconds: captureLimit)
         guard let pcmFormat = AVAudioFormat(standardFormatWithSampleRate: rate, channels: AVAudioChannelCount(channels.count)) else {
             throw VoiceAudioIssue.conversion
         }

@@ -1,86 +1,39 @@
-# Definitive Technical & Evidence Handoff for `rasc-web`
+# Rasc evidence handoff for rasc-web
 
-**Audience:** maintainers and agents building `rasc-web` (product landing page, Notes/engineering deep-dives, interactive examples, benchmarks, and visual showcases).
-**Date:** 2026-11-27
-**Verified Source Commit:** `main @ 30c5c14` (PRs `#101`–`#113` merged; `0.1.16 build 22`, macOS deployment target `14.0`).
-**Candidate Artifact Verified:** `build/updater-rc/0.1.16-final-rc/Rasc-0.1.16-updater.dmg` (`0.1.16 build 22`, ad-hoc signed with `Has Library Load Constraints`, unnotarized — Developer ID/notarization remains deferred; `v0.1.15 build 21` remains the latest tagged external DMG artifact).
-**Machine-Readable Evidence Datasets (generate charts/tables strictly from these JSONs):**
-- Efficiency, `8h` soak, `8.50h` standby, `5k` scale, streaming `mono16k()`, and `0.1.16-final-rc` data: [`docs/evidence/efficiency-web-data.json`](efficiency-web-data.json)
-- Paired Voice Competitive & Latency data: [`docs/evidence/voice-competitive-web-data.json`](voice-competitive-web-data.json)
-- On-device Refine (`Apple Foundation Models`) evaluation data: [`docs/evidence/refine-web-data.json`](refine-web-data.json)
-- Visually audited Light & Dark PNGs (`38` clean synthetic views): [`docs/evidence/screenshots/manifest.json`](screenshots/manifest.json)
-- Publishable CC BY 4.0 audio clips, transcripts & synthetic/CC-BY Refine pairs: [`docs/evidence/examples/ATTRIBUTION.md`](examples/ATTRIBUTION.md)
+Rasc is a native macOS scratchpad for unfinished thoughts. Capture, Keep, Home search and Markdown export work with local SQLite. Voice Capture and Dictate use a separate, opt-in speech pack. Refine uses Apple Foundation Models when available and lets the author review a suggested edit before accepting it.
 
----
+The published artifact in this evidence set is **v0.1.15 build 21**. The **0.1.16 build 22** DMG is retained from source `30c5c14`. **0.1.16 build 25** is the isolated, ad-hoc signed candidate for the feature-freeze test pass. Its build inputs match the consolidating commit, with the source patch and DMG checksums recorded in the release runbook. Source, test harness, DMG and device results carry separate provenance. [Candidate identity](../RELEASE.md#isolated-reliability-candidate-0116-build-25)
 
-## 1. Product Positioning & Non-Negotiable Invariants
+## Evidence sources
 
-Rasc is a native macOS floating scratchpad for unfinished thoughts: **Capture → Refine (optional) → Keep → back to work**.
+| Source | What it measures |
+|---|---|
+| [Efficiency data](efficiency-web-data.json) | Historical sandbox Release workloads, extended study, measured size and build 22 artifact checks |
+| [Voice data](voice-competitive-web-data.json) | Historical paired **engine** runs, instrumented software endpoints and the final reliability follow-up |
+| [Refine data](refine-web-data.json) | Historical and final runs on the frozen corpus, with separate intent regression results |
+| [Screenshot manifest](screenshots/manifest.json) | 38 historical app-view PNGs seeded with synthetic notes and captured from `30c5c14` |
+| [Example attribution](examples/ATTRIBUTION.md) | Publication eligibility and attribution for individual audio and text examples |
+| [Editorial brief](EDITORIAL-BRIEF.md) | Suggested placement, chart labels and qualifications |
 
-1. **Local-first & zero account:** Notes live exclusively in local SQLite (`GRDB` WAL + `FTS5`). Opening, editing, searching, backing up, and exporting never require an account, network connection, or AI model.
-2. **No silent egress & sandboxed boundary:** Release builds run inside **App Sandbox** with **zero `com.apple.security.network.client`** on the main `Rasc` executable. When the user opts into downloading the speech pack, only an isolated XPC helper (`com.rafaeltorres.rasc.VoiceModelDownloader.xpc`) touches the network, returning verified read-only handles to `Rasc` (which validates byte count + SHA-256 against `VoiceModelManifest.json`). Zero telemetry, analytics, or remote logging exist anywhere in the codebase.
-3. **Explicit, stateless, conservative, reversible Refine:** Uses Apple `SystemLanguageModel.default` on-device (macOS 26+ Apple Intelligence). Requests are stateless per note (zero cross-note history). The original thought is never overwritten before user acceptance; three views (`Suggested`, word-level `Changes` diff, `Original`) allow inspection and immediate `Esc` rollback or post-accept Undo.
-4. **No scope creep:** No folders, tags, multi-device sync, cloud chat, semantic embeddings, agents, or auto-Keep.
+## Historical efficiency
 
----
+- The active-work stage ran for **8.00 hours of wall time**, with **4.33 hours active** across **15 system sleeps**. The median process physical footprint was **73.70 MiB**. The run completed 32 soak cycles and sampled leaks at intervals.
+- The voice-enabled standby captured **8.50 hours of a 24-hour plan** (35.43%, no detected sleep). Its last retained sample was 2026-11-27 at 11:46:05 BRT. Median physical footprint was **33.66 MiB**, ending at **30.94 MiB**. Seven package idle wakeups were counted, with a median of **0/s**. The retained summary measures XNU per-process CPU energy.
+- Both stages used an isolated sandboxed Release build from the **PR #107 branch, before PRs #108–#114 and without Sparkle**. The original run manifest recorded the branch context and bundle ID. Treat later short-idle, launch, scale and Sparkle measurements as separate cohorts.
+- Logical disk sizes from the earlier artifacts were **40.54 MiB** for the standard Release bundle, **44.50 MiB** for the Sparkle build 22 bundle, **13.14 MiB** for its compressed DMG, and **622.09 MiB** for the separate speech pack. Physical footprint, RSS and neural footprint are process accounting fields with different definitions. The JSON includes the original units and separate columns for these metrics. [Extended study](../../Experiments/Efficiency/results/long_running_20261126/REPORT.md)
 
-## 2. Verified Quantitative Metrics (`Mac15,6` M3 Pro 18 GiB, macOS `26.5.1`)
+## Voice and latency
 
-### 2.1 Application Footprint, Idle Residency & Responsiveness (`efficiency-web-data.json`)
+Fluid Speech Pro, Apple's on-device SpeechTranscriber and MLX Whisper Large V3 Turbo were measured as speech engines on the same M3 Pro. Round 5 historical Fluid Speech Pro WER was **8.925%** on VoiceArena (151 rows), **14.151%** on Round 3 Held (168 rows) and **4.961%** on FLEURS (60 historical rows, 59 unique WAVs). Publish corpus, engine, sample count and hardware with any comparison. The raw-gain long-form comparison has a truncated tail reference and a mismatched stereo-channel comparator. The loudness-matched long set uses stitched read utterances, including related variations of the same source.
 
-| Metric | Measured Result | Scope / Notes |
-|---|---:|---|
-| **Standard Release `.app` size** | **`40.54 MiB`** (`42,367,708 B`) | Ad-hoc signed, App Sandbox, zero embedded Sparkle or speech model |
-| **Sparkle + LLC RC `.app` / DMG** | **`44.50 MiB`** `.app` (`46,660,045 B`) · **`13.14 MiB`** DMG (`13,782,657 B`) | `0.1.16-final-rc` (`build 22`, `208d426e...`), embeds `Sparkle.framework` + `libswiftCompatibilitySpan.dylib` pinned via LLC |
-| **Optional Speech Model Pack** | **`622.09 MiB`** (`652,304,885 B`) | `Fluid Speech Pro` (`3b9d38a9...`); stored outside `.app`, downloaded/imported only on explicit opt-in |
-| **Cold launch settle (`n=5`, `n=3` reps)** | **`0.74 s`** p50 · **`24.59 MiB`** `phys_footprint` | Unlocked desktop, standard Release (`0.83 s` / `25.20 MiB` on Sparkle LLC build) |
-| **Short standby Voice Off / Voice On (`90 s`)** | **`24.49 MiB`** (`0.0024%` CPU) / **`50.17 MiB`** (`0.0017%` CPU) | **`0.000/s`** pkg idle wakeups, `0.00–0.01 mW` XNU CPU power |
-| **8.00h Active Soak (`20261126-191517-full-32h`)** | **`73.70 MiB`** p50 · **`73.77 MiB`** end (`125.99 MiB` max) | `28,801.45 s` wall (`15,594.13 s` active, `15` sleeps, `260` notes, `32` Refine, `7` sleep/wake probes); `0.0295%` p50 CPU, `0.0/s` p50 wakeups, **`0` Rasc leaks** (`288` Apple `LNDaemonApplicationInterface` XPC cycles constant) |
-| **8.50h Voice-On Idle Standby (`stage_2`)** | **`33.66 MiB`** p50 (`61.88 -> 30.94 MiB` end, `-1.06 MiB/h`) | `8.50h` of planned `24.0h` captured before host stop at `2026-11-27T11:46:05-0300` (reported honestly without extrapolation); `11.81 MiB` flat `neural_footprint`, **`0.0%` p50 CPU**, **`0.0/s` p50 wakeups**, `1.9586 J` total (`0.06 mW` mean), `0` Rasc leaks |
-| **Accelerated Workday Peak & Cooldown** |Peak **`143.16 MiB`** (`−51.5%`) · Cooldown **`63.70 MiB`** (`−66.3%`) | `n=3` medians vs `1cee496` (`294.99` / `189.22 MiB`); CPU time `−70.8%`, XNU CPU energy `−74.7%` (`52.14 J`) |
-| **Home UI & `5,000`-Note SQLite Scale (`30c5c14`)** | `home_open` **`4.26 ms`** (`141×`), `search` **`11.56 ms`**, `close` **`5.77 ms`** | At `5,000` notes (`1,000` kept): `fetchMostRecent` **`0.041 ms`**, `search(20)` **`4.48 ms`**, `search(500)` **`6.62 ms`**, `backup` **`6.24 ms`**, WAL truncate **`5.00 ms -> 0 B`** |
+The historical **65.55 ms warm median** measures pre-delivered PCM to sanitized transcript. The nearest-rank p95 is **169.34 ms** (`n=15`). The “ready” endpoint checks permission, accessibility trust and session state. The Scratchpad endpoint adds SQLite create/fetch. The Dictate endpoint adds formatting and a write to a unique pasteboard. Real hotkey handling, mic startup, finish padding, window focus, external AX insertion, paste fallback and rendering remain separate physical observations. [Round 5 protocol](../../Experiments/VoiceCapture/Round5/REPORT.md)
 
-### 2.2 Paired On-Device Voice Benchmarks (`voice-competitive-web-data.json`, Release `RascBench`)
+The Round 5 trace locates the reported English omission around **20.56–25.76 s on the recording timeline**. It is about five seconds of audio, present in a standalone crop and absent in the corresponding multi-window decoder outputs before merging. Token order can also be corrupted at overlaps. The candidate uses pause-seeking independent windows and a bounded retry. It has a **temporary 120 s limit** after a residual six-word omission in one 300 s gain-stress source and its 48 kHz derivative. The long captures are laboratory stress tests. Spontaneous dictation, physical microphones and target-application delivery need their own validation. [Long-form reliability](../../Experiments/VoiceCapture/Round5/REPORT.md#reliability-follow-up-after-5c4e5ad)
 
-All comparators ran locally on the exact same M3 Pro / macOS `26.5.1` audio sets:
-- **Rasc `Fluid Speech Pro`** (`AsrModels.loadLocalOnly`, CPU + Neural Engine, verbatim)
-- **Apple `SpeechTranscriber`** (macOS 26 built-in on-device `SpeechAnalyzer`)
-- **Local `mlx-whisper`** (`mlx-community/whisper-large-v3-turbo` 4-bit MLX, representing local Whisper competitors such as Handy / local Superwhisper / VoiceInk Whisper mode; `~2.41 GiB` peak RAM)
+## Refine
 
-| Corpus | `Rasc Fluid Pro` WER / Latency | `Apple SpeechTranscriber` WER / Latency | `Whisper Large v3 Turbo (MLX)` WER / Latency |
-|---|---:|---:|---:|
-| **VoiceArena (`n=151`)** | **`8.925%`** (`0` empty, `p50 65.6 ms`, `p95 368.8 ms`, `RTF 0.006`) | `11.456%` (`p50 218.4 ms`) | `11.609%` (`p50 1382.8 ms`) |
-| **Round 3 Held (`n=168`, natural/conv/switch)** | **`14.151%`** (`5` empty, `p50 42.15 ms`, vs `+200ms` pad `15.002%`) | `23.466%` (`8` empty, `p50 68.9 ms`) | `20.152%` (`p50 1291.3 ms`) |
-| **FLEURS-60 (`30 EN + 30 PT`)** | **`4.961%`** (`EN 5.965%` / `PT 3.949%`, `p50 53.3 ms`) | `8.425%` (`p50 130.9 ms`) | `5.433%` (`p50 1341.1 ms`) |
-| **Long-form `-20 dBFS` `30s–300s` (`n=11`)** | **`9.605%`** (`0` empty, `p50 821.3 ms`, `300s 1.43–1.51 s`) | `16.423%` (`p50 1140.7 ms`) | `35.054%` (`p50 9424.1 ms`) |
-| **Long-form un-normalized `30s–300s` (`n=17`)** | **`13.720%`** (`0` empty, `p50 828.1 ms`) | `24.275%` (`1` empty) | `52.062%` |
+Refine runs on-device, on demand and per note. The review UI offers Suggested, Changes and Original. In the paired intent study, 17 of 84 baseline attempts answered or ran the prompt. The final guard and prompt surfaced none in 84 attempts, with one provider failure. Frozen-corpus objective passes were 82/135 before and 79/135 after, with separate denominators for language, literal and changed-output checks. Generated output can still change a detail or decline an edit. Example captions should identify whether the output comes from a historical provider probe or the final guarded path. [Refine study](../../Experiments/Refine/final-2026-11-27/REPORT.md)
 
-- **Awake End-to-End Voice Latency (`caffeinate -i`, Release):** `coldShortcutToReady 46.94 ms`, `warmShortcutToReady p50 31.04 ms`, `coldFinishToTranscript 380.82 ms`, `warmFinishToTranscript p50 65.55 ms / p95 148.10 ms`, `warmFinishToScratchpad p50 65.95 ms` (`dbSaveAndFetch p50 0.420 ms`), `warmFinishToDictate p50 65.67 ms`, `postIdleFinishToTranscript p50 205.86 ms`.
-- **Stage 4 Streaming `VoiceAudio.mono16k()` Fix (`30c5c14`):** `norm_en_us_300s_48k_mono` retains **`4,800,000 / 4,800,000` (`100.0%`)** frames in **`21.66 ms`** using reusable `15 s` `AVAudioConverter` chunks (matching `9.605%` WER with `32.30 MiB` released footprint).
+## Publishing
 
-### 2.3 On-Device Refine (`refine-web-data.json`, Live `SystemLanguageModel.default`)
-
-| Dataset | `n` | Objective Pass Rate (vs `M12B-008`) | Latency `p50 / p95` | User-Visible Protected Literal Corruptions | Proposal Failures | User-Visible Language Safe |
-|---|---:|---:|---:|---:|---:|---:|
-| **Validation** | `57` | **`64.9%`** (vs `54.4%`) | `747 / 1116 ms` | **`0`** (`2` blocked by guard) | `0.0%` | `94.1%` |
-| **Holdout** | `72` | **`63.9%`** (vs `54.2%`) | `720 / 1105 ms` | **`0`** (`3` blocked by guard) | `0.0%` | `97.1%` |
-| **Regression** | `6` | **`66.7%`** (vs `66.7%`) | `743 / 1258 ms` | **`0`** (`0` blocked) | `0.0%` | `100.0%` |
-| **Live PT/Mixed Voice→Refine** | `16` | `11` changed, `4` noChange, `1` caught `providerFailure` | `1048.6 / 1252.8 ms` | `—` | `6.25%` caught safely | Original intact on failure |
-
----
-
-## 3. Claims & Boundaries (`rasc-web` Guardrails)
-
-### Safe Public Claims
-1. Zero account, zero telemetry, zero cloud fallback, App Sandbox without main-app `network.client`.
-2. Capture, Keep, Search (`FTS5`), and Export (`Markdown` + `manifest.json`) work instantaneously without AI (`4.26 ms` Home open, `4.48 ms` search at 5k notes).
-3. Quiet background footprint (`~24.5 MiB` idle Voice Off, `~33.7–50.2 MiB` idle Voice On with `0.0/s` median package wakeups across 8.5h standby, `~73.7 MiB` p50 across an 8h active soak with `0` Rasc leaks).
-4. Verbatim Core ML speech recognition (`Fluid Speech Pro`, opt-in `622 MiB` pack) outperforms built-in macOS `SpeechTranscriber` and local 4-bit `whisper-large-v3-turbo` on tested FLEURS, VoiceArena, Round 3 Held, and 30s–300s corpora on M3 Pro at `~53–66 ms` median short-clip latency (`RTF ~0.005–0.006`).
-5. Refine is explicit, reversible, stateless per note, and protects numbers/dates/URLs/emails/identifiers with `0` user-visible literal corruptions across validation and holdout suites.
-
-### Do NOT Claim
-- **Never conflate ZER/AMEND (`Wispr Flow`, `Monologue`, etc.) with verbatim WER**, nor claim overall superiority over cloud-formatted products without an editorial/human-edit trial.
-- **Never claim `24h` completed standby**: Stage 2 stopped cleanly at **`8.50h` of `24.0h`**.
-- **Never claim `0%` errors or "ready-to-send"**: bare ChatGPT-style questions (`ai_prompt`) get answered instead of preserved if fed directly to Refine, proper names/technical identifiers can suffer verbatim ASR errors (`<unk>` or phonetic approximations), and one ~20.5 s clause in unchunked 300s audio was dropped inside upstream FluidAudio multi-chunk merging (`ChunkProcessor.swift`).
-- **Never claim notarization or Intel/macOS 14–15 runtime proof**: `0.1.16-final-rc` and `v0.1.15` are ad-hoc signed unnotarized Apple silicon builds verified on `macOS 26.5.1` (`M3 Pro`). Include **Open Anyway** guidance until Developer ID + notarization ships.
-- **Never claim full-SoC wall watts or battery hours** (`sudo powermetrics` unavailable; XNU per-process CPU energy only) or physical Bluetooth/Spaces/VoiceOver sign-off (pending manual desktop QA checklist).
+Use only material on the example allowlist. Google FLEURS and CS-FLEURS have different terms. VoiceArena and CS-FLEURS belong in aggregate research reporting on the product site. Keep ZER, AMEND, WER, and latency in their respective methodologies. Carry the platform limitations with measurements and keep the user-test RC and the public download distinct.

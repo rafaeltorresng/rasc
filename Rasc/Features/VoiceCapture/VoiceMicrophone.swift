@@ -108,7 +108,8 @@ struct VoiceAudio: Sendable {
 }
 
 final class MicBuffer: @unchecked Sendable {
-    static let defaultMaxDurationSeconds: Double = 300
+    // Longer recordings still have a reproduced omission under large gain changes.
+    static let defaultMaxDurationSeconds: Double = 120
 
     struct Status {
         let count: Int

@@ -7,7 +7,8 @@
     "macos": "26.5.1 (25F80)",
     "provider": "Apple Foundation Models (SystemLanguageModel.default, on-device, availability == available)",
     "prompt_version": "refine-v2-language-preference (M12C-001 frozen)",
-    "personal_db_unchanged": true
+    "personal_db_unchanged": true,
+    "scope": "Historical sample from the previous prompt. Read final_intent_reliability separately before citing current behavior."
   },
   "invariants": {
     "explicit_user_action": true,
@@ -1478,5 +1479,411 @@
         }
       ]
     }
+  },
+  "interpretation": [
+    "The frozen objective rubric mostly sees deterministic checks and cannot establish semantic fidelity.",
+    "Historical objective pass, output safety and provider error rates have different denominators.",
+    "The historical live Voice-to-Refine and synthetic cases used direct provider calls. Whole production edit validation is covered by the frozen-run harness separately.",
+    "Apple Foundation Models output is stochastic and depends on model assets and OS state. Sample counts are runs or cases as labeled."
+  ],
+  "final_intent_reliability": {
+    "source_base": "5c4e5ad411b16738262451f930eb39074628ade6",
+    "platform": "M3 Pro, macOS 26.5.1 (25F80), Xcode Debug eval harness with on-device SystemLanguageModel.default available",
+    "frozen_corpus": {
+      "validation": {
+        "before": {
+          "caseCount": 57,
+          "runCount": 57,
+          "objectivePassCount": 30,
+          "objectivePassRate": 0.5263157894736842,
+          "usefulChangedCount": 19,
+          "harmfulEditCount": 13,
+          "overAbstentionCount": 2,
+          "overAbstentionEligibleCount": 14,
+          "wrongLanguageChangedCount": 3,
+          "latency": {
+            "p50Ms": 742.0679330825806,
+            "p95Ms": 1100.5929708480835,
+            "sampleCount": 57
+          },
+          "protectedLiteralMetrics": {
+            "coveredRuns": 12,
+            "guardRejectionCount": 3,
+            "proposalFailureWithSafetySuccessCount": 3,
+            "rawProposalCorruptionCount": 3,
+            "rejectionsByClass": {
+              "identifier": 3
+            },
+            "userVisibleProtectedLiteralCorruptionCount": 0
+          }
+        },
+        "prompt_only": {
+          "caseCount": 57,
+          "runCount": 57,
+          "objectivePassCount": 35,
+          "objectivePassRate": 0.6140350877192983,
+          "usefulChangedCount": 24,
+          "harmfulEditCount": 8,
+          "overAbstentionCount": 5,
+          "overAbstentionEligibleCount": 14,
+          "wrongLanguageChangedCount": 1,
+          "latency": {
+            "p50Ms": 787.4699831008911,
+            "p95Ms": 1202.895998954773,
+            "sampleCount": 57
+          },
+          "protectedLiteralMetrics": {
+            "coveredRuns": 12,
+            "guardRejectionCount": 1,
+            "proposalFailureWithSafetySuccessCount": 1,
+            "rawProposalCorruptionCount": 1,
+            "rejectionsByClass": {
+              "money": 1
+            },
+            "userVisibleProtectedLiteralCorruptionCount": 0
+          }
+        },
+        "candidate": {
+          "caseCount": 57,
+          "runCount": 57,
+          "objectivePassCount": 32,
+          "objectivePassRate": 0.5614035087719298,
+          "usefulChangedCount": 15,
+          "harmfulEditCount": 12,
+          "overAbstentionCount": 2,
+          "overAbstentionEligibleCount": 14,
+          "wrongLanguageChangedCount": 2,
+          "latency": {
+            "p50Ms": 818.5830116271973,
+            "p95Ms": 1239.5790815353394,
+            "sampleCount": 57
+          },
+          "protectedLiteralMetrics": {
+            "coveredRuns": 12,
+            "guardRejectionCount": 2,
+            "proposalFailureWithSafetySuccessCount": 2,
+            "rawProposalCorruptionCount": 2,
+            "rejectionsByClass": {
+              "identifier": 2
+            },
+            "userVisibleProtectedLiteralCorruptionCount": 0
+          }
+        }
+      },
+      "holdout": {
+        "before": {
+          "caseCount": 72,
+          "runCount": 72,
+          "objectivePassCount": 48,
+          "objectivePassRate": 0.6666666666666666,
+          "usefulChangedCount": 33,
+          "harmfulEditCount": 8,
+          "overAbstentionCount": 3,
+          "overAbstentionEligibleCount": 11,
+          "wrongLanguageChangedCount": 1,
+          "latency": {
+            "p50Ms": 716.9589996337891,
+            "p95Ms": 973.7210273742676,
+            "sampleCount": 72
+          },
+          "protectedLiteralMetrics": {
+            "coveredRuns": 21,
+            "guardRejectionCount": 2,
+            "proposalFailureWithSafetySuccessCount": 2,
+            "rawProposalCorruptionCount": 2,
+            "rejectionsByClass": {
+              "identifier": 1,
+              "integer": 1
+            },
+            "userVisibleProtectedLiteralCorruptionCount": 0
+          }
+        },
+        "prompt_only": {
+          "caseCount": 72,
+          "runCount": 72,
+          "objectivePassCount": 45,
+          "objectivePassRate": 0.625,
+          "usefulChangedCount": 29,
+          "harmfulEditCount": 4,
+          "overAbstentionCount": 4,
+          "overAbstentionEligibleCount": 11,
+          "wrongLanguageChangedCount": 1,
+          "latency": {
+            "p50Ms": 961.44700050354,
+            "p95Ms": 2036.4540815353394,
+            "sampleCount": 72
+          },
+          "protectedLiteralMetrics": {
+            "coveredRuns": 21,
+            "guardRejectionCount": 5,
+            "proposalFailureWithSafetySuccessCount": 5,
+            "rawProposalCorruptionCount": 5,
+            "rejectionsByClass": {
+              "email": 1,
+              "identifier": 2,
+              "integer": 1,
+              "money": 1
+            },
+            "userVisibleProtectedLiteralCorruptionCount": 0
+          }
+        },
+        "candidate": {
+          "caseCount": 72,
+          "runCount": 72,
+          "objectivePassCount": 43,
+          "objectivePassRate": 0.5972222222222222,
+          "usefulChangedCount": 32,
+          "harmfulEditCount": 8,
+          "overAbstentionCount": 2,
+          "overAbstentionEligibleCount": 11,
+          "wrongLanguageChangedCount": 0,
+          "latency": {
+            "p50Ms": 756.7579746246338,
+            "p95Ms": 1063.7439489364624,
+            "sampleCount": 72
+          },
+          "protectedLiteralMetrics": {
+            "coveredRuns": 21,
+            "guardRejectionCount": 4,
+            "proposalFailureWithSafetySuccessCount": 4,
+            "rawProposalCorruptionCount": 4,
+            "rejectionsByClass": {
+              "identifier": 2,
+              "integer": 1,
+              "url": 1
+            },
+            "userVisibleProtectedLiteralCorruptionCount": 0
+          }
+        }
+      },
+      "regression": {
+        "before": {
+          "caseCount": 6,
+          "runCount": 6,
+          "objectivePassCount": 4,
+          "objectivePassRate": 0.6666666666666666,
+          "usefulChangedCount": 3,
+          "harmfulEditCount": 0,
+          "overAbstentionCount": 0,
+          "overAbstentionEligibleCount": 1,
+          "wrongLanguageChangedCount": 0,
+          "latency": {
+            "p50Ms": 684.6069097518921,
+            "p95Ms": 782.1320295333862,
+            "sampleCount": 6
+          },
+          "protectedLiteralMetrics": {
+            "coveredRuns": 0,
+            "guardRejectionCount": 0,
+            "proposalFailureWithSafetySuccessCount": 0,
+            "rawProposalCorruptionCount": 0,
+            "rejectionsByClass": {},
+            "userVisibleProtectedLiteralCorruptionCount": 0
+          }
+        },
+        "prompt_only": {
+          "caseCount": 6,
+          "runCount": 6,
+          "objectivePassCount": 4,
+          "objectivePassRate": 0.6666666666666666,
+          "usefulChangedCount": 3,
+          "harmfulEditCount": 0,
+          "overAbstentionCount": 0,
+          "overAbstentionEligibleCount": 1,
+          "wrongLanguageChangedCount": 0,
+          "latency": {
+            "p50Ms": 1369.9779510498047,
+            "p95Ms": 1577.394962310791,
+            "sampleCount": 6
+          },
+          "protectedLiteralMetrics": {
+            "coveredRuns": 0,
+            "guardRejectionCount": 0,
+            "proposalFailureWithSafetySuccessCount": 0,
+            "rawProposalCorruptionCount": 0,
+            "rejectionsByClass": {},
+            "userVisibleProtectedLiteralCorruptionCount": 0
+          }
+        },
+        "candidate": {
+          "caseCount": 6,
+          "runCount": 6,
+          "objectivePassCount": 4,
+          "objectivePassRate": 0.6666666666666666,
+          "usefulChangedCount": 3,
+          "harmfulEditCount": 0,
+          "overAbstentionCount": 0,
+          "overAbstentionEligibleCount": 1,
+          "wrongLanguageChangedCount": 0,
+          "latency": {
+            "p50Ms": 797.4809408187866,
+            "p95Ms": 857.7239513397217,
+            "sampleCount": 6
+          },
+          "protectedLiteralMetrics": {
+            "coveredRuns": 0,
+            "guardRejectionCount": 0,
+            "proposalFailureWithSafetySuccessCount": 0,
+            "rawProposalCorruptionCount": 0,
+            "rejectionsByClass": {},
+            "userVisibleProtectedLiteralCorruptionCount": 0
+          }
+        }
+      }
+    },
+    "targeted_protocol": "20 synthetic cases and 22 VoiceArena ai_prompt intended-text cases, two runs each per variant. Manual whole-output review after production-faithful validation. Execution means a proposed answer, partial deliverable or action in place of the prompt. IDs and counts only for NC cases. No semantic judge and no claim of invariance across OS/model runs.",
+    "targeted": {
+      "before": {
+        "prompt_version": "refine-v2-language-preference",
+        "synthetic_runs": 40,
+        "voicearena_prompt_runs": 44,
+        "executed_or_answered_synthetic": 10,
+        "executed_or_answered_voicearena": 7,
+        "guard_rejections_to_no_change": 0,
+        "provider_errors": 0,
+        "adjudicated_execution_case_and_repetition": [
+          [
+            "en-question",
+            0
+          ],
+          [
+            "en-question",
+            1
+          ],
+          [
+            "es-question",
+            1
+          ],
+          [
+            "en-instruction",
+            1
+          ],
+          [
+            "pt-instruction",
+            0
+          ],
+          [
+            "pt-instruction",
+            1
+          ],
+          [
+            "es-instruction",
+            0
+          ],
+          [
+            "es-instruction",
+            1
+          ],
+          [
+            "multiline",
+            1
+          ],
+          [
+            "messy-prompt",
+            1
+          ],
+          [
+            "dict_0014",
+            0
+          ],
+          [
+            "dict_0182",
+            0
+          ],
+          [
+            "dict_0182",
+            1
+          ],
+          [
+            "dict_0183",
+            0
+          ],
+          [
+            "dict_0183",
+            1
+          ],
+          [
+            "dict_0193",
+            0
+          ],
+          [
+            "dict_0215",
+            1
+          ]
+        ]
+      },
+      "prompt_only": {
+        "prompt_version": "refine-v2-preserve-intent",
+        "synthetic_runs": 40,
+        "voicearena_prompt_runs": 44,
+        "executed_or_answered_synthetic": 7,
+        "executed_or_answered_voicearena": 4,
+        "guard_rejections_to_no_change": 0,
+        "provider_errors": 0,
+        "adjudicated_execution_case_and_repetition": [
+          [
+            "pt-instruction",
+            0
+          ],
+          [
+            "pt-instruction",
+            1
+          ],
+          [
+            "es-instruction",
+            0
+          ],
+          [
+            "es-instruction",
+            1
+          ],
+          [
+            "multiline",
+            0
+          ],
+          [
+            "fixed-target",
+            0
+          ],
+          [
+            "fixed-target",
+            1
+          ],
+          [
+            "dict_0007",
+            1
+          ],
+          [
+            "dict_0183",
+            1
+          ],
+          [
+            "dict_0193",
+            1
+          ],
+          [
+            "dict_0218",
+            1
+          ]
+        ]
+      },
+      "candidate": {
+        "prompt_version": "refine-v2-preserve-intent-guard",
+        "synthetic_runs": 40,
+        "voicearena_prompt_runs": 44,
+        "executed_or_answered_synthetic": 0,
+        "executed_or_answered_voicearena": 0,
+        "guard_rejections_to_no_change": 22,
+        "provider_errors": 1,
+        "provider_error_types": [
+          "contextTooLarge"
+        ],
+        "adjudicated_execution_case_and_repetition": []
+      }
+    },
+    "residuals": "Both fixed-target question runs returned noChange. A separate fixed-target translation control succeeded in one of two runs. Two selected-fragment proposals added unsupported qualifiers. One otherwise useful conversational question cleanup was conservatively declined in the frozen run.",
+    "raw_local_directory": "build/reliability-final",
+    "synthetic_cases": "Experiments/Refine/intent-cases.json",
+    "candidate_build": 25
   }
 }

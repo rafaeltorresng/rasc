@@ -69,7 +69,7 @@ Use synthetic thoughts and a temporary test account/profile when exercising fail
 ## Distribution and energy
 
 - [ ] Release updater builds embedding `Sparkle.framework` and `libswiftCompatibilitySpan.dylib` launch cleanly on macOS 14/15 as well as macOS 26 (confirming LLC pins cover all `Contents/Frameworks/` binaries), and `VoiceModelDownloader.xpc` downloads inside the sandbox cleanly.
-- [ ] Direct Dictate `AXSelectedText` insertion (including Electron apps and Secure Input refusal) and physical 5-minute / Bluetooth / external mic captures succeed without leaks or focus theft.
+- [ ] Direct Dictate `AXSelectedText` insertion (including Electron apps and Secure Input refusal) and physical 2-minute / Bluetooth / external mic captures succeed without leaks or focus theft.
 - [ ] Packaged app matches the source revision, version and build; previously published artifacts remain unchanged.
 - [ ] Verify the published checksum, sandbox and signing status; record notarization only when a notarized build is claimed. Test ordinary first-install and upgrade paths.
 - [ ] Inspect icon at Finder/DMG sizes and bundled dependency notices.
@@ -82,3 +82,16 @@ these physical desktop interaction checks as passed. Record the actual signing a
 notarization status of each candidate (`0.1.16-final-rc` build 22 is ad-hoc signed with LLC
 and unnotarized). Ad-hoc builds use the documented **Open Anyway** path in
 [INSTALL-UNSIGNED.md](INSTALL-UNSIGNED.md); notarization is not required for them.
+
+## Independent reliability candidate pass
+
+Build 25 passed all 613 domain tests and the scale suite. The full Xcode run
+passed 660 of 665 tests. The five failures involved Home focus, orb visibility,
+Refine preview navigation and Command-W. The same five failed on the baseline
+with the display locked. The cases below still require a live desktop pass.
+
+1. **Install and isolate.** Verify the DMG checksum and open the candidate from a separate folder. Confirm About shows **0.1.16 (25)** and Home starts empty. Import the model or opt into the download. Close the normal app while trying global shortcuts.
+2. **Record through the cap.** With Wi-Fi off after setup, record in English, Brazilian Portuguese and mixed PT/EN. Include an audible quiet passage after a louder one, a pause, and distinctive phrases just before and after the last-15-second warning. Check that Capture stops at 2:00, delivers the last phrase before the cap, preserves order, and has no repeated or missing sentences. Repeat with a USB or Bluetooth mic.
+3. **Check delivery.** Try Scratchpad, Dictate into TextEdit and an Electron field, then Dictate with no editable focus or under Secure Input. Check one delivery, expected clipboard fallback or refusal, and expected focus. Cancel a long capture and check that nothing is inserted.
+4. **Check Refine.** Refine a direct question, a drafting command and a messy task list. Test a selected fragment and one fixed-target translation. Verify that the questions and commands remain drafts, ordinary edits still help, and Original, Esc and Undo preserve the text.
+5. **Record failures with context.** Note the candidate build, macOS, mic and route, elapsed time, and the first/last missing words from a reproducible non-private sample.

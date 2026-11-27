@@ -418,7 +418,7 @@ actor VoiceModel {
             do {
                 try await manager.initialize(models: models)
                 let initialized = ContinuousClock.now
-                let result = try await manager.transcribe(samples, source: .microphone)
+                let text = try await VoiceRecordingTranscription.transcribe(samples, using: manager)
                 let inferred = ContinuousClock.now
                 try Task.checkCancellation()
                 await manager.cleanup()
@@ -434,7 +434,7 @@ actor VoiceModel {
                     totalMs: Self.ms(taskStart.duration(to: cleaned)),
                     audioSeconds: audio.seconds
                 )
-                return result.text
+                return text
             } catch {
                 await manager.cleanup()
                 throw error
@@ -501,6 +501,134 @@ actor VoiceModel {
 
     private static func milliseconds(since start: ContinuousClock.Instant) -> Int {
         Int((start.duration(to: .now) / .milliseconds(1)).rounded())
+    }
+}
+
+enum VoiceRecordingTranscription {
+    private static let sampleRate = 16_000
+    private static let maximum = ASRConstants.maxModelSamples
+    private static let frame = ASRConstants.samplesPerEncoderFrame
+    private static let minimumSignalPower: Float = 0.00000036
+
+    static func transcribe(_ samples: [Float], using manager: AsrManager) async throws -> String {
+        if samples.count <= maximum {
+            return try await manager.transcribe(samples, source: .microphone).text
+        }
+
+        // Decode contiguous single-model windows. The library's overlapping path
+        // can discard or interleave independently decoded subword tokens at joins.
+        var components: [String] = []
+        for range in windows(in: samples) {
+            try Task.checkCancellation()
+            let result = try await manager.transcribe(Array(samples[range]), source: .microphone)
+            let text = try await recoveringGap(in: samples, range: range, result: result, using: manager)
+            if !text.isEmpty { components.append(text) }
+        }
+        return components.joined(separator: " ")
+    }
+
+    static func windows(in samples: [Float]) -> [Range<Int>] {
+        var windows: [Range<Int>] = []
+        var start = 0
+        while samples.count - start > maximum {
+            // Leave enough audio for the decoder's minimum window, including just
+            // above the single-window threshold. Look for a pause near the limit.
+            let latest = min(start + maximum - frame, samples.count - sampleRate) / frame * frame
+            let cut = quietCut(in: samples, from: latest - 50 * frame, through: latest)
+            windows.append(start..<cut)
+            start = cut
+        }
+        windows.append(start..<samples.count)
+        return windows
+    }
+
+    private static func quietCut(in samples: [Float], from earliest: Int, through latest: Int) -> Int {
+        var cut = latest
+        var bestEnergy = Float.infinity
+        for candidate in stride(from: latest, through: earliest, by: -frame) {
+            let energy = samples[(candidate - frame)..<(candidate + frame)].reduce(Float(0)) {
+                $0 + $1 * $1
+            }
+            if energy < bestEnergy {
+                bestEnergy = energy
+                cut = candidate
+            }
+        }
+        return cut
+    }
+
+    private static func recoveringGap(
+        in samples: [Float], range: Range<Int>, result: ASRResult, using manager: AsrManager
+    ) async throws -> String {
+        guard range.count >= 4 * sampleRate else { return result.text }
+        let starts = result.tokenTimings?.map(\.startTime) ?? []
+        let uncovered = uncoveredFrames(in: samples[range], tokenStarts: starts)
+        guard uncovered >= 10 else { return result.text }
+
+        // A different cut changes the model's acoustic context. Retry at most
+        // once and only replace the text if the retry accounts for more audio.
+        let middle = (range.lowerBound + range.count / 2) / frame * frame
+        let cut = quietCut(in: samples, from: middle - 12 * frame, through: middle + 12 * frame)
+        try Task.checkCancellation()
+        let retryAudio = levelQuietBlocks(samples[range])
+        let localCut = cut - range.lowerBound
+        let left = try await manager.transcribe(Array(retryAudio[..<localCut]), source: .microphone)
+        try Task.checkCancellation()
+        let right = try await manager.transcribe(Array(retryAudio[localCut...]), source: .microphone)
+        let offset = Double(localCut) / Double(sampleRate)
+        let leftTokens = left.tokenTimings ?? []
+        let rightTokens = right.tokenTimings ?? []
+        let retryStarts = leftTokens.map(\.startTime) + rightTokens.map { $0.startTime + offset }
+        let retryIDs = Set((leftTokens + rightTokens).map(\.tokenId))
+        let retained = result.tokenTimings?.count(where: { retryIDs.contains($0.tokenId) }) ?? 0
+        let retry = [left.text, right.text].filter { !$0.isEmpty }.joined(separator: " ")
+        guard retryStarts.count >= starts.count,
+              retained * 4 >= starts.count * 3,
+              uncoveredFrames(in: samples[range], tokenStarts: retryStarts) <= uncovered - 10
+        else { return result.text }
+        return retry
+    }
+
+    static func uncoveredFrames(in samples: ArraySlice<Float>, tokenStarts: [Double]) -> Int {
+        // A quiet speaker can fall below MicBuffer's activity floor while
+        // another speaker keeps the recording active. Energy alone is only
+        // a trigger for retry, never a speech label.
+        let signalEnergy = Float(frame) * minimumSignalPower
+        var previous = samples.startIndex
+        var uncovered = 0
+        for time in tokenStarts + [Double(samples.count) / Double(sampleRate)] {
+            let next = samples.startIndex + min(samples.count, max(0, Int(time * Double(sampleRate))))
+            if next - previous >= 30 * frame {
+                for offset in stride(from: previous + 4 * frame, to: next - 5 * frame, by: frame) {
+                    let energy = samples[offset..<(offset + frame)].reduce(Float(0)) { $0 + $1 * $1 }
+                    if energy > signalEnergy { uncovered += 1 }
+                }
+            }
+            previous = next
+        }
+        return uncovered
+    }
+
+    private static func levelQuietBlocks(_ samples: ArraySlice<Float>) -> [Float] {
+        let powers = stride(from: samples.startIndex, to: samples.endIndex, by: sampleRate).map { start in
+            let block = samples[start..<min(start + sampleRate, samples.endIndex)]
+            return block.reduce(Float(0)) { $0 + $1 * $1 } / Float(block.count)
+        }
+        guard let loudest = powers.max(),
+              powers.contains(where: { $0 > minimumSignalPower && $0 * 256 < loudest })
+        else { return Array(samples) }
+
+        let gains = powers.map { power in
+            power > minimumSignalPower ? max(1, min(24, 0.025 / power.squareRoot())) : 1
+        }
+        // Interpolating avoids a gain discontinuity at one-second boundaries.
+        return samples.enumerated().map { index, sample in
+            let block = index / sampleRate
+            let next = min(block + 1, gains.count - 1)
+            let fraction = Float(index % sampleRate) / Float(sampleRate)
+            let gain = gains[block] + (gains[next] - gains[block]) * fraction
+            return max(-1, min(1, sample * gain))
+        }
     }
 }
 

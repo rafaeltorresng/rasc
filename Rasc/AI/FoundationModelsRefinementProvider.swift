@@ -140,6 +140,13 @@ private extension FoundationModelsRefinementProvider {
                 result = RefinementResult(decision: .noChange, kind: .alreadyGood, text: request.inputText)
             }
 
+            let intentRejected = result.decision == .changed && RefineDraftIntentGuard.rejects(
+                input: request.inputText, output: result.text, isFixedTarget: resolvedLanguage.isFixedTarget
+            )
+            if intentRejected {
+                result = RefinementResult(decision: .noChange, kind: .alreadyGood, text: request.inputText)
+            }
+
             let trace = RefinementLanguageTrace(
                 resolvedLabel: resolvedLanguage.label.rawValue,
                 resolvedLocale: resolvedLanguage.localeIdentifier,
@@ -154,6 +161,7 @@ private extension FoundationModelsRefinementProvider {
                     final: result,
                     validatorRejected: validatorRejected,
                     unresolvedGuardRejected: unresolvedGuardRejected,
+                    intentRejected: intentRejected,
                     resolved: resolvedLanguage
                 ),
                 legacyResolvedLabel: {
@@ -226,6 +234,7 @@ private extension FoundationModelsRefinementProvider {
         final: RefinementResult,
         validatorRejected: Bool,
         unresolvedGuardRejected: Bool,
+        intentRejected: Bool,
         resolved: ResolvedRefineLanguage
     ) -> String {
         if validatorRejected {
@@ -233,6 +242,9 @@ private extension FoundationModelsRefinementProvider {
         }
         if unresolvedGuardRejected {
             return "unresolved_language_guard_rejected_to_noChange"
+        }
+        if intentRejected {
+            return "draft_intent_guard_rejected_to_noChange"
         }
         if raw.decision == .noChange {
             return "model_returned_noChange"

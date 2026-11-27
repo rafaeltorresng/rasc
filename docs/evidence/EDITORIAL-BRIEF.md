@@ -1,35 +1,17 @@
-# Editorial & Asset Brief for `rasc-web`
+# Editorial and asset brief for rasc-web
 
-**Target:** `rasc-web` marketing landing page, `/notes` engineering essays, interactive comparison widgets, and open-source download page.
-**Data Root:** `docs/evidence/` (generated directly from verified M3 Pro `30c5c14` outputs; zero personal data).
+Lead with capture, optional editing and getting back to work. Use native Light and Dark screenshots and show Keep in copper. The historical PNGs use synthetic notes. Refer to the manifest for visual provenance and to the final reliability notes for current behavior. [Screenshot manifest](screenshots/manifest.json)
 
----
+| Section | Assets and evidence | Suggested framing |
+|---|---|---|
+| Capture | `scratchpad-text-light.png`, `scratchpad-text-dark.png`, efficiency `operation_latencies_ms` | Local scratchpad, no account. Use the named software endpoint if giving a latency. |
+| Keep and retrieve | `home-list-light.png`, `home-batch-light.png`, `quick-search-grat-light.png`, efficiency `scale_benchmark_1k_5k` | Home and search in the tested 5,000-note database. Keep measured SQLite search separate from UI timing. |
+| Voice and Dictate | `voice-hud-listening-dark.png`, `onboarding-v2-voice-light.png`, voice `paired_corpora` and `final_reliability` | On-device dictation with an opt-in 622.09 MiB pack. Label model latency and word error rate by engine, corpus and machine. The isolated candidate has a temporary 120 s cap. Link the coverage findings if showing 300 s laboratory probes. |
+| Listen to examples | `examples/examples.json` and the five listed WAVs | Human reference and raw engine hypothesis. Include the near-match, missing token and proper-name cases beside the clean example. Use only the publication allowlist. |
+| Refine | `refine-preview-suggested-light.png`, `refine-preview-changes-dark.png`, `examples/refine_examples.json` | A before/after edit the author can accept or discard. Label historical generated outputs and show limitations alongside objective scores. Use the final intent study for current prompt handling. |
+| Energy and memory | Efficiency `before_vs_after`, `long_running_20261126` | Show like-for-like accelerated workday results separately from the earlier long-run trace. Label **8.00 h wall / 4.33 h active** and **8.50 h observed / 24 h planned**. Report physical footprint, RSS, neural footprint and XNU CPU energy separately. |
+| Download and trust | Efficiency `storage_distinction`, release docs | Label the compressed DMG, installed bundle and optional model separately. Use the published artifact for the download. Explain ad-hoc signing and use the corresponding checksum and macOS install guidance. |
 
-## 1. Story Arc & Product Voice
+For the engine chart, group by corpus on one tested Mac. The historical FLEURS set contains one duplicate WAV. Long-form stitched diagnostics deserve a separate coverage chart. Use the nearest-rank latency convention and link to the exact endpoint definitions. Commercial application names belong in a separate landscape section with their own sources and methodologies.
 
-- **Core Thesis:** *"A fast place before the note."* Most tools force premature organization (folders, tags, workspaces, chatbots) or push everything through the cloud. Rasc respects unfinished thoughts: instant invoke (`<5 ms` warm open), zero account, zero telemetry, optional offline AI when you explicitly ask for it, and clean handoff when an idea graduates.
-- **Tone:** Calm, utilitarian macOS engineering craft — warm graphite & paper minimalism, empirical honesty (publish error cases and unverified platforms openly rather than cherry-picking "99% accuracy" claims).
-- **Visual Direction:** Use Graphite Paper Light & Dark pairs side-by-side (`home-list-{light,dark}.png`, `scratchpad-text-{light,dark}.png`, `refine-preview-changes-{light,dark}.png`). Copper (`#B8602D` / `#D67A45`) must stay strictly scoped to **Keep / Kept** badges and primary Keep interactions.
-
----
-
-## 2. Section-by-Section Asset Map
-
-| Page / Section | Structured Data (`docs/evidence/...`) | Visual Assets (`docs/evidence/...`) | Key Proof Point to Highlight |
-|---|---|---|---|
-| **Hero / Above the Fold** | `efficiency-web-data.json` (`states`, `storage_distinction`) | `screenshots/scratchpad-text-dark.png`, `screenshots/scratchpad-text-light.png` | `40.54 MiB` app, `~24.5 MiB` idle, `0.000/s` idle wakeups, opens instantly without AI or internet |
-| **Lifecycle & Retrieval (`Keep`, `Home`, `Search`)** | `efficiency-web-data.json` (`operation_latencies_ms`, `scale_benchmark_1k_5k`) | `screenshots/home-list-light.png`, `screenshots/home-cards-dark.png`, `screenshots/home-batch-light.png`, `screenshots/quick-search-grat-light.png`, `screenshots/command-palette-re-dark.png` | `4.26 ms` Home open, `4.48 ms` FTS5 search at `5,000` notes (`0.041 ms` recent fetch), batch export/discard with transactional Undo |
-| **Voice & Dictate (Offline Core ML)** | `voice-competitive-web-data.json` (`paired_corpora`, `e2e_awake_latency_ms`, `streaming_resampling_final`) | `screenshots/voice-hud-listening-dark.png`, `screenshots/voice-hud-transcribing-light.png`, `screenshots/onboarding-v2-voice-light.png`, `examples/*.wav`, `examples/examples.json` | Opt-in `622 MiB` pack via isolated XPC; `65.6 ms` warm E2E finish→text; beats local `SpeechTranscriber` and `mlx-whisper` across FLEURS (`4.96%`), VoiceArena (`8.93%`), Round 3 (`14.15%`), and normalized `300s` (`9.61%`) |
-| **Honest Audio Corner (Listen Yourself)** | `voice-competitive-web-data.json` (`longform_diagnostic_findings`, `cannot_claim`) | `examples/en_us-000001683.wav` (clean), `examples/en_us-000001664.wav` ("powders"→"powers"), `examples/pt_br-000001678.wav` (`<unk>`), `examples/pt_br-000001891.wav` (proper nouns), `examples/ATTRIBUTION.md` | Publish real CC BY 4.0 FLEURS audio + verbatim transcripts showing both clean recognition and honest proper-noun/`<unk>` limitations |
-| **On-Device Refine (`Apple Foundation Models`)** | `refine-web-data.json` (`datasets`, `baseline_reference_m12b_008`) | `screenshots/refine-preview-suggested-light.png`, `screenshots/refine-preview-changes-light.png`, `screenshots/refine-preview-changes-dark.png`, `examples/refine_examples.json` | Explicit, stateless, reversible diff (`Suggested / Changes / Original`); `64.9%` / `63.9%` objective pass vs `54.4%` / `54.2%` M12B-008 baseline; **`0` user-visible protected literal corruptions**; document bare-question & `providerFailure` guardrails |
-| **Quiet Background Efficiency (`/notes` Deep-Dive)** | `efficiency-web-data.json` (`before_vs_after`, `replications`, `long_running_20261126`) | `screenshots/settings-general-light.png`, `screenshots/settings-theme-dark.png`, `screenshots/settings-voice-dark.png` | Interactive Before→After workday charts (`−51.5%` peak RAM, `−70.8%` CPU, `−74.7%` XNU energy), `8h` active soak (`73.7 MiB` p50, `0` Rasc leaks) + `8.50h` idle Voice-On (`30.9 MiB` settled, `0.0%` CPU, `0.0/s` p50 wakeups) |
-| **Trust, Sandbox & Installation** | `efficiency-web-data.json` (`rc_0_1_16_final_verification`) | `screenshots/onboarding-welcome-light.png`, `screenshots/settings-shortcuts-light.png`, `screenshots/voice-hud-permission-light.png` | MIT open-source, `PRAGMA quick_check` fail-closed DB, zero network entitlement on main app, verified SHA-256 + Ed25519 Sparkle delta updates + honest **Open Anyway** note while ad-hoc signed |
-
----
-
-## 3. Chart & Interactive Widget Recommendations
-
-1. **Paired Speech Engine Comparison Chart (`voice-competitive-web-data.json`):** Bar chart showing **WER (%) ↓** alongside a **Median Latency (ms) log/linear toggle** for Rasc `Fluid Speech Pro`, `Apple SpeechTranscriber`, and `Whisper Large v3 Turbo (MLX)` across FLEURS (`4.96%` / `53 ms`), VoiceArena (`8.93%` / `66 ms`), Round 3 (`14.15%` / `42 ms`), and Long-Form `30s–300s` `-20 dBFS` (`9.61%` / `821 ms`). Include footnote: *"Same audio clips, warm M3 Pro 18 GiB, verbatim output without LLM rewriting."*
-2. **Standby & Workday Efficiency Trajectory (`efficiency-web-data.json`):** Dual chart pairing Before vs After `n=3` workday bars (`294.99 → 143.16 MiB` peak, `600.17 → 4.26 ms` Home open) with `long_running_20261126` 8.0h active soak + 8.50h standby (`73.70 MiB` → `30.94 MiB`, `0.0/s` p50 wakeups, `0` leaks).
-3. **Interactive Refine Diff Drawer (`examples/refine_examples.json`):** Let visitors toggle between **Original**, **Changes**, and **Suggested** on real synthetic notes (`syn_pt_meeting`, `syn_pt_uncertainty`, `syn_en_numbers_urls`) and inspect one guarded failure boundary (`syn_mixed_bare_prompt` / `mix-r3-por_1706_CC`).
-4. **Audio + Verbatim Player (`examples/*.wav`):** Click-to-play 8–16 s FLEURS CC BY 4.0 clips paired directly with their human reference and unmodified Rasc transcript, plus proper `Conneau et al. (FLEURS, CC BY 4.0)` attribution.
+Use the Refine examples as text diffs. Include attribution whenever the original derives from FLEURS, indicate processing or editing, and identify historical outputs that failed the copyediting intent. Avoid republishing restricted transcripts, prompts, hypotheses and clips. [Example allowlist](examples/ATTRIBUTION.md)

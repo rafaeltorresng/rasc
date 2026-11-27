@@ -42,7 +42,7 @@ standard global shortcut or a clean single-modifier tap (`Option`, `Command`, `C
 or `Shift`; Accessibility permission is requested only when using global modifier-only
 shortcuts or cursor insertion). The menu bar can also start, finish, or dismiss capture.
 
-- **Voice Capture** (max **5 minutes / 300 s** with a 15 s warning countdown): wait for
+- **Voice Capture** (temporary max **2 minutes / 120 s** with a 15 s warning countdown): wait for
   Listening, speak naturally, then press again. The transcript opens in Scratchpad as a
   new unfinished thought (`origin = .scratch`) with the caret at the end. Continue writing,
   use Refine, or Keep or Discard with the usual commands; any previous scratch stays

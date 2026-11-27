@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
 CHECKOUTS = ROOT / ".derivedData/Rasc/SourcePackages/checkouts"
-PKG = Path("/tmp/rasc-bench-pkg")
+PKG = Path(os.environ.get("RASC_BENCH_DIR", "/tmp/rasc-bench-pkg"))
 DRIVER = Path(__file__).resolve().parent / "BenchRunner.swift"
 
 
@@ -32,11 +33,12 @@ def main() -> None:
         link(src, PKG / "Sources/RascBench/Rasc" / src.relative_to(ROOT / "Rasc"))
 
     link(DRIVER, PKG / "Sources/RascBench/BenchRunner.swift")
+    link(DRIVER.with_name("VoiceReliability.swift"), PKG / "Sources/RascBench/VoiceReliability.swift")
 
     deps = [
         str(CHECKOUTS / "GRDB.swift"),
         str(CHECKOUTS / "KeyboardShortcuts"),
-        str(CHECKOUTS / "FluidAudio"),
+        os.environ.get("RASC_BENCH_FLUID_CHECKOUT", str(CHECKOUTS / "FluidAudio")),
         str(ROOT / "Vendor/ThinkingOrbsKit"),
     ]
     dep_lines = ",\n".join(f'        .package(path: {json.dumps(p)})' for p in deps)
