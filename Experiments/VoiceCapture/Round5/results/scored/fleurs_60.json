@@ -1,0 +1,165 @@
+{
+  "corpus": "fleurs_60",
+  "engines": {
+    "rasc_fluid": {
+      "speechRecognition": {
+        "clips": 60,
+        "errors": 0,
+        "emptyTranscripts": 0,
+        "referenceWords": 1270,
+        "hypothesisWords": 1268,
+        "wordEdits": 63,
+        "werPercent": 4.961,
+        "cerPercent": 1.787,
+        "werPunctuationSensitivePercent": 7.92,
+        "warmTranscribeMs": {
+          "n": 60,
+          "mean": 58.153,
+          "p50": 53.322,
+          "p95": 102.986,
+          "min": 41.708,
+          "max": 108.614
+        },
+        "warmRtf": {
+          "n": 60,
+          "mean": 0.006,
+          "p50": 0.005,
+          "p95": 0.007,
+          "min": 0.004,
+          "max": 0.011
+        }
+      },
+      "speechRecognitionByGroup": {
+        "read-speech": {
+          "clips": 60,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 1270,
+          "hypothesisWords": 1268,
+          "wordEdits": 63,
+          "werPercent": 4.961,
+          "cerPercent": 1.787,
+          "werPunctuationSensitivePercent": 7.92,
+          "warmTranscribeMs": {
+            "n": 60,
+            "mean": 58.153,
+            "p50": 53.322,
+            "p95": 102.986,
+            "min": 41.708,
+            "max": 108.614
+          },
+          "warmRtf": {
+            "n": 60,
+            "mean": 0.006,
+            "p50": 0.005,
+            "p95": 0.007,
+            "min": 0.004,
+            "max": 0.011
+          }
+        }
+      }
+    },
+    "apple_speech_transcriber": {
+      "speechRecognition": {
+        "clips": 60,
+        "errors": 0,
+        "emptyTranscripts": 0,
+        "referenceWords": 1270,
+        "hypothesisWords": 1280,
+        "wordEdits": 107,
+        "werPercent": 8.425,
+        "cerPercent": 3.974,
+        "werPunctuationSensitivePercent": 13.636,
+        "warmTranscribeMs": {
+          "n": 60,
+          "mean": 157.378,
+          "p50": 130.903,
+          "p95": 274.198,
+          "min": 66.539,
+          "max": 415.758
+        },
+        "warmRtf": null
+      },
+      "speechRecognitionByGroup": {
+        "read-speech": {
+          "clips": 60,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 1270,
+          "hypothesisWords": 1280,
+          "wordEdits": 107,
+          "werPercent": 8.425,
+          "cerPercent": 3.974,
+          "werPunctuationSensitivePercent": 13.636,
+          "warmTranscribeMs": {
+            "n": 60,
+            "mean": 157.378,
+            "p50": 130.903,
+            "p95": 274.198,
+            "min": 66.539,
+            "max": 415.758
+          },
+          "warmRtf": null
+        }
+      }
+    },
+    "whisper_large_v3_turbo": {
+      "speechRecognition": {
+        "clips": 60,
+        "errors": 0,
+        "emptyTranscripts": 0,
+        "referenceWords": 1270,
+        "hypothesisWords": 1270,
+        "wordEdits": 69,
+        "werPercent": 5.433,
+        "cerPercent": 2.267,
+        "werPunctuationSensitivePercent": 9.022,
+        "warmTranscribeMs": {
+          "n": 59,
+          "mean": 1346.13,
+          "p50": 1341.054,
+          "p95": 1432.137,
+          "min": 1279.161,
+          "max": 1438.085
+        },
+        "warmRtf": {
+          "n": 59,
+          "mean": 0.136,
+          "p50": 0.123,
+          "p95": 0.224,
+          "min": 0.079,
+          "max": 0.333
+        }
+      },
+      "speechRecognitionByGroup": {
+        "read-speech": {
+          "clips": 60,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 1270,
+          "hypothesisWords": 1270,
+          "wordEdits": 69,
+          "werPercent": 5.433,
+          "cerPercent": 2.267,
+          "werPunctuationSensitivePercent": 9.022,
+          "warmTranscribeMs": {
+            "n": 59,
+            "mean": 1346.13,
+            "p50": 1341.054,
+            "p95": 1432.137,
+            "min": 1279.161,
+            "max": 1438.085
+          },
+          "warmRtf": {
+            "n": 59,
+            "mean": 0.136,
+            "p50": 0.123,
+            "p95": 0.224,
+            "min": 0.079,
+            "max": 0.333
+          }
+        }
+      }
+    }
+  }
+}

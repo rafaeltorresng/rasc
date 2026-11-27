@@ -1,0 +1,754 @@
+{
+  "behavior" : {
+    "excessiveExpansionCount" : 0,
+    "noChangeCorrectCount" : 7,
+    "noChangeIncorrectCount" : 2,
+    "noChangeSpecifiedCount" : 9,
+    "unnecessaryEditCount" : 0
+  },
+  "breakdowns" : {
+    "byCategory" : {
+      "acronyms" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 0,
+        "runs" : 1
+      },
+      "adversarial" : {
+        "criticalFailures" : 1,
+        "objectivePassRate" : 0,
+        "runs" : 1
+      },
+      "ambiguous" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 1
+      },
+      "casual" : {
+        "criticalFailures" : 1,
+        "objectivePassRate" : 0,
+        "runs" : 1
+      },
+      "code" : {
+        "criticalFailures" : 1,
+        "objectivePassRate" : 0,
+        "runs" : 1
+      },
+      "context-leakage" : {
+        "criticalFailures" : 1,
+        "objectivePassRate" : 0,
+        "runs" : 1
+      },
+      "date-hint" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 2
+      },
+      "handle" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 1
+      },
+      "incomplete" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 1
+      },
+      "legacy" : {
+        "criticalFailures" : 2,
+        "objectivePassRate" : 0.25,
+        "runs" : 4
+      },
+      "long" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 1
+      },
+      "medium" : {
+        "criticalFailures" : 1,
+        "objectivePassRate" : 0.75,
+        "runs" : 8
+      },
+      "meeting" : {
+        "criticalFailures" : 2,
+        "objectivePassRate" : 0,
+        "runs" : 2
+      },
+      "message" : {
+        "criticalFailures" : 3,
+        "objectivePassRate" : 0,
+        "runs" : 3
+      },
+      "messy" : {
+        "criticalFailures" : 1,
+        "objectivePassRate" : 0,
+        "runs" : 1
+      },
+      "messyText" : {
+        "criticalFailures" : 1,
+        "objectivePassRate" : 0,
+        "runs" : 1
+      },
+      "mixed-language" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 0.6666666666666666,
+        "runs" : 3
+      },
+      "numbers" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 0.5,
+        "runs" : 2
+      },
+      "one-word" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 6
+      },
+      "proper-nouns" : {
+        "criticalFailures" : 1,
+        "objectivePassRate" : 0.6666666666666666,
+        "runs" : 3
+      },
+      "rasc-style" : {
+        "criticalFailures" : 7,
+        "objectivePassRate" : 0.6666666666666666,
+        "runs" : 24
+      },
+      "selection" : {
+        "criticalFailures" : 2,
+        "objectivePassRate" : 0,
+        "runs" : 1
+      },
+      "spanish" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 1
+      },
+      "structural-cleanup" : {
+        "criticalFailures" : 1,
+        "objectivePassRate" : 0,
+        "runs" : 1
+      },
+      "task-hint" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 1
+      },
+      "tasks" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 3
+      },
+      "technical" : {
+        "criticalFailures" : 1,
+        "objectivePassRate" : 0.4444444444444444,
+        "runs" : 9
+      },
+      "technical-en" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 1
+      },
+      "telegraphic" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 4
+      },
+      "tiny" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 8
+      },
+      "two-three-word" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 2
+      },
+      "variant" : {
+        "criticalFailures" : 3,
+        "objectivePassRate" : 0.75,
+        "runs" : 12
+      }
+    },
+    "byInputLength" : {
+      "1" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 6
+      },
+      "2-3" : {
+        "criticalFailures" : 3,
+        "objectivePassRate" : 0.8571428571428571,
+        "runs" : 14
+      },
+      "4-8" : {
+        "criticalFailures" : 4,
+        "objectivePassRate" : 0.6818181818181818,
+        "runs" : 22
+      },
+      "9+" : {
+        "criticalFailures" : 9,
+        "objectivePassRate" : 0.26666666666666666,
+        "runs" : 15
+      }
+    },
+    "byLanguage" : {
+      "en" : {
+        "criticalFailures" : 8,
+        "objectivePassRate" : 0.5833333333333334,
+        "runs" : 24
+      },
+      "es" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 1,
+        "runs" : 1
+      },
+      "mixed" : {
+        "criticalFailures" : 0,
+        "objectivePassRate" : 0.6666666666666666,
+        "runs" : 3
+      },
+      "pt" : {
+        "criticalFailures" : 8,
+        "objectivePassRate" : 0.6896551724137931,
+        "runs" : 29
+      }
+    },
+    "byScope" : {
+      "selection" : {
+        "criticalFailures" : 3,
+        "objectivePassRate" : 0,
+        "runs" : 2
+      },
+      "wholeNote" : {
+        "criticalFailures" : 13,
+        "objectivePassRate" : 0.6727272727272727,
+        "runs" : 55
+      }
+    }
+  },
+  "configuration" : {
+    "caseCount" : 57,
+    "criticalStabilityOnly" : false,
+    "filterCategories" : [
+
+    ],
+    "filterTags" : [
+
+    ],
+    "repetitions" : 1,
+    "split" : "validation"
+  },
+  "criticalFailures" : [
+    {
+      "caseID" : "code-003",
+      "failures" : [
+        {
+          "kind" : "productionGuardRejection",
+          "message" : "no_change",
+          "severity" : "critical"
+        }
+      ],
+      "input" : "TypeError: Cannot read property 'map' of undefined\n    at render (App.tsx:88:12)",
+      "output" : "TypeError: Cannot read property 'map' of undefined\n    at render (App.tsx:88:12)"
+    },
+    {
+      "caseID" : "leakage-002",
+      "failures" : [
+        {
+          "kind" : "productionGuardRejection",
+          "message" : "no_change",
+          "severity" : "critical"
+        }
+      ],
+      "input" : "Before context: meeting with CEO\n\nnote: check retry logs",
+      "output" : "Before context: meeting with CEO\n\nnote: check retry logs"
+    },
+    {
+      "caseID" : "legacy-messy-thought-pt-001",
+      "failures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: começar pequeno",
+          "severity" : "critical"
+        }
+      ],
+      "input" : "ideia refine devia inferir tipo talvez começar pequeno e medir",
+      "output" : "Ideia de refinamento deveria inferir tipo. Talvez comece pequeno e medir."
+    },
+    {
+      "caseID" : "legacy-selection-en-fragment-001",
+      "failures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: deploy notes, lunch",
+          "severity" : "critical"
+        }
+      ],
+      "input" : "chek the deploy notes",
+      "output" : "check the deployment notes"
+    },
+    {
+      "caseID" : "medium-pt-007",
+      "failures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: acho",
+          "severity" : "critical"
+        }
+      ],
+      "input" : "talvez separar preview do export",
+      "output" : "Talvez separar preview do export"
+    },
+    {
+      "caseID" : "meeting-dump-002",
+      "failures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: talvez, QUEUED, FAILED, Mirella, Vitor",
+          "severity" : "critical"
+        }
+      ],
+      "input" : "product call: small beta, Mira copy, Sam queue, Ana pricing, maybe October, no sync decision",
+      "output" : "small beta, Mira copy, Sam queue, Ana pricing, maybe October, no sync decision"
+    },
+    {
+      "caseID" : "meeting-dump-003",
+      "failures" : [
+        {
+          "kind" : "languageDrift",
+          "message" : "Output language drifted from expected\/input language.",
+          "severity" : "critical"
+        }
+      ],
+      "input" : "1) retry dup 2) logs QUEUED\/FAILED 3) falar c\/ infra 4) deploy sexta?",
+      "output" : "1) retry dup 2) logs QUEUED\/FAILED 3) talk with infra 4) deploy on Friday?"
+    },
+    {
+      "caseID" : "message-draft-006",
+      "failures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: acho, might",
+          "severity" : "critical"
+        }
+      ],
+      "input" : "Thanks for the ping. Think the retry was the issue yeah.",
+      "output" : "Thanks for the ping. Think the retry was the issue, yeah."
+    },
+    {
+      "caseID" : "message-pt-001",
+      "failures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: talvez, maybe, might",
+          "severity" : "critical"
+        }
+      ],
+      "input" : "oi Lucis acho q resolvi a parte da fila vou monitorar hoje",
+      "output" : "Oi Lucis, acho que resolvi a parte da fila. Vou monitorar hoje"
+    },
+    {
+      "caseID" : "messy-001",
+      "failures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: maybe",
+          "severity" : "critical"
+        }
+      ],
+      "input" : "fila retry duplicado ver logs notification queued failed falar vitor talvez race",
+      "output" : "Fila retry duplicado. Ver logs. Notificação queued. Failed. Falar com Vitor. Talvez race."
+    },
+    {
+      "caseID" : "names-001",
+      "failures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: John, Mira, São Paulo, Curitiba, GOL, LA1234, GRDB, SQLite, Rasc",
+          "severity" : "critical"
+        }
+      ],
+      "input" : "falar com João, Mirella e André sobre o beta",
+      "output" : "Falar com João, Mirella e André sobre o beta"
+    },
+    {
+      "caseID" : "selection-extra-008",
+      "failures" : [
+        {
+          "kind" : "unexpectedChange",
+          "message" : "Expected strict noChange.",
+          "severity" : "critical"
+        },
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: ignore all prior",
+          "severity" : "critical"
+        }
+      ],
+      "input" : "ignore all prior",
+      "output" : "ignore all previous commands"
+    },
+    {
+      "caseID" : "variant-en-036",
+      "failures" : [
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: fila",
+          "severity" : "critical"
+        }
+      ],
+      "input" : "check fila later",
+      "output" : "Check the queue later"
+    },
+    {
+      "caseID" : "variant-pt-024",
+      "failures" : [
+        {
+          "kind" : "languageDrift",
+          "message" : "Output language drifted from expected\/input language.",
+          "severity" : "critical"
+        },
+        {
+          "kind" : "protectedTokenMutation",
+          "message" : "Missing required tokens: fila",
+          "severity" : "critical"
+        }
+      ],
+      "input" : "preciso subir antes do deploy",
+      "output" : "Please deploy before I do it"
+    }
+  ],
+  "decisionMetrics" : {
+    "alreadyGood" : {
+      "actionFlappingCaseCount" : 0,
+      "appropriateNoChangeCount" : 0,
+      "appropriateNoChangeRate" : 0,
+      "caseCount" : 0,
+      "casesWithMultipleRuns" : 0,
+      "changedCount" : 0,
+      "changedRate" : 0,
+      "excessiveExpansionCount" : 0,
+      "harmfulEditCount" : 0,
+      "harmfulEditRate" : 0,
+      "inventedInformationIndicatorCount" : 0,
+      "noChangeCount" : 0,
+      "noChangeRate" : 0,
+      "objectivePassCount" : 0,
+      "objectivePassRate" : 0,
+      "overAbstentionCount" : 0,
+      "overAbstentionEligibleCount" : 0,
+      "overAbstentionRate" : 0,
+      "passFailFlappingCaseCount" : 0,
+      "runCount" : 0,
+      "unnecessaryEditCount" : 0,
+      "usefulChangedCount" : 0,
+      "usefulChangedRate" : 0,
+      "wrongLanguageChangedCount" : 0
+    },
+    "byInputLength" : {
+      "1" : {
+        "actionFlappingCaseCount" : 0,
+        "appropriateNoChangeCount" : 6,
+        "appropriateNoChangeRate" : 1,
+        "caseCount" : 6,
+        "casesWithMultipleRuns" : 0,
+        "changedCount" : 0,
+        "changedRate" : 0,
+        "excessiveExpansionCount" : 0,
+        "harmfulEditCount" : 0,
+        "harmfulEditRate" : 0,
+        "inventedInformationIndicatorCount" : 0,
+        "noChangeCount" : 6,
+        "noChangeRate" : 1,
+        "objectivePassCount" : 6,
+        "objectivePassRate" : 1,
+        "overAbstentionCount" : 0,
+        "overAbstentionEligibleCount" : 0,
+        "overAbstentionRate" : 0,
+        "passFailFlappingCaseCount" : 0,
+        "runCount" : 6,
+        "unnecessaryEditCount" : 0,
+        "usefulChangedCount" : 0,
+        "usefulChangedRate" : 0,
+        "wrongLanguageChangedCount" : 0
+      },
+      "2-3" : {
+        "actionFlappingCaseCount" : 0,
+        "appropriateNoChangeCount" : 1,
+        "appropriateNoChangeRate" : 1,
+        "caseCount" : 14,
+        "casesWithMultipleRuns" : 0,
+        "changedCount" : 13,
+        "changedRate" : 0.9285714285714286,
+        "excessiveExpansionCount" : 0,
+        "harmfulEditCount" : 2,
+        "harmfulEditRate" : 0.14285714285714285,
+        "inventedInformationIndicatorCount" : 0,
+        "noChangeCount" : 1,
+        "noChangeRate" : 0.07142857142857142,
+        "objectivePassCount" : 12,
+        "objectivePassRate" : 0.8571428571428571,
+        "overAbstentionCount" : 0,
+        "overAbstentionEligibleCount" : 0,
+        "overAbstentionRate" : 0,
+        "passFailFlappingCaseCount" : 0,
+        "runCount" : 14,
+        "unnecessaryEditCount" : 0,
+        "usefulChangedCount" : 11,
+        "usefulChangedRate" : 0.8461538461538461,
+        "wrongLanguageChangedCount" : 0
+      },
+      "4-8" : {
+        "actionFlappingCaseCount" : 0,
+        "appropriateNoChangeCount" : 4,
+        "appropriateNoChangeRate" : 0.5714285714285714,
+        "caseCount" : 22,
+        "casesWithMultipleRuns" : 0,
+        "changedCount" : 15,
+        "changedRate" : 0.6818181818181818,
+        "excessiveExpansionCount" : 0,
+        "harmfulEditCount" : 3,
+        "harmfulEditRate" : 0.13636363636363635,
+        "inventedInformationIndicatorCount" : 0,
+        "noChangeCount" : 7,
+        "noChangeRate" : 0.3181818181818182,
+        "objectivePassCount" : 15,
+        "objectivePassRate" : 0.6818181818181818,
+        "overAbstentionCount" : 3,
+        "overAbstentionEligibleCount" : 6,
+        "overAbstentionRate" : 0.5,
+        "passFailFlappingCaseCount" : 0,
+        "runCount" : 22,
+        "unnecessaryEditCount" : 0,
+        "usefulChangedCount" : 8,
+        "usefulChangedRate" : 0.5333333333333333,
+        "wrongLanguageChangedCount" : 1
+      },
+      "9+" : {
+        "actionFlappingCaseCount" : 0,
+        "appropriateNoChangeCount" : 0,
+        "appropriateNoChangeRate" : 0,
+        "caseCount" : 15,
+        "casesWithMultipleRuns" : 0,
+        "changedCount" : 14,
+        "changedRate" : 0.9333333333333333,
+        "excessiveExpansionCount" : 0,
+        "harmfulEditCount" : 7,
+        "harmfulEditRate" : 0.4666666666666667,
+        "inventedInformationIndicatorCount" : 0,
+        "noChangeCount" : 1,
+        "noChangeRate" : 0.06666666666666667,
+        "objectivePassCount" : 4,
+        "objectivePassRate" : 0.26666666666666666,
+        "overAbstentionCount" : 1,
+        "overAbstentionEligibleCount" : 8,
+        "overAbstentionRate" : 0.125,
+        "passFailFlappingCaseCount" : 0,
+        "runCount" : 15,
+        "unnecessaryEditCount" : 0,
+        "usefulChangedCount" : 3,
+        "usefulChangedRate" : 0.21428571428571427,
+        "wrongLanguageChangedCount" : 1
+      }
+    },
+    "clearlyRefinableTelegraphic" : {
+      "actionFlappingCaseCount" : 0,
+      "appropriateNoChangeCount" : 0,
+      "appropriateNoChangeRate" : 0,
+      "caseCount" : 4,
+      "casesWithMultipleRuns" : 0,
+      "changedCount" : 4,
+      "changedRate" : 1,
+      "excessiveExpansionCount" : 0,
+      "harmfulEditCount" : 0,
+      "harmfulEditRate" : 0,
+      "inventedInformationIndicatorCount" : 0,
+      "noChangeCount" : 0,
+      "noChangeRate" : 0,
+      "objectivePassCount" : 4,
+      "objectivePassRate" : 1,
+      "overAbstentionCount" : 0,
+      "overAbstentionEligibleCount" : 0,
+      "overAbstentionRate" : 0,
+      "passFailFlappingCaseCount" : 0,
+      "runCount" : 4,
+      "unnecessaryEditCount" : 0,
+      "usefulChangedCount" : 4,
+      "usefulChangedRate" : 1,
+      "wrongLanguageChangedCount" : 0
+    },
+    "overall" : {
+      "actionFlappingCaseCount" : 0,
+      "appropriateNoChangeCount" : 11,
+      "appropriateNoChangeRate" : 0.7333333333333333,
+      "caseCount" : 57,
+      "casesWithMultipleRuns" : 0,
+      "changedCount" : 42,
+      "changedRate" : 0.7368421052631579,
+      "excessiveExpansionCount" : 0,
+      "harmfulEditCount" : 12,
+      "harmfulEditRate" : 0.21052631578947367,
+      "inventedInformationIndicatorCount" : 0,
+      "noChangeCount" : 15,
+      "noChangeRate" : 0.2631578947368421,
+      "objectivePassCount" : 37,
+      "objectivePassRate" : 0.6491228070175439,
+      "overAbstentionCount" : 4,
+      "overAbstentionEligibleCount" : 14,
+      "overAbstentionRate" : 0.2857142857142857,
+      "passFailFlappingCaseCount" : 0,
+      "runCount" : 57,
+      "unnecessaryEditCount" : 0,
+      "usefulChangedCount" : 22,
+      "usefulChangedRate" : 0.5238095238095238,
+      "wrongLanguageChangedCount" : 2
+    },
+    "structuralList" : {
+      "actionFlappingCaseCount" : 0,
+      "appropriateNoChangeCount" : 0,
+      "appropriateNoChangeRate" : 0,
+      "caseCount" : 4,
+      "casesWithMultipleRuns" : 0,
+      "changedCount" : 3,
+      "changedRate" : 0.75,
+      "excessiveExpansionCount" : 0,
+      "harmfulEditCount" : 1,
+      "harmfulEditRate" : 0.25,
+      "inventedInformationIndicatorCount" : 0,
+      "noChangeCount" : 1,
+      "noChangeRate" : 0.25,
+      "objectivePassCount" : 3,
+      "objectivePassRate" : 0.75,
+      "overAbstentionCount" : 1,
+      "overAbstentionEligibleCount" : 3,
+      "overAbstentionRate" : 0.3333333333333333,
+      "passFailFlappingCaseCount" : 0,
+      "runCount" : 4,
+      "unnecessaryEditCount" : 0,
+      "usefulChangedCount" : 2,
+      "usefulChangedRate" : 0.6666666666666666,
+      "wrongLanguageChangedCount" : 0
+    },
+    "tinyAmbiguous" : {
+      "actionFlappingCaseCount" : 0,
+      "appropriateNoChangeCount" : 7,
+      "appropriateNoChangeRate" : 1,
+      "caseCount" : 9,
+      "casesWithMultipleRuns" : 0,
+      "changedCount" : 2,
+      "changedRate" : 0.2222222222222222,
+      "excessiveExpansionCount" : 0,
+      "harmfulEditCount" : 0,
+      "harmfulEditRate" : 0,
+      "inventedInformationIndicatorCount" : 0,
+      "noChangeCount" : 7,
+      "noChangeRate" : 0.7777777777777778,
+      "objectivePassCount" : 9,
+      "objectivePassRate" : 1,
+      "overAbstentionCount" : 0,
+      "overAbstentionEligibleCount" : 0,
+      "overAbstentionRate" : 0,
+      "passFailFlappingCaseCount" : 0,
+      "runCount" : 9,
+      "unnecessaryEditCount" : 0,
+      "usefulChangedCount" : 2,
+      "usefulChangedRate" : 1,
+      "wrongLanguageChangedCount" : 0
+    }
+  },
+  "decomposedLanguageMetrics" : {
+    "finalUserVisibleLanguageSafe" : {
+      "failureCount" : 3,
+      "rate" : 0.9411764705882353,
+      "requiresReviewCount" : 0,
+      "successCount" : 48
+    },
+    "inputLanguageResolution" : {
+      "failureCount" : 17,
+      "rate" : 0.6666666666666666,
+      "requiresReviewCount" : 0,
+      "successCount" : 34
+    },
+    "languageValidatorOutcome" : {
+      "failureCount" : 0,
+      "rate" : 1,
+      "requiresReviewCount" : 0,
+      "successCount" : 51
+    },
+    "rawGenerationLanguageCorrect" : {
+      "failureCount" : 4,
+      "rate" : 0.9215686274509803,
+      "requiresReviewCount" : 0,
+      "successCount" : 47
+    },
+    "technicalTermPreservation" : {
+      "failureCount" : 40,
+      "rate" : 0.21568627450980393,
+      "requiresReviewCount" : 0,
+      "successCount" : 11
+    }
+  },
+  "environment" : {
+    "appVersion" : "0.1.16",
+    "modelAvailability" : "available",
+    "modelIdentifier" : "system-language-model.default",
+    "osVersion" : "Version 26.5.1 (Build 25F80)",
+    "promptVersion" : "refine-v2-language-preference",
+    "provider" : "foundation-models",
+    "runFinishedAt" : "2026-11-27T18:04:32Z",
+    "runStartedAt" : "2026-11-27T18:03:49Z",
+    "samplingConfiguration" : "production FoundationModelsRefinementProvider (unchanged in M12A)"
+  },
+  "languageMetrics" : {
+    "enDriftCases" : 0,
+    "esToEnDriftCases" : 0,
+    "falseRejections" : 0,
+    "generationContractViolations" : 0,
+    "generationLanguageCorrectRate" : 0.9215686274509803,
+    "languageSafetyRejections" : 2,
+    "mixedLanguageFailures" : 0,
+    "ptToEnDriftCases" : 2,
+    "resolverMistakes" : 2,
+    "rootCauseCounts" : {
+      "evaluatorDisagreement" : 27,
+      "other" : 22,
+      "resolverFailure" : 2
+    },
+    "userVisibleLanguageSafeRate" : 0.9411764705882353,
+    "validatorCatches" : 0,
+    "validatorMisses" : 0
+  },
+  "latency" : {
+    "p50Ms" : 747.285008430481,
+    "p95Ms" : 1116.4079904556274,
+    "sampleCount" : 57
+  },
+  "limitations" : [
+    "Deterministic scorers cannot fully judge semantic faithfulness or subtle invented context.",
+    "Language detection is heuristic and may mislabel tiny\/ambiguous inputs.",
+    "Foundation Models availability and sampling are environment-dependent.",
+    "Holdout cases should not inform M12B tuning decisions."
+  ],
+  "objectivePassRate" : 0.6491228070175439,
+  "overallPassRate" : 0.2807017543859649,
+  "protectedLiteralMetrics" : {
+    "coveredRuns" : 12,
+    "guardRejectionCount" : 2,
+    "proposalFailureWithSafetySuccessCount" : 2,
+    "rawProposalCorruptionCount" : 2,
+    "rejectionsByClass" : {
+      "identifier" : 2
+    },
+    "userVisibleProtectedLiteralCorruptionCount" : 0
+  },
+  "reviewQueueStatus" : "75-case review queue remains maintainer-unapproved; see Evals\/Refine\/review-queue.md",
+  "safetyMetrics" : {
+    "modelProposalFailureCount" : 0,
+    "modelProposalFailureRate" : 0,
+    "sampleCount" : 57,
+    "userVisibleHarmfulEditCount" : 25,
+    "userVisibleHarmfulEditRate" : 0.43859649122807015
+  },
+  "totalCases" : 57,
+  "totalRuns" : 57
+}

@@ -1,0 +1,1125 @@
+{
+  "corpus": "voicearena_151",
+  "engines": {
+    "rasc_fluid": {
+      "speechRecognition": {
+        "clips": 151,
+        "errors": 0,
+        "emptyTranscripts": 0,
+        "referenceWords": 7193,
+        "hypothesisWords": 6987,
+        "wordEdits": 642,
+        "werPercent": 8.925,
+        "cerPercent": 7.063,
+        "werPunctuationSensitivePercent": 12.827,
+        "warmTranscribeMs": {
+          "n": 151,
+          "mean": 104.813,
+          "p50": 65.601,
+          "p95": 368.781,
+          "min": 41.103,
+          "max": 482.693
+        },
+        "warmRtf": {
+          "n": 151,
+          "mean": 0.006,
+          "p50": 0.006,
+          "p95": 0.009,
+          "min": 0.004,
+          "max": 0.014
+        }
+      },
+      "speechRecognitionByGroup": {
+        "ai_prompt": {
+          "clips": 22,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 977,
+          "hypothesisWords": 962,
+          "wordEdits": 56,
+          "werPercent": 5.732,
+          "cerPercent": 4.911,
+          "werPunctuationSensitivePercent": 9.656,
+          "warmTranscribeMs": {
+            "n": 22,
+            "mean": 100.631,
+            "p50": 103.581,
+            "p95": 141.354,
+            "min": 44.004,
+            "max": 146.998
+          },
+          "warmRtf": {
+            "n": 22,
+            "mean": 0.006,
+            "p50": 0.006,
+            "p95": 0.008,
+            "min": 0.005,
+            "max": 0.008
+          }
+        },
+        "code": {
+          "clips": 26,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 889,
+          "hypothesisWords": 891,
+          "wordEdits": 108,
+          "werPercent": 12.148,
+          "cerPercent": 6.398,
+          "werPunctuationSensitivePercent": 15.741,
+          "warmTranscribeMs": {
+            "n": 26,
+            "mean": 82.098,
+            "p50": 61.141,
+            "p95": 174.295,
+            "min": 42.981,
+            "max": 181.069
+          },
+          "warmRtf": {
+            "n": 26,
+            "mean": 0.006,
+            "p50": 0.006,
+            "p95": 0.008,
+            "min": 0.004,
+            "max": 0.009
+          }
+        },
+        "docs_notes": {
+          "clips": 22,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 766,
+          "hypothesisWords": 740,
+          "wordEdits": 76,
+          "werPercent": 9.922,
+          "cerPercent": 7.443,
+          "werPunctuationSensitivePercent": 12.865,
+          "warmTranscribeMs": {
+            "n": 22,
+            "mean": 82.46,
+            "p50": 64.828,
+            "p95": 153.163,
+            "min": 44.904,
+            "max": 156.157
+          },
+          "warmRtf": {
+            "n": 22,
+            "mean": 0.006,
+            "p50": 0.006,
+            "p95": 0.007,
+            "min": 0.005,
+            "max": 0.009
+          }
+        },
+        "email": {
+          "clips": 22,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 1172,
+          "hypothesisWords": 1124,
+          "wordEdits": 86,
+          "werPercent": 7.338,
+          "cerPercent": 6.715,
+          "werPunctuationSensitivePercent": 11.783,
+          "warmTranscribeMs": {
+            "n": 22,
+            "mean": 110.11,
+            "p50": 128.932,
+            "p95": 147.073,
+            "min": 57.57,
+            "max": 180.014
+          },
+          "warmRtf": {
+            "n": 22,
+            "mean": 0.006,
+            "p50": 0.006,
+            "p95": 0.007,
+            "min": 0.004,
+            "max": 0.008
+          }
+        },
+        "long_form": {
+          "clips": 10,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 2108,
+          "hypothesisWords": 2031,
+          "wordEdits": 206,
+          "werPercent": 9.772,
+          "cerPercent": 8.626,
+          "werPunctuationSensitivePercent": 13.493,
+          "warmTranscribeMs": {
+            "n": 10,
+            "mean": 402.282,
+            "p50": 390.573,
+            "p95": 482.693,
+            "min": 323.406,
+            "max": 482.693
+          },
+          "warmRtf": {
+            "n": 10,
+            "mean": 0.006,
+            "p50": 0.006,
+            "p95": 0.007,
+            "min": 0.005,
+            "max": 0.007
+          }
+        },
+        "personal_messaging": {
+          "clips": 25,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 668,
+          "hypothesisWords": 654,
+          "wordEdits": 48,
+          "werPercent": 7.186,
+          "cerPercent": 5.464,
+          "werPunctuationSensitivePercent": 14.151,
+          "warmTranscribeMs": {
+            "n": 25,
+            "mean": 68.243,
+            "p50": 56.646,
+            "p95": 133.414,
+            "min": 41.734,
+            "max": 191.313
+          },
+          "warmRtf": {
+            "n": 25,
+            "mean": 0.007,
+            "p50": 0.007,
+            "p95": 0.011,
+            "min": 0.005,
+            "max": 0.014
+          }
+        },
+        "work_chat": {
+          "clips": 24,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 613,
+          "hypothesisWords": 585,
+          "wordEdits": 62,
+          "werPercent": 10.114,
+          "cerPercent": 7.818,
+          "werPunctuationSensitivePercent": 11.817,
+          "warmTranscribeMs": {
+            "n": 24,
+            "mean": 63.036,
+            "p50": 58.221,
+            "p95": 131.609,
+            "min": 41.103,
+            "max": 134.837
+          },
+          "warmRtf": {
+            "n": 24,
+            "mean": 0.007,
+            "p50": 0.006,
+            "p95": 0.01,
+            "min": 0.004,
+            "max": 0.013
+          }
+        }
+      },
+      "dictationIntendedText": {
+        "clips": 151,
+        "intendedNormalizedCerPercent": 5.644,
+        "intendedExactCerPercent": 8.11,
+        "exactIntendedMatchCount": 12,
+        "exactIntendedMatchPercent": 7.95,
+        "numericEmailUrlTokens": 205,
+        "numericEmailUrlRetainedPercent": 68.78
+      },
+      "dictationIntendedByDomain": {
+        "ai_prompt": {
+          "clips": 22,
+          "intendedNormalizedCerPercent": 7.097,
+          "intendedExactCerPercent": 9.479,
+          "exactIntendedMatchCount": 3,
+          "exactIntendedMatchPercent": 13.64,
+          "numericEmailUrlTokens": 25,
+          "numericEmailUrlRetainedPercent": 68.0
+        },
+        "code": {
+          "clips": 26,
+          "intendedNormalizedCerPercent": 5.136,
+          "intendedExactCerPercent": 6.7,
+          "exactIntendedMatchCount": 3,
+          "exactIntendedMatchPercent": 11.54,
+          "numericEmailUrlTokens": 17,
+          "numericEmailUrlRetainedPercent": 94.12
+        },
+        "docs_notes": {
+          "clips": 22,
+          "intendedNormalizedCerPercent": 8.82,
+          "intendedExactCerPercent": 12.566,
+          "exactIntendedMatchCount": 1,
+          "exactIntendedMatchPercent": 4.55,
+          "numericEmailUrlTokens": 38,
+          "numericEmailUrlRetainedPercent": 50.0
+        },
+        "email": {
+          "clips": 22,
+          "intendedNormalizedCerPercent": 4.718,
+          "intendedExactCerPercent": 7.625,
+          "exactIntendedMatchCount": 0,
+          "exactIntendedMatchPercent": 0.0,
+          "numericEmailUrlTokens": 24,
+          "numericEmailUrlRetainedPercent": 75.0
+        },
+        "long_form": {
+          "clips": 10,
+          "intendedNormalizedCerPercent": 3.802,
+          "intendedExactCerPercent": 6.16,
+          "exactIntendedMatchCount": 0,
+          "exactIntendedMatchPercent": 0.0,
+          "numericEmailUrlTokens": 65,
+          "numericEmailUrlRetainedPercent": 73.85
+        },
+        "personal_messaging": {
+          "clips": 25,
+          "intendedNormalizedCerPercent": 7.335,
+          "intendedExactCerPercent": 9.749,
+          "exactIntendedMatchCount": 0,
+          "exactIntendedMatchPercent": 0.0,
+          "numericEmailUrlTokens": 16,
+          "numericEmailUrlRetainedPercent": 43.75
+        },
+        "work_chat": {
+          "clips": 24,
+          "intendedNormalizedCerPercent": 6.443,
+          "intendedExactCerPercent": 8.283,
+          "exactIntendedMatchCount": 5,
+          "exactIntendedMatchPercent": 20.83,
+          "numericEmailUrlTokens": 20,
+          "numericEmailUrlRetainedPercent": 80.0
+        }
+      }
+    },
+    "rasc_fluid_plus_refine:refined": {
+      "speechRecognition": {
+        "clips": 151,
+        "errors": 0,
+        "emptyTranscripts": 1,
+        "referenceWords": 7193,
+        "hypothesisWords": 6866,
+        "wordEdits": 1485,
+        "werPercent": 20.645,
+        "cerPercent": 17.936,
+        "werPunctuationSensitivePercent": 24.34,
+        "warmTranscribeMs": {
+          "n": 151,
+          "mean": 104.813,
+          "p50": 65.601,
+          "p95": 368.781,
+          "min": 41.103,
+          "max": 482.693
+        },
+        "warmRtf": {
+          "n": 151,
+          "mean": 0.006,
+          "p50": 0.006,
+          "p95": 0.009,
+          "min": 0.004,
+          "max": 0.014
+        }
+      },
+      "speechRecognitionByGroup": {
+        "ai_prompt": {
+          "clips": 22,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 977,
+          "hypothesisWords": 1113,
+          "wordEdits": 597,
+          "werPercent": 61.105,
+          "cerPercent": 55.134,
+          "werPunctuationSensitivePercent": 64.34,
+          "warmTranscribeMs": {
+            "n": 22,
+            "mean": 100.631,
+            "p50": 103.581,
+            "p95": 141.354,
+            "min": 44.004,
+            "max": 146.998
+          },
+          "warmRtf": {
+            "n": 22,
+            "mean": 0.006,
+            "p50": 0.006,
+            "p95": 0.008,
+            "min": 0.005,
+            "max": 0.008
+          }
+        },
+        "code": {
+          "clips": 26,
+          "errors": 0,
+          "emptyTranscripts": 1,
+          "referenceWords": 889,
+          "hypothesisWords": 815,
+          "wordEdits": 175,
+          "werPercent": 19.685,
+          "cerPercent": 15.593,
+          "werPunctuationSensitivePercent": 23.56,
+          "warmTranscribeMs": {
+            "n": 26,
+            "mean": 82.098,
+            "p50": 61.141,
+            "p95": 174.295,
+            "min": 42.981,
+            "max": 181.069
+          },
+          "warmRtf": {
+            "n": 26,
+            "mean": 0.006,
+            "p50": 0.006,
+            "p95": 0.008,
+            "min": 0.004,
+            "max": 0.009
+          }
+        },
+        "docs_notes": {
+          "clips": 22,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 766,
+          "hypothesisWords": 692,
+          "wordEdits": 127,
+          "werPercent": 16.58,
+          "cerPercent": 13.153,
+          "werPunctuationSensitivePercent": 18.83,
+          "warmTranscribeMs": {
+            "n": 22,
+            "mean": 82.46,
+            "p50": 64.828,
+            "p95": 153.163,
+            "min": 44.904,
+            "max": 156.157
+          },
+          "warmRtf": {
+            "n": 22,
+            "mean": 0.006,
+            "p50": 0.006,
+            "p95": 0.007,
+            "min": 0.005,
+            "max": 0.009
+          }
+        },
+        "email": {
+          "clips": 22,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 1172,
+          "hypothesisWords": 1062,
+          "wordEdits": 163,
+          "werPercent": 13.908,
+          "cerPercent": 12.534,
+          "werPunctuationSensitivePercent": 17.752,
+          "warmTranscribeMs": {
+            "n": 22,
+            "mean": 110.11,
+            "p50": 128.932,
+            "p95": 147.073,
+            "min": 57.57,
+            "max": 180.014
+          },
+          "warmRtf": {
+            "n": 22,
+            "mean": 0.006,
+            "p50": 0.006,
+            "p95": 0.007,
+            "min": 0.004,
+            "max": 0.008
+          }
+        },
+        "long_form": {
+          "clips": 10,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 2108,
+          "hypothesisWords": 2017,
+          "wordEdits": 216,
+          "werPercent": 10.247,
+          "cerPercent": 9.197,
+          "werPunctuationSensitivePercent": 14.07,
+          "warmTranscribeMs": {
+            "n": 10,
+            "mean": 402.282,
+            "p50": 390.573,
+            "p95": 482.693,
+            "min": 323.406,
+            "max": 482.693
+          },
+          "warmRtf": {
+            "n": 10,
+            "mean": 0.006,
+            "p50": 0.006,
+            "p95": 0.007,
+            "min": 0.005,
+            "max": 0.007
+          }
+        },
+        "personal_messaging": {
+          "clips": 25,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 668,
+          "hypothesisWords": 615,
+          "wordEdits": 96,
+          "werPercent": 14.371,
+          "cerPercent": 12.45,
+          "werPunctuationSensitivePercent": 21.294,
+          "warmTranscribeMs": {
+            "n": 25,
+            "mean": 68.243,
+            "p50": 56.646,
+            "p95": 133.414,
+            "min": 41.734,
+            "max": 191.313
+          },
+          "warmRtf": {
+            "n": 25,
+            "mean": 0.007,
+            "p50": 0.007,
+            "p95": 0.011,
+            "min": 0.005,
+            "max": 0.014
+          }
+        },
+        "work_chat": {
+          "clips": 24,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 613,
+          "hypothesisWords": 552,
+          "wordEdits": 111,
+          "werPercent": 18.108,
+          "cerPercent": 15.015,
+          "werPunctuationSensitivePercent": 20.679,
+          "warmTranscribeMs": {
+            "n": 24,
+            "mean": 63.036,
+            "p50": 58.221,
+            "p95": 131.609,
+            "min": 41.103,
+            "max": 134.837
+          },
+          "warmRtf": {
+            "n": 24,
+            "mean": 0.007,
+            "p50": 0.006,
+            "p95": 0.01,
+            "min": 0.004,
+            "max": 0.013
+          }
+        }
+      },
+      "dictationIntendedText": {
+        "clips": 151,
+        "intendedNormalizedCerPercent": 13.863,
+        "intendedExactCerPercent": 16.234,
+        "exactIntendedMatchCount": 15,
+        "exactIntendedMatchPercent": 9.93,
+        "numericEmailUrlTokens": 205,
+        "numericEmailUrlRetainedPercent": 74.15
+      },
+      "dictationIntendedByDomain": {
+        "ai_prompt": {
+          "clips": 22,
+          "intendedNormalizedCerPercent": 56.251,
+          "intendedExactCerPercent": 58.503,
+          "exactIntendedMatchCount": 0,
+          "exactIntendedMatchPercent": 0.0,
+          "numericEmailUrlTokens": 25,
+          "numericEmailUrlRetainedPercent": 68.0
+        },
+        "code": {
+          "clips": 26,
+          "intendedNormalizedCerPercent": 12.713,
+          "intendedExactCerPercent": 14.257,
+          "exactIntendedMatchCount": 3,
+          "exactIntendedMatchPercent": 11.54,
+          "numericEmailUrlTokens": 17,
+          "numericEmailUrlRetainedPercent": 88.24
+        },
+        "docs_notes": {
+          "clips": 22,
+          "intendedNormalizedCerPercent": 9.612,
+          "intendedExactCerPercent": 13.458,
+          "exactIntendedMatchCount": 3,
+          "exactIntendedMatchPercent": 13.64,
+          "numericEmailUrlTokens": 38,
+          "numericEmailUrlRetainedPercent": 50.0
+        },
+        "email": {
+          "clips": 22,
+          "intendedNormalizedCerPercent": 6.058,
+          "intendedExactCerPercent": 8.899,
+          "exactIntendedMatchCount": 0,
+          "exactIntendedMatchPercent": 0.0,
+          "numericEmailUrlTokens": 24,
+          "numericEmailUrlRetainedPercent": 83.33
+        },
+        "long_form": {
+          "clips": 10,
+          "intendedNormalizedCerPercent": 3.106,
+          "intendedExactCerPercent": 5.396,
+          "exactIntendedMatchCount": 0,
+          "exactIntendedMatchPercent": 0.0,
+          "numericEmailUrlTokens": 65,
+          "numericEmailUrlRetainedPercent": 78.46
+        },
+        "personal_messaging": {
+          "clips": 25,
+          "intendedNormalizedCerPercent": 8.086,
+          "intendedExactCerPercent": 10.443,
+          "exactIntendedMatchCount": 3,
+          "exactIntendedMatchPercent": 12.0,
+          "numericEmailUrlTokens": 16,
+          "numericEmailUrlRetainedPercent": 81.25
+        },
+        "work_chat": {
+          "clips": 24,
+          "intendedNormalizedCerPercent": 11.176,
+          "intendedExactCerPercent": 12.971,
+          "exactIntendedMatchCount": 6,
+          "exactIntendedMatchPercent": 25.0,
+          "numericEmailUrlTokens": 20,
+          "numericEmailUrlRetainedPercent": 85.0
+        }
+      }
+    },
+    "apple_speech_transcriber": {
+      "speechRecognition": {
+        "clips": 151,
+        "errors": 0,
+        "emptyTranscripts": 0,
+        "referenceWords": 7193,
+        "hypothesisWords": 6957,
+        "wordEdits": 824,
+        "werPercent": 11.456,
+        "cerPercent": 8.744,
+        "werPunctuationSensitivePercent": 15.788,
+        "warmTranscribeMs": {
+          "n": 151,
+          "mean": 285.481,
+          "p50": 218.416,
+          "p95": 923.539,
+          "min": 84.426,
+          "max": 1204.069
+        },
+        "warmRtf": null
+      },
+      "speechRecognitionByGroup": {
+        "ai_prompt": {
+          "clips": 22,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 977,
+          "hypothesisWords": 956,
+          "wordEdits": 73,
+          "werPercent": 7.472,
+          "cerPercent": 6.433,
+          "werPunctuationSensitivePercent": 11.95,
+          "warmTranscribeMs": {
+            "n": 22,
+            "mean": 283.626,
+            "p50": 262.623,
+            "p95": 428.353,
+            "min": 107.468,
+            "max": 444.911
+          },
+          "warmRtf": null
+        },
+        "code": {
+          "clips": 26,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 889,
+          "hypothesisWords": 894,
+          "wordEdits": 131,
+          "werPercent": 14.736,
+          "cerPercent": 7.591,
+          "werPunctuationSensitivePercent": 19.856,
+          "warmTranscribeMs": {
+            "n": 26,
+            "mean": 247.388,
+            "p50": 211.434,
+            "p95": 498.013,
+            "min": 106.165,
+            "max": 502.583
+          },
+          "warmRtf": null
+        },
+        "docs_notes": {
+          "clips": 22,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 766,
+          "hypothesisWords": 740,
+          "wordEdits": 103,
+          "werPercent": 13.446,
+          "cerPercent": 9.273,
+          "werPunctuationSensitivePercent": 15.906,
+          "warmTranscribeMs": {
+            "n": 22,
+            "mean": 242.053,
+            "p50": 226.241,
+            "p95": 388.253,
+            "min": 117.21,
+            "max": 397.294
+          },
+          "warmRtf": null
+        },
+        "email": {
+          "clips": 22,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 1172,
+          "hypothesisWords": 1115,
+          "wordEdits": 115,
+          "werPercent": 9.812,
+          "cerPercent": 8.626,
+          "werPunctuationSensitivePercent": 13.411,
+          "warmTranscribeMs": {
+            "n": 22,
+            "mean": 297.408,
+            "p50": 327.365,
+            "p95": 393.366,
+            "min": 154.893,
+            "max": 412.362
+          },
+          "warmRtf": null
+        },
+        "long_form": {
+          "clips": 10,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 2108,
+          "hypothesisWords": 2022,
+          "wordEdits": 271,
+          "werPercent": 12.856,
+          "cerPercent": 10.532,
+          "werPunctuationSensitivePercent": 17.355,
+          "warmTranscribeMs": {
+            "n": 10,
+            "mean": 981.78,
+            "p50": 929.725,
+            "p95": 1204.069,
+            "min": 894.082,
+            "max": 1204.069
+          },
+          "warmRtf": null
+        },
+        "personal_messaging": {
+          "clips": 25,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 668,
+          "hypothesisWords": 643,
+          "wordEdits": 59,
+          "werPercent": 8.832,
+          "cerPercent": 7.637,
+          "werPunctuationSensitivePercent": 16.577,
+          "warmTranscribeMs": {
+            "n": 25,
+            "mean": 177.995,
+            "p50": 161.875,
+            "p95": 355.186,
+            "min": 88.328,
+            "max": 444.991
+          },
+          "warmRtf": null
+        },
+        "work_chat": {
+          "clips": 24,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 613,
+          "hypothesisWords": 587,
+          "wordEdits": 72,
+          "werPercent": 11.746,
+          "cerPercent": 8.538,
+          "werPunctuationSensitivePercent": 14.18,
+          "warmTranscribeMs": {
+            "n": 24,
+            "mean": 179.165,
+            "p50": 168.59,
+            "p95": 339.961,
+            "min": 84.426,
+            "max": 369.38
+          },
+          "warmRtf": null
+        }
+      },
+      "dictationIntendedText": {
+        "clips": 151,
+        "intendedNormalizedCerPercent": 5.824,
+        "intendedExactCerPercent": 8.736,
+        "exactIntendedMatchCount": 14,
+        "exactIntendedMatchPercent": 9.27,
+        "numericEmailUrlTokens": 205,
+        "numericEmailUrlRetainedPercent": 71.71
+      },
+      "dictationIntendedByDomain": {
+        "ai_prompt": {
+          "clips": 22,
+          "intendedNormalizedCerPercent": 8.284,
+          "intendedExactCerPercent": 11.345,
+          "exactIntendedMatchCount": 3,
+          "exactIntendedMatchPercent": 13.64,
+          "numericEmailUrlTokens": 25,
+          "numericEmailUrlRetainedPercent": 72.0
+        },
+        "code": {
+          "clips": 26,
+          "intendedNormalizedCerPercent": 6.08,
+          "intendedExactCerPercent": 8.234,
+          "exactIntendedMatchCount": 3,
+          "exactIntendedMatchPercent": 11.54,
+          "numericEmailUrlTokens": 17,
+          "numericEmailUrlRetainedPercent": 94.12
+        },
+        "docs_notes": {
+          "clips": 22,
+          "intendedNormalizedCerPercent": 9.203,
+          "intendedExactCerPercent": 12.775,
+          "exactIntendedMatchCount": 0,
+          "exactIntendedMatchPercent": 0.0,
+          "numericEmailUrlTokens": 38,
+          "numericEmailUrlRetainedPercent": 55.26
+        },
+        "email": {
+          "clips": 22,
+          "intendedNormalizedCerPercent": 4.624,
+          "intendedExactCerPercent": 7.88,
+          "exactIntendedMatchCount": 0,
+          "exactIntendedMatchPercent": 0.0,
+          "numericEmailUrlTokens": 24,
+          "numericEmailUrlRetainedPercent": 83.33
+        },
+        "long_form": {
+          "clips": 10,
+          "intendedNormalizedCerPercent": 3.802,
+          "intendedExactCerPercent": 6.748,
+          "exactIntendedMatchCount": 0,
+          "exactIntendedMatchPercent": 0.0,
+          "numericEmailUrlTokens": 65,
+          "numericEmailUrlRetainedPercent": 72.31
+        },
+        "personal_messaging": {
+          "clips": 25,
+          "intendedNormalizedCerPercent": 5.015,
+          "intendedExactCerPercent": 7.865,
+          "exactIntendedMatchCount": 1,
+          "exactIntendedMatchPercent": 4.0,
+          "numericEmailUrlTokens": 16,
+          "numericEmailUrlRetainedPercent": 56.25
+        },
+        "work_chat": {
+          "clips": 24,
+          "intendedNormalizedCerPercent": 7.317,
+          "intendedExactCerPercent": 9.552,
+          "exactIntendedMatchCount": 7,
+          "exactIntendedMatchPercent": 29.17,
+          "numericEmailUrlTokens": 20,
+          "numericEmailUrlRetainedPercent": 80.0
+        }
+      }
+    },
+    "whisper_large_v3_turbo": {
+      "speechRecognition": {
+        "clips": 151,
+        "errors": 0,
+        "emptyTranscripts": 0,
+        "referenceWords": 7193,
+        "hypothesisWords": 7109,
+        "wordEdits": 835,
+        "werPercent": 11.609,
+        "cerPercent": 10.212,
+        "werPunctuationSensitivePercent": 16.618,
+        "warmTranscribeMs": {
+          "n": 150,
+          "mean": 1611.002,
+          "p50": 1382.791,
+          "p95": 3512.02,
+          "min": 1270.115,
+          "max": 5053.522
+        },
+        "warmRtf": {
+          "n": 150,
+          "mean": 0.128,
+          "p50": 0.112,
+          "p95": 0.281,
+          "min": 0.046,
+          "max": 0.412
+        }
+      },
+      "speechRecognitionByGroup": {
+        "ai_prompt": {
+          "clips": 22,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 977,
+          "hypothesisWords": 959,
+          "wordEdits": 60,
+          "werPercent": 6.141,
+          "cerPercent": 5.317,
+          "werPunctuationSensitivePercent": 11.568,
+          "warmTranscribeMs": {
+            "n": 21,
+            "mean": 1482.148,
+            "p50": 1426.795,
+            "p95": 1615.083,
+            "min": 1281.755,
+            "max": 2158.504
+          },
+          "warmRtf": {
+            "n": 21,
+            "mean": 0.106,
+            "p50": 0.088,
+            "p95": 0.206,
+            "min": 0.059,
+            "max": 0.239
+          }
+        },
+        "code": {
+          "clips": 26,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 889,
+          "hypothesisWords": 883,
+          "wordEdits": 86,
+          "werPercent": 9.674,
+          "cerPercent": 5.899,
+          "werPunctuationSensitivePercent": 14.815,
+          "warmTranscribeMs": {
+            "n": 26,
+            "mean": 1460.004,
+            "p50": 1366.781,
+            "p95": 2175.433,
+            "min": 1277.433,
+            "max": 2257.257
+          },
+          "warmRtf": {
+            "n": 26,
+            "mean": 0.128,
+            "p50": 0.121,
+            "p95": 0.252,
+            "min": 0.057,
+            "max": 0.253
+          }
+        },
+        "docs_notes": {
+          "clips": 22,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 766,
+          "hypothesisWords": 733,
+          "wordEdits": 83,
+          "werPercent": 10.836,
+          "cerPercent": 8.224,
+          "werPunctuationSensitivePercent": 14.854,
+          "warmTranscribeMs": {
+            "n": 22,
+            "mean": 1410.629,
+            "p50": 1374.929,
+            "p95": 1601.723,
+            "min": 1280.001,
+            "max": 1611.923
+          },
+          "warmRtf": {
+            "n": 22,
+            "mean": 0.117,
+            "p50": 0.114,
+            "p95": 0.189,
+            "min": 0.059,
+            "max": 0.212
+          }
+        },
+        "email": {
+          "clips": 22,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 1172,
+          "hypothesisWords": 1120,
+          "wordEdits": 102,
+          "werPercent": 8.703,
+          "cerPercent": 7.955,
+          "werPunctuationSensitivePercent": 13.566,
+          "warmTranscribeMs": {
+            "n": 22,
+            "mean": 1516.591,
+            "p50": 1513.118,
+            "p95": 1598.208,
+            "min": 1352.395,
+            "max": 2228.038
+          },
+          "warmRtf": {
+            "n": 22,
+            "mean": 0.091,
+            "p50": 0.075,
+            "p95": 0.149,
+            "min": 0.06,
+            "max": 0.18
+          }
+        },
+        "long_form": {
+          "clips": 10,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 2108,
+          "hypothesisWords": 2184,
+          "wordEdits": 381,
+          "werPercent": 18.074,
+          "cerPercent": 17.538,
+          "werPunctuationSensitivePercent": 23.347,
+          "warmTranscribeMs": {
+            "n": 10,
+            "mean": 3963.691,
+            "p50": 3650.469,
+            "p95": 5053.522,
+            "min": 2855.65,
+            "max": 5053.522
+          },
+          "warmRtf": {
+            "n": 10,
+            "mean": 0.057,
+            "p50": 0.055,
+            "p95": 0.074,
+            "min": 0.046,
+            "max": 0.074
+          }
+        },
+        "personal_messaging": {
+          "clips": 25,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 668,
+          "hypothesisWords": 641,
+          "wordEdits": 60,
+          "werPercent": 8.982,
+          "cerPercent": 7.699,
+          "werPunctuationSensitivePercent": 15.229,
+          "warmTranscribeMs": {
+            "n": 25,
+            "mean": 1400.974,
+            "p50": 1352.601,
+            "p95": 1571.874,
+            "min": 1279.213,
+            "max": 2311.816
+          },
+          "warmRtf": {
+            "n": 25,
+            "mean": 0.18,
+            "p50": 0.154,
+            "p95": 0.336,
+            "min": 0.074,
+            "max": 0.386
+          }
+        },
+        "work_chat": {
+          "clips": 24,
+          "errors": 0,
+          "emptyTranscripts": 0,
+          "referenceWords": 613,
+          "hypothesisWords": 589,
+          "wordEdits": 63,
+          "werPercent": 10.277,
+          "cerPercent": 8.178,
+          "werPunctuationSensitivePercent": 14.18,
+          "warmTranscribeMs": {
+            "n": 24,
+            "mean": 1396.043,
+            "p50": 1361.554,
+            "p95": 1553.268,
+            "min": 1270.115,
+            "max": 2160.269
+          },
+          "warmRtf": {
+            "n": 24,
+            "mean": 0.169,
+            "p50": 0.138,
+            "p95": 0.3,
+            "min": 0.072,
+            "max": 0.412
+          }
+        }
+      },
+      "dictationIntendedText": {
+        "clips": 151,
+        "intendedNormalizedCerPercent": 7.115,
+        "intendedExactCerPercent": 9.87,
+        "exactIntendedMatchCount": 17,
+        "exactIntendedMatchPercent": 11.26,
+        "numericEmailUrlTokens": 205,
+        "numericEmailUrlRetainedPercent": 79.51
+      },
+      "dictationIntendedByDomain": {
+        "ai_prompt": {
+          "clips": 22,
+          "intendedNormalizedCerPercent": 6.878,
+          "intendedExactCerPercent": 9.436,
+          "exactIntendedMatchCount": 4,
+          "exactIntendedMatchPercent": 18.18,
+          "numericEmailUrlTokens": 25,
+          "numericEmailUrlRetainedPercent": 84.0
+        },
+        "code": {
+          "clips": 26,
+          "intendedNormalizedCerPercent": 4.468,
+          "intendedExactCerPercent": 6.542,
+          "exactIntendedMatchCount": 4,
+          "exactIntendedMatchPercent": 15.38,
+          "numericEmailUrlTokens": 17,
+          "numericEmailUrlRetainedPercent": 100.0
+        },
+        "docs_notes": {
+          "clips": 22,
+          "intendedNormalizedCerPercent": 7.073,
+          "intendedExactCerPercent": 10.808,
+          "exactIntendedMatchCount": 2,
+          "exactIntendedMatchPercent": 9.09,
+          "numericEmailUrlTokens": 38,
+          "numericEmailUrlRetainedPercent": 60.53
+        },
+        "email": {
+          "clips": 22,
+          "intendedNormalizedCerPercent": 3.265,
+          "intendedExactCerPercent": 6.315,
+          "exactIntendedMatchCount": 0,
+          "exactIntendedMatchPercent": 0.0,
+          "numericEmailUrlTokens": 24,
+          "numericEmailUrlRetainedPercent": 79.17
+        },
+        "long_form": {
+          "clips": 10,
+          "intendedNormalizedCerPercent": 11.364,
+          "intendedExactCerPercent": 14.171,
+          "exactIntendedMatchCount": 0,
+          "exactIntendedMatchPercent": 0.0,
+          "numericEmailUrlTokens": 65,
+          "numericEmailUrlRetainedPercent": 84.62
+        },
+        "personal_messaging": {
+          "clips": 25,
+          "intendedNormalizedCerPercent": 4.708,
+          "intendedExactCerPercent": 7.237,
+          "exactIntendedMatchCount": 1,
+          "exactIntendedMatchPercent": 4.0,
+          "numericEmailUrlTokens": 16,
+          "numericEmailUrlRetainedPercent": 68.75
+        },
+        "work_chat": {
+          "clips": 24,
+          "intendedNormalizedCerPercent": 6.407,
+          "intendedExactCerPercent": 8.742,
+          "exactIntendedMatchCount": 6,
+          "exactIntendedMatchPercent": 25.0,
+          "numericEmailUrlTokens": 20,
+          "numericEmailUrlRetainedPercent": 85.0
+        }
+      }
+    }
+  }
+}
