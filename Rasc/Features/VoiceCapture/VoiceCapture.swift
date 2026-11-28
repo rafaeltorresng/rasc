@@ -123,6 +123,7 @@ final class VoiceCapture: ObservableObject {
     @Published private(set) var modifierShortcutIsActive = false
     @Published private(set) var modifierShortcutHasAccess = true
     @Published private(set) var hasAccessibilityAccess = true
+    @Published private(set) var accessibilitySetupGuidance = false
     @Published private(set) var output: VoiceCaptureOutput
     @Published private(set) var dictationDelivery: VoiceDictationDelivery
     @Published private(set) var dictationAlsoCopiesToClipboard: Bool
@@ -150,10 +151,14 @@ final class VoiceCapture: ObservableObject {
     private let presentWindows: Bool
     private let modifierStore: ModifierShortcutStore
     private let accessibilityTrusted: @Sendable () -> Bool
+    private let accessibilityPrompt: @Sendable () -> Void
+    private let accessibilitySettingsOpener: @MainActor @Sendable () -> Void
+    private let promptSettlingDelay: Duration
     private let pasteboard: NSPasteboard
     private let insertText: @MainActor @Sendable (String, NSRunningApplication?, NSPasteboard) -> VoiceTextInsertion.Result
-    private let insertInCurrentApp: @MainActor @Sendable (String) -> Bool
+    private let insertInCurrentApp: @MainActor @Sendable (String, NSWindow?, NSResponder?) -> Bool
     private let isCurrentAppFrontmost: @MainActor @Sendable () -> Bool
+    private let frontmostApplicationProvider: @MainActor @Sendable () -> NSRunningApplication?
     private lazy var modifierMonitor = ModifierShortcutMonitor()
     private var repository: NoteRepository?
     private lazy var windows = VoiceCaptureWindows(capture: self)
@@ -182,8 +187,11 @@ final class VoiceCapture: ObservableObject {
     private var captureWasInterrupted: Bool { interruptionReason != .none }
     private var announcedTimeLimitWarning = false
     private var targetApplication: NSRunningApplication?
+    private var targetEditorWindow: NSWindow?
+    private var targetEditorResponder: NSResponder?
     private var deliveryDismissTask: Task<Void, Never>?
     private var standaloneHistoryTask: Task<Void, Never>?
+    private var accessibilityPromptTask: Task<Void, Never>?
     private var lastActivation: ContinuousClock.Instant?
     private var activatedAt: ContinuousClock.Instant?
     private var recordingStartedAt: ContinuousClock.Instant?
@@ -223,20 +231,33 @@ final class VoiceCapture: ObservableObject {
         cancelConfirmationTimeout: Duration = .seconds(6),
         modifierStore: ModifierShortcutStore = .shared,
         accessibilityTrusted: @escaping @Sendable () -> Bool = { ModifierShortcutAccess.isTrusted },
+        accessibilityPrompt: @escaping @Sendable () -> Void = { ModifierShortcutAccess.request() },
+        accessibilitySettingsOpener: @escaping @MainActor @Sendable () -> Void = {
+            ModifierShortcutAccess.openSettings()
+        },
+        promptSettlingDelay: Duration = .seconds(1.2),
         pasteboard: NSPasteboard = .general,
         insertText: @escaping @MainActor @Sendable (String, NSRunningApplication?, NSPasteboard) -> VoiceTextInsertion.Result = {
             VoiceTextInsertion.insert($0, target: $1, pasteboard: $2)
         },
-        insertInCurrentApp: @escaping @MainActor @Sendable (String) -> Bool = { text in
+        insertInCurrentApp: @escaping @MainActor @Sendable (String, NSWindow?, NSResponder?) -> Bool = { text, capturedWindow, capturedResponder in
             guard NSApp.isActive,
-                  NSWorkspace.shared.frontmostApplication == .current
+                  NSWorkspace.shared.frontmostApplication == .current,
+                  capturedWindow == nil || NSApp.keyWindow === capturedWindow
             else {
                 return false
             }
-            return VoiceTextInsertion.insertIntoWindowEditor(text, window: NSApp.keyWindow)
+            return VoiceTextInsertion.insertIntoWindowEditor(
+                text,
+                window: NSApp.keyWindow,
+                responder: capturedResponder
+            )
         },
         isCurrentAppFrontmost: @escaping @MainActor @Sendable () -> Bool = {
             NSWorkspace.shared.frontmostApplication == .current
+        },
+        frontmostApplicationProvider: @escaping @MainActor @Sendable () -> NSRunningApplication? = {
+            NSWorkspace.shared.frontmostApplication
         }
     ) {
         self.preferences = preferences
@@ -251,10 +272,14 @@ final class VoiceCapture: ObservableObject {
         self.cancelConfirmationTimeout = cancelConfirmationTimeout
         self.modifierStore = modifierStore
         self.accessibilityTrusted = accessibilityTrusted
+        self.accessibilityPrompt = accessibilityPrompt
+        self.accessibilitySettingsOpener = accessibilitySettingsOpener
+        self.promptSettlingDelay = promptSettlingDelay
         self.pasteboard = pasteboard
         self.insertText = insertText
         self.insertInCurrentApp = insertInCurrentApp
         self.isCurrentAppFrontmost = isCurrentAppFrontmost
+        self.frontmostApplicationProvider = frontmostApplicationProvider
         modifierShortcut = modifierStore.shortcut
         let trusted = accessibilityTrusted()
         modifierShortcutHasAccess = trusted
@@ -441,19 +466,51 @@ final class VoiceCapture: ObservableObject {
         dictationDelivery == .insertAtCursor && !hasAccessibilityAccess
     }
 
+    /// Concrete resolution for ad-hoc builds: macOS may keep one Rasc entry
+    /// that belongs to an older build and silently skip the prompt, so the user
+    /// must replace that entry with this exact app bundle.
+    var accessibilitySetupInstructions: String {
+        "Remove the existing Rasc entry in Accessibility, choose + and add this build: \(Bundle.main.bundleURL.path). Then return to Rasc."
+    }
+
     func refreshAccessibilityStatus() {
         let trusted = accessibilityTrusted()
         hasAccessibilityAccess = trusted
         modifierShortcutHasAccess = trusted
+        if trusted {
+            accessibilitySetupGuidance = false
+            accessibilityPromptTask?.cancel()
+            accessibilityPromptTask = nil
+        }
     }
 
     func requestAccessibilityForInsertion() {
-        ModifierShortcutAccess.request()
+        // macOS shows its Accessibility prompt at most once per app identity.
+        // For an ad-hoc rebuild it can be suppressed entirely while an older
+        // Rasc entry stays enabled, leaving the user with no way to grant.
+        // Prompt first, then, if trust did not change, open Settings once and
+        // explain how to replace that entry with this build.
+        accessibilityPrompt()
+        refreshAccessibilityStatus()
         refreshModifierShortcut()
+        guard !hasAccessibilityAccess else {
+            accessibilitySetupGuidance = false
+            return
+        }
+        accessibilityPromptTask?.cancel()
+        accessibilityPromptTask = Task { [weak self] in
+            do { try await Task.sleep(for: self?.promptSettlingDelay ?? .seconds(1.2)) } catch { return }
+            guard let self, !Task.isCancelled else { return }
+            self.refreshAccessibilityStatus()
+            guard !self.hasAccessibilityAccess else { return }
+            self.accessibilitySetupGuidance = true
+            self.accessibilitySettingsOpener()
+        }
     }
 
     func openAccessibilitySettings() {
         ModifierShortcutAccess.openSettings()
+        if !hasAccessibilityAccess { accessibilitySetupGuidance = true }
     }
 
     func resetModifierShortcutState() {
@@ -793,7 +850,24 @@ final class VoiceCapture: ObservableObject {
             return
         }
         activatedAt = .now
-        targetApplication = NSWorkspace.shared.frontmostApplication.flatMap { $0 == .current ? nil : $0 }
+        // Remember the destination before any permission prompt or HUD appears.
+        // Delivery only ever targets this app/window, never whichever app happens
+        // to be frontmost when transcription finishes.
+        if isCurrentAppFrontmost() {
+            targetApplication = nil
+            targetEditorWindow = NSApp.keyWindow
+            if let responder = NSApp.keyWindow?.firstResponder {
+                // A SwiftUI TextField's first responder can be the NSTextField;
+                // remember its actual field editor before any HUD appears.
+                targetEditorResponder = (responder as? NSTextField)?.currentEditor() ?? responder
+            } else {
+                targetEditorResponder = nil
+            }
+        } else {
+            targetApplication = frontmostApplicationProvider().flatMap { $0 == .current ? nil : $0 }
+            targetEditorWindow = nil
+            targetEditorResponder = nil
+        }
         transition(.checking)
         if presentWindows { windows.showStatus() }
         observeResources()
@@ -828,10 +902,15 @@ final class VoiceCapture: ObservableObject {
                 return
             }
             transition(.starting)
-            // Remember where dictation started. Focus is never stolen; insertion
-            // follows the app that is frontmost at finish, falling back to this.
-            if let frontmost = NSWorkspace.shared.frontmostApplication, frontmost != .current {
+            // A system permission prompt can leave another app frontmost on
+            // return. Only adopt it when no destination was captured at start;
+            // otherwise keep the original target and let delivery detect the
+            // focus change.
+            if targetApplication == nil, !isCurrentAppFrontmost(),
+               let frontmost = frontmostApplicationProvider(), frontmost != .current {
                 targetApplication = frontmost
+                targetEditorWindow = nil
+                targetEditorResponder = nil
             }
             let input = self.input
             do {
@@ -1063,6 +1142,18 @@ final class VoiceCapture: ObservableObject {
         }
     }
 
+    /// Dictation started for an external app must never land in a different
+    /// app if focus moved while recording. When Rasc was frontmost at the
+    /// start, following an intentional switch to another app is allowed.
+    static func focusChangedDuringCapture(
+        startedWithExternalTarget: NSRunningApplication?,
+        currentTarget: NSRunningApplication?,
+        rascIsFrontmost: Bool
+    ) -> Bool {
+        guard let started = startedWithExternalTarget else { return false }
+        return rascIsFrontmost || currentTarget != started
+    }
+
     /// Deliver a finished transcript according to `activeIntent` and `dictationDelivery`.
     /// Focus is never stolen; no Scratchpad window opens in `.dictate` mode.
     private func deliverTranscript(_ text: String, owner token: UUID) async {
@@ -1079,37 +1170,30 @@ final class VoiceCapture: ObservableObject {
                 transition(.copied)
                 scheduleDeliveryDismiss(.copied, after: .milliseconds(1400))
             case .insertAtCursor:
-                if insertInCurrentApp(text) {
-                    if dictationAlsoCopiesToClipboard {
-                        VoiceTextInsertion.copy(text, to: pasteboard)
-                        transition(.insertedAndCopied)
-                        scheduleDeliveryDismiss(.insertedAndCopied, after: .milliseconds(1400))
-                    } else {
-                        transition(.inserted)
-                        scheduleDeliveryDismiss(.inserted, after: .milliseconds(1400))
-                    }
-                } else if isCurrentAppFrontmost() {
+                let frontmostIsRasc = isCurrentAppFrontmost()
+                let app = currentTargetApplication()
+                // Insertion is only valid for the destination captured when
+                // recording began. A changed app or editor window is reported
+                // honestly instead of typing into an unrelated field.
+                let focusChanged = Self.focusChangedDuringCapture(
+                    startedWithExternalTarget: targetApplication,
+                    currentTarget: app,
+                    rascIsFrontmost: frontmostIsRasc
+                )
+                if focusChanged {
+                    copyFallback(text, reason: .focusChanged)
+                } else if insertInCurrentApp(text, targetEditorWindow, targetEditorResponder) {
+                    commitInsertion(text, owner: token)
+                } else if frontmostIsRasc {
                     // Rasc is frontmost with no editable field in focus; never leak into a background app.
-                    VoiceTextInsertion.copy(text, to: pasteboard)
-                    lastFallbackReason = .noFocusedTextField
-                    transition(.copiedFallback)
+                    copyFallback(text, reason: .noFocusedTextField)
                 } else {
-                    let app = currentTargetApplication()
                     let result = insertText(text, app, pasteboard)
                     switch result {
                     case .inserted:
-                        if dictationAlsoCopiesToClipboard {
-                            VoiceTextInsertion.copy(text, to: pasteboard)
-                            transition(.insertedAndCopied)
-                            scheduleDeliveryDismiss(.insertedAndCopied, after: .milliseconds(1400))
-                        } else {
-                            transition(.inserted)
-                            scheduleDeliveryDismiss(.inserted, after: .milliseconds(1400))
-                        }
+                        commitInsertion(text, owner: token)
                     case .copiedToClipboard(let reason):
-                        // Honest fallback: text is on the clipboard, keep the capsule up.
-                        lastFallbackReason = reason
-                        transition(.copiedFallback)
+                        copyFallback(text, reason: reason)
                     case .blockedBySecureInput:
                         canRetryAudio = false
                         transition(.issue(.secureInputBlocked))
@@ -1119,6 +1203,26 @@ final class VoiceCapture: ObservableObject {
             }
             enqueueStandaloneHistoryIfNeeded(text)
         }
+    }
+
+    private func commitInsertion(_ text: String, owner token: UUID) {
+        guard owns(token) else { return }
+        if dictationAlsoCopiesToClipboard {
+            VoiceTextInsertion.copy(text, to: pasteboard)
+            transition(.insertedAndCopied)
+            scheduleDeliveryDismiss(.insertedAndCopied, after: .milliseconds(1400))
+        } else {
+            transition(.inserted)
+            scheduleDeliveryDismiss(.inserted, after: .milliseconds(1400))
+        }
+    }
+
+    /// Honest fallback: the transcript is on the clipboard and the capsule stays
+    /// up until dismissed so the user knows exactly why insertion did not happen.
+    private func copyFallback(_ text: String, reason: VoiceTextInsertion.Reason) {
+        VoiceTextInsertion.copy(text, to: pasteboard)
+        lastFallbackReason = reason
+        transition(.copiedFallback)
     }
 
     /// Saves a copy in Rasc's local store only when the user asked for standalone history.
@@ -1138,7 +1242,7 @@ final class VoiceCapture: ObservableObject {
     }
 
     private func currentTargetApplication() -> NSRunningApplication? {
-        if let frontmost = NSWorkspace.shared.frontmostApplication, frontmost != .current { return frontmost }
+        if let frontmost = frontmostApplicationProvider(), frontmost != .current { return frontmost }
         return targetApplication
     }
 
@@ -1320,6 +1424,8 @@ final class VoiceCapture: ObservableObject {
         deliveryDismissTask?.cancel()
         deliveryDismissTask = nil
         targetApplication = nil
+        targetEditorWindow = nil
+        targetEditorResponder = nil
         modifierMonitor.reset()
         GlobalModifierDispatcher.shared.reset()
         resetInput()

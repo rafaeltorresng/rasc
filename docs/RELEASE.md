@@ -105,6 +105,36 @@ on macOS 26.5.1. The preceding DMGs have been retained.
 Use the documented Open Anyway flow after verifying the checksum.
 [Install guide](INSTALL-UNSIGNED.md), [Independent checklist](NATIVE-UI-VALIDATION.md#independent-reliability-candidate-pass)
 
+### Focused UX / Dictate candidate (`0.1.16`, build `28`)
+
+Use `build/updater-rc/0.1.16-ux-dictate-28/export/Rasc.app` for the final
+Dictate, onboarding and window-geometry pass. Builds 25, 26 and 27 are retained
+untouched. This build has its own bundle identifier and container, so a plain
+`open` starts the onboarding welcome step. Its Accessibility identity is distinct
+from the distributed app and every other ad-hoc build: if System Settings lists
+an older Rasc entry, remove it and add this exact bundle with **+**, then return
+to Rasc. **Allow…** opens Accessibility with those instructions when the system
+prompt is suppressed.
+
+| Field | Value |
+|---|---|
+| Base commit | `02dbacc577e5fb65f4eeb3402484281b3a186709` |
+| Source commit | `70a147de3c3b3ff705243d838879cd127c8a5cec` |
+| Source patch | `candidate-source.patch`, SHA-256 `6f9796ff385ec570e7787c808e1fa5ce656c5fbe21d869a8161b550f5a3add48` |
+| Bundle | `com.rafaeltorres.rasc.uxrc28`, arm64, deployment target macOS 14.0 |
+| DMG | `Rasc-0.1.16-updater.dmg`, SHA-256 `2066c4b5c412f001ba9dc29b4719e541d250a402feba3f97792a278442460b33` |
+| App executable | SHA-256 `7f319b7f1f04cba532eb584f4dba49313b8dd1e7c2ed98eec13133be197e8e02` |
+| Signing | Ad-hoc, Hardened Runtime, cdhash-pinned LLC, unnotarized |
+| Update isolation | Automatic checks off and `https://127.0.0.1:9/appcast.xml` as the feed |
+| Recording cap | 120 seconds (unchanged) |
+
+Automated validation: 672 Xcode tests, 619 `Scripts/test-domain.py` tests plus
+the scale suite, Debug and Release builds, `verify-rc-bundle.sh`, DMG checksum,
+deep strict codesign and embedded library pins. Physical desktop checks are
+still pending and listed in
+[NATIVE-UI-VALIDATION.md](NATIVE-UI-VALIDATION.md#focused-ux--dictate--geometry-pass-build-28).
+The production appcast and published release are unchanged.
+
 ## Prerequisites
 
 The prerequisites below apply to the optional Developer ID/notarization path. The

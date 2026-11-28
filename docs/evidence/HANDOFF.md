@@ -2,7 +2,7 @@
 
 Rasc is a native macOS scratchpad for unfinished thoughts. Capture, Keep, Home search and Markdown export work with local SQLite. Voice Capture and Dictate use a separate, opt-in speech pack. Refine uses Apple Foundation Models when available and lets the author review a suggested edit before accepting it.
 
-The published artifact in this evidence set is **v0.1.15 build 21**. The **0.1.16 build 22** DMG is retained from source `30c5c14`. **0.1.16 build 25** is the isolated, ad-hoc signed candidate for the feature-freeze test pass. Its build inputs match the consolidating commit, with the source patch and DMG checksums recorded in the release runbook. Source, test harness, DMG and device results carry separate provenance. [Candidate identity](../RELEASE.md#isolated-reliability-candidate-0116-build-25)
+The published artifact in this evidence set is **v0.1.15 build 21**. The **0.1.16 build 22** DMG is retained from source `30c5c14`. **0.1.16 build 25** is the isolated, ad-hoc signed candidate for the feature-freeze test pass. **0.1.16 builds 26, 27 and 28** are the isolated candidates for the final Dictate, onboarding and window-geometry pass; build 28 supersedes earlier ones with a stable onboarding frame and a more reliable Dictate editor target. Their physical desktop validation is still pending and they do not change any measurement or claim in this evidence set. Each candidate's build inputs match its source commit, with source patches and DMG checksums recorded in the release runbook. Source, test harness, DMG and device results carry separate provenance. [Candidate identities](../RELEASE.md#isolated-reliability-candidate-0116-build-25)
 
 ## Evidence sources
 

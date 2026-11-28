@@ -1197,7 +1197,7 @@ struct VoiceCaptureTests {
                 Issue.record("External AX fallback should not run when in-app editor accepted text")
                 return .copiedToClipboard(.noTargetApplication)
             },
-            insertInCurrentApp: { text in
+            insertInCurrentApp: { text, _, _ in
                 VoiceTextInsertion.insertIntoWindowEditor(text, window: window)
             }
         )
@@ -1343,7 +1343,7 @@ struct VoiceCaptureTests {
                 Issue.record("Background target app must not receive dictation when Rasc is frontmost")
                 return .inserted
             },
-            insertInCurrentApp: { _ in false },
+            insertInCurrentApp: { _, _, _ in false },
             isCurrentAppFrontmost: { true }
         )
         capture.setEnabled(true)
@@ -1398,6 +1398,113 @@ struct VoiceCaptureTests {
         try await wait { capture.phase == .idle }
     }
 
+    @Test func fallbackCapsuleOnlyOffersAccessibilityWhenPermissionIsMissing() {
+        #expect(VoiceFallbackPresentation.showsAccessibilityAction(
+            reason: .noAccessibilityPermission,
+            hasAccessibilityAccess: false
+        ))
+        #expect(!VoiceFallbackPresentation.showsAccessibilityAction(
+            reason: .noAccessibilityPermission,
+            hasAccessibilityAccess: true
+        ))
+        #expect(!VoiceFallbackPresentation.showsAccessibilityAction(
+            reason: .insertionFailed,
+            hasAccessibilityAccess: false
+        ))
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: .noAccessibilityPermission,
+            hasAccessibilityAccess: false,
+            reachedLimit: false
+        ) == "Accessibility needed — copied")
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: .focusChanged,
+            hasAccessibilityAccess: true,
+            reachedLimit: false
+        ) == "Focus changed — copied")
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: .noFocusedTextField,
+            hasAccessibilityAccess: true,
+            reachedLimit: false
+        ) == "No field focused — copied")
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: .insertionFailed,
+            hasAccessibilityAccess: true,
+            reachedLimit: false
+        ) == "Can't insert here — copied")
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: .noTargetApplication,
+            hasAccessibilityAccess: true,
+            reachedLimit: false
+        ) == "No target app — copied")
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: nil,
+            hasAccessibilityAccess: true,
+            reachedLimit: true
+        ) == "2 min limit — ⌘V to paste")
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: nil,
+            hasAccessibilityAccess: true,
+            reachedLimit: false
+        ) == "Copied — press ⌘V")
+        #expect(VoiceFallbackPresentation.fallbackTitle(
+            reason: .noAccessibilityPermission,
+            hasAccessibilityAccess: false,
+            reachedLimit: false,
+            needsManualGrant: true
+        ) == "Add this build in Accessibility")
+    }
+
+    @Test func accessibilityRequestGuidesManualGrantWhenPromptIsSuppressed() async throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        let flow = AccessibilityFlowBox()
+
+        let capture = VoiceCapture(
+            preferences: fixture.defaults,
+            supported: true,
+            input: .init(
+                authorization: { .authorized },
+                requestAccess: { true },
+                start: { id, route in await fixture.input.start(id, audible: true, route: route) },
+                stop: { id in await fixture.input.stop(id) }
+            ),
+            accessibilityTrusted: { false },
+            accessibilityPrompt: { flow.prompts += 1 },
+            accessibilitySettingsOpener: { flow.settingsOpens += 1 },
+            promptSettlingDelay: .milliseconds(10)
+        )
+
+        capture.requestAccessibilityForInsertion()
+        try await wait { capture.accessibilitySetupGuidance && flow.settingsOpens == 1 }
+        #expect(flow.prompts == 1)
+        #expect(flow.settingsOpens == 1)
+        #expect(capture.accessibilitySetupInstructions.contains(Bundle.main.bundleURL.path))
+    }
+
+    @Test func focusChangePolicyProtectsCapturedExternalTargetOnly() {
+        let target = NSRunningApplication.current
+        #expect(!VoiceCapture.focusChangedDuringCapture(
+            startedWithExternalTarget: nil,
+            currentTarget: target,
+            rascIsFrontmost: false
+        ))
+        #expect(!VoiceCapture.focusChangedDuringCapture(
+            startedWithExternalTarget: target,
+            currentTarget: target,
+            rascIsFrontmost: false
+        ))
+        #expect(VoiceCapture.focusChangedDuringCapture(
+            startedWithExternalTarget: target,
+            currentTarget: nil,
+            rascIsFrontmost: false
+        ))
+        #expect(VoiceCapture.focusChangedDuringCapture(
+            startedWithExternalTarget: target,
+            currentTarget: target,
+            rascIsFrontmost: true
+        ))
+    }
+
     @Test func smartLeadingSpaceCoversWordBoundariesPunctuationAndInAppEditor() {
         #expect(VoiceTextInsertion.textWithSmartLeadingSpace("hello", precedingCharacter: "a") == " hello")
         #expect(VoiceTextInsertion.textWithSmartLeadingSpace("hello", precedingCharacter: ".") == " hello")
@@ -1421,6 +1528,29 @@ struct VoiceCaptureTests {
         let inserted = VoiceTextInsertion.insertIntoWindowEditor("world", window: window)
         #expect(inserted)
         #expect(textView.string == "Hello world")
+    }
+
+    @Test func dictationFindsTheFieldEditorOfAnNSTextFieldFirstResponder() throws {
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 320, height: 120),
+            styleMask: [.titled], backing: .buffered, defer: false
+        )
+        let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 320, height: 120))
+        field.isEditable = true
+        field.stringValue = "Hello"
+        window.contentView = field
+        window.makeFirstResponder(field)
+
+        let editor = try #require(field.currentEditor() as? NSTextView)
+        editor.string = "Hello"
+        editor.setSelectedRange(NSRange(location: 5, length: 0))
+        let inserted = VoiceTextInsertion.insertIntoWindowEditor(
+            " world",
+            window: window,
+            responder: field
+        )
+        #expect(inserted)
+        #expect(editor.string == "Hello world")
     }
 
     private func wait(until predicate: () -> Bool) async throws {
@@ -1505,13 +1635,18 @@ struct VoiceCaptureTests {
                 accessibilityTrusted: resolvedAccessibilityTrusted,
                 pasteboard: pasteboard,
                 insertText: resolvedInsertText,
-                insertInCurrentApp: { _ in insertInCurrentApp },
+                insertInCurrentApp: { _, _, _ in insertInCurrentApp },
                 isCurrentAppFrontmost: { isCurrentAppFrontmost }
             )
             capture.connect(repository: repository)
             return capture
         }
     }
+}
+
+private final class AccessibilityFlowBox: @unchecked Sendable {
+    nonisolated(unsafe) var prompts = 0
+    nonisolated(unsafe) var settingsOpens = 0
 }
 
 private actor FakeMicrophone {

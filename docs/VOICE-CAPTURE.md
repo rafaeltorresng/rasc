@@ -55,9 +55,22 @@ can import that same directory through **Choose Model Folder…**.
   (`max(30, audioSeconds * 0.5 + 15)`).
 - Dictate (`VoiceTextInsertion`) wakes Electron accessibility trees (`AXManualAccessibility` /
   `AXEnhancedUserInterface`), refuses Secure Input (`IsSecureEventInputEnabled()` and
-  `AXSecureTextField`), inserts with `textWithSmartLeadingSpace` via `AXSelectedText` (never
-  synthetic keystrokes), isolates frontmost Rasc window-editor targets, and keeps a persistent
-  `.copiedFallback` HUD dismissible with `Esc` when Accessibility or editable focus is absent.
+  `AXSecureTextField`), and inserts with `textWithSmartLeadingSpace` through `AXSelectedText`,
+  falling back to a verified `AXValue` range replacement for editors that do not implement
+  `AXSelectedText`. Focused elements are resolved from the app, the system-wide AX element
+  and the app's main window; in-app delivery uses the captured SwiftUI field editor rather
+  than only a bare first responder. It never posts synthetic keystrokes, never activates another app, and
+  preserves the focused app, window, first responder and caret across the cycle. Delivery is
+  restricted to the target captured at start; a changed app or editor window produces an
+  honest clipboard fallback instead of inserting elsewhere. The HUD distinguishes missing
+  Accessibility, no focused field, incompatible target, failed insertion, and focus changes.
+  Accessibility trust is re-read when Rasc becomes active, so the **Allow…** action appears
+  only while this running build truly lacks permission. **Allow…** first prompts for this
+  build's TCC identity; macOS may silently skip that prompt when an older Rasc entry is
+  still enabled, so if trust has not changed Rasc opens Accessibility once and shows the
+  concrete resolution: remove the old entry, add this exact bundle with **+**, then return.
+  The same guidance appears onboarding and in Settings → Voice. An ad-hoc RC is a distinct
+  Accessibility client from the distributed app and from every other ad-hoc build.
 - Standard Rasc distributions do not bundle the 622 MiB speech model. When you
   enable Voice Capture and choose **Download Speech Model**, an embedded
   sandboxed XPC helper (`com.rafaeltorres.rasc.VoiceModelDownloader.xpc`,

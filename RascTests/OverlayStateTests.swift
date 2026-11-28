@@ -312,7 +312,10 @@ struct OverlayStateTests {
         PaletteCommand.availableCommands(
             isKept: session.isActiveNoteKept,
             hasPersistableContent: session.hasPersistableContent,
-            canPerformCompletion: session.canPerformThoughtCompletion
+            canPerformCompletion: session.canPerformThoughtCompletion,
+            // The session reads the shared voice-enabled state at render time;
+            // match it so the expectation is independent of local preferences.
+            includesVoiceCapture: VoiceCapture.shared.enabled
         )
     }
 

@@ -86,6 +86,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, MenuBarControllerDeleg
 
         GlobalShortcutMigration.migrateFromPreviousDefaultIfNeeded()
         GlobalShortcutStore.shared.migrateLegacyPreferencesIfNeeded()
+        GlobalShortcutStore.shared.seedVoiceDefaultsIfNeeded()
         AppThemeApplicator.applyStoredTheme()
         SettingsWindowPresentation.installIfNeeded()
         SettingsWindowPresentation.onSettingsWindowWillPresent = { [weak self] in

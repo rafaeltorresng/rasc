@@ -22,8 +22,27 @@ struct WindowFramePlacementTests {
             in: visible
         )
 
-        #expect(origin.x == 140)
-        #expect(origin.y == 180)
+        #expect(origin.x == visible.midX - RascWindowMetrics.scratchpadDefault.width / 2)
+        #expect(origin.y == visible.midY - RascWindowMetrics.scratchpadDefault.height / 2)
+    }
+
+    @Test
+    func mainSurfacesUseIntentionalCompactBounds() {
+        #expect(RascWindowMetrics.scratchpadDefault.width <= 640)
+        #expect(RascWindowMetrics.scratchpadDefault.height <= 380)
+        #expect(RascWindowMetrics.scratchpadMinimum.width < RascWindowMetrics.scratchpadDefault.width)
+        #expect(RascWindowMetrics.scratchpadDefault.width < RascWindowMetrics.scratchpadMaximum.width)
+        #expect(RascWindowMetrics.scratchpadMinimum.height < RascWindowMetrics.scratchpadDefault.height)
+        #expect(RascWindowMetrics.scratchpadDefault.height < RascWindowMetrics.scratchpadMaximum.height)
+
+        #expect(RascWindowMetrics.onboardingMinimum.width < RascWindowMetrics.onboarding.width)
+        #expect(RascWindowMetrics.onboarding.width < RascWindowMetrics.onboardingMaximum.width)
+        #expect(RascWindowMetrics.onboardingMinimum.height < RascWindowMetrics.onboarding.height)
+        #expect(RascWindowMetrics.onboarding.height <= RascWindowMetrics.onboardingMaximum.height)
+        #expect(RascWindowMetrics.onboarding.height >= 640)
+
+        #expect(RascTransientPanelSizing.maximumHeight < RascWindowMetrics.scratchpadDefault.height)
+        #expect(RascTransientPanelSizing.searchMaximumHeight <= RascWindowMetrics.scratchpadDefault.height)
     }
 
     @Test

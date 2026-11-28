@@ -131,6 +131,51 @@ struct UnifiedShortcutTests {
     }
 
     @Test
+    func seedsFirstRunVoiceShortcutsFromCommandBackslashAndOptionTap() throws {
+        let suite = "UnifiedShortcutTests.Seed.\(UUID())"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = GlobalShortcutStore(userDefaults: defaults, chordBacking: .userDefaultsOnly)
+
+        store.seedVoiceDefaultsIfNeeded()
+
+        #expect(store.trigger(for: .voiceScratchpad) == .chord(
+            KeyboardShortcuts.Shortcut(.backslash, modifiers: [.command])
+        ))
+        #expect(store.trigger(for: .voiceDictate) == .modifier(.option))
+        #expect(store.isUsingDefault(for: .voiceScratchpad))
+        #expect(defaults.bool(forKey: GlobalShortcutStore.voiceDefaultsSeededKey))
+
+        // Seeding is a one-time migration.
+        store.set(nil, for: .voiceDictate)
+        store.seedVoiceDefaultsIfNeeded()
+        #expect(store.trigger(for: .voiceDictate) == nil)
+    }
+
+    @Test
+    func seedingPreservesExistingInstallAndExplicitRemoval() throws {
+        let completedSuite = "UnifiedShortcutTests.SeedCompleted.\(UUID())"
+        let completedDefaults = try #require(UserDefaults(suiteName: completedSuite))
+        defer { completedDefaults.removePersistentDomain(forName: completedSuite) }
+        OnboardingStore(userDefaults: completedDefaults).isCompleted = true
+        let completedStore = GlobalShortcutStore(userDefaults: completedDefaults, chordBacking: .userDefaultsOnly)
+        completedStore.seedVoiceDefaultsIfNeeded()
+        #expect(completedStore.trigger(for: .voiceScratchpad) == nil)
+        #expect(completedStore.trigger(for: .voiceDictate) == nil)
+
+        let clearedSuite = "UnifiedShortcutTests.SeedCleared.\(UUID())"
+        let clearedDefaults = try #require(UserDefaults(suiteName: clearedSuite))
+        defer { clearedDefaults.removePersistentDomain(forName: clearedSuite) }
+        let clearedStore = GlobalShortcutStore(userDefaults: clearedDefaults, chordBacking: .userDefaultsOnly)
+        #expect(clearedStore.set(nil, for: .voiceDictate) == nil)
+        clearedStore.seedVoiceDefaultsIfNeeded()
+        #expect(clearedStore.trigger(for: .voiceDictate) == nil)
+        #expect(clearedStore.trigger(for: .voiceScratchpad) == .chord(
+            KeyboardShortcuts.Shortcut(.backslash, modifiers: [.command])
+        ))
+    }
+
+    @Test
     func unifiedRecorderCapturesSingleModifierTapOrChordWithoutCrosstalk() throws {
         let (store, cleanup) = try makeIsolatedStore()
         defer { cleanup() }

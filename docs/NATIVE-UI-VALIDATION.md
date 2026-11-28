@@ -69,7 +69,9 @@ Use synthetic thoughts and a temporary test account/profile when exercising fail
 ## Distribution and energy
 
 - [ ] Release updater builds embedding `Sparkle.framework` and `libswiftCompatibilitySpan.dylib` launch cleanly on macOS 14/15 as well as macOS 26 (confirming LLC pins cover all `Contents/Frameworks/` binaries), and `VoiceModelDownloader.xpc` downloads inside the sandbox cleanly.
-- [ ] Direct Dictate `AXSelectedText` insertion (including Electron apps and Secure Input refusal) and physical 2-minute / Bluetooth / external mic captures succeed without leaks or focus theft.
+- [ ] Dictate insertion via `AXSelectedText` and the verified `AXValue` fallback (AppKit, SwiftUI, Chromium/Electron and code editors), Secure Input refusal, and physical 2-minute / Bluetooth / external mic captures succeed without leaks or focus theft.
+- [ ] Dictate never steals focus: the onboarding **Try Dictate here** field keeps its caret through start, recording and delivery, and an external app stays active throughout.
+- [ ] A transcript never lands in an app that gained focus after recording began; the capsule names the actual fallback reason, and **Allow…** appears only while this exact build lacks Accessibility.
 - [ ] Packaged app matches the source revision, version and build; previously published artifacts remain unchanged.
 - [ ] Verify the published checksum, sandbox and signing status; record notarization only when a notarized build is claimed. Test ordinary first-install and upgrade paths.
 - [ ] Inspect icon at Finder/DMG sizes and bundled dependency notices.
@@ -95,3 +97,37 @@ with the display locked. The cases below still require a live desktop pass.
 3. **Check delivery.** Try Scratchpad, Dictate into TextEdit and an Electron field, then Dictate with no editable focus or under Secure Input. Check one delivery, expected clipboard fallback or refusal, and expected focus. Cancel a long capture and check that nothing is inserted.
 4. **Check Refine.** Refine a direct question, a drafting command and a messy task list. Test a selected fragment and one fixed-target translation. Verify that the questions and commands remain drafts, ordinary edits still help, and Original, Esc and Undo preserve the text.
 5. **Record failures with context.** Note the candidate build, macOS, mic and route, elapsed time, and the first/last missing words from a reproducible non-private sample.
+
+## Focused UX / Dictate / geometry pass (build 28)
+
+The focused fixes changed first-run shortcuts (`⌘\` for Voice to Scratchpad,
+`⌥` for Dictate), onboarding stability, compact Scratchpad geometry, insertion
+target guards and fallback feedback. Automated coverage includes the full Xcode
+suite, `Scripts/test-domain.py`, and Light/Dark offscreen onboarding renders.
+These still need a physical desktop pass:
+
+1. **Onboarding focus.** Build 28 has its own bundle and container, so a plain
+   launch starts at the welcome step. Focus **Try Dictate here**, press
+   `⌥`, speak and confirm the caret stays in that field and the text lands there
+   exactly once. Verify the progress dots stay centered on every step and the
+   window does not resize during the normal flow; resize down on a small display
+   and confirm scrolling remains available.
+2. **Shortcut defaults and conflicts.** Confirm the two new defaults appear for
+   a fresh install, that each can be changed or cleared in onboarding, and that
+   an existing profile (including previously cleared shortcuts) is unchanged.
+   Grant Accessibility for this build if the one-key trigger is used.
+3. **External Dictate.** From TextEdit, Chrome/Electron and a code editor, tap
+   `⌥`, speak and confirm insertion at the caret with no focus change. Then
+   switch apps mid-recording and confirm the text is copied, not inserted into
+   the newly focused app. Check Secure Input still refuses without copying.
+4. **Accessibility honesty.** With an isolated ad-hoc RC running alongside the
+   distributed app, confirm **Allow…** appears only when `AXIsProcessTrusted()`
+   is false for this build. If the macOS prompt is suppressed because an older
+   Rasc entry exists, the action must open Accessibility exactly once and show
+   the bundle path to add with **+** after removing the old entry. Confirm the
+   capsule title changes to **Add this build in Accessibility**, that returning
+   with this build granted clears the guidance, and that onboarding and
+   Settings → Voice show the same instructions.
+5. **Geometry and appearance.** Check the compact Scratchpad (600 × 350), Home,
+   Onboarding, Quick Search, Command Palette, Refine and the Voice HUD in Light
+   and Dark, on the active screen, across Spaces and with a fullscreen app.

@@ -126,6 +126,14 @@ final class GlobalShortcutStore: ObservableObject {
     static let shared = GlobalShortcutStore()
     static let didChange = Notification.Name("RascGlobalShortcutDidChange")
     static let migrationCompletedKey = "globalShortcutsMigratedV1"
+    static let voiceDefaultsSeededKey = "globalShortcutsVoiceDefaultsSeededV1"
+
+    /// Sensible first-run voice triggers. These are seeded once for new
+    /// installations only; upgrades and explicit removals are never overwritten.
+    static let voiceDefaults: [GlobalShortcutAction: GlobalShortcutTrigger] = [
+        .voiceScratchpad: .chord(KeyboardShortcuts.Shortcut(.backslash, modifiers: [.command])),
+        .voiceDictate: .modifier(.option)
+    ]
 
     private let defaults: UserDefaults
     private let chordBacking: ChordBacking
@@ -180,7 +188,11 @@ final class GlobalShortcutStore: ObservableObject {
     }
 
     func isUsingDefault(for action: GlobalShortcutAction) -> Bool {
-        trigger(for: action) == action.defaultTrigger
+        trigger(for: action) == effectiveDefault(for: action)
+    }
+
+    private func effectiveDefault(for action: GlobalShortcutAction) -> GlobalShortcutTrigger? {
+        Self.voiceDefaults[action] ?? action.defaultTrigger
     }
 
     /// Assigns `trigger` after validating against app and system conflicts.
@@ -198,7 +210,7 @@ final class GlobalShortcutStore: ObservableObject {
 
     @discardableResult
     func restoreDefault(for action: GlobalShortcutAction) -> Bool {
-        guard let initial = action.defaultTrigger else {
+        guard let initial = effectiveDefault(for: action) else {
             writeTrigger(nil, for: action)
             return true
         }
@@ -295,7 +307,28 @@ final class GlobalShortcutStore: ObservableObject {
         NotificationCenter.default.post(name: Self.didChange, object: self)
     }
 
+    /// Seeds the first-run voice shortcuts once. Existing installations,
+    /// upgraded preferences and shortcuts the user explicitly removed keep
+    /// their stored values.
+    func seedVoiceDefaultsIfNeeded() {
+        guard !defaults.bool(forKey: Self.voiceDefaultsSeededKey) else { return }
+        defaults.set(true, forKey: Self.voiceDefaultsSeededKey)
+        guard !OnboardingStore(userDefaults: defaults).isCompleted else { return }
+        for (action, defaultTrigger) in Self.voiceDefaults {
+            guard trigger(for: action) == nil,
+                  !defaults.bool(forKey: clearedKey(for: action))
+            else { continue }
+            // A conflicting default is left unset rather than overriding a
+            // shortcut the user or another action already owns.
+            _ = set(defaultTrigger, for: action)
+        }
+    }
+
     // MARK: - Storage Helpers
+
+    private func clearedKey(for action: GlobalShortcutAction) -> String {
+        "globalShortcutCleared.\(action.rawValue)"
+    }
 
     private func modifierKey(for action: GlobalShortcutAction) -> String {
         "globalShortcutModifier.\(action.rawValue)"
@@ -339,6 +372,11 @@ final class GlobalShortcutStore: ObservableObject {
     }
 
     private func writeTrigger(_ trigger: GlobalShortcutTrigger?, for action: GlobalShortcutAction) {
+        if trigger == nil {
+            defaults.set(true, forKey: clearedKey(for: action))
+        } else {
+            defaults.removeObject(forKey: clearedKey(for: action))
+        }
         switch trigger {
         case let .chord(shortcut):
             defaults.removeObject(forKey: modifierKey(for: action))
